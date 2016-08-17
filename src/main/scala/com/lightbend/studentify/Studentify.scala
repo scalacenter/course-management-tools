@@ -4,9 +4,6 @@ package com.lightbend.studentify
   * Copyright © 2014, 2015, 2016 Lightbend, Inc. All rights reserved. [http://www.lightbend.com]
   */
 
-import java.io.File
-import sbt.{IO => sbtio}
-
 object Studentify {
 
   def main(args: Array[String]): Unit = {
@@ -23,6 +20,8 @@ object Studentify {
     val solutionPaths = hideExerciseSolutions(targetFolder)
     createBookmarkFile(exercises, targetFolder)
     createBuildFile(targetFolder)
+    cleanUp(List(".DS_Store", ".idea"), targetFolder)
+
   }
 
 }

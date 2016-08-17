@@ -45,24 +45,18 @@ object Exercises {
 
   def createBuildFile(targetFolder: File): Unit = {
 
-    val build =
-      s"""
-         |lazy val base = (project in file("."))
-         |  .aggregate(
-         |    common,
-         |    exercises
-         |  )
-         |  .settings(CommonSettings.commonSettings: _*)
-         |lazy val common = project.settings(CommonSettings.commonSettings: _*)
-         |
-         |lazy val exercises = project
-         |  .settings(CommonSettings.commonSettings: _*)
-         |  .dependsOn(common % "test->test;compile->compile")
-         |
-         |onLoad in Global := { state => Command.process("project exercises", state) }
-       """.stripMargin
+    for {
+      sbtTemplateFile <- sbtio.listFiles(new File("."), SbtTemplateFile())
+      sbtFileName = sbtTemplateFile.getName.replaceAll(".template", "")
+      sbtFile = new File(targetFolder, sbtFileName)
+    } {
+      sbtio.copyFile(sbtTemplateFile, sbtFile)
+    }
+  }
 
-    val buildFile = "build.sbt"
-    dumpStringToFile(build, new File(targetFolder, buildFile).getPath)
+  def cleanUp(files: Seq[String], targetFolder: File): Unit = {
+    for (file <- files) {
+      sbtio.delete(new File(targetFolder, file))
+    }
   }
 }

@@ -90,4 +90,10 @@ def savedStates = Command.command("savedStates") { state =>
   newState
 }
 
-commands in Global ++= Seq(pullSolution, saveState, restoreState, savedStates)
+def show = Command.command("show") { state =>
+  val currentExercise = getCurrentExercise(state)
+  Console.println(s"""${Console.GREEN}[INFO]${Console.RESET} Currently at ${Console.BLUE}${currentExercise}${Console.RESET}""")
+  state
+}
+
+commands in Global ++= Seq(pullSolution, saveState, restoreState, savedStates, show)

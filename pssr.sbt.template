@@ -79,7 +79,7 @@ def savedStates = Command.command("savedStates") { state =>
   val savedState = getSavedStateFolder(state)
   val savedExercises = IO.listFiles(savedState).map(_.getName).toList
   if (savedExercises.isEmpty) {
-    state.log.info(s"No previously saved exercise states found")
+    Console.println(Console.BLUE + "[WARN] " + Console.RESET + s"No previously saved exercise states found")
   } else {
     Console.println(
       s"""${Console.GREEN}[INFO]${Console.RESET} Saved exercise states are available for the following exercise(s):${Console.BLUE}

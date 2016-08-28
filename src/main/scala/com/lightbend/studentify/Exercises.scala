@@ -2,6 +2,7 @@ package com.lightbend.studentify
 
 import sbt.{IO => sbtio}
 import java.io.File
+import scala.sys.process.Process
 
 /**
   * Copyright © 2014, 2015, 2016 Lightbend, Inc. All rights reserved. [http://www.lightbend.com]
@@ -10,6 +11,14 @@ import java.io.File
 object Exercises {
 
   val ExerciseNameSpec = """.*/exercise_[0-9][0-9][0-9]_\w+$""".r
+
+  def cleanMasterViaGit(srcFolder: File, projectName: String): File = {
+    val projectName = srcFolder.getName
+    val tmpDir = sbtio.createTemporaryDirectory
+    val curDir = new File(System.getProperty("user.dir"))
+    val status = Process(Seq("./cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), new File(System.getProperty("user.dir"))).!
+    tmpDir
+  }
 
   def isExerciseFolder(folder: File): Boolean = {
     ExerciseNameSpec.findFirstIn(folder.getPath).isDefined

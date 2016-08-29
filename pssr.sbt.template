@@ -96,4 +96,27 @@ def show = Command.command("show") { state =>
   state
 }
 
-commands in Global ++= Seq(pullSolution, saveState, restoreState, savedStates, show)
+def pullTemplate: Command = Command("pullTemplate")(s => restoreArg) { (state, arg) =>
+  arg match {
+    case Some(templateFilePath) =>
+      //Todo: make this function more user-friendly allowing for specifiying just the (unique) filename iso package/filename
+      val currentExercise = getCurrentExercise(state)
+      val currentExerciseMain = new sbt.File(getRootFolder(state), "exercises/src/main")
+      val cueFolder = getCueFolder(state)
+      val solFolder = new sbt.File(cueFolder, currentExercise + "/src/main/")
+      val templateFileSrc = new File(solFolder, templateFilePath)
+      val templateFileDst = new File(currentExerciseMain, templateFilePath)
+      if (templateFileSrc.exists && templateFileSrc.isFile) {
+        IO.copyFile(templateFileSrc, templateFileDst)
+        Console.println(Console.GREEN + "[INFO] " + Console.RESET + s"Exercise " + Console.BLUE + templateFilePath + Console.RESET + " pulled")
+      } else {
+        Console.println(Console.RED + "[ERROR] " + Console.BLUE + s"$templateFilePath" + Console.RESET + s": no such template file")
+      }
+      state
+    case None =>
+      Console.println(Console.BLUE + "[WARN] " + Console.RESET + s"Provide name of template file to pull")
+      state
+  }
+}
+
+commands in Global ++= Seq(pullSolution, saveState, restoreState, savedStates, show, pullTemplate)

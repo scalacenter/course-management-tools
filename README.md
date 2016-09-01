@@ -55,6 +55,4 @@ studentify ./LightbendTraining/FTTAS-v1.3.0/fast-track-akka-scala ./LightbendTra
 
 ## Todo
 
-* Leverage ```git```'s, ```.gitignore``` file to filter out file and folders that shouldn't end-up in student repository
-* Implement ```front``` command
-* Implement ```save``` and ```restore``` command that will allow a student to save/restore the state of an exercise for later investigation
+- Implement `delinearize` command

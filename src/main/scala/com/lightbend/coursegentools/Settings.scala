@@ -1,4 +1,4 @@
-package com.lightbend.studentify
+package com.lightbend.coursegentools
 
 /**
   * Copyright © 2014, 2015, 2016 Lightbend, Inc. All rights reserved. [http://www.lightbend.com]

@@ -1,4 +1,4 @@
-package com.lightbend.studentify
+package com.lightbend.coursegentools
 
 import sbt.{IO => sbtio}
 import java.io.File

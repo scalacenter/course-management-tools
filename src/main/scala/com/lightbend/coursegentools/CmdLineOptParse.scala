@@ -1,4 +1,4 @@
-package com.lightbend.studentify
+package com.lightbend.coursegentools
 
 import java.io.File
 

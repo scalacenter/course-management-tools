@@ -10,7 +10,7 @@ import java.nio.file.{Files, Paths}
 
 import sbt.{IO => sbtio}
 
-package object studentify {
+package object coursegentools {
 
   type Seq[+A] = scala.collection.immutable.Seq[A]
   val Seq = scala.collection.immutable.Seq

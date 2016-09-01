@@ -8,7 +8,7 @@ object Studentify {
 
   def main(args: Array[String]): Unit = {
 
-    import Exercises._
+    import Helpers._
     import java.io.File
 
     val cmdOptions = CmdLineOptParse.parse(args)

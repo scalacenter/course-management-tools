@@ -8,7 +8,7 @@ import scala.sys.process.Process
   * Copyright © 2014, 2015, 2016 Lightbend, Inc. All rights reserved. [http://www.lightbend.com]
   */
 
-object Exercises {
+object Helpers {
 
   val ExerciseNameSpec = """.*/exercise_[0-9][0-9][0-9]_\w+$""".r
 

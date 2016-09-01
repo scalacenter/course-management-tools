@@ -19,3 +19,4 @@ scalacOptions ++= List(
   "-encoding", "UTF-8"
 )
 
+addCommandAlias("studentify", "runMain com.lightbend.coursegentools.Studentify")

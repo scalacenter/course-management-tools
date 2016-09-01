@@ -6,7 +6,7 @@ import java.io.File
   * Copyright © 2014, 2015, 2016 Lightbend, Inc. All rights reserved. [http://www.lightbend.com]
   */
 
-object CmdLineOptParse {
+object StudentifyCmdLineOptParse {
 
   def parse(args: Array[String]): Option[CmdOptions] = {
 

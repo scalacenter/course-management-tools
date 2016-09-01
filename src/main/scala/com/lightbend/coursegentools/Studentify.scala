@@ -11,7 +11,7 @@ object Studentify {
     import Helpers._
     import java.io.File
 
-    val cmdOptions = CmdLineOptParse.parse(args)
+    val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
     val CmdOptions(masterRepo, targetFolder) = cmdOptions.get
 

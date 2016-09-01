@@ -10,7 +10,45 @@ import scala.sys.process.Process
 
 object Helpers {
 
+  import ProcessDSL._
+
   val ExerciseNameSpec = """.*/exercise_[0-9][0-9][0-9]_\w+$""".r
+
+  def commitRemainingExercises(exercises: Seq[String], masterRepo: File, linearizedProject: File): Unit = {
+    val exercisesDstFolder = new File(linearizedProject, "exercises")
+    for {
+      exercise <- exercises
+    } {
+      val from = new File(masterRepo, exercise)
+      sbtio.delete(exercisesDstFolder)
+      sbtio.copyDirectory(from, exercisesDstFolder, preserveLastModified = true)
+      ProcessCmd(Seq("git", "add", "-A"), linearizedProject) runAndExitIfFailed(s"Failed to add exercise files for exercise $exercise")
+      ProcessCmd(Seq("git", "commit", "-m", exercise), linearizedProject) runAndExitIfFailed(s"Failed to commit exercise $exercise")
+     }
+  }
+
+  def commitFirstExercise(exercise: String, linearizedProject: File): Unit = {
+    ProcessCmd(Seq("git", "add", "-A"), linearizedProject) runAndExitIfFailed(s"Failed to add first exercise files")
+    ProcessCmd(Seq("git", "commit", "-m", exercise), linearizedProject) runAndExitIfFailed(s"Failed to commit exercise $exercise files")
+  }
+
+  def initializeGitRepo(linearizedProject: File): Unit = {
+    ProcessCmd(Seq("git", "init"), linearizedProject) runAndExitIfFailed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}")
+  }
+
+  def removeExercisesFromCleanMaster(cleanMasterRepo: File, exercises: Seq[String]): Unit = {
+    for {
+      exercise <- exercises
+    } {
+      val exerciseFolder = new File(cleanMasterRepo, exercise)
+      if (exerciseFolder.exists()) {
+        sbtio.delete(exerciseFolder)
+      } else {
+        println(s"Error in removeExercisesFromCleanMaster, bailing out")
+        System.exit(-1)
+      }
+    }
+  }
 
   def cleanMasterViaGit(srcFolder: File, projectName: String): File = {
     val projectName = srcFolder.getName
@@ -44,7 +82,7 @@ object Helpers {
 
   def stageFirstExercise(firstEx: String, masterRepo: File, targetFolder: File): Unit = {
     val firstExercise = new File(masterRepo, firstEx)
-    sbtio.copyDirectory(firstExercise, new File(targetFolder, Settings.studentBaseProject))
+    sbtio.copyDirectory(firstExercise, new File(targetFolder, Settings.studentBaseProject), preserveLastModified = true)
   }
 
   def createBookmarkFile(exSolutionPaths: Seq[String], targetFolder: File): Unit = {

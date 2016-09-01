@@ -2,7 +2,15 @@
 
 ## Introduction
 
-This application will generate a *student* repository based on a course master repository.
+This application contains a number of utilities to manage Lightbend courses. It assumes a
+certain structure of the master repository that contains the course exercises. More details
+on these requirements can be found in the `Requirements` section below.
+
+The aforementioned utilities are:
+
+### studentify
+
+`studentify` generates a *student* repository from a given course master repository.
 
 A student will clone a copy of the generated student repository, load it in his/her favorite IDE (IntelliJ or Eclipse).
 
@@ -11,6 +19,16 @@ Using either *sbt* or *activator*, the student can move between exercises by iss
 Detailed, per-exercise instructions can be obtained via the ```man e``` command.
 
 General course instructions can be obtained via the ```man``` command.
+
+### linearize
+
+`linearize` will generate a new git project in which every exercise is a commit in the project's history.
+
+This repo can then be utilized to apply changes to the exercises via interactive rebasing
+
+### delinearize
+
+`delinearize` does the opposite of `linearize`. NOT YET IMPLEMENTED
 
 ## Usage
 

@@ -14,7 +14,7 @@ The aforementioned utilities are:
 
 A student will clone a copy of the generated student repository, load it in his/her favorite IDE (IntelliJ or Eclipse).
 
-Using either *sbt* or *activator*, the student can move between exercises by issuing the ```next``` or ```prev``` commands. 
+Using either *sbt* or *activator*, the student can move between exercises by issuing the ```nextExercise``` or ```prevExercise``` commands. 
 
 Detailed, per-exercise instructions can be obtained via the ```man e``` command.
 
@@ -107,14 +107,14 @@ Let's apply a small change to the course. Let's add a text file named `SampleTex
    pick cea8563 exercise_006_actor_state
    pick 3372ff7 exercise_007_use_scheduler
    pick 3140ad7 exercise_008_keep_actor_busy
-   e 6accfc2 exercise_009_stop_actor
+   edit 6accfc2 exercise_009_stop_actor
    pick 72e9cf4 exercise_010_lifecycle_monitoring
    pick 30c10a1 exercise_011_faulty_actor
    pick 0ab3f71 exercise_012_custom_supervision
    pick c7e0f8c exercise_013_another_faulty_actor
    pick 6424eb2 exercise_014_self_healing
    pick 5e90ed0 exercise_015_detect_bottleneck
-   e 4d900a7 exercise_016_use_router
+   edit 4d900a7 exercise_016_use_router
    pick 67206d5 exercise_017_config_dispatcher
    pick 59e16ea exercise_018_become_stash
    pick 8c4bc1a exercise_019_use_ask_pattern
@@ -128,34 +128,16 @@ We apply the change:
 
 ```
 [ericloots@Eric-Loots-MBP] $ touch exercises/src/SampleTextFile.txt
+
 [ericloots@Eric-Loots-MBP] $ git add -A
+
 [ericloots@Eric-Loots-MBP] $ git rebase --continue
-[detached HEAD 9421c45] exercise_009_stop_actor
- Date: Fri Sep 2 13:27:18 2016 +0200
- 9 files changed, 121 insertions(+), 52 deletions(-)
- create mode 100644 exercises/src/SampleTextFile.txt
- rewrite exercises/src/test/resources/README.md (75%)
-Stopped at 4d900a743db56c9319f2ed023fc6559ef8e9ec26... exercise_016_use_router
-You can amend the commit now, with
-
-       	git commit --amend
-
-Once you are satisfied with your changes, run
-
-       	git rebase --continue
 
 [ericloots@Eric-Loots-MBP] $ rm exercises/src/SampleTextFile.txt
+
 [ericloots@Eric-Loots-MBP] $ git add -A
+
 [ericloots@Eric-Loots-MBP] $ git rebase --continue
-[detached HEAD a7c6eb6] exercise_016_use_router
- Date: Fri Sep 2 13:27:19 2016 +0200
- 6 files changed, 97 insertions(+), 61 deletions(-)
- delete mode 100644 exercises/src/SampleTextFile.txt
- rewrite exercises/src/test/resources/README.md (83%)
-Successfully rebased and updated refs/heads/master.
-[ericloots@Eric-Loots-MBP] $ git status
-On branch master
-nothing to commit, working directory clean
 ```
 
 After applying the change, we `delinearize` the project.
@@ -168,6 +150,7 @@ Let's see that that did to the (clean) master course repo.
 
 ```
 [ericloots@Eric-Loots-MBP] $ cd FTTAS-v1.3.0/fast-track-akka-scala/
+
 [ericloots@Eric-Loots-MBP] $ git st
 On branch master
 Your branch is up-to-date with 'origin/master'.
@@ -211,6 +194,7 @@ Let's undo the changes applied in the previous example, *and* add another text f
 
 ```
 [ericloots@Eric-Loots-MBP] $ cd /lbt/Studentify/fttas-linearized/fast-track-akka-scala
+
 [ericloots@Eric-Loots-MBP] $ git rebase -i --root
    pick 9b00254 exercise_000_initial_state
    pick 03bd482 exercise_001_implement_actor
@@ -268,7 +252,7 @@ delinearize /lbt/FTTAS-v1.3.0/fast-track-akka-scala /lbt/Studentify/fttas-linear
 
 ```
 [ericloots@Eric-Loots-MBP] $ cd /lbt/FTTAS-v1.3.0/fast-track-akka-scala
-/lbt/FTTAS-v1.3.0/fast-track-akka-scala
+
 [ericloots@Eric-Loots-MBP] $ git st
 On branch master
 Your branch is up-to-date with 'origin/master'.

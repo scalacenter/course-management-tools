@@ -7,9 +7,9 @@ import java.io.File
   */
 
 object LinearizeCmdLineOptParse {
-  def parse(args: Array[String]): Option[CmdOptions] = {
+  def parse(args: Array[String]): Option[LinearizeCmdOptions] = {
 
-    val parser = new scopt.OptionParser[CmdOptions]("studentify") {
+    val parser = new scopt.OptionParser[LinearizeCmdOptions]("linearize") {
       head("linearize", "1.0")
 
       arg[File]("masterRepo")
@@ -22,17 +22,17 @@ object LinearizeCmdLineOptParse {
           c.copy(masterRepo = masterRepo)
         }
 
-      arg[File]("out")
+      arg[File]("linearRepo")
         .text("base folder for linearized version repo")
-        .action { case (out, config) =>
-          if (! folderExists(out)) {
-            println(s"base folder for linearized version repo (${out.getPath}) doesn't exist")
+        .action { case (linearRepo, config) =>
+          if (! folderExists(linearRepo)) {
+            println(s"base folder for linearized version repo (${linearRepo.getPath}) doesn't exist")
             System.exit(-1)
           }
-          config.copy(out = out)}
+          config.copy(linearRepo = linearRepo)}
 
     }
 
-    parser.parse(args, CmdOptions())
+    parser.parse(args, LinearizeCmdOptions())
   }
 }

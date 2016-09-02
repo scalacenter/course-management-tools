@@ -26,4 +26,11 @@ object ProcessDSL {
       }
     }
   }
+
+  implicit class StringToProcessExt(val command: String) extends AnyVal {
+    def toProcessCmd(workingDir: File): ProcessCmd = {
+      val cmdSeq = command.split("""\s+""").toVector
+      ProcessCmd(cmdSeq, workingDir)
+    }
+  }
 }

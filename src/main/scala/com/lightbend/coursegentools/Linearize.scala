@@ -13,7 +13,7 @@ object Linearize {
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val CmdOptions(masterRepo, linearizedOutputFolder) = cmdOptions.get
+    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder) = cmdOptions.get
 
     val projectName = masterRepo.getName
     val exercises: Seq[String] = getExerciseNames(masterRepo)

@@ -8,9 +8,9 @@ import java.io.File
 
 object StudentifyCmdLineOptParse {
 
-  def parse(args: Array[String]): Option[CmdOptions] = {
+  def parse(args: Array[String]): Option[StudentifyCmdOptions] = {
 
-    val parser = new scopt.OptionParser[CmdOptions]("studentify") {
+    val parser = new scopt.OptionParser[StudentifyCmdOptions]("studentify") {
       head("studentify", "1.0")
 
       arg[File]("masterRepo")
@@ -34,6 +34,6 @@ object StudentifyCmdLineOptParse {
 
     }
 
-    parser.parse(args, CmdOptions())
+    parser.parse(args, StudentifyCmdOptions())
   }
 }

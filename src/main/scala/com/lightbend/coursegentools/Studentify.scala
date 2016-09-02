@@ -13,7 +13,7 @@ object Studentify {
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val CmdOptions(masterRepo, targetFolder) = cmdOptions.get
+    val StudentifyCmdOptions(masterRepo, targetFolder) = cmdOptions.get
 
     val projectName = masterRepo.getName
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)

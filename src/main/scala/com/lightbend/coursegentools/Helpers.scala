@@ -14,26 +14,75 @@ object Helpers {
 
   val ExerciseNameSpec = """.*/exercise_[0-9][0-9][0-9]_\w+$""".r
 
+  def putBackToMaster(masterRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExNameAndSHA]): Unit = {
+
+    for (ExNameAndSHA(exercise, sha) <- exercisesAndSHAs) {
+      s"git checkout $sha"
+        .toProcessCmd(linearizedRepo)
+        .runAndExitIfFailed(s"Unable to checkout commit($sha) corresponding to exercise: $exercise")
+
+      sbtio.delete(new File(masterRepo, exercise))
+      sbtio.copyDirectory(new File(linearizedRepo, "exercises"), new File(masterRepo, exercise), preserveLastModified = true)
+    }
+
+    s"git checkout master".toProcessCmd(linearizedRepo).runAndExitIfFailed(s"Unable to checkout master in linearized repo")
+  }
+
+  def getExercisesAndSHAs(linearizedOutputFolder: File): Vector[ExNameAndSHA] = {
+    def convertToExNameAndSHA(v: Vector[String]): ExNameAndSHA = {
+      v match {
+        case sha +: name +: _ => ExNameAndSHA(name, sha)
+      }
+    }
+    def splitSHAandExName(shaAndExname: String): Vector[String] = {
+      shaAndExname.split("""\s+""").toVector
+    }
+
+    Process(Seq("git", "log", "--oneline"), linearizedOutputFolder).!!
+      .split("""\n""").toVector
+      .map(splitSHAandExName)
+      .map(convertToExNameAndSHA)
+      .reverse
+  }
+
+  def checkReposMatch(exercisesInMaster: Vector[String], exercisesAndSHAs: Vector[ExNameAndSHA]): Unit = {
+    if (exercisesInMaster != exercisesAndSHAs.map(_.exName)) {
+      println(s"Repos are incompatible")
+      System.exit(-1)
+    }
+  }
+
   def commitRemainingExercises(exercises: Seq[String], masterRepo: File, linearizedProject: File): Unit = {
     val exercisesDstFolder = new File(linearizedProject, "exercises")
-    for {
-      exercise <- exercises
-    } {
+    for { exercise <- exercises } {
       val from = new File(masterRepo, exercise)
       sbtio.delete(exercisesDstFolder)
       sbtio.copyDirectory(from, exercisesDstFolder, preserveLastModified = true)
-      ProcessCmd(Seq("git", "add", "-A"), linearizedProject) runAndExitIfFailed(s"Failed to add exercise files for exercise $exercise")
-      ProcessCmd(Seq("git", "commit", "-m", exercise), linearizedProject) runAndExitIfFailed(s"Failed to commit exercise $exercise")
+
+      s"git add -A"
+        .toProcessCmd(workingDir = linearizedProject)
+        .runAndExitIfFailed(s"Failed to add exercise files for exercise $exercise")
+
+      s"git commit  -m $exercise"
+        .toProcessCmd(workingDir = linearizedProject)
+        .runAndExitIfFailed(s"Failed to add exercise files for exercise $exercise")
      }
   }
 
   def commitFirstExercise(exercise: String, linearizedProject: File): Unit = {
-    ProcessCmd(Seq("git", "add", "-A"), linearizedProject) runAndExitIfFailed(s"Failed to add first exercise files")
-    ProcessCmd(Seq("git", "commit", "-m", exercise), linearizedProject) runAndExitIfFailed(s"Failed to commit exercise $exercise files")
+    s"git add -A"
+      .toProcessCmd(workingDir = linearizedProject)
+      .runAndExitIfFailed(s"Failed to add first exercise files")
+
+    s"git commit -m $exercise"
+      .toProcessCmd(linearizedProject)
+      .runAndExitIfFailed(s"Failed to commit exercise $exercise files")
   }
 
   def initializeGitRepo(linearizedProject: File): Unit = {
-    ProcessCmd(Seq("git", "init"), linearizedProject) runAndExitIfFailed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}")
+    s"git init"
+      .toProcessCmd(linearizedProject)
+      .runAndExitIfFailed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}")
   }
 
   def removeExercisesFromCleanMaster(cleanMasterRepo: File, exercises: Seq[String]): Unit = {
@@ -54,6 +103,7 @@ object Helpers {
     val projectName = srcFolder.getName
     val tmpDir = sbtio.createTemporaryDirectory
     val curDir = new File(System.getProperty("user.dir"))
+
     val status = Process(Seq("./cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), new File(System.getProperty("user.dir"))).!
     tmpDir
   }
@@ -66,9 +116,9 @@ object Helpers {
     sbtio.copyDirectory(masterRepo, targetFolder, overwrite = false, preserveLastModified = true)
   }
 
-  def getExerciseNames(masterRepo: File): Seq[String] = {
+  def getExerciseNames(masterRepo: File): Vector[String] = {
     val exerciseFolders = sbtio.listFiles(masterRepo, FoldersOnly()).filter(isExerciseFolder)
-    exerciseFolders.map(folder => folder.getName).toList
+    exerciseFolders.map(folder => folder.getName).toVector
   }
 
   def hideExerciseSolutions(targetFolder: File): Unit = {

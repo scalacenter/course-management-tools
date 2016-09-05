@@ -32,6 +32,13 @@ object StudentifyCmdLineOptParse {
           }
           config.copy(out = out)}
 
+      opt[Unit]("multi-jvm")
+        .text("generate multi-jvm build file")
+        .abbr("mjvm")
+        .action { case (_, c) =>
+                c.copy(multiJVM = true)
+            }
+
     }
 
     parser.parse(args, StudentifyCmdOptions())

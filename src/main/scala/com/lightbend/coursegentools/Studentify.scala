@@ -13,7 +13,7 @@ object Studentify {
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val StudentifyCmdOptions(masterRepo, targetFolder) = cmdOptions.get
+    val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM) = cmdOptions.get
 
     val projectName = masterRepo.getName
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
@@ -24,7 +24,7 @@ object Studentify {
     copyMaster(cleanMasterRepo, targetCourseFolder)
     val solutionPaths = hideExerciseSolutions(targetCourseFolder)
     createBookmarkFile(exercises, targetCourseFolder)
-    createBuildFile(targetCourseFolder)
+    createBuildFile(targetCourseFolder, multiJVM)
     cleanUp(List(".git", ".gitignore"), targetCourseFolder)
     sbt.IO.delete(tmpDir)
 

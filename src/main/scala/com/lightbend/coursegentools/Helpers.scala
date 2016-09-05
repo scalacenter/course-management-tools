@@ -140,10 +140,20 @@ object Helpers {
     dumpStringToFile(firstExercise, new File(targetFolder, ".bookmark").getPath)
   }
 
-  def createBuildFile(targetFolder: File): Unit = {
+  def createBuildFile(targetFolder: File, multiJVM: Boolean): Unit = {
 
+    println(s"createBuildFile: $multiJVM")
+    val buildFileTemplate =
+      if (multiJVM) {
+        "build-mjvm.sbt.template"
+      } else {
+        "build.sbt.template"
+      }
+    sbtio.copyFile(new File(buildFileTemplate), new File(targetFolder, "build.sbt"))
+
+    val templateFiles = sbtio.listFiles(new File("."), SbtTemplateFile()).filterNot(_.getName startsWith("build"))
     for {
-      sbtTemplateFile <- sbtio.listFiles(new File("."), SbtTemplateFile())
+      sbtTemplateFile <- templateFiles
       sbtFileName = sbtTemplateFile.getName.replaceAll(".template", "")
       sbtFile = new File(targetFolder, sbtFileName)
     } {

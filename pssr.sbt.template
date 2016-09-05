@@ -1,4 +1,4 @@
-import java.io.File
+import sbt.File
 
 import sbt.complete.DefaultParsers._
 import scala.Console

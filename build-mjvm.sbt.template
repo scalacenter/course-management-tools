@@ -1,0 +1,23 @@
+import sbt._
+
+lazy val base = (project in file("."))
+  .aggregate(
+    common,
+    exercises
+  )
+  .settings(SbtMultiJvm.multiJvmSettings: _*)
+  .settings(CommonSettings.commonSettings: _*)
+  .configs(MultiJvm)
+
+lazy val common = project
+  .settings(SbtMultiJvm.multiJvmSettings: _*)
+  .settings(CommonSettings.commonSettings: _*)
+  .configs(MultiJvm)
+
+lazy val exercises = project
+  .settings(SbtMultiJvm.multiJvmSettings: _*)
+  .settings(CommonSettings.commonSettings: _*)
+  .configs(MultiJvm)
+  .dependsOn(common % "test->test;compile->compile")
+
+onLoad in Global := { state => Command.process("project exercises", state) }

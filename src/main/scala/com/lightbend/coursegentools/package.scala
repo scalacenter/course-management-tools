@@ -15,8 +15,8 @@ package object coursegentools {
   type Seq[+A] = scala.collection.immutable.Seq[A]
   val Seq = scala.collection.immutable.Seq
 
-  case class StudentifyCmdOptions(masterRepo: File = new File("."), out: File = new File("."))
-  case class LinearizeCmdOptions(masterRepo: File = new File("."), linearRepo: File = new File("."))
+  case class StudentifyCmdOptions(masterRepo: File = new File("."), out: File = new File("."), multiJVM: Boolean = false)
+  case class LinearizeCmdOptions(masterRepo: File = new File("."), linearRepo: File = new File("."), multiJVM: Boolean = false)
   case class DeLinearizeCmdOptions(masterRepo: File = new File("."), linearRepo: File = new File("."))
 
   case class ExNameAndSHA(exName: String, exSHA: String)

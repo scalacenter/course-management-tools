@@ -31,6 +31,13 @@ object LinearizeCmdLineOptParse {
           }
           config.copy(linearRepo = linearRepo)}
 
+      opt[Unit]("multi-jvm")
+        .text("generate multi-jvm build file")
+        .abbr("mjvm")
+        .action { case (_, c) =>
+          c.copy(multiJVM = true)
+        }
+
     }
 
     parser.parse(args, LinearizeCmdOptions())

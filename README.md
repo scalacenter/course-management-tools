@@ -25,22 +25,22 @@ General course instructions can be obtained via the ```man``` command.
 * a master repository and its file-path
 * the path to an (empty) folder in which the student distribution will be created
 
-### Invocation:
+### Invocation
 
 ```
-studentify 1.0
-Usage: studentify masterRepo out
+studentify 1.1
+Usage: studentify [options] masterRepo out
 
-  masterRepo  base folder holding master course repository
-  out         base folder for student repo
+  masterRepo          base folder holding master course repository
+  out                 base folder for student repo
+  -mjvm, --multi-jvm  generate multi-jvm build file
 ```
 
 ### Example
 
 ```
-./studentify                                                              \
-    /Users/ericloots/LightbendTraining/FTTAS-v1.3.0/fast-track-akka-scala \
-    ./LightbendTraining/Studentify/fttas-student
+./studentify  /lbt/Studentify/aas-base/advanced-akka-scala \ 
+              /lbt/Studentify/aas-out -mjvm
 ```
 
 In the above example, a folder `fast-track-akka-scala` will be created under the `out` folder.
@@ -51,10 +51,22 @@ In the above example, a folder `fast-track-akka-scala` will be created under the
 
 This repo can then be utilized to apply changes to the exercises via interactive rebasing.
 
+### Invocation
+
+```
+linearize 1.1
+Usage: linearize [options] masterRepo linearRepo
+
+  masterRepo          base folder holding master course repository
+  linearRepo          base folder for linearized version repo
+  -mjvm, --multi-jvm  generate multi-jvm build file
+```
+
 ### Example
 
 ```
-linearize /lbt/FTTAS-v1.3.0/fast-track-akka-scala /lbt/Studentify/fttas-linearized
+linearize /lbt/FTTAS-v1.3.0/fast-track-akka-scala \
+          /lbt/Studentify/fttas-linearized
 ```
 
 In the above example, a folder `fast-track-akka-scala` will be created. This folder contains a git repository containing all the course exercises with one commit per exercise. Note that each commit contains an sbt multi-project build. More precise, two projects are defined, `common` and `exercises`.

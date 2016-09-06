@@ -28,12 +28,18 @@ General course instructions can be obtained via the ```man``` command.
 ### Invocation
 
 ```
-studentify 1.1
+studentify 1.2
 Usage: studentify [options] masterRepo out
 
-  masterRepo          base folder holding master course repository
-  out                 base folder for student repo
-  -mjvm, --multi-jvm  generate multi-jvm build file
+  masterRepo               base folder holding master course repository
+  out                      base folder for student repo
+  -mjvm, --multi-jvm       generate multi-jvm build file
+  -fe, --first-exercise <value>
+                           name of first exercise to output
+  -le, --last-exercise <value>
+                           name of last exercise to output
+  -sfe, --selected-first-exercise <value>
+                           name of initial exercise on start
 ```
 
 ### Example

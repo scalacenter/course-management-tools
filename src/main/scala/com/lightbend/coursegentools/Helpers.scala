@@ -121,28 +121,58 @@ object Helpers {
     exerciseFolders.map(folder => folder.getName).toVector
   }
 
-  def hideExerciseSolutions(targetFolder: File): Unit = {
+  def hideExerciseSolutions(targetFolder: File, selectedExercises: Seq[String]): Unit = {
     val hiddenFolder = new File(targetFolder, Settings.solutionsFolder)
     sbtio.createDirectory(hiddenFolder)
     val exercises = sbtio.listFiles(targetFolder, FoldersOnly()).filter(isExerciseFolder)
     exercises.foreach { exercise =>
-      sbtio.move(exercise, new File(hiddenFolder, exercise.getName))
+      if (selectedExercises contains exercise.getName) {
+        sbtio.move(exercise, new File(hiddenFolder, exercise.getName))
+      } else {
+        sbtio.delete(exercise)
+      }
     }
   }
 
+  def getInitialExercise(selectedFirstOpt: Option[String], selectedExercises: Seq[String]): String = {
+    val selectedExercise = selectedFirstOpt.getOrElse(selectedExercises.head)
+    if (selectedExercises contains selectedExercise)
+      selectedExercise
+    else {
+      println(s"Exercise on start not in selected range of exercises")
+      System.exit(-1)
+      selectedExercise
+    }
+  }
   def stageFirstExercise(firstEx: String, masterRepo: File, targetFolder: File): Unit = {
     val firstExercise = new File(masterRepo, firstEx)
     sbtio.copyDirectory(firstExercise, new File(targetFolder, Settings.studentBaseProject), preserveLastModified = true)
   }
 
-  def createBookmarkFile(exSolutionPaths: Seq[String], targetFolder: File): Unit = {
-    val firstExercise = exSolutionPaths.sorted.head
+  def createBookmarkFile(firstExercise: String, targetFolder: File): Unit = {
+    //val firstExercise = exSolutionPaths.sorted.head
     dumpStringToFile(firstExercise, new File(targetFolder, ".bookmark").getPath)
+  }
+
+
+  def getSelectedExercises(exercises: Seq[String], firstOpt: Option[String], lastOpt: Option[String]): Seq[String] = {
+    val (firstExercise, lastExercise) = (exercises.head, exercises.last)
+    val selExcs = (firstOpt.getOrElse(exercises.head), lastOpt.getOrElse(exercises.last)) match {
+      case (`firstExercise`, `lastExercise`) =>
+        exercises
+      case (first, last) =>
+        exercises.dropWhile(_ != first).reverse.dropWhile(_ != last).reverse
+
+    }
+    if (selExcs isEmpty) {
+      println(s"Invalid exercise selection")
+      System.exit(-1)
+    }
+    selExcs
   }
 
   def createBuildFile(targetFolder: File, multiJVM: Boolean): Unit = {
 
-    println(s"createBuildFile: $multiJVM")
     val buildFileTemplate =
       if (multiJVM) {
         "build-mjvm.sbt.template"

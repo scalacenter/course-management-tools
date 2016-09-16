@@ -15,13 +15,6 @@ object Studentify {
     if (cmdOptions.isEmpty) System.exit(-1)
     val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt) = cmdOptions.get
 
-    println(
-      s"""
-         |First = $firstOpt
-         |Last  = $lastOpt
-         |selectedFirst = $selectedFirstOpt
-       """.stripMargin)
-
     val projectName = masterRepo.getName
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)

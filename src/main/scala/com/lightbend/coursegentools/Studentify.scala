@@ -22,12 +22,15 @@ object Studentify {
     val selectedExercises: Seq[String] = getSelectedExercises(exercises, firstOpt, lastOpt)
     val targetCourseFolder = new File(targetFolder, projectName)
     val initialExercise = getInitialExercise(selectedFirstOpt, selectedExercises)
+    val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
     stageFirstExercise(initialExercise, cleanMasterRepo, targetCourseFolder)
     copyMaster(cleanMasterRepo, targetCourseFolder)
     val solutionPaths = hideExerciseSolutions(targetCourseFolder, selectedExercises)
     createBookmarkFile(initialExercise, targetCourseFolder)
+    createSbtRcFile(targetCourseFolder)
     createBuildFile(targetCourseFolder, multiJVM)
-    cleanUp(List(".git", ".gitignore", ".sbtopts"), targetCourseFolder)
+    addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
+    cleanUp(List(".git", ".gitignore", ".sbtopts", "man.sbt", "navigation.sbt", "shell-prompt.sbt"), targetCourseFolder)
     sbt.IO.delete(tmpDir)
 
   }

@@ -154,6 +154,18 @@ object Helpers {
     dumpStringToFile(firstExercise, new File(targetFolder, ".bookmark").getPath)
   }
 
+  def createSbtRcFile(targetFolder: File): Unit = {
+    dumpStringToFile("alias boot = ;reload ;project exercises ;iflast shell", new File(targetFolder, ".sbtrc").getPath)
+  }
+
+  def addSbtStudentCommands(sbtStudentCommandsTemplateFolder: File, targetCourseFolder: File): Unit = {
+    val projectFolder = new File(targetCourseFolder, "project")
+    val moves = for {
+      template <- sbtio.listFiles(sbtStudentCommandsTemplateFolder)
+      target = new File(projectFolder, template.getName.replaceAll(".scala.template", ".scala"))
+    } yield (template, target)
+    sbtio.copy(moves)
+  }
 
   def getSelectedExercises(exercises: Seq[String], firstOpt: Option[String], lastOpt: Option[String]): Seq[String] = {
     val (firstExercise, lastExercise) = (exercises.head, exercises.last)
@@ -181,14 +193,14 @@ object Helpers {
       }
     sbtio.copyFile(new File(buildFileTemplate), new File(targetFolder, "build.sbt"))
 
-    val templateFiles = sbtio.listFiles(new File("."), SbtTemplateFile()).filterNot(_.getName startsWith("build"))
-    for {
-      sbtTemplateFile <- templateFiles
-      sbtFileName = sbtTemplateFile.getName.replaceAll(".template", "")
-      sbtFile = new File(targetFolder, sbtFileName)
-    } {
-      sbtio.copyFile(sbtTemplateFile, sbtFile)
-    }
+//    val templateFiles = sbtio.listFiles(new File("."), SbtTemplateFile()).filterNot(_.getName startsWith("build"))
+//    for {
+//      sbtTemplateFile <- templateFiles
+//      sbtFileName = sbtTemplateFile.getName.replaceAll(".template", "")
+//      sbtFile = new File(targetFolder, sbtFileName)
+//    } {
+//      sbtio.copyFile(sbtTemplateFile, sbtFile)
+//    }
   }
 
   def cleanUp(files: Seq[String], targetFolder: File): Unit = {

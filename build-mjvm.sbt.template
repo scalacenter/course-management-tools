@@ -20,4 +20,3 @@ lazy val exercises = project
   .configs(MultiJvm)
   .dependsOn(common % "test->test;compile->compile")
 
-onLoad in Global := { state => Command.process("project exercises", state) }

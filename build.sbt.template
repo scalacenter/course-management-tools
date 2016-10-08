@@ -12,4 +12,3 @@ lazy val exercises = project
   .settings(CommonSettings.commonSettings: _*)
   .dependsOn(common % "test->test;compile->compile")
 
-onLoad in Global := { state => Command.process("project exercises", state) }

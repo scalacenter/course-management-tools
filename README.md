@@ -28,7 +28,7 @@ General course instructions can be obtained via the ```man``` command.
 ### Invocation
 
 ```
-studentify 1.2
+studentify 1.3
 Usage: studentify [options] masterRepo out
 
   masterRepo               base folder holding master course repository

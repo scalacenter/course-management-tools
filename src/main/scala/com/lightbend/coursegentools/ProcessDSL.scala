@@ -15,7 +15,7 @@ object ProcessDSL {
   implicit class ProcessExtension(val cmd: ProcessCmd) extends AnyVal {
     def runAndExitIfFailed(errorMsg: String): Unit = {
       val status = Try(Process(cmd.cmd, cmd.workingDir).!)
-      if (status.isFailure) {
+      if (status.getOrElse(-1) != 0) {
         println(
           s"""
              |$errorMsg

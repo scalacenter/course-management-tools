@@ -63,7 +63,7 @@ object Helpers {
         .toProcessCmd(workingDir = linearizedProject)
         .runAndExitIfFailed(s"Failed to add exercise files for exercise $exercise")
 
-      s"git commit  -m $exercise"
+      s"git commit -m $exercise"
         .toProcessCmd(workingDir = linearizedProject)
         .runAndExitIfFailed(s"Failed to add exercise files for exercise $exercise")
      }

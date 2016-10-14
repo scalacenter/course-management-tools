@@ -164,7 +164,10 @@ object Helpers {
       template <- sbtio.listFiles(sbtStudentCommandsTemplateFolder)
       target = new File(projectFolder, template.getName.replaceAll(".scala.template", ".scala"))
     } yield (template, target)
-    sbtio.copy(moves)
+    // Don't overwrite already existing target files. Used specifically in the case when master project
+    // contains definitions for sbt command aliases and/or sbt console initial commands
+    val selectedMoves = moves.filterNot { case (_, target) => target.exists()}
+    sbtio.copy(selectedMoves)
   }
 
   def getSelectedExercises(exercises: Seq[String], firstOpt: Option[String], lastOpt: Option[String]): Seq[String] = {

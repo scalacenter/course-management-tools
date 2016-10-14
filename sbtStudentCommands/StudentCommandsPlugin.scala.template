@@ -2,7 +2,7 @@ package sbtstudent
 
 import sbt._
 import Keys._
-import Pssr.{ pullSolution, saveState, restoreState, savedStates, show, pullTemplate }
+import Pssr.{ pullSolution, saveState, restoreState, savedStates, showExerciseId, pullTemplate }
 import Navigation.{ loadBookmark, setupNavAttrs }
 import scala.Console
 import scala.util.matching._
@@ -15,12 +15,15 @@ object StudentCommandsPlugin extends AutoPlugin {
   override lazy val globalSettings =
     Seq(
       commands in Global ++= Seq(Man.man, Navigation.nextExercise, Navigation.prevExercise,
-        pullSolution, saveState, restoreState, savedStates, show, pullTemplate),
+        pullSolution, saveState, restoreState, savedStates, showExerciseId, pullTemplate),
       onLoad in Global := {
         val state = (onLoad in Global).value
         loadBookmark compose(setupNavAttrs compose state)
       }
-    )
+    ) ++
+       AdditionalSettings.initialCmdsConsole ++
+       AdditionalSettings.initialCmdsTestConsole ++
+       AdditionalSettings.cmdAliases
 
   override lazy val projectSettings =
     Seq(

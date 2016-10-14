@@ -93,7 +93,7 @@ object Pssr {
     newState
   }
 
-  def show = Command.command("show") { state =>
+  def showExerciseId = Command.command("showExerciseId") { state =>
     val currentExercise = getCurrentExercise(state)
     Console.println(s"""${Console.GREEN}[INFO]${Console.RESET} Currently at ${Console.BLUE}${currentExercise}${Console.RESET}""")
     state

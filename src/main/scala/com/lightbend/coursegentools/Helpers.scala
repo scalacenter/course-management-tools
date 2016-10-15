@@ -100,11 +100,11 @@ object Helpers {
   }
 
   def cleanMasterViaGit(srcFolder: File, projectName: String): File = {
-    val projectName = srcFolder.getName
     val tmpDir = sbtio.createTemporaryDirectory
     val curDir = new File(System.getProperty("user.dir"))
+    println(s"current Directory = $curDir")
 
-    val status = Process(Seq("./cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), new File(System.getProperty("user.dir"))).!
+    val status = Process(Seq("./cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), curDir).!
     tmpDir
   }
 

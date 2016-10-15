@@ -7,6 +7,7 @@ REMOTE_REPO=${REPO_NAME}.git
 CUR_DIR=`pwd`
 
 cd $MASTER
+MASTER=`pwd`
 CUR_BRANCH=`git branch | sed -e '/^ /d' -e 's/^..//'`
 
 cd $TMP_DIR                               &&

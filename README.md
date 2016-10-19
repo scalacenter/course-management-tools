@@ -334,22 +334,7 @@ addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "3.0.0")
 sbt.version=0.13.12
 ```
 
-### Appendix 6 - Course Management tools source
-
-```
-https://github.com/lightbend-training/course-management-tools.git
-```
-
-### Appendix 7 - *Studentified* projects
-
-```
-https://github.com/lightbend-training/fast-track-scala-advanced-scala.git
-https://github.com/lightbend-training/fast-track-akka-scala.git
-https://github.com/lightbend-training/advanced-akka-with-scala.git
-https://github.com/lightbend-training/fast-track-akka-streams-scala.git
-```
-
-### Appendix 8 - Course management tools summary
+## Appendix 6 - Course management tools summary
 
 ##### studentify
 

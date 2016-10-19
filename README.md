@@ -154,7 +154,7 @@ Two possible approaches can be utilized.
 
 One can apply changes directly to files in the exercise project(s) and verify correctness by running, possibly modified, tests. (run `base/test:test` in sbt). In most cases, any change made in a particular exercise, will have an impact on subsequent exercises. As such, making changes implies being able to efficiently search for occurrences of certain classes, methods and variable names. A very nice tool that can assist in this process is the 'Silver Searcher' (<https://github.com/ggreer/the_silver_searcher>). It's basically a `find`/`grep`/`awk` on steroids.
 
-Combined with some simple scripting, many changes can be implemented very efficiently. A video recording showing this approach is available at <https://lightbend.com/tbd>
+Combined with some simple scripting, many changes can be implemented very efficiently. A video recording showing this approach will be posted in the near future.
 
 Of course, the (best) practice to commit often in `git` applies here.
 

@@ -22,6 +22,9 @@ Over the last couple of years, a specific set of tools and workflow were used to
 	- Ability to selectively *pull* source files from the complete solution of an exercise
 	- Generalization of the use of *manual pages* for all exercises
 	- Support for (*Akka*) *multi-jvm* tests
+	- A brief (13') demo of the student repo functionality is available [here](https://www.youtube.com/watch?v=coPOCe8erzc)
+	
+
 	
 > Note: the course management tools (currently three tools: `studentify`, `linearize` and `delinearize`) have been verified to run on a *nix system (MacOS). No effort was made to make these Windows 'compatible'. If there's a need to run the tools on Windows&reg;, Windows&reg; 10 now has an integrated `bash` shell which should be sufficient to get the tools working.
 
@@ -154,7 +157,7 @@ Two possible approaches can be utilized.
 
 One can apply changes directly to files in the exercise project(s) and verify correctness by running, possibly modified, tests. (run `base/test:test` in sbt). In most cases, any change made in a particular exercise, will have an impact on subsequent exercises. As such, making changes implies being able to efficiently search for occurrences of certain classes, methods and variable names. A very nice tool that can assist in this process is the 'Silver Searcher' (<https://github.com/ggreer/the_silver_searcher>). It's basically a `find`/`grep`/`awk` on steroids.
 
-Combined with some simple scripting, many changes can be implemented very efficiently. A video recording showing this approach will be posted in the near future.
+Combined with some simple scripting, many changes can be implemented very efficiently. A video recording showing this approach can be viewed at: [course master editing workflow](https://www.youtube.com/watch?v=yLMPoN13eMM).
 
 Of course, the (best) practice to commit often in `git` applies here.
 
@@ -607,6 +610,11 @@ Untracked files:
 
 nothing added to commit but untracked files present (use "git add" to track)
 ```
+
+### Appendix 7 - Demonstration Videos
+
+- [Demo of student course repository functionality](https://www.youtube.com/watch?v=coPOCe8erzc)
+- [Course Master repository edit workflow and tools](https://www.youtube.com/watch?v=yLMPoN13eMM)
 
 ## License & Support
 

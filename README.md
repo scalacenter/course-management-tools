@@ -8,7 +8,7 @@ Over the last couple of years, a specific set of tools and workflow were used to
 	- Easy retrieval of current and older version of a course
 	- Allow for '*normal*' handling of pull requests
  
-- Ability to linearize and de-linearize (using the `linearize` and `delinearize` commands respectively) a version of a course exercise master. A de-linearized course master can be changed using `git` interactive rebasing
+- Ability to linearize and de-linearize (using the `linearize` and `delinearize` commands respectively) a version of a course exercise master. A linearized course master can be changed using `git` interactive rebasing
 
 - The ability to run *all* tests for *all* exercises in a course
 

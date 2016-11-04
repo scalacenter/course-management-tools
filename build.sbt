@@ -8,6 +8,7 @@ scalaVersion := Version.scalaVer
 
 // The Typesafe repository
 resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
+resolvers += "Typesafe Ivy Releases" at "http://repo.typesafe.com/typesafe/ivy-releases/"
 
 libraryDependencies ++= Dependencies.studentify
 

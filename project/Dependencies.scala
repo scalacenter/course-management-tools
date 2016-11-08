@@ -5,7 +5,7 @@ object Version {
   val scalaParsers    = "1.0.3"
   val scalaTest       = "2.2.4"
   val scopt           = "3.5.0"
-  val sbtio           = "0.13.12"
+  val sbtio           = "0.13.13"
   val typesafeConfig  = "1.3.0"
 }
 

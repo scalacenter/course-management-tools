@@ -32,6 +32,18 @@ Over the last couple of years, a specific set of tools and workflow were used to
 	
 ## Course master repository structure
 
+### Getting started
+
+The following section detail the structure of a course master project.
+
+To give anyone who wants to use this approach a leg-up, a template project is available [here](https://github.com/lightbend-training/course-master-template). Next:
+
+- Clone the project
+- You probably may want to *'re-git'* it:
+	- `rm -rf .git`
+	- `git init`
+- ... and start hacking! 
+
 ### Course master set-up
 
 A course master repository is a multi-project sbt build that needs to adhere to a few conventions:

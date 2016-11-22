@@ -45,6 +45,7 @@ object Studentify {
     createBookmarkFile(initialExercise, targetCourseFolder)
     createSbtRcFile(targetCourseFolder)
     createBuildFile(targetCourseFolder, multiJVM)
+    createEclipseBuildSettings(targetCourseFolder, List("common", "exercises"))
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
     cleanUp(List(".git", ".gitignore", ".sbtopts", "man.sbt", "navigation.sbt", "shell-prompt.sbt"), targetCourseFolder)
     sbt.IO.delete(tmpDir)

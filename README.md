@@ -34,7 +34,7 @@ Over the last couple of years, a specific set of tools and workflow were used to
 
 ### Getting started
 
-The following section detail the structure of a course master project.
+The following section details the structure of a course master project.
 
 To give anyone who wants to use this approach a leg-up, a template project is available [here](https://github.com/lightbend-training/course-master-template). Next:
 
@@ -340,13 +340,13 @@ object CompileOptions {
 ## Appendix 4 - *sample* plugins.sbt
 
 ```
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "3.0.0")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.0.1")
 ```
 
 ## Appendix 5 - *sample* build.properties
 
 ```
-sbt.version=0.13.12
+sbt.version=0.13.13
 ```
 
 ## Appendix 6 - Course management tools summary
@@ -355,7 +355,7 @@ sbt.version=0.13.12
 
 `studentify` generates a *student* repository from a given course master repository.
 
-A student will clone a copy of the generated student repository, load it in his/her favorite IDE (IntelliJ or Eclipse).
+A student will clone a copy of the generated student repository, load it in his/her favorite IDE (IntelliJ or Scala IDE (Eclipse)).
 
 Using either *sbt* or *activator*, the student can move between exercises by issuing the ```nextExercise``` or ```prevExercise``` commands.
 

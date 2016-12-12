@@ -40,8 +40,8 @@ object Linearize {
       case (true, false) =>
         println(
           s"""
-             |Destination folder ${destinationFolder.getPath} exists: Either remove
-             |this folder manually or use the -fde to delete it automatically
+             |Destination folder ${destinationFolder.getPath} exists: Either remove this folder
+             |manually or use the '-f' command-line option to delete it automatically
              |""".stripMargin)
         System.exit(-1)
       case (true, true) =>

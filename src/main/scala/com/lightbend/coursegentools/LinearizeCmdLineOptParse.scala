@@ -56,7 +56,7 @@ object LinearizeCmdLineOptParse {
 
       opt[Unit]("force-delete-existing-destination-folder")
         .text("generate multi-jvm build file")
-        .abbr("fde")
+        .abbr("f")
         .action { case (_, c) =>
           c.copy(forceDeleteExistingDestinationFolder = true)
         }

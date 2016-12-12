@@ -40,7 +40,8 @@ package object coursegentools {
 
   case class LinearizeCmdOptions(masterRepo: File = new File("."),
                                  linearRepo: File = new File("."),
-                                 multiJVM: Boolean = false)
+                                 multiJVM: Boolean = false,
+                                 forceDeleteExistingDestinationFolder: Boolean = false)
 
   case class DeLinearizeCmdOptions(masterRepo: File = new File("."),
                                    linearRepo: File = new File("."))

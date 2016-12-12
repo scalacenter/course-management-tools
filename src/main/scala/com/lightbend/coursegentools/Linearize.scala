@@ -26,13 +26,29 @@ object Linearize {
 
     import Helpers._
     import java.io.File
+    import sbt.{ IO => sbtio }
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM) = cmdOptions.get
+    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder) = cmdOptions.get
 
     val projectName = masterRepo.getName
     val exercises: Seq[String] = getExerciseNames(masterRepo)
+    val destinationFolder = new File(linearizedOutputFolder, projectName)
+
+    (destinationFolder.exists(), forceDeleteExistingDestinationFolder) match {
+      case (true, false) =>
+        println(
+          s"""
+             |Destination folder ${destinationFolder.getPath} exists: Either remove this folder
+             |manually or use the '-f' command-line option to delete it automatically
+             |""".stripMargin)
+        System.exit(-1)
+      case (true, true) =>
+        sbtio.delete(destinationFolder)
+      case _ =>
+
+    }
 
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)

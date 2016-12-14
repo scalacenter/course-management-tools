@@ -406,11 +406,10 @@ This repo can then be utilized to apply changes to the exercises via interactive
 linearize 1.x
 Usage: linearize [options] masterRepo linearRepo
 
-  masterRepo               base folder holding master course repository
-  linearRepo               base folder for linearized version repo
-  -mjvm, --multi-jvm       generate multi-jvm build file
-  -f, --force-delete-existing-destination-folder
-                           generate multi-jvm build file
+  masterRepo          base folder holding master course repository
+  linearRepo          base folder for linearized version repo
+  -mjvm, --multi-jvm  generate multi-jvm build file
+  -f, --force-delete  Force-delete a pre-existing destination folder
 ```
 
 #### Example

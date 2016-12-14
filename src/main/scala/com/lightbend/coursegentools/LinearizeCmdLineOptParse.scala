@@ -26,7 +26,7 @@ object LinearizeCmdLineOptParse {
   def parse(args: Array[String]): Option[LinearizeCmdOptions] = {
 
     val parser = new scopt.OptionParser[LinearizeCmdOptions]("linearize") {
-      head("linearize", "1.1")
+      head("linearize", "1.2")
 
       arg[File]("masterRepo")
         .text("base folder holding master course repository")
@@ -54,8 +54,8 @@ object LinearizeCmdLineOptParse {
           c.copy(multiJVM = true)
         }
 
-      opt[Unit]("force-delete-existing-destination-folder")
-        .text("generate multi-jvm build file")
+      opt[Unit]("force-delete")
+        .text("Force-delete a pre-existing destination folder")
         .abbr("f")
         .action { case (_, c) =>
           c.copy(forceDeleteExistingDestinationFolder = true)

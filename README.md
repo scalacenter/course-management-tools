@@ -406,9 +406,11 @@ This repo can then be utilized to apply changes to the exercises via interactive
 linearize 1.x
 Usage: linearize [options] masterRepo linearRepo
 
-  masterRepo          base folder holding master course repository
-  linearRepo          base folder for linearized version repo
-  -mjvm, --multi-jvm  generate multi-jvm build file
+  masterRepo               base folder holding master course repository
+  linearRepo               base folder for linearized version repo
+  -mjvm, --multi-jvm       generate multi-jvm build file
+  -f, --force-delete-existing-destination-folder
+                           generate multi-jvm build file
 ```
 
 #### Example
@@ -417,6 +419,8 @@ Usage: linearize [options] masterRepo linearRepo
 linearize /lbt/FTTAS-v1.3.0/fast-track-akka-scala \
           /lbt/Studentify/fttas-linearized
 ```
+
+Note that if the destination folder exists, `linearize` will abort. Two options are available: either delete the pre-existing destination folder and re-run the command, or, specify the `-f` command line option: `linearize` will delete the folder (and its contents) before proceeding. 
 
 In the above example, a folder `fast-track-akka-scala` will be created. This folder contains a git repository containing all the course exercises with one commit per exercise. Note that each commit contains an sbt multi-project build. More precise, two projects are defined, `common` and `exercises`.
 

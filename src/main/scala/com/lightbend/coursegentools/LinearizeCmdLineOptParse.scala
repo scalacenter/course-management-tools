@@ -26,7 +26,7 @@ object LinearizeCmdLineOptParse {
   def parse(args: Array[String]): Option[LinearizeCmdOptions] = {
 
     val parser = new scopt.OptionParser[LinearizeCmdOptions]("linearize") {
-      head("linearize", "1.1")
+      head("linearize", "1.2")
 
       arg[File]("masterRepo")
         .text("base folder holding master course repository")

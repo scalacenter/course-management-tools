@@ -357,7 +357,7 @@ sbt.version=0.13.13
 
 A student will clone a copy of the generated student repository, load it in his/her favorite IDE (IntelliJ or Scala IDE (Eclipse)).
 
-Using either *sbt* or *activator*, the student can move between exercises by issuing the ```nextExercise``` or ```prevExercise``` commands.
+Using *sbt*, the student can move between exercises by issuing the ```nextExercise``` or ```prevExercise``` commands.
 Please note that the ```nextExercise``` or ```prevExercise``` command pull only exercise tests and does NOT change sources. 
 There is the `pullSolution` command that pulls the solution code.
 

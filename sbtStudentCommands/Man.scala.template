@@ -51,19 +51,22 @@ object Man {
   val ConYellow = Console.YELLOW
 
   def printOut(path: String) {
+    var inCodeFence = false
     IO.readLines(new sbt.File(path)) foreach {
-      case ln if ln.length > 0 && ln(0).equals('#') =>
+      case ln if !inCodeFence && ln.length > 0 && ln(0).equals('#') =>
         Console.println(ConRed + ln + ConReset)
-      case ln if ln.matches(".*" + bulletRx.toString() + ".*") =>
+      case ln if !inCodeFence && ln.matches(".*" + bulletRx.toString() + ".*") =>
         val lne = bulletRx replaceAllIn (ln, ConRed + bulletRx.toString() + ConReset)
         Console.println(rxFormat(rxFormat(rxFormat(lne, codeRx, ConBlue), boldRx, ConYellow), urlRx, ConMagenta,
           keepWrapper = true))
-      case ln if ln.matches(numberRx.toString() + ".*") =>
+      case ln if !inCodeFence && ln.matches(numberRx.toString() + ".*") =>
         val lne = numberRx replaceAllIn (ln, _ match { case numberRx(n, s) => f"$ConRed$n$s$ConReset" })
         Console.println(rxFormat(rxFormat(lne, codeRx, ConBlue), boldRx, ConYellow))
       case ln if ln.matches(fenceStartRx.toString()) =>
+        inCodeFence = true
         Console.print(ConBlue)
       case ln if ln.matches(fenceEndRx.toString()) =>
+        inCodeFence = false
         Console.print(ConReset)
       case ln =>
         Console.println(rxFormat(rxFormat(rxFormat(ln, codeRx, ConBlue), boldRx, ConYellow), urlRx, ConMagenta,

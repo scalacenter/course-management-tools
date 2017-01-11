@@ -30,6 +30,30 @@ object Helpers {
 
   val ExerciseNameSpec = """.*/exercise_[0-9][0-9][0-9]_\w+$""".r
 
+  def fileList(base: File): Vector[File] = {
+    @scala.annotation.tailrec
+    def fileList(filesSoFar: Vector[File], folders: Vector[File]): Vector[File] = {
+      val subs = (folders foldLeft Vector.empty[File]) {
+        case (tally, folder) =>
+          tally ++ sbtio.listFiles(folder)
+      }
+      subs.partition(_.isDirectory) match {
+        case (rem, result) if rem.isEmpty => filesSoFar ++ result
+        case (rem, tally) => fileList(filesSoFar ++ tally, rem)
+      }
+    }
+
+    val (seedFolders, seedFiles) = sbtio.listFiles(base).partition(_.isDirectory)
+    fileList(seedFiles.toVector, seedFolders.toVector)
+  }
+
+  def zipSolution(exFolder: File, removeOriginal: Boolean = false): Unit = {
+    val fl = fileList(exFolder).map(f => (f, sbtio.relativize(exFolder.getParentFile, f).get))
+    val zipFile = new File(exFolder.getParentFile, s"${exFolder.getName}.zip")
+    sbtio.zip(fl, zipFile)
+    if (removeOriginal) sbtio.delete(exFolder)
+  }
+
   def putBackToMaster(masterRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExNameAndSHA]): Unit = {
 
     for (ExNameAndSHA(exercise, sha) <- exercisesAndSHAs) {
@@ -141,7 +165,9 @@ object Helpers {
     val exercises = sbtio.listFiles(targetFolder, FoldersOnly()).filter(isExerciseFolder)
     exercises.foreach { exercise =>
       if (selectedExercises contains exercise.getName) {
-        sbtio.move(exercise, new File(hiddenFolder, exercise.getName))
+        val exerciseFolder = new File(hiddenFolder, exercise.getName)
+        sbtio.move(exercise, exerciseFolder)
+        zipSolution(exerciseFolder, removeOriginal = true)
       } else {
         sbtio.delete(exercise)
       }

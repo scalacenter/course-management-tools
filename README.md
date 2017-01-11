@@ -5,28 +5,29 @@
 Over the last couple of years, a specific set of tools and workflow were used to maintain the exercise source code for Lightbend training courses. Based on the experience gained over time, a new approach has been devised that meets the following objectives:
 
 - Maintain a regular history of course versions in git
-	- Easy retrieval of current and older version of a course
-	- Allow for '*normal*' handling of pull requests
+	- Easy retrieval of current and older version of a course and allow for *normal* handling of pull requests
  
 - Ability to linearize and de-linearize (using the `linearize` and `delinearize` commands respectively) a version of a course exercise master. A linearized course master can be changed using `git` interactive rebasing
 
-- The ability to run *all* tests for *all* exercises in a course
+- The ability to run *all* tests for *all* exercises in a course master repository
 
 - Generation of self-contained student exercise repositories using `studentify`
 	- The student repository has no external dependencies except:
 		- Java (8) SDK
-		- sbt (Scala build tool, version 0.13.12 or higher)
+		- sbt (Scala build tool, version 0.13.13 or higher)
 		- dependencies defined as part of the course master itself
 	- Ability to *save* the current state of an exercise with the possibility to restore it at a later moment
 	- Ability to *pull* the complete solution of an exercise
 	- Ability to selectively *pull* source files from the complete solution of an exercise
 	- Generalization of the use of *manual pages* for all exercises
 	- Support for (*Akka*) *multi-jvm* tests
+	- Ability to *list* all the exercises in a master repository
+	- Ability to *jump* to an exercise based on its sequence number
 	- A brief (13') demo of the student repo functionality is available [here](https://www.youtube.com/watch?v=coPOCe8erzc)
 	
 
 	
-> Note: the course management tools (currently three tools: `studentify`, `linearize` and `delinearize`) have been verified to run on a *nix system (MacOS). No effort was made to make these Windows 'compatible'. If there's a need to run the tools on Windows&reg;, Windows&reg; 10 now has an integrated `bash` shell which should be sufficient to get the tools working.
+> Note: the course management tools (currently three tools: `studentify`, `linearize` and `delinearize`) have been verified to run on a *nix system (MacOS). No effort was made to make these Windows 'compatible'. If there's a need to run the tools on Windows&reg;, Windows&reg; 10 now has an integrated `bash` shell which should be sufficient to get the tools working. Do note that a `studentified` version of a course should run on *nix and Windows 10 systems. 
 
 > Note: Testing has revealed that some 'older' version of `git` pose problems. `git` version 2.10.0 should be fine.
 	
@@ -40,8 +41,8 @@ To give anyone who wants to use this approach a leg-up, a template project is av
 
 - Clone the project
 - You probably may want to *'re-git'* it:
-	- `rm -rf .git`
-	- `git init`
+   - `rm -rf .git`
+   - `git init`
 - ... and start hacking! 
 
 ### Course master set-up
@@ -57,6 +58,7 @@ A course master repository is a multi-project sbt build that needs to adhere to 
 	- Each exercise project should have a `README.md` file containing a description of the exercise and 'run', 'test' and 'next step' instructions and should be located at `exercises_xxx_.../src/test/resources`
 	- The `common` project should have a `README.md` file located under `common/src/test/resources`
 	- The `base` project should have a `README.md` file located under `src/test/resources`
+	- Note that the `listExercises` command, available on a _studentified_ repo extracts the exercise descriptions from the exercise project name. For example, the exercise project name `exercise_001_create_a_class` generates `1. Exercise 1 > Define A Class` in the output of the command. 
 
 ### Course master project structure
 
@@ -116,30 +118,29 @@ It is recommended to use the following file structure in the `project` folder:
             |
             +--/project
                   |
-                  +- CommonSettings.scala
-                  |
-                  +- Dependencies.scala
-                  |
                   +- AdditionalSetting.scala
+                  |
+                  +- build.properties
+                  |
+                  +- CommonSettings.scala
                   |
                   +- CompileOptions.scala
                   |
+                  +- Dependencies.scala
+                  |
+                  +- Navigation.scala
+                  |
+                  +- Man.scala
+                  |
                   +- plugins.sbt
                   |
-                  +- build.properties
+                  +- StudentCommandsPlugin.scala
+                  |
+                  +- StudentKeys.scala
+
 ```
 
-In addition to these files, a few other files need to be present in the repository's root folder:
-
-```
-           ./
-            |
-            +- navigation.sbt
-            |
-            +- man.sbt
-            |
-            +- shell-prompt.sbt
-```
+When settings up a new course master repository, the easiest way to get started is to follow the instructions in the _Getting started_ section above. 
 
 > Note: plan is to add a tool in the course management tool set to automatically add these files **and** generate the `build.sbt` file based of the project folder layout automatically
 
@@ -263,93 +264,7 @@ Finally, there's the `-mjvm` option that will generate a `build.sbt` file that s
 
 > Note: Course master repos that use `multi-jvm` should include the dependencies required for this feature (see the `Advanced Akka with Scala` course for an example).
 
----
-
-## Appendix 1 - *example* CommonSettings.scala
-
-```
-import com.typesafe.sbteclipse.core.EclipsePlugin.{EclipseCreateSrc, EclipseKeys}
-import sbt.Keys._
-import sbt._
-
-object CommonSettings {
-  lazy val commonSettings = Seq(
-    organization := "com.lightbend.training",
-    version := "3.0.2",
-    scalaVersion := Version.scalaVer,
-    scalacOptions ++= CompileOptions.compileOptions,
-    unmanagedSourceDirectories in Compile := List((scalaSource in Compile).value),
-    unmanagedSourceDirectories in Test := List((scalaSource in Test).value),
-    EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
-    EclipseKeys.eclipseOutput := Some(".target"),
-    EclipseKeys.withSource := true,
-    EclipseKeys.skipParents in ThisBuild := true,
-    EclipseKeys.skipProject := true,
-    fork in Test := true,
-    parallelExecution in Test := false,
-    logBuffered in Test := false,
-    parallelExecution in ThisBuild := false,
-    libraryDependencies ++= Dependencies.dependencies
-  )
-}
-```
-
-## Appendix 2 - *example* Dependencies.scala
-
-```
-import sbt._
-
-object Version {
-  val scalaVer     = "2.11.8"
-  val scalaParsers = "1.0.3"
-  val scalaTest    = "2.2.4"
-  val playJson     = "2.5.9"
-}
-
-object Library {
-  val scalaParsers = "org.scala-lang.modules" %% "scala-parser-combinators" % Version.scalaParsers
-  val scalaTest    = "org.scalatest"          %% "scalatest"                % Version.scalaTest
-  val playJson     = "com.typesafe.play"      %% "play-json"                % Version.playJson
-}
-
-object Dependencies {
-  import Library._
-
-  val dependencies = List(
-    scalaParsers,
-    scalaTest % "test",
-    playJson
-  )
-}
-```
-
-## Appendix 3 - *example* CompileOptions.scala
-
-```
-object CompileOptions {
-  val compileOptions = Seq(
-    "-unchecked",
-    "-deprecation",
-    "-language:_",
-    "-target:jvm-1.6",
-    "-encoding", "UTF-8"
-  )
-}
-```
-
-## Appendix 4 - *sample* plugins.sbt
-
-```
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.0.1")
-```
-
-## Appendix 5 - *sample* build.properties
-
-```
-sbt.version=0.13.13
-```
-
-## Appendix 6 - Course management tools summary
+## Appendix 1 - Course management tools summary
 
 ##### studentify
 
@@ -357,13 +272,15 @@ sbt.version=0.13.13
 
 A student will clone a copy of the generated student repository, load it in his/her favorite IDE (IntelliJ or Scala IDE (Eclipse)).
 
-Using *sbt*, the student can move between exercises by issuing the ```nextExercise``` or ```prevExercise``` commands.
-Please note that the ```nextExercise``` or ```prevExercise``` command pull only exercise tests and does NOT change sources. 
+Using *sbt*, the student can move between exercises by issuing the `nextExercise`, `prevExercise` and `gotoExerciseNr` commands.
+Please note that these commands pull only exercise tests and do NOT change other (solution) sources. 
 There is the `pullSolution` command that pulls the solution code.
 
-Detailed, per-exercise instructions can be obtained via the ```man e``` command.
+Detailed, per-exercise instructions can be obtained via the `man e` command.
 
-General course instructions can be obtained via the ```man``` command.
+General course instructions can be obtained via the `man` command.
+
+The `listExercises` command will generate a list of exercises and their description.
 
 #### Requirements:
 
@@ -395,6 +312,8 @@ Usage: studentify [options] masterRepo out
 ```
 
 In the above example, a folder `fast-track-akka-scala` will be created under the `out` folder.
+
+> Note: `studentify` will copy over a number of files verbatim from the master build definition and overwrite or create a number of files in the student repo. A diagram, `images/sbtSourceCode.png` provides more details on this.
 
 ### linearize
 
@@ -628,7 +547,323 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 
-### Appendix 7 - Demonstration Videos
+## Appendix 2 - *example* project/CommonSettings.scala
+
+```
+import com.typesafe.sbteclipse.core.EclipsePlugin.{EclipseCreateSrc, EclipseKeys}
+import sbt.Keys._
+import sbt._
+import sbtstudent.AdditionalSettings
+
+object CommonSettings {
+  lazy val commonSettings = Seq(
+    organization := "com.lightbend.training",
+    version := "1.3.0",
+    scalaVersion := Version.scalaVer,
+    scalacOptions ++= CompileOptions.compileOptions,
+    unmanagedSourceDirectories in Compile := List((scalaSource in Compile).value),
+    unmanagedSourceDirectories in Test := List((scalaSource in Test).value),
+    EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.ManagedClasses,
+    EclipseKeys.eclipseOutput := Some(".target"),
+    EclipseKeys.withSource := true,
+    EclipseKeys.skipParents in ThisBuild := true,
+    EclipseKeys.skipProject := true,
+    parallelExecution in GlobalScope := false,
+    logBuffered in Test := false,
+    parallelExecution in ThisBuild := false,
+    fork in Test := true,
+    libraryDependencies ++= Dependencies.dependencies
+  ) ++
+    AdditionalSettings.initialCmdsConsole ++
+    AdditionalSettings.initialCmdsTestConsole ++
+    AdditionalSettings.cmdAliases
+}
+```
+
+## Appendix 3 - *example* project/Dependencies.scala
+
+```
+import sbt._
+
+object Version {
+  val akkaVer         = "2.4.14"
+  val logbackVer      = "1.1.3"
+  val scalaVer        = "2.12.1"
+  val scalaParsersVer = "1.0.4"
+  val scalaTestVer    = "3.0.1"
+
+}
+
+object Dependencies {
+  val dependencies = Seq(
+    "com.typesafe.akka"       %% "akka-actor"                 % Version.akkaVer,
+    "com.typesafe.akka"       %% "akka-slf4j"                 % Version.akkaVer,
+    "ch.qos.logback"           % "logback-classic"            % Version.logbackVer,
+    "org.scala-lang.modules"  %% "scala-parser-combinators"   % Version.scalaParsersVer,
+    "com.typesafe.akka"       %% "akka-testkit"               % Version.akkaVer % "test",
+    "org.scalatest"           %% "scalatest"                  % Version.scalaTestVer % "test"
+  )
+}
+```
+
+## Appendix 4 - *example* project/CompileOptions.scala
+
+```
+
+object CompileOptions {
+  val compileOptions = Seq(
+    "-unchecked",
+    "-deprecation",
+    "-language:_",
+    "-encoding", "UTF-8"
+  )
+}
+
+```
+
+## Appendix 5 - *sample* project/plugins.sbt
+
+```
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.0.1")
+```
+
+## Appendix 6 - *sample* project/build.properties
+
+```
+sbt.version=0.13.13
+```
+
+## Appendix 7 - *sample* project/AdditionalSettings.scala
+
+```
+package sbtstudent
+
+import sbt._
+import Keys._
+
+object AdditionalSettings {
+
+  // Change 'loadInitialCmds' to true when requested in exercise instructions
+  val loadInitialCmds = false
+
+  val initialCmdsConsole: Seq[Def.Setting[String]] =
+    if (loadInitialCmds) {
+      Seq(initialCommands in console := "import com.lightbend.training.coffeehouse._")
+    } else {
+      Seq()
+    }
+
+  val initialCmdsTestConsole: Seq[Def.Setting[String]]  =
+    if (loadInitialCmds) {
+//      Seq(initialCommands in(Test, console) := (initialCommands in console).value + ", TestData._")
+      Seq()
+    } else {
+      Seq()
+    }
+
+  // Note that if no command aliases need to be added, assign an empty Seq to cmdAliasesIn
+  val cmdAliasesIn: Seq[Def.Setting[(State) => State]] = Seq(
+    //    addCommandAlias("xxx", "help"),
+    //    addCommandAlias("yxy", "help")
+  ).flatten
+
+  val cmdAliases: Seq[Def.Setting[(State) => State]] =
+    cmdAliasesIn
+}
+```
+
+## Appendix 8 - *sample* project/Man.scala
+
+```
+package sbtstudent
+/**
+  * Copyright © 2014, 2015, 2016 Lightbend, Inc. All rights reserved. [http://www.typesafe.com]
+  */
+
+import sbt.Keys._
+import sbt._
+import sbt.complete.DefaultParsers._
+
+import scala.Console
+import scala.util.matching._
+
+object Man {
+  val manDetail: String = "Displays the README.md file. Use <noarg> for setup README.md or <e> for exercise README.md"
+
+  lazy val optArg = OptSpace ~> StringBasic.?
+
+  def man: Command = Command("man")(_ => optArg) { (state, arg) =>
+    arg match {
+      case Some(a) if a == "e" =>
+        val base: File = Project.extract(state).get(sourceDirectory)
+        val basePath: String = base + "/test/resources/README.md"
+        printOut(basePath)
+        Console.print("\n")
+        state
+      case Some(a) =>
+        Console.print("\n")
+        Console.println(Console.RED + "[ERROR] " + Console.RESET + "invalid argument " + Console.RED + a + Console.RESET  + ". " + manDetail)
+        Console.print("\n")
+        state
+      case None =>
+        val base: File = Project.extract(state).get(baseDirectory)
+        val readMeFile = new sbt.File(new sbt.File(Project.extract(state).structure.root), "README.md")
+        val basePath = readMeFile.getPath
+        printOut(basePath)
+        Console.print("\n")
+        state
+    }
+  }
+
+  val bulletRx: Regex = """- """.r
+  val boldRx: Regex = """(\*\*)(\w*)(\*\*)""".r
+  val codeRx: Regex = """(`)([^`]+)(`)""".r
+  val fenceStartRx: Regex = """^```(bash|scala)$""".r
+  val fenceEndRx: Regex = """^```$""".r
+  val numberRx: Regex = """^(\d{1,3})(\. )""".r
+  val urlRx: Regex = """(\()(htt[a-zA-Z0-9\-\.\/:]*)(\))""".r
+  val ConBlue = Console.BLUE
+  val ConMagenta = Console.MAGENTA
+  val ConRed = Console.RED
+  val ConReset = Console.RESET
+  val ConYellow = Console.YELLOW
+
+  def printOut(path: String) {
+    var inCodeFence = false
+    IO.readLines(new sbt.File(path)) foreach {
+      case ln if !inCodeFence && ln.length > 0 && ln(0).equals('#') =>
+        Console.println(ConRed + ln + ConReset)
+      case ln if !inCodeFence && ln.matches(".*" + bulletRx.toString() + ".*") =>
+        val lne = bulletRx replaceAllIn (ln, ConRed + bulletRx.toString() + ConReset)
+        Console.println(rxFormat(rxFormat(rxFormat(lne, codeRx, ConBlue), boldRx, ConYellow), urlRx, ConMagenta,
+          keepWrapper = true))
+      case ln if !inCodeFence && ln.matches(numberRx.toString() + ".*") =>
+        val lne = numberRx replaceAllIn (ln, _ match { case numberRx(n, s) => f"$ConRed$n$s$ConReset" })
+        Console.println(rxFormat(rxFormat(lne, codeRx, ConBlue), boldRx, ConYellow))
+      case ln if ln.matches(fenceStartRx.toString()) =>
+        inCodeFence = true
+        Console.print(ConBlue)
+      case ln if ln.matches(fenceEndRx.toString()) =>
+        inCodeFence = false
+        Console.print(ConReset)
+      case ln =>
+        Console.println(rxFormat(rxFormat(rxFormat(ln, codeRx, ConBlue), boldRx, ConYellow), urlRx, ConMagenta,
+          keepWrapper = true))
+    }
+  }
+
+  def rxFormat(ln: String, rx: Regex, startColor: String, keepWrapper: Boolean = false): String = ln match {
+    case `ln` if ln.matches(".*" + rx.toString + ".*") =>
+      val lne = rx replaceAllIn (ln, _ match {
+        case rx(start, in, stop) =>
+          if (keepWrapper)
+            f"$start$startColor$in$ConReset$stop"
+          else
+            f"$startColor$in$ConReset"
+      })
+      lne
+    case _ =>
+      ln
+  }
+
+}
+```
+
+## Appendix 9 - *sample* project/Navigation.scala
+
+```
+package sbtstudent
+
+/**
+  * Copyright © 2014, 2015, 2016 Lightbend, Inc. All rights reserved. [http://www.typesafe.com]
+  */
+import StudentKeys._
+import sbt.Keys._
+import sbt._
+
+import scala.Console
+
+object Navigation {
+
+  val setupNavAttrs: (State) => State = (state: State) => state
+
+  val loadBookmark: (State) => State = (state: State) => {
+    // loadBookmark doesn't really load a bookmark for a master repo.
+    // It just selects the first exercise (project) from the repo
+    val refs =
+    Project.extract(state)
+      .structure
+      .allProjectRefs
+      .toList
+      .map(r => r.project)
+      .filter(_.startsWith("exercise_"))
+      .sorted
+    Command.process(s"project ${refs.head}", state)
+  }
+}
+```
+
+## Appendix 10 - *sample* project/StudentCommandsPlugin.scala
+
+```
+package sbtstudent
+
+import sbt.Keys._
+import sbt._
+import Navigation.{loadBookmark, setupNavAttrs}
+
+import scala.Console
+
+object StudentCommandsPlugin extends AutoPlugin {
+
+  override val requires = sbt.plugins.JvmPlugin
+  override val trigger: PluginTrigger = allRequirements
+  object autoImport {
+  }
+  override lazy val globalSettings =
+    Seq(
+      commands in Global ++=
+        Seq(
+          Man.man
+        ),
+      onLoad in Global := {
+        val state = (onLoad in Global).value
+        Navigation.loadBookmark compose(Navigation.setupNavAttrs compose state)
+      }
+    )
+
+  override lazy val projectSettings =
+    Seq(
+      shellPrompt := { state =>
+        val base: File = Project.extract(state).get(sourceDirectory)
+        val basePath: String = base + "/test/resources/README.md"
+        val exercise = Console.BLUE + IO.readLines(new sbt.File(basePath)).head + Console.RESET
+        val manRmnd = Console.RED + "man [e]" + Console.RESET
+        val prjNbrNme = IO.readLines(new sbt.File(new sbt.File(Project.extract(state).structure.root), ".courseName")).head
+        s"$manRmnd > $prjNbrNme > $exercise > "
+      }
+    )
+}
+```
+
+## Appendix 11 *sample* project/StudentKeys.scala
+
+```
+package sbtstudent
+
+import sbt._
+
+object StudentKeys {
+  val bookmarkKeyName = "bookmark"
+  val mapPrevKeyName = "map-prev"
+  val mapNextKeyName = "map-next"
+  val bookmark: AttributeKey[File] = AttributeKey[File](bookmarkKeyName)
+  val mapPrev: AttributeKey[Map[String, String]] = AttributeKey[Map[String, String]](mapPrevKeyName)
+  val mapNext: AttributeKey[Map[String, String]] = AttributeKey[Map[String, String]](mapNextKeyName)
+}
+```
+
+## Appendix 12 - Demonstration Videos
 
 - [Demo of student course repository functionality](https://www.youtube.com/watch?v=coPOCe8erzc)
 - [Course Master repository edit workflow and tools](https://www.youtube.com/watch?v=yLMPoN13eMM)

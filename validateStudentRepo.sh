@@ -41,6 +41,9 @@ function validateAllExercises {
     done
     
     echo $SEPARATOR
+    sbt "gotoExerciseNr 0" 2>&1 | grep "Moved to"
+    
+    echo $SEPARATOR
     echo "Validation Completed"
 
     cd $startingDir

@@ -51,67 +51,69 @@ fi
 VERSION=${VERSION:-SNAPSHOT}
 STUDENTIFY_ARGS=${STUDENTIFY_ARGS:-}
 
-RELEASE_DIR="./target/releases"
+WORKING_DIR="target/releases"
 
-COURSE_RELEASE_FOLDER="$RELEASE_DIR/$REPO_NAME"
-COURSE_RELEASE_TEMP_FILE="$RELEASE_DIR/$REPO_NAME-exercises-UNVERIFIED.zip"
-COURSE_RELEASE_FILE="$RELEASE_DIR/$REPO_NAME-exercises-$VERSION.zip"
+VERSIONED_BASE_NAME="$REPO_NAME-exercises-$VERSION"
+UNVERIFIED_BASE_NAME="$REPO_NAME-exercises-UNVERIFIED"
 
 function clean {
     echo $SEPARATOR
-    echo "DELETING OLD RELEASES: $COURSE_RELEASE_FOLDER $COURSE_RELEASE_FILE"
+    echo "DELETING OLD RELEASES: $REPO_NAME*"
     echo $SEPARATOR
     
-    rm -rf $COURSE_RELEASE_FOLDER
-    rm -rf $COURSE_RELEASE_FILE
-    rm -rf $COURSE_RELEASE_TEMP_FILE
+    rm -rf $REPO_NAME*
 }
 
 function studentify_repo {
     echo $SEPARATOR
-    echo "STUDENTIFYING REPO: $REPO_NAME"
+    echo "STUDENTIFYING REPO: $REPO"
     echo $SEPARATOR
     
-    mkdir -p $RELEASE_DIR
-    
-    sbt "studentify $STUDENTIFY_ARGS $REPO $RELEASE_DIR"
+    cd $STARTING_DIR
+    sbt "studentify $STUDENTIFY_ARGS $REPO $WORKING_DIR"
+    cd $WORKING_DIR
 }
 
 function validate_repo {
     echo $SEPARATOR
-    echo "VALIDATING REPO: $REPO_NAME"
+    echo "VALIDATING: $VERSIONED_BASE_NAME"
     echo $SEPARATOR
     
-    ./validateStudentRepo.sh $COURSE_RELEASE_FOLDER
+    $STARTING_DIR/validateStudentRepo.sh "$VERSIONED_BASE_NAME"
 }
 
 function prepare_repo {
     echo $SEPARATOR
-    echo "PREPARING REPO: $REPO_NAME"
+    echo "RENAMING: $REPO_NAME -> $VERSIONED_BASE_NAME"
     echo $SEPARATOR
     
-    echo "course.version=$VERSION" > $COURSE_RELEASE_FOLDER/version.properties
+    mv "$REPO_NAME" "$VERSIONED_BASE_NAME"
+
+    echo $SEPARATOR
+    echo "ADDING VERSION FILE: $VERSIONED_BASE_NAME/version.properties"
+    echo $SEPARATOR
+    
+    echo "course.version=$VERSION" > "$VERSIONED_BASE_NAME/version.properties"
 }
 
 function zip_repo {
     echo $SEPARATOR
-    echo "ZIPPING REPO: $REPO_NAME"
+    echo "ZIPPING: $UNVERIFIED_BASE_NAME.zip"
     echo $SEPARATOR
     
-    cd $COURSE_RELEASE_FOLDER
-    
-    zip -r "$STARTING_DIR/$COURSE_RELEASE_TEMP_FILE" .
-    
-    cd $STARTING_DIR
+    zip -r "$UNVERIFIED_BASE_NAME.zip" $VERSIONED_BASE_NAME
 }
 
 function release_repo {
     echo $SEPARATOR
-    echo "RELEASING REPO: $REPO_NAME"
+    echo "RELEASING: $VERSIONED_BASE_NAME.zip"
     echo $SEPARATOR
     
-    mv $COURSE_RELEASE_TEMP_FILE $COURSE_RELEASE_FILE
+    mv "$UNVERIFIED_BASE_NAME.zip" "$VERSIONED_BASE_NAME.zip"
 }
+
+mkdir -p $WORKING_DIR
+cd $WORKING_DIR
 
 clean
 studentify_repo
@@ -120,6 +122,8 @@ zip_repo
 validate_repo
 release_repo
 
+cd $STARTING_DIR
+
 echo $SEPARATOR
-echo -e "[${GREEN}SUCCESS${RESET}] RELEASE CREATED $COURSE_RELEASE_FILE"
+echo -e "[${GREEN}SUCCESS${RESET}] RELEASE CREATED $WORKING_DIR/$VERSIONED_BASE_NAME.zip"
 echo $SEPARATOR

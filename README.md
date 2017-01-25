@@ -264,6 +264,32 @@ Finally, there's the `-mjvm` option that will generate a `build.sbt` file that s
 
 > Note: Course master repos that use `multi-jvm` should include the dependencies required for this feature (see the `Advanced Akka with Scala` course for an example).
 
+## Validating student repositories
+
+While all the tests for a project can be run in the Master project, it is also valuable to verify that all the tests
+still run correctly once the repository has been converted to the student version. This can be accomplished using the
+`validateStudentRepo.sh` script. To use this script you simply run it and pass in the path to the student repo you want
+to validate. For example: `./validateStudentRepo.sh ../FTTS-fast-track-scala`.
+
+When run, this script will advance through each exercise in the student repo. It will pull the solution and run all the
+tests against that solution to verify that they work. It completes once it reaches the final exercise.
+
+## Creating Releases
+
+When you are ready to release your student repo into the wild, you can create a versioned zip file to distribute.
+This zip file is easily created using the `createRelease.sh` script. To use this script you run it, passing in a path
+to the master repo that you want to release. This script will generate the student repo, validate it using the
+`validateStudentRepo.sh`, package it into a zip file, and attach a version number to that zip. It also embeds a file in
+the zip that contains the version number. This zip file is now ready to distribute.
+
+By default, the version used is "SNAPSHOT". You can specify your own version by using the `-v <Version>` option.
+
+So to release Fast Track to Scala version 2.0.0 you would run a command such as: 
+`./createRelease.sh -v 2.0.0 ../FTTS-fast-track-scala`
+
+It is important to note that the final zip name is determined by the name of the repo that you pass in. So in the above
+scenario, the final zip generated would be `FTTS-fast-track-scala-exercises-2.0.0.zip`
+
 ## Appendix 1 - Course management tools summary
 
 ##### studentify
@@ -545,6 +571,39 @@ Untracked files:
        	exercise_013_another_faulty_actor/src/SomeOtherTextFile.txt
 
 nothing added to commit but untracked files present (use "git add" to track)
+```
+
+### validateStudentRepo
+
+`validateStudentRepo` advances through the exercises in a student repository, one at a time. For each exercise it
+pulls the solution, then runs all the tests to verify they pass.
+
+#### Invocation
+
+```
+usage: validateStudentRepo [directory]
+```
+
+### createRelease
+
+`createRelease` generates the student repo, validates the tests, packages it into a zip file, and attaches a version
+number. This creates a packaged zip that could be distributed to students prior to the course.
+
+#### Invocation
+
+```
+usage: createRelease -v <version> [directory]
+```
+
+#### Notes
+If no version is provided, then the default is to use `SNAPSHOT`.
+
+Some projects may require additional arguments to be passed to the studentify command (eg. `-mjvm`). These can be 
+supplied by including a `course_management.conf` file in the root of the project. This file contains the arguments 
+being passed to studentify in the format:
+
+```
+STUDENTIFY_ARGS="-mjvm"
 ```
 
 ## Appendix 2 - *example* project/CommonSettings.scala

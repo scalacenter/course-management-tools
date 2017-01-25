@@ -96,17 +96,33 @@ function zip_repo {
     echo "ZIPPING REPO: $REPO_NAME"
     echo $SEPARATOR
     
-    cd $COURSE_RELEASE_FOLDER
+    cd $RELEASE_DIR
     
-    zip -r "$STARTING_DIR/$COURSE_RELEASE_FILE" *
+    zip -r "$STARTING_DIR/$COURSE_RELEASE_FILE" $REPO_NAME
     
     cd $STARTING_DIR
+}
+
+function clean_target {
+    echo "Clean REPO: $REPO_NAME"
+    echo find $RELEASE_DIR/$REPO_NAME -name target -depth -type d -exec rm -rf {} \;
+    find $RELEASE_DIR/$REPO_NAME -name target -depth -type d -exec rm -rf {} \;
+}
+
+function reset_student_repo_state {
+    echo "Resetting student repo state"
+    (
+      cd $RELEASE_DIR/$REPO_NAME
+      sbt ";gotoExerciseNr 0;pullSolution"
+    )
 }
 
 clean
 studentify_repo
 validate_repo
 prepare_repo
+reset_student_repo_state
+clean_target
 zip_repo
 
 echo $SEPARATOR

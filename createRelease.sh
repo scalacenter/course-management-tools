@@ -54,6 +54,7 @@ STUDENTIFY_ARGS=${STUDENTIFY_ARGS:-}
 RELEASE_DIR="./target/releases"
 
 COURSE_RELEASE_FOLDER="$RELEASE_DIR/$REPO_NAME"
+COURSE_RELEASE_TEMP_FILE="$RELEASE_DIR/$REPO_NAME-exercises-UNVERIFIED.zip"
 COURSE_RELEASE_FILE="$RELEASE_DIR/$REPO_NAME-exercises-$VERSION.zip"
 
 function clean {
@@ -63,6 +64,7 @@ function clean {
     
     rm -rf $COURSE_RELEASE_FOLDER
     rm -rf $COURSE_RELEASE_FILE
+    rm -rf $COURSE_RELEASE_TEMP_FILE
 }
 
 function studentify_repo {
@@ -98,16 +100,25 @@ function zip_repo {
     
     cd $COURSE_RELEASE_FOLDER
     
-    zip -r "$STARTING_DIR/$COURSE_RELEASE_FILE" *
+    zip -r "$STARTING_DIR/$COURSE_RELEASE_TEMP_FILE" .
     
     cd $STARTING_DIR
 }
 
+function release_repo {
+    echo $SEPARATOR
+    echo "RELEASING REPO: $REPO_NAME"
+    echo $SEPARATOR
+    
+    mv $COURSE_RELEASE_TEMP_FILE $COURSE_RELEASE_FILE
+}
+
 clean
 studentify_repo
-validate_repo
 prepare_repo
 zip_repo
+validate_repo
+release_repo
 
 echo $SEPARATOR
 echo -e "[${GREEN}SUCCESS${RESET}] RELEASE CREATED $COURSE_RELEASE_FILE"

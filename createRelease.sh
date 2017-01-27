@@ -44,6 +44,13 @@ STARTING_DIR=`pwd`
 REPO=$1
 REPO_NAME=`basename $REPO`
 
+if [[ $REPO_NAME == *"deck"* ]]; then
+    echo "DETECTED A SLIDE DECK"
+    TYPE="deck"
+else
+    TYPE="exercises"
+fi
+
 if [ -a $REPO/course_management.conf ]; then
     source $REPO/course_management.conf
 fi
@@ -53,8 +60,13 @@ STUDENTIFY_ARGS=${STUDENTIFY_ARGS:-}
 
 WORKING_DIR="target/releases"
 
-VERSIONED_BASE_NAME="$REPO_NAME-exercises-$VERSION"
-UNVERIFIED_BASE_NAME="$REPO_NAME-exercises-UNVERIFIED"
+if [[ $TYPE == "exercises" ]]; then
+    VERSIONED_BASE_NAME="$REPO_NAME-exercises-$VERSION"
+    UNVERIFIED_BASE_NAME="$REPO_NAME-exercises-UNVERIFIED"
+else
+    VERSIONED_BASE_NAME="$REPO_NAME-$VERSION"
+    UNVERIFIED_BASE_NAME="$REPO_NAME-UNVERIFIED"
+fi
 
 function clean {
     echo $SEPARATOR
@@ -62,6 +74,14 @@ function clean {
     echo $SEPARATOR
     
     rm -rf $REPO_NAME*
+}
+
+function studentify_or_copy {
+    if [[ $TYPE == "exercises" ]]; then
+        studentify_repo
+    else
+        copy_deck
+    fi
 }
 
 function studentify_repo {
@@ -74,12 +94,24 @@ function studentify_repo {
     cd $WORKING_DIR
 }
 
-function validate_repo {
+function copy_deck {
     echo $SEPARATOR
-    echo "VALIDATING: $VERSIONED_BASE_NAME"
+    echo "COPYING DECK: $REPO"
     echo $SEPARATOR
     
-    $STARTING_DIR/validateStudentRepo.sh "$VERSIONED_BASE_NAME"
+    cd $STARTING_DIR
+    cp -r $REPO "$WORKING_DIR/$REPO_NAME"
+    cd $WORKING_DIR
+}
+
+function validate_repo {
+    if [[ $TYPE == "exercises" ]]; then
+        echo $SEPARATOR
+        echo "VALIDATING: $VERSIONED_BASE_NAME"
+        echo $SEPARATOR
+    
+        $STARTING_DIR/validateStudentRepo.sh "$VERSIONED_BASE_NAME"
+    fi
 }
 
 function prepare_repo {
@@ -116,7 +148,7 @@ mkdir -p $WORKING_DIR
 cd $WORKING_DIR
 
 clean
-studentify_repo
+studentify_or_copy
 prepare_repo
 zip_repo
 validate_repo

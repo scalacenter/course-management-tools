@@ -29,7 +29,7 @@ object Studentify {
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt) = cmdOptions.get
+    val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, lagom, firstOpt, lastOpt, selectedFirstOpt) = cmdOptions.get
 
     val projectName = masterRepo.getName
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
@@ -44,8 +44,7 @@ object Studentify {
     val solutionPaths = hideExerciseSolutions(targetCourseFolder, selectedExercises)
     createBookmarkFile(initialExercise, targetCourseFolder)
     createSbtRcFile(targetCourseFolder)
-    createBuildFile(targetCourseFolder, multiJVM)
-    createEclipseBuildSettings(targetCourseFolder, List("common", "exercises"))
+    createBuildFile(targetCourseFolder, multiJVM, lagom)
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
     cleanUp(List(".git", ".gitignore", ".sbtopts", "man.sbt", "navigation.sbt", "shell-prompt.sbt"), targetCourseFolder)
     sbt.IO.delete(tmpDir)

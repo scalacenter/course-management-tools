@@ -40,9 +40,9 @@ object Pssr {
   def pullSolution: Command = Command.command("pullSolution") { state =>
     val currentExercise = getCurrentExercise(state)
     withZipFile(state, currentExercise) { () =>
-      val currentExerciseMain = new sbt.File(getRootFolder(state), "exercises/src/main")
+      val currentExerciseMain = new sbt.File(getRootFolder(state), "exercises")
       val cueFolder = getCueFolder(state)
-      val solFolder = new sbt.File(cueFolder, currentExercise + "/src/main")
+      val solFolder = new sbt.File(cueFolder, currentExercise)
       IO.delete(currentExerciseMain)
       IO.copyDirectory(solFolder, currentExerciseMain)
       Console.println(Console.GREEN + "[INFO] " + Console.RESET + s"Solution for exercise $currentExercise pulled successfully")

@@ -30,7 +30,7 @@ object Linearize {
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder) = cmdOptions.get
+    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, lagom, forceDeleteExistingDestinationFolder) = cmdOptions.get
 
     val projectName = masterRepo.getName
     val exercises: Seq[String] = getExerciseNames(masterRepo)
@@ -58,7 +58,7 @@ object Linearize {
     val linearizedProject = new File(linearizedOutputFolder, projectName)
     copyMaster(cleanMasterRepo, linearizedProject)
     sbt.IO.delete(tmpDir)
-    createBuildFile(linearizedProject, multiJVM)
+    createBuildFile(linearizedProject, multiJVM, lagom)
     cleanUp(List(".git", "navigation.sbt"), linearizedProject)
     initializeGitRepo(linearizedProject)
     commitFirstExercise(exercises.head, linearizedProject)

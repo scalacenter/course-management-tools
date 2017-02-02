@@ -34,7 +34,6 @@ package object coursegentools {
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),
                                   multiJVM: Boolean = false,
-                                  lagom: Boolean = false,
                                   first: Option[String] = None,
                                   last: Option[String] = None,
                                   selectedFirst: Option[String] = None)
@@ -42,7 +41,6 @@ package object coursegentools {
   case class LinearizeCmdOptions(masterRepo: File = new File("."),
                                  linearRepo: File = new File("."),
                                  multiJVM: Boolean = false,
-                                 lagom: Boolean = false,
                                  forceDeleteExistingDestinationFolder: Boolean = false)
 
   case class DeLinearizeCmdOptions(masterRepo: File = new File("."),

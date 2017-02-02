@@ -225,7 +225,6 @@ object Helpers {
   }
 
   def createBuildFile(targetFolder: File, multiJVM: Boolean, lagom: Boolean): Unit = {
-
     val buildFileTemplate =
       if (multiJVM) {
         "build-mjvm.sbt.template"
@@ -235,15 +234,6 @@ object Helpers {
         "build.sbt.template"
       }
     sbtio.copyFile(new File(buildFileTemplate), new File(targetFolder, "build.sbt"))
-
-//    val templateFiles = sbtio.listFiles(new File("."), SbtTemplateFile()).filterNot(_.getName startsWith("build"))
-//    for {
-//      sbtTemplateFile <- templateFiles
-//      sbtFileName = sbtTemplateFile.getName.replaceAll(".template", "")
-//      sbtFile = new File(targetFolder, sbtFileName)
-//    } {
-//      sbtio.copyFile(sbtTemplateFile, sbtFile)
-//    }
   }
 
   def cleanUp(files: Seq[String], targetFolder: File): Unit = {

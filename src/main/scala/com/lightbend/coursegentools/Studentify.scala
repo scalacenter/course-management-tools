@@ -46,7 +46,7 @@ object Studentify {
     createSbtRcFile(targetCourseFolder)
     createBuildFile(targetCourseFolder, multiJVM, lagom)
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
-    cleanUp(List(".git", ".gitignore", ".sbtopts", "man.sbt", "navigation.sbt", "shell-prompt.sbt"), targetCourseFolder)
+    cleanUp(List(".git", ".gitignore", "man.sbt", "navigation.sbt", "shell-prompt.sbt"), targetCourseFolder)
     sbt.IO.delete(tmpDir)
 
   }

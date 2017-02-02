@@ -54,13 +54,6 @@ object LinearizeCmdLineOptParse {
           c.copy(multiJVM = true)
         }
 
-      opt[Unit]("lagom")
-        .text("generate lagom build file")
-        .abbr("lagom")
-        .action { case (_, c) =>
-          c.copy(lagom = true)
-        }
-
       opt[Unit]("force-delete")
         .text("Force-delete a pre-existing destination folder")
         .abbr("f")

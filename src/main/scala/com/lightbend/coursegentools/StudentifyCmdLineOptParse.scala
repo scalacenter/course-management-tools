@@ -55,13 +55,6 @@ object StudentifyCmdLineOptParse {
                 c.copy(multiJVM = true)
             }
 
-      opt[Unit]("lagom")
-        .text("generate lagom build file")
-        .abbr("lagom")
-        .action { case (_, c) =>
-          c.copy(lagom = true)
-        }
-
       opt[String]("first-exercise")
           .text("name of first exercise to output")
             .abbr("fe")

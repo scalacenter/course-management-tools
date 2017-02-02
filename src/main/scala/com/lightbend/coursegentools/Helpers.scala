@@ -224,12 +224,10 @@ object Helpers {
     selExcs
   }
 
-  def createBuildFile(targetFolder: File, multiJVM: Boolean, lagom: Boolean): Unit = {
+  def createBuildFile(targetFolder: File, multiJVM: Boolean): Unit = {
     val buildFileTemplate =
       if (multiJVM) {
         "build-mjvm.sbt.template"
-      } else if (lagom) {
-        "build-lagom.sbt.template"
       } else {
         "build.sbt.template"
       }

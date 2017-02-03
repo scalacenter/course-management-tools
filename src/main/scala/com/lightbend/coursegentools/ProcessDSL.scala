@@ -38,7 +38,7 @@ object ProcessDSL {
              |  Executed command: ${cmd.cmd.mkString(" ")}
              |  Working directory: ${cmd.workingDir}
            """.stripMargin)
-        System.exit(-1)
+        System.exit(status.getOrElse(-1))
       }
     }
   }

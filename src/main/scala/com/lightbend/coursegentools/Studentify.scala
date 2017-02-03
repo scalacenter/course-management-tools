@@ -31,6 +31,8 @@ object Studentify {
     if (cmdOptions.isEmpty) System.exit(-1)
     val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt) = cmdOptions.get
 
+    exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
+
     val projectName = masterRepo.getName
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)

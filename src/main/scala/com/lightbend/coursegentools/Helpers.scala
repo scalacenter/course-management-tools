@@ -246,20 +246,21 @@ object Helpers {
         "build.sbt.template"
       }
     sbtio.copyFile(new File(buildFileTemplate), new File(targetFolder, "build.sbt"))
-
-//    val templateFiles = sbtio.listFiles(new File("."), SbtTemplateFile()).filterNot(_.getName startsWith("build"))
-//    for {
-//      sbtTemplateFile <- templateFiles
-//      sbtFileName = sbtTemplateFile.getName.replaceAll(".template", "")
-//      sbtFile = new File(targetFolder, sbtFileName)
-//    } {
-//      sbtio.copyFile(sbtTemplateFile, sbtFile)
-//    }
   }
 
   def cleanUp(files: Seq[String], targetFolder: File): Unit = {
     for (file <- files) {
       sbtio.delete(new File(targetFolder, file))
     }
+  }
+
+  def exitIfGitIndexOrWorkspaceIsntClean(masterRepo: File): Unit = {
+    """git diff-index --quiet HEAD --"""
+      .toProcessCmd(workingDir = masterRepo)
+      .runAndExitIfFailed(s"YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN STUDENTIFY")
+
+    s"""./checkIfWorkspaceClean.sh ${masterRepo.getPath}"""
+      .toProcessCmd(workingDir = new File("."))
+      .runAndExitIfFailed(s"YOU HAVE CHANGES IN YOUR GIT WORKSPACE. COMMIT CHANGES AND RE-RUN STUDENTIFY")
   }
 }

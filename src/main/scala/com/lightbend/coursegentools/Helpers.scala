@@ -239,4 +239,14 @@ object Helpers {
       sbtio.delete(new File(targetFolder, file))
     }
   }
+
+  def exitIfGitIndexOrWorkspaceIsntClean(masterRepo: File): Unit = {
+    """git diff-index --quiet HEAD --"""
+      .toProcessCmd(workingDir = masterRepo)
+      .runAndExitIfFailed(s"YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN STUDENTIFY")
+
+    s"""./checkIfWorkspaceClean.sh ${masterRepo.getPath}"""
+      .toProcessCmd(workingDir = new File("."))
+      .runAndExitIfFailed(s"YOU HAVE CHANGES IN YOUR GIT WORKSPACE. COMMIT CHANGES AND RE-RUN STUDENTIFY")
+  }
 }

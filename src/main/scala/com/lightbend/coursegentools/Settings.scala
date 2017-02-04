@@ -30,4 +30,6 @@ object Settings {
 
   val studentBaseProject = config.getString("studentify.exercises.student-base-project")
 
+  val studentSettingsFile = config.getString("studentify.student-settings-file")
+
 }

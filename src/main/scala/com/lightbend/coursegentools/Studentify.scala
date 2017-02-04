@@ -32,13 +32,13 @@ object Studentify {
     val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt) = cmdOptions.get
 
     exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
-
     val projectName = masterRepo.getName
+    val targetCourseFolder = new File(targetFolder, projectName)
+
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)
     val exercises: Seq[String] = getExerciseNames(cleanMasterRepo)
     val selectedExercises: Seq[String] = getSelectedExercises(exercises, firstOpt, lastOpt)
-    val targetCourseFolder = new File(targetFolder, projectName)
     val initialExercise = getInitialExercise(selectedFirstOpt, selectedExercises)
     val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
     stageFirstExercise(initialExercise, cleanMasterRepo, targetCourseFolder)
@@ -48,6 +48,7 @@ object Studentify {
     createSbtRcFile(targetCourseFolder)
     createBuildFile(targetCourseFolder, multiJVM)
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
+    loadStudentSettings(masterRepo, targetCourseFolder)
     cleanUp(List(".git", ".gitignore", "man.sbt", "navigation.sbt", "shell-prompt.sbt"), targetCourseFolder)
     sbt.IO.delete(tmpDir)
 

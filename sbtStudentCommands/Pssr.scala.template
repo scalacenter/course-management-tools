@@ -52,8 +52,8 @@ object Pssr {
 
   def saveState: Command = Command.command("saveState") { state =>
     val currentExercise = getCurrentExercise(state)
-    val saveFolder = new sbt.File(getSavedStateFolder(state), currentExercise + "/src")
-    val currentExerciseSrc = new sbt.File(getRootFolder(state), "exercises/src")
+    val saveFolder = new sbt.File(getSavedStateFolder(state), currentExercise)
+    val currentExerciseSrc = new sbt.File(getRootFolder(state), "exercises")
     if (saveFolder exists) IO.delete(saveFolder)
     IO.copyDirectory(currentExerciseSrc, saveFolder)
     Console.println(Console.GREEN + "[INFO] " + Console.RESET + s"State for exercise " + Console.BLUE + currentExercise + Console.RESET + " saved successfully")
@@ -65,8 +65,8 @@ object Pssr {
       case Some(exercise) =>
         val savedFolder = new sbt.File(getSavedStateFolder(state), exercise)
         if (savedFolder.exists()) {
-          val savedStateFolder = new sbt.File(savedFolder, "src")
-          val currentExerciseSrc = new sbt.File(getRootFolder(state), "exercises/src")
+          val savedStateFolder = savedFolder
+          val currentExerciseSrc = new sbt.File(getRootFolder(state), "exercises")
           IO.delete(currentExerciseSrc)
           IO.copyDirectory(savedStateFolder, currentExerciseSrc)
           bookmark(exercise, state)

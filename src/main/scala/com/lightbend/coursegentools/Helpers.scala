@@ -263,4 +263,35 @@ object Helpers {
       .toProcessCmd(workingDir = new File("."))
       .runAndExitIfFailed(s"YOU HAVE CHANGES IN YOUR GIT WORKSPACE. COMMIT CHANGES AND RE-RUN STUDENTIFY")
   }
+
+  def printErrorMsgAndExit(masterConfigurationFile: File, lineNr: Option[Int], setting: String): Unit = {
+    val LineNrInfo = if (lineNr.isDefined) s"on line ${lineNr.get+1}" else ""
+    println(
+      s"""Invalid setting syntax $LineNrInfo in ${masterConfigurationFile.getName}:
+         |  $setting
+               """.stripMargin)
+    System.exit(-1)
+  }
+
+  def loadMasterConfiguration(masterRepo: File): Map[String, String] = {
+    val masterConfigurationFile = new File(masterRepo, Settings.masterConfigurationFile)
+    println(s"looking for ${masterConfigurationFile.getPath}")
+    if (masterConfigurationFile.exists()) {
+      println("loading master configuration...")
+      val R = """([^=\s]+)\s*=\s*([^=\s]+)\s*""".r
+      sbtio.readLines(masterConfigurationFile).zipWithIndex.map { case (setting, lineNr) =>
+        try {
+          val R(key, value) = setting
+          (key, value)
+        } catch {
+          case me: MatchError =>
+            printErrorMsgAndExit(masterConfigurationFile, Some(lineNr), setting)
+            ("key", "value") // Make this type-check
+        }
+      }.toMap
+    } else {
+      println("no master configuration found...")
+      Map.empty[String, String]
+    }
+  }
 }

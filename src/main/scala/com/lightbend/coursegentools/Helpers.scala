@@ -273,25 +273,48 @@ object Helpers {
     System.exit(-1)
   }
 
-  def loadMasterConfiguration(masterRepo: File): Map[String, String] = {
-    val masterConfigurationFile = new File(masterRepo, Settings.masterConfigurationFile)
-    println(s"looking for ${masterConfigurationFile.getPath}")
-    if (masterConfigurationFile.exists()) {
-      println("loading master configuration...")
-      val R = """([^=\s]+)\s*=\s*([^=\s]+)\s*""".r
-      sbtio.readLines(masterConfigurationFile).zipWithIndex.map { case (setting, lineNr) =>
+  def writeTestCodeFolders(settings: String, targetFolder: File): Unit = {
+    dumpStringToFile(
+      s"""package sbtstudent
+         |
+         |object TestFolders {
+         |  val testFolders = List(${settings.split(":").map(s => s""""$s"""").mkString(", ")})
+         |}
+       """.stripMargin, new File(targetFolder, "project/TestFolders.scala").getPath)
+  }
+
+  def loadStudentSettings(masterRepo: File, targetFolder: File): Map[String, String] = {
+    val DefaultStudentSettings = Map(
+      "TestCodeFolders" -> "src/test:src/multi-jvm"
+    )
+
+    val studentSettingsFile = new File(masterRepo, Settings.studentSettingsFile)
+    val settings = if (studentSettingsFile.exists()) {
+      val SettingsLine = """([^=\s]+)\s*=\s*([^=\s]+)\s*""".r
+      sbtio.readLines(studentSettingsFile).zipWithIndex.map { case (setting, lineNr) =>
         try {
-          val R(key, value) = setting
+          val SettingsLine(key, value) = setting
           (key, value)
         } catch {
           case me: MatchError =>
-            printErrorMsgAndExit(masterConfigurationFile, Some(lineNr), setting)
+            printErrorMsgAndExit(studentSettingsFile, Some(lineNr), setting)
             ("key", "value") // Make this type-check
         }
       }.toMap
     } else {
-      println("no master configuration found...")
       Map.empty[String, String]
     }
+    println(s"Settings: $settings")
+    for {
+      (settingsKey, setting) <- DefaultStudentSettings
+    } {
+      settingsKey match {
+        case key @ "TestCodeFolders" =>
+          val s = settings.getOrElse(key, DefaultStudentSettings(key))
+          writeTestCodeFolders(s, targetFolder)
+      }
+    }
+    // TODO: check for mistyped setting keys in student settings file...
+    settings
   }
 }

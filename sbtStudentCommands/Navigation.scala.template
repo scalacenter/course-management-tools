@@ -120,10 +120,10 @@ object Navigation {
         exercises match {
           case exercise +: Nil =>
             withZipFile(state, exercise) { () =>
-              val src = Project.extract(state).get(sourceDirectory)
-              val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$exercise/src")
+              val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), "exercises")
+              val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$exercise")
               for {
-                f <- List("test", "multi-jvm")
+                f <- TestFolders.testFolders
                 fromFolder = new File(newExerciseSrc, f)
                 toFolder = new File(src, f)
               } {
@@ -177,11 +177,13 @@ object Navigation {
         newState
       case (true, toProjectName, _) =>
         withZipFile(state, toProjectName) { () =>
-          val src = Project.extract(state).get(sourceDirectory)
+          //val src = Project.extract(state).get(sourceDirectory)
+          val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), "exercises")
+          //println(s"=== src = $src ===")
           // update tests (can be previous or next...)
-          val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$toProjectName/src")
+          val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$toProjectName")
           for {
-            f <- List("test", "multi-jvm")
+            f <- TestFolders.testFolders
             fromFolder = new File(newExerciseSrc, f)
             toFolder = new File(src, f)
           } {

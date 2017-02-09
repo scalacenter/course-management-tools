@@ -264,6 +264,21 @@ Finally, there's the `-mjvm` option that will generate a `build.sbt` file that s
 
 > Note: Course master repos that use `multi-jvm` should include the dependencies required for this feature (see the `Advanced Akka with Scala` course for an example).
 
+## Navigating student repositories
+
+To navigate through a student repository you can leverage the following commands:
+
+- `man e` - Displays current exercise instructions.
+- `showExerciseID` - Displays the current exercise name.
+- `listExercises` - Lists all exercises in course.
+- `nextExercise` - Brings new tests and instructions into scope, while preserving your code.
+- `prevExercise` - Reverts tests and instructions to the previous state, while preserving your code.
+- `gotoExerciseNr <exercise Nr>` - Jump to exercise `Nr`, bring in tests for that exercise while preserving code.
+- `pullSolution` - Overwrites your code with the official solution.
+- `saveState` - Create a snapshot of your current code.
+- `restoreState <exercise Id>` - Restore the code from a saved snapshot.
+- `savedStates` - List all saved states.
+
 ## Validating student repositories
 
 While all the tests for a project can be run in the Master project, it is also valuable to verify that all the tests

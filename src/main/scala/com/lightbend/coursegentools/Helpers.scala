@@ -238,7 +238,6 @@ object Helpers {
   }
 
   def createBuildFile(targetFolder: File, multiJVM: Boolean): Unit = {
-
     val buildFileTemplate =
       if (multiJVM) {
         "build-mjvm.sbt.template"
@@ -273,19 +272,20 @@ object Helpers {
     System.exit(-1)
   }
 
-  def writeTestCodeFolders(settings: String, targetFolder: File): Unit = {
+  def writeTestCodeFolders(settings: String, targetFolder: File, defaultSettings: String): Unit = {
+    val finalSettings = settings.split(":").toSet ++ defaultSettings.split(":")
     dumpStringToFile(
       s"""package sbtstudent
          |
          |object TestFolders {
-         |  val testFolders = List(${settings.split(":").map(s => s""""$s"""").mkString(", ")})
+         |  val testFolders = List(${finalSettings.map(s => s""""$s"""").mkString(", ")})
          |}
        """.stripMargin, new File(targetFolder, "project/TestFolders.scala").getPath)
   }
 
   def loadStudentSettings(masterRepo: File, targetFolder: File): Map[String, String] = {
     val DefaultStudentSettings = Map(
-      "TestCodeFolders" -> "src/test:src/multi-jvm"
+      "TestCodeFolders" -> "src/test"
     )
 
     val studentSettingsFile = new File(masterRepo, Settings.studentSettingsFile)
@@ -304,14 +304,13 @@ object Helpers {
     } else {
       Map.empty[String, String]
     }
-    println(s"Settings: $settings")
     for {
       (settingsKey, setting) <- DefaultStudentSettings
     } {
       settingsKey match {
         case key @ "TestCodeFolders" =>
           val s = settings.getOrElse(key, DefaultStudentSettings(key))
-          writeTestCodeFolders(s, targetFolder)
+          writeTestCodeFolders(s, targetFolder, DefaultStudentSettings(key))
       }
     }
     // TODO: check for mistyped setting keys in student settings file...

@@ -50,7 +50,7 @@ object Studentify {
     createEclipseBuildSettings(targetCourseFolder, List("common", "exercises"))
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
     loadStudentSettings(masterRepo, targetCourseFolder)
-    cleanUp(List(".git", ".gitignore", ".sbtopts", "man.sbt", "navigation.sbt", "shell-prompt.sbt"), targetCourseFolder)
+    cleanUp(List(".git", ".gitignore", "man.sbt", "navigation.sbt", "shell-prompt.sbt"), targetCourseFolder)
     sbt.IO.delete(tmpDir)
 
   }

@@ -269,7 +269,7 @@ Finally, there's the `-mjvm` option that will generate a `build.sbt` file that s
 To navigate through a student repository you can leverage the following commands:
 
 - `man e` - Displays current exercise instructions.
-- `showExerciseID` - Displays the current exercise name.
+- `showExerciseId` - Displays the current exercise name.
 - `listExercises` - Lists all exercises in course.
 - `nextExercise` - Brings new tests and instructions into scope, while preserving your code.
 - `prevExercise` - Reverts tests and instructions to the previous state, while preserving your code.

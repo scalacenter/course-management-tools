@@ -40,7 +40,7 @@ object Man {
   val bulletRx: Regex = """- """.r
   val boldRx: Regex = """(\*\*)(\w*)(\*\*)""".r
   val codeRx: Regex = """(`)([^`]+)(`)""".r
-  val fenceStartRx: Regex = """^```(bash|scala)$""".r
+  val fenceStartRx: Regex = """^```(bash|scala|java)$""".r
   val fenceEndRx: Regex = """^```$""".r
   val numberRx: Regex = """^(\d{1,3})(\. )""".r
   val urlRx: Regex = """(\()(htt[a-zA-Z0-9\-\.\/:]*)(\))""".r

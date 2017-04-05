@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/bash
 
 MASTER=$1
 TMP_DIR=$2

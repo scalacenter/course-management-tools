@@ -190,7 +190,7 @@ object Helpers {
   }
 
   def createBookmarkFile(firstExercise: String, targetFolder: File): Unit = {
-    //val firstExercise = exSolutionPaths.sorted.head
+    println(s"Setting student repository bookmark to $firstExercise")
     dumpStringToFile(firstExercise, new File(targetFolder, ".bookmark").getPath)
   }
 

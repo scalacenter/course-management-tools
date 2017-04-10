@@ -6,6 +6,15 @@ Release notes added on January 11, 2017
 
 ## Releases
 
+### 2017-04-10 Studentify version 2.0
+
+- Generalized `studentify`:
+  - Add configuration option for test code folders
+    - configuration file `.student-settings.conf` in course master contains a settings line:
+  - `studentify` will now abort if the course master source folder contains uncommited changes
+  - `studentify` will carry over a `.sbtopts` config file from course master repo to the generated student repo
+  - `pullSolution` will now pull in _**all**_ code for an exercise instead of just the `src` folder  
+
 ### 2017-01-11 Studentify version 1.4
 
 - Addition of new commands:

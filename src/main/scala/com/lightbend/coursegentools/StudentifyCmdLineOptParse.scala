@@ -27,7 +27,7 @@ object StudentifyCmdLineOptParse {
   def parse(args: Array[String]): Option[StudentifyCmdOptions] = {
 
     val parser = new scopt.OptionParser[StudentifyCmdOptions]("studentify") {
-      head("studentify", "1.3")
+      head("studentify", "2.0")
 
       arg[File]("masterRepo")
         .text("base folder holding master course repository")

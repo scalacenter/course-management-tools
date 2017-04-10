@@ -52,13 +52,14 @@ A course master repository is a multi-project sbt build that needs to adhere to 
 - Each exercise is an sbt project who's name has to start with `exercise_[0-9][0-9][0-9]` followed by a description of the exercise (for example `exercise_001_create_a_class`)
 - There should be an `sbt` project containing *common* code with the exact name `common`
 - The `build.sbt` file in the root folder of the master repository uses a fixed layout described in more detail below
-- There should be a `.sbtopts` file in the root folder of the master repository which sets a number of options that are important when running integration tests
+- There should be a `.sbtopts` file in the root folder of the master repository which sets a number of options that are important when running integration tests.
 - README files:
 	- There should be a global `README.md` file containing the overall course description for students and a list of `sbt` commands that the user can use to 'navigate' the course.
 	- Each exercise project should have a `README.md` file containing a description of the exercise and 'run', 'test' and 'next step' instructions and should be located at `exercises_xxx_.../src/test/resources`
 	- The `common` project should have a `README.md` file located under `common/src/test/resources`
 	- The `base` project should have a `README.md` file located under `src/test/resources`
 	- Note that the `listExercises` command, available on a _studentified_ repo extracts the exercise descriptions from the exercise project name. For example, the exercise project name `exercise_001_create_a_class` generates `1. Exercise 1 > Define A Class` in the output of the command. 
+- By default, test code is assumed to be located in a `src/test` folder in each exercise folder. As of `studentify` version 2.0, this has become configurable by creating a file `.student-settings.conf` in the course master repo with a line that sets the `TestCodeFolders` option.
 
 ### Course master project structure
 
@@ -327,6 +328,12 @@ The `listExercises` command will generate a list of exercises and their descript
 
 * a master repository and its file-path
 * the path to an (empty) folder in which the student distribution will be created
+* an optional configuration file `.student-settings.conf` in the course master repository may specify the folders from which test code will be copied. Suppose that we have a course master that has test code in three folders: `src/test`, `ServiceLocatorImpl/test` and `ServiceAdmImpl/test`. Setting the `TestCodeFolders` option as shown below will do the trick:
+
+```
+[ericloots@Eric-Loots-MacBook-Pro] $ cat .student-settings.conf
+TestCodeFolders=src/test:ServiceLocatorImpl/test:ServiceAdmImpl/test
+```
 
 #### Invocation
 

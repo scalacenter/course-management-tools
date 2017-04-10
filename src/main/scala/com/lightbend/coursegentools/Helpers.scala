@@ -238,7 +238,6 @@ object Helpers {
   }
 
   def createBuildFile(targetFolder: File, multiJVM: Boolean): Unit = {
-
     val buildFileTemplate =
       if (multiJVM) {
         "build-mjvm.sbt.template"
@@ -246,20 +245,75 @@ object Helpers {
         "build.sbt.template"
       }
     sbtio.copyFile(new File(buildFileTemplate), new File(targetFolder, "build.sbt"))
-
-//    val templateFiles = sbtio.listFiles(new File("."), SbtTemplateFile()).filterNot(_.getName startsWith("build"))
-//    for {
-//      sbtTemplateFile <- templateFiles
-//      sbtFileName = sbtTemplateFile.getName.replaceAll(".template", "")
-//      sbtFile = new File(targetFolder, sbtFileName)
-//    } {
-//      sbtio.copyFile(sbtTemplateFile, sbtFile)
-//    }
   }
 
   def cleanUp(files: Seq[String], targetFolder: File): Unit = {
     for (file <- files) {
       sbtio.delete(new File(targetFolder, file))
     }
+  }
+
+  def exitIfGitIndexOrWorkspaceIsntClean(masterRepo: File): Unit = {
+    """git diff-index --quiet HEAD --"""
+      .toProcessCmd(workingDir = masterRepo)
+      .runAndExitIfFailed(s"YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN STUDENTIFY")
+
+    s"""./checkIfWorkspaceClean.sh ${masterRepo.getPath}"""
+      .toProcessCmd(workingDir = new File("."))
+      .runAndExitIfFailed(s"YOU HAVE CHANGES IN YOUR GIT WORKSPACE. COMMIT CHANGES AND RE-RUN STUDENTIFY")
+  }
+
+  def printErrorMsgAndExit(masterConfigurationFile: File, lineNr: Option[Int], setting: String): Unit = {
+    val LineNrInfo = if (lineNr.isDefined) s"on line ${lineNr.get+1}" else ""
+    println(
+      s"""Invalid setting syntax $LineNrInfo in ${masterConfigurationFile.getName}:
+         |  $setting
+               """.stripMargin)
+    System.exit(-1)
+  }
+
+  def writeTestCodeFolders(settings: String, targetFolder: File, defaultSettings: String): Unit = {
+    val finalSettings = settings.split(":").toSet ++ defaultSettings.split(":")
+    dumpStringToFile(
+      s"""package sbtstudent
+         |
+         |object TestFolders {
+         |  val testFolders = List(${finalSettings.map(s => s""""$s"""").mkString(", ")})
+         |}
+       """.stripMargin, new File(targetFolder, "project/TestFolders.scala").getPath)
+  }
+
+  def loadStudentSettings(masterRepo: File, targetFolder: File): Map[String, String] = {
+    val DefaultStudentSettings = Map(
+      "TestCodeFolders" -> "src/test"
+    )
+
+    val studentSettingsFile = new File(masterRepo, Settings.studentSettingsFile)
+    val settings = if (studentSettingsFile.exists()) {
+      val SettingsLine = """([^=\s]+)\s*=\s*([^=\s]+)\s*""".r
+      sbtio.readLines(studentSettingsFile).zipWithIndex.map { case (setting, lineNr) =>
+        try {
+          val SettingsLine(key, value) = setting
+          (key, value)
+        } catch {
+          case me: MatchError =>
+            printErrorMsgAndExit(studentSettingsFile, Some(lineNr), setting)
+            ("key", "value") // Make this type-check
+        }
+      }.toMap
+    } else {
+      Map.empty[String, String]
+    }
+    for {
+      (settingsKey, setting) <- DefaultStudentSettings
+    } {
+      settingsKey match {
+        case key @ "TestCodeFolders" =>
+          val s = settings.getOrElse(key, DefaultStudentSettings(key))
+          writeTestCodeFolders(s, targetFolder, DefaultStudentSettings(key))
+      }
+    }
+    // TODO: check for mistyped setting keys in student settings file...
+    settings
   }
 }

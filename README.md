@@ -308,7 +308,7 @@ scenario, the final zip generated would be `FTTS-fast-track-scala-exercises-2.0.
 
 ## Appendix 1 - Course management tools summary
 
-##### studentify
+### studentify
 
 `studentify` generates a *student* repository from a given course master repository.
 
@@ -594,6 +594,32 @@ Untracked files:
 
 nothing added to commit but untracked files present (use "git add" to track)
 ```
+
+### masterAdm
+
+This command currently implements one feature, namely exercise renumbering. This can be handy when exercises are deleted or when one want to add one or more exercises.
+
+When deleting an exercise, on removes the project folder for that exercise followed by a matching adaptation of the build file (`build.sbt`). This will lead to one or more 'gaps' in between exercises. These gaps can be removed by running `masterAdm -r`: the first exercise will be numbered to `000` and all subsequent exercises numbers will increment by 1.
+
+When adding exercises, one uses the `masterAdm` command and with a value of `rstep` greater than 1. This will creates gaps between exercises. Next one adds the exercise(s), adapts the build file accordingly and when finished all 'unneeded' gaps can be removed by again running `masterAdm -r`.
+
+#### Invocation
+
+```
+masteradm 1.0
+Usage: masteradm [options] masterRepo
+
+  masterRepo               base folder holding master course repository
+  -mjvm, --multi-jvm       generate multi-jvm build file
+  -r, --renum              renumber exercises
+  -rbase, --renum-base <value>
+                           index of first exercise
+  -rstep, --renum-step <value>
+                           step between exercises
+
+```
+
+> For projects that utilize multi-jvm tests, specify the `-mjvm` option in order to generate a matching build file 
 
 ### validateStudentRepo
 

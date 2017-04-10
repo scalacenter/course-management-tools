@@ -194,19 +194,6 @@ object Helpers {
     dumpStringToFile(firstExercise, new File(targetFolder, ".bookmark").getPath)
   }
 
-  def createEclipseBuildSettings(targetCourseFolder: File, exFolders: List[String]): Unit = {
-    val setting =
-      """EclipseKeys.skipProject := false
-        |
-      """.stripMargin
-    for {
-      folder <- exFolders
-      projectFolder = new File(targetCourseFolder, folder)
-      eclipseSettingsFile = new File(projectFolder, "build.sbt")
-    } {
-      dumpStringToFile(setting, eclipseSettingsFile.getPath)
-    }
-  }
   def createSbtRcFile(targetFolder: File): Unit = {
     dumpStringToFile("alias boot = ;reload ;project exercises ;iflast shell", new File(targetFolder, ".sbtrc").getPath)
   }
@@ -238,7 +225,6 @@ object Helpers {
   }
 
   def createBuildFile(targetFolder: File, multiJVM: Boolean): Unit = {
-
     val buildFileTemplate =
       if (multiJVM) {
         "build-mjvm.sbt.template"
@@ -246,15 +232,6 @@ object Helpers {
         "build.sbt.template"
       }
     sbtio.copyFile(new File(buildFileTemplate), new File(targetFolder, "build.sbt"))
-
-//    val templateFiles = sbtio.listFiles(new File("."), SbtTemplateFile()).filterNot(_.getName startsWith("build"))
-//    for {
-//      sbtTemplateFile <- templateFiles
-//      sbtFileName = sbtTemplateFile.getName.replaceAll(".template", "")
-//      sbtFile = new File(targetFolder, sbtFileName)
-//    } {
-//      sbtio.copyFile(sbtTemplateFile, sbtFile)
-//    }
   }
 
   def cleanUp(files: Seq[String], targetFolder: File): Unit = {

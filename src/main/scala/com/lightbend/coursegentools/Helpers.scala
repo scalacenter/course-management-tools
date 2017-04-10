@@ -156,7 +156,7 @@ object Helpers {
 
   def getExerciseNames(masterRepo: File): Vector[String] = {
     val exerciseFolders = sbtio.listFiles(masterRepo, FoldersOnly()).filter(isExerciseFolder)
-    exerciseFolders.map(folder => folder.getName).toVector
+    exerciseFolders.map(folder => folder.getName).toVector.sorted
   }
 
   def hideExerciseSolutions(targetFolder: File, selectedExercises: Seq[String]): Unit = {

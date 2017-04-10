@@ -38,7 +38,12 @@ object Studentify {
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)
     val exercises: Seq[String] = getExerciseNames(cleanMasterRepo)
+
     val selectedExercises: Seq[String] = getSelectedExercises(exercises, firstOpt, lastOpt)
+    println(
+      s"""Processing exercises:
+         |${selectedExercises.mkString("    ", "\n    ", "")}
+       """.stripMargin)
     val initialExercise = getInitialExercise(selectedFirstOpt, selectedExercises)
     val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
     stageFirstExercise(initialExercise, cleanMasterRepo, targetCourseFolder)

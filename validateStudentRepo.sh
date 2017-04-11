@@ -39,7 +39,7 @@ function validateAllExercises {
     cd $studentRepo
 
     echo $SEPARATOR
-    sbt "gotoExerciseNr 0" 2>&1 | grep "Moved to"
+    sbt "gotoFirstExercise" 2>&1 | grep "Moved to first exercise in course"
 
     while validateNextExercise 
     do
@@ -47,7 +47,7 @@ function validateAllExercises {
     done
     
     echo $SEPARATOR
-    sbt "gotoExerciseNr 0" 2>&1 | grep "Moved to"
+    sbt "gotoFirstExercise" 2>&1 | grep "Moved to first exercise in course"
     
     echo $SEPARATOR
     echo "Validation Completed"

@@ -104,6 +104,25 @@ object Navigation {
 
   private lazy val ExerciseNr = OptSpace ~> IntBasic.?
 
+  def gotoFirstExercise: Command = Command.command("gotoFirstExercise") { state =>
+    val firstExercise = state.get(mapNext).get.keys.toVector.sorted.head
+    withZipFile(state, firstExercise) { () =>
+      val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), "exercises")
+      val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$firstExercise")
+      for {
+        f <- TestFolders.testFolders
+        fromFolder = new File(newExerciseSrc, f)
+        toFolder = new File(src, f)
+      } {
+        IO.delete(toFolder)
+        IO.copyDirectory(fromFolder, toFolder)
+      }
+      writeBookmark(firstExercise, state)
+      Console.println(Console.GREEN + "[INFO] " + Console.RESET + s"Moved to first exercise in course")
+      state
+    }
+  }
+
   def gotoExerciseNr: Command = Command("gotoExerciseNr")(s => ExerciseNr) { (state, arg) =>
     val ExerciseFmt = """.*exercise_([0-9][0-9][0-9])_\w+$""".r
     arg match {

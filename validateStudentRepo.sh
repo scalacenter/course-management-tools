@@ -18,14 +18,16 @@ RESET='\033[0m' # No Color
 SEPARATOR="##########################################################"
 
 function validateNextExercise {    
+
+
+    if ! sbt ";pullSolution;test"; then
+        fail
+    fi
+    echo -e "[${GREEN}SUCCESS${RESET}] Validated Exercise"
+
     echo $SEPARATOR
-    
     if sbt nextExercise 2>&1 | grep "Moved to"; then
-        if sbt ";pullSolution;test"; then
-            return 0
-        else
-            fail
-        fi
+        return 0
     else
         return 1
     fi
@@ -42,7 +44,6 @@ function validateAllExercises {
     while validateNextExercise 
     do
         echo $SEPARATOR
-        echo -e "[${GREEN}SUCCESS${RESET}] Validated Exercise"
     done
     
     echo $SEPARATOR

@@ -2,7 +2,9 @@ package com.lightbend.coursegentools
 
 import sbt.{IO => sbtio}
 import java.io.File
+
 import scala.sys.process.Process
+import scala.util.matching.Regex
 
 /**
   * Copyright © 2016 Lightbend, Inc
@@ -28,7 +30,8 @@ object Helpers {
 
   import ProcessDSL._
 
-  val ExerciseNameSpec = """.*/exercise_[0-9][0-9][0-9]_\w+$""".r
+  val ExercisePathSpec: Regex = """(.*/exercise_)(\d{3})(_\w+)$""".r
+  val ExerciseNameSpec: Regex = """(exercise_)(\d{3})(_\w+)$""".r
 
   def fileList(base: File): Vector[File] = {
     @scala.annotation.tailrec
@@ -147,7 +150,7 @@ object Helpers {
   }
 
   def isExerciseFolder(folder: File): Boolean = {
-    ExerciseNameSpec.findFirstIn(folder.getPath).isDefined
+    ExercisePathSpec.findFirstIn(folder.getPath).isDefined
   }
 
   def copyMaster(masterRepo: File, targetFolder: File): Unit = {

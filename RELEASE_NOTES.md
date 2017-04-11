@@ -6,6 +6,11 @@ Release notes added on January 11, 2017
 
 ## Releases
 
+### 2017-04-10 masterAdm version 1.0
+
+Add new course master admin command `masterAdm`
+  - Exercise renumbering: allows renumbering of exercises from a given base number, incrementing each sbsequent exercise number by a given value
+
 ### 2017-04-10 Studentify version 2.0
 
 - Generalized `studentify`:

@@ -26,10 +26,19 @@ import java.nio.file.{Files, Paths}
 
 import sbt.{IO => sbtio}
 
+import scala.util.matching.Regex
+
 package object coursegentools {
 
   type Seq[+A] = scala.collection.immutable.Seq[A]
   val Seq = scala.collection.immutable.Seq
+
+  case class MasterAdmCmdOption(masterRepo: File = new File("."),
+                                multiJVM: Boolean = false,
+                                renumber: Boolean = false,
+                                renumberOffset: Int = 0,
+                                renumberDelta: Int = 1
+                               )
 
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),
@@ -70,4 +79,5 @@ package object coursegentools {
   class SbtTemplateFile extends java.io.FileFilter {
     override def accept(f: File): Boolean = f.isFile && f.getName.endsWith(".sbt.template")
   }
+
 }

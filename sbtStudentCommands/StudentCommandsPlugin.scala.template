@@ -15,7 +15,8 @@ object StudentCommandsPlugin extends AutoPlugin {
       commands in Global ++=
           Seq(
             Man.man,
-            Navigation.nextExercise, Navigation.prevExercise, Navigation.gotoExerciseNr, Navigation.listExercises,
+            Navigation.nextExercise, Navigation.prevExercise, Navigation.gotoExerciseNr,
+            Navigation.listExercises, Navigation.gotoFirstExercise,
             Pssr.pullSolution, Pssr.pullTemplate, Pssr.restoreState,
             Pssr.savedStates, Pssr.saveState, Pssr.showExerciseId
           ),

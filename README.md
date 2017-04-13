@@ -274,6 +274,7 @@ To navigate through a student repository you can leverage the following commands
 - `listExercises` - Lists all exercises in course.
 - `nextExercise` - Brings new tests and instructions into scope, while preserving your code.
 - `prevExercise` - Reverts tests and instructions to the previous state, while preserving your code.
+- `gotoFirstExercise` - Jump to the first exercise in the course and bring in tests for that exercise while preserving code.
 - `gotoExerciseNr <exercise Nr>` - Jump to exercise `Nr`, bring in tests for that exercise while preserving code.
 - `pullSolution` - Overwrites your code with the official solution.
 - `saveState` - Create a snapshot of your current code.
@@ -308,13 +309,13 @@ scenario, the final zip generated would be `FTTS-fast-track-scala-exercises-2.0.
 
 ## Appendix 1 - Course management tools summary
 
-##### studentify
+### studentify
 
 `studentify` generates a *student* repository from a given course master repository.
 
 A student will clone a copy of the generated student repository, load it in his/her favorite IDE (IntelliJ or Scala IDE (Eclipse)).
 
-Using *sbt*, the student can move between exercises by issuing the `nextExercise`, `prevExercise` and `gotoExerciseNr` commands.
+Using *sbt*, the student can move between exercises by issuing the `nextExercise`, `prevExercise`, `gotoFirstExercise` and `gotoExerciseNr` commands.
 Please note that these commands pull only exercise tests and do NOT change other (solution) sources. 
 There is the `pullSolution` command that pulls the solution code.
 

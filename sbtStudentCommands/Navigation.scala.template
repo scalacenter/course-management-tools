@@ -150,17 +150,17 @@ object Navigation {
                 IO.copyDirectory(fromFolder, toFolder)
               }
               writeBookmark(exercise, state)
-              Console.println(s"""${Console.GREEN}[INFO]${Console.RESET} Moved to ${Console.BLUE}${exercise}${Console.RESET}""")
+              Console.println(s"""${Console.GREEN}[INFO]${Console.RESET} Moved to ${Console.YELLOW}${exercise}${Console.RESET}""")
               state
             }
 
           case _ =>
-            Console.println(Console.RED + "[ERROR] " + Console.BLUE + s"$exerciseNr" + Console.RESET + s": No exercise with that number")
+            Console.println(Console.RED + "[ERROR] " + Console.YELLOW + s"$exerciseNr" + Console.RESET + s": No exercise with that number")
         }
         state
 
       case None =>
-        Console.println(Console.BLUE + "[WARN] " + Console.RESET + s"Usage: gotoExerciseNr <ddd>")
+        Console.println(Console.YELLOW + "[WARNING] " + Console.RESET + s"Usage: gotoExerciseNr <ddd>")
         state
     }
   }
@@ -183,10 +183,10 @@ object Navigation {
     val toPrjNme: String = moveMap.get(prjNme)
     (cueFolderExists(state), toPrjNme, direction) match {
       case (_, `prjNme`, "prev") =>
-        Console.println(Console.BLUE + "[WARNING] " + Console.RESET + "You're already at the first exercise")
+        Console.println(Console.YELLOW + "[WARNING] " + Console.RESET + "You're already at the first exercise")
         state
       case (_, `prjNme`, "next") =>
-        Console.println(Console.BLUE + "[WARNING] " + Console.RESET + "You're already at the last exercise")
+        Console.println(Console.YELLOW + "[WARNING] " + Console.RESET + "You're already at the last exercise")
         state
       case (false, _, _) =>
         var cmd: String = s"project $toPrjNme"
@@ -210,7 +210,7 @@ object Navigation {
             IO.copyDirectory(fromFolder, toFolder)
           }
           writeBookmark(toProjectName, state)
-          Console.println(s"""${Console.GREEN}[INFO]${Console.RESET} Moved to ${Console.BLUE}${toProjectName}${Console.RESET}""")
+          Console.println(s"""${Console.GREEN}[INFO]${Console.RESET} Moved to ${Console.YELLOW}${toProjectName}${Console.RESET}""")
           state
         }
     }

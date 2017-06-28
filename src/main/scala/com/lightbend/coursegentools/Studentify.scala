@@ -22,6 +22,16 @@ package com.lightbend.coursegentools
 
 object Studentify {
 
+  private val filesToCleanup = List(
+    ".git",
+    ".gitignore",
+    "man.sbt",
+    "navigation.sbt",
+    "shell-prompt.sbt",
+    "Jenkinsfile",
+    "Jenkinsfile.original"
+  )
+
   def main(args: Array[String]): Unit = {
 
     import Helpers._
@@ -54,7 +64,7 @@ object Studentify {
     createBuildFile(targetCourseFolder, multiJVM)
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
     loadStudentSettings(masterRepo, targetCourseFolder)
-    cleanUp(List(".git", ".gitignore", "man.sbt", "navigation.sbt", "shell-prompt.sbt"), targetCourseFolder)
+    cleanUp(filesToCleanup, targetCourseFolder)
     sbt.IO.delete(tmpDir)
 
   }

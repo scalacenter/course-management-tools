@@ -100,7 +100,11 @@ function copy_deck {
     echo $SEPARATOR
     
     cd $STARTING_DIR
-    cp -r $REPO "$WORKING_DIR/$REPO_NAME"
+    if [[ -d ${REPO}/deck ]];then
+      cp -r ${REPO}/deck "$WORKING_DIR/$REPO_NAME"
+    else
+      cp -r $REPO "$WORKING_DIR/$REPO_NAME"
+    fi
     cd $WORKING_DIR
 }
 

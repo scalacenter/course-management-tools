@@ -1,6 +1,7 @@
 package sbtstudent
+
 /**
-  * Copyright © 2014, 2015 Typesafe, Inc. All rights reserved. [http://www.typesafe.com]
+  * Copyright © 2014 - 2017 Lightbend, Inc. All rights reserved. [http://www.lightbend.com]
   */
 
 import sbt._

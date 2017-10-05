@@ -1,26 +1,21 @@
-/**
-  * Copyright © 2014, 2015 Typesafe, Inc. All rights reserved. [http://www.typesafe.com]
-  */
 package sbtstudent
+
+/**
+  * Copyright © 2014 - 2017 Lightbend, Inc. All rights reserved. [http://www.lightbend.com]
+  */
 
 import java.io.File
 
-import StudentKeys._
 import sbt.Keys._
-import Zip.withZipFile
-
 import sbt._
+import sbt.complete.DefaultParsers.{IntBasic, Space}
+import sbt.complete.Parser
+import sbtstudent.StudentKeys._
+import sbtstudent.Zip.withZipFile
+
 import scala.Console
 
-import sbt.complete.DefaultParsers.{OptSpace, IntBasic}
-
 object Navigation {
-  def mapExercisesFromProjects(state: State, reverse: Boolean = false): Map[String, String] = {
-    val refs = Project.extract(state).structure.allProjectRefs.toList.map(r => r.project).filter(_.startsWith("exercise_")).sorted
-    val refsReordered = if (reverse) refs.reverse else refs
-    val mapping = (refsReordered zip refsReordered.tail) :+ (refsReordered.last, refsReordered.last)
-    mapping.toMap
-  }
 
   def mapExercisesFromFolders(state: State, reverse: Boolean = false): Map[String, String] = {
     object FoldersOnly {
@@ -47,14 +42,13 @@ object Navigation {
     cueFolder.exists()
   }
 
-  def mapExercises(state: State, reverse: Boolean = false): Map[String, String] = {
-    if (cueFolderExists(state)) {
-      mapExercisesFromFolders(state, reverse)
-    } else {
-      mapExercisesFromProjects(state, reverse)
-    }
-  }
+  def mapExercises(state: State, reverse: Boolean = false): Map[String, String] =
+    mapExercisesFromFolders(state, reverse)
 
+  val getAllExercises: (State) => State = (s: State) => {
+    val ex = mapExercises(s).keys.toList.map(str => str: Parser[String])
+    s.put(allExercises, Space ~ Parser.oneOf(ex))
+  }
 
   val setupNavAttrs: (State) => State = (s: State) => {
 
@@ -102,7 +96,7 @@ object Navigation {
     state
   }
 
-  private lazy val ExerciseNr = OptSpace ~> IntBasic.?
+  private lazy val ExerciseNr = Space ~> IntBasic.?
 
   def gotoFirstExercise: Command = Command.command("gotoFirstExercise") { state =>
     val firstExercise = state.get(mapNext).get.keys.toVector.sorted.head
@@ -121,6 +115,29 @@ object Navigation {
       Console.println(Console.GREEN + "[INFO] " + Console.RESET + s"Moved to first exercise in course")
       state
     }
+  }
+
+  val exerciseNameParser: (State) => Parser[(Seq[Char], String)] =
+      (s: State) => s.get(AttributeKey[Parser[(Seq[Char], String)]](allExercisesKeyName)).get
+
+  def gotoExercise: Command = Command("gotoExercise")(exerciseNameParser) { (state, arg) =>
+    val (_, exercise) = arg
+    withZipFile(state, exercise) { () =>
+      val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), "exercises")
+      val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$exercise")
+      for {
+        f <- TestFolders.testFolders
+        fromFolder = new File(newExerciseSrc, f)
+        toFolder = new File(src, f)
+      } {
+        IO.delete(toFolder)
+        IO.copyDirectory(fromFolder, toFolder)
+      }
+      writeBookmark(exercise, state)
+      Console.println(s"""${Console.GREEN}[INFO]${Console.RESET} Moved to ${Console.YELLOW}${exercise}${Console.RESET}""")
+      state
+    }
+
   }
 
   def gotoExerciseNr: Command = Command("gotoExerciseNr")(s => ExerciseNr) { (state, arg) =>
@@ -181,25 +198,16 @@ object Navigation {
     val prjNme: String = getExerciseName(state)
     val moveMap: Option[Map[String, String]] = state get attrKey
     val toPrjNme: String = moveMap.get(prjNme)
-    (cueFolderExists(state), toPrjNme, direction) match {
-      case (_, `prjNme`, "prev") =>
+    (toPrjNme, direction) match {
+      case (`prjNme`, "prev") =>
         Console.println(Console.YELLOW + "[WARNING] " + Console.RESET + "You're already at the first exercise")
         state
-      case (_, `prjNme`, "next") =>
+      case (`prjNme`, "next") =>
         Console.println(Console.YELLOW + "[WARNING] " + Console.RESET + "You're already at the last exercise")
         state
-      case (false, _, _) =>
-        var cmd: String = s"project $toPrjNme"
-        if (keyName.equals(mapNextKeyName)) cmd = moveNextCmd(prjNme, toPrjNme, state)
-        val newState: State = Command.process(cmd, state)
-        writeBookmark(toPrjNme, newState)
-        newState
-      case (true, toProjectName, _) =>
+      case (toProjectName, _) =>
         withZipFile(state, toProjectName) { () =>
-          //val src = Project.extract(state).get(sourceDirectory)
           val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), "exercises")
-          //println(s"=== src = $src ===")
-          // update tests (can be previous or next...)
           val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$toProjectName")
           for {
             f <- TestFolders.testFolders
@@ -213,21 +221,6 @@ object Navigation {
           Console.println(s"""${Console.GREEN}[INFO]${Console.RESET} Moved to ${Console.YELLOW}${toProjectName}${Console.RESET}""")
           state
         }
-    }
-  }
-
-  def moveNextCmd(frmPrjNme: String, toPrjNme: String, state: State): String = {
-    val frmPrjSrc: String = Project.extract(state).get(sourceDirectory) + "/main"
-    val toPrjSrc: String = frmPrjSrc.toString.replaceAll(frmPrjNme, toPrjNme)
-    val next: String = s"project $toPrjNme"
-    val nextGroom: String = s";project $toPrjNme;groom"
-    toPrjNme match {
-      case ("base" | "common" | "entry_state") =>
-        next
-      case _ if new sbt.File(toPrjSrc) exists =>
-        next
-      case _ =>
-        nextGroom
     }
   }
 

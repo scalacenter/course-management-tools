@@ -26,7 +26,7 @@ object Linearize {
 
     import Helpers._
     import java.io.File
-    import sbt.{ IO => sbtio }
+    import sbt.io.{ IO => sbtio }
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
@@ -59,7 +59,7 @@ object Linearize {
     removeExercisesFromCleanMaster(cleanMasterRepo, exercises)
     val linearizedProject = new File(linearizedOutputFolder, projectName)
     copyMaster(cleanMasterRepo, linearizedProject)
-    sbt.IO.delete(tmpDir)
+    sbtio.delete(tmpDir)
     createBuildFile(linearizedProject, multiJVM)
     cleanUp(List(".git", "navigation.sbt"), linearizedProject)
     initializeGitRepo(linearizedProject)

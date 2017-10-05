@@ -20,6 +20,8 @@ package com.lightbend.coursegentools
   * limitations under the License.
   */
 
+import com.typesafe.config.ConfigFactory
+
 object Studentify {
 
   private val filesToCleanup = List(
@@ -36,6 +38,7 @@ object Studentify {
 
     import Helpers._
     import java.io.File
+    import sbt.io.{IO => sbtio}
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
@@ -48,6 +51,11 @@ object Studentify {
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)
     val exercises: Seq[String] = getExerciseNames(cleanMasterRepo)
+
+    implicit val config: MasterSettings = new MasterSettings(masterRepo)
+    import config.testCodeFolders
+
+    println(s"testCodeFolders: $testCodeFolders")
 
     val selectedExercises: Seq[String] = getSelectedExercises(exercises, firstOpt, lastOpt)
     println(
@@ -65,7 +73,7 @@ object Studentify {
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
     loadStudentSettings(masterRepo, targetCourseFolder)
     cleanUp(filesToCleanup, targetCourseFolder)
-    sbt.IO.delete(tmpDir)
+    sbtio.delete(tmpDir)
 
   }
 

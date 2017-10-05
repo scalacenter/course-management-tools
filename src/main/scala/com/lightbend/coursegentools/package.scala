@@ -24,8 +24,6 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 
-import sbt.{IO => sbtio}
-
 package object coursegentools {
 
   type Seq[+A] = scala.collection.immutable.Seq[A]

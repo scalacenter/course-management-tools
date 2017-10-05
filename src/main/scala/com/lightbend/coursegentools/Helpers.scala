@@ -1,6 +1,6 @@
 package com.lightbend.coursegentools
 
-import sbt.{IO => sbtio}
+import sbt.io.{IO => sbtio}
 import java.io.File
 import scala.sys.process.Process
 
@@ -204,7 +204,7 @@ object Helpers {
       template <- sbtio.listFiles(sbtStudentCommandsTemplateFolder)
       target = new File(projectFolder, template.getName.replaceAll(".scala.template", ".scala"))
     } yield (template, target)
-    sbtio.copy(moves, overwrite = true)
+    sbtio.copy(moves, overwrite = true, preserveLastModified = true, preserveExecutable = false)
 
   }
 
@@ -259,48 +259,14 @@ object Helpers {
     System.exit(-1)
   }
 
-  def writeTestCodeFolders(settings: String, targetFolder: File, defaultSettings: String): Unit = {
-    val finalSettings = settings.split(":").toSet ++ defaultSettings.split(":")
+  def loadStudentSettings(masterRepo: File, targetFolder: File)(implicit masterSettings: MasterSettings): Unit = {
+
     dumpStringToFile(
       s"""package sbtstudent
          |
-         |object TestFolders {
-         |  val testFolders = List(${finalSettings.map(s => s""""$s"""").mkString(", ")})
+         |object SSettings {
+         |  val testFolders = List(${masterSettings.testCodeFolders.map(s => s""""$s"""").mkString(", ")})
          |}
-       """.stripMargin, new File(targetFolder, "project/TestFolders.scala").getPath)
-  }
-
-  def loadStudentSettings(masterRepo: File, targetFolder: File): Map[String, String] = {
-    val DefaultStudentSettings = Map(
-      "TestCodeFolders" -> "src/test"
-    )
-
-    val studentSettingsFile = new File(masterRepo, Settings.studentSettingsFile)
-    val settings = if (studentSettingsFile.exists()) {
-      val SettingsLine = """([^=\s]+)\s*=\s*([^=\s]+)\s*""".r
-      sbtio.readLines(studentSettingsFile).zipWithIndex.map { case (setting, lineNr) =>
-        try {
-          val SettingsLine(key, value) = setting
-          (key, value)
-        } catch {
-          case me: MatchError =>
-            printErrorMsgAndExit(studentSettingsFile, Some(lineNr), setting)
-            ("key", "value") // Make this type-check
-        }
-      }.toMap
-    } else {
-      Map.empty[String, String]
-    }
-    for {
-      (settingsKey, setting) <- DefaultStudentSettings
-    } {
-      settingsKey match {
-        case key @ "TestCodeFolders" =>
-          val s = settings.getOrElse(key, DefaultStudentSettings(key))
-          writeTestCodeFolders(s, targetFolder, DefaultStudentSettings(key))
-      }
-    }
-    // TODO: check for mistyped setting keys in student settings file...
-    settings
+       """.stripMargin, new File(targetFolder, "project/SSettings.scala").getPath)
   }
 }

@@ -38,6 +38,8 @@ object Linearize {
     val exercises: Seq[String] = getExerciseNames(masterRepo)
     val destinationFolder = new File(linearizedOutputFolder, projectName)
 
+    implicit val config: MasterSettings = new MasterSettings(masterRepo)
+
     (destinationFolder.exists(), forceDeleteExistingDestinationFolder) match {
       case (true, false) =>
         println(

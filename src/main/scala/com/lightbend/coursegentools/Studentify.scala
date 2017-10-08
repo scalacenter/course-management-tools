@@ -50,12 +50,14 @@ object Studentify {
 
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)
-    val exercises: Seq[String] = getExerciseNames(cleanMasterRepo)
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo)
-    import config.testCodeFolders
+    import config.{testCodeFolders, studentifiedBaseFolder}
 
-    println(s"testCodeFolders: $testCodeFolders")
+    val exercises: Seq[String] = getExerciseNames(cleanMasterRepo)
+
+    println(s"testCodeFolders:        $testCodeFolders")
+    println(s"studentifiedBaseFolder: $studentifiedBaseFolder")
 
     val selectedExercises: Seq[String] = getSelectedExercises(exercises, firstOpt, lastOpt)
     println(

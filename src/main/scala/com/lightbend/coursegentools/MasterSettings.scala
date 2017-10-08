@@ -16,4 +16,6 @@ class MasterSettings(masterRepo: File) {
 
   val testCodeFolders: List[String] = config.getStringList("studentify.test-code-folders").asScala.toList
 
+  val studentifiedBaseFolder: String = config.getString("studentify.studentified-base-folder")
+
 }

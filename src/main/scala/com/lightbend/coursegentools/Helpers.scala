@@ -184,9 +184,9 @@ object Helpers {
       selectedExercise
     }
   }
-  def stageFirstExercise(firstEx: String, masterRepo: File, targetFolder: File): Unit = {
+  def stageFirstExercise(firstEx: String, masterRepo: File, targetFolder: File)(implicit config: MasterSettings): Unit = {
     val firstExercise = new File(masterRepo, firstEx)
-    sbtio.copyDirectory(firstExercise, new File(targetFolder, Settings.studentBaseProject), preserveLastModified = true)
+    sbtio.copyDirectory(firstExercise, new File(targetFolder, config.studentifiedBaseFolder), preserveLastModified = true)
   }
 
   def createBookmarkFile(firstExercise: String, targetFolder: File): Unit = {
@@ -194,8 +194,8 @@ object Helpers {
     dumpStringToFile(firstExercise, new File(targetFolder, ".bookmark").getPath)
   }
 
-  def createSbtRcFile(targetFolder: File): Unit = {
-    dumpStringToFile("alias boot = ;reload ;project exercises ;iflast shell", new File(targetFolder, ".sbtrc").getPath)
+  def createSbtRcFile(targetFolder: File)(implicit config: MasterSettings): Unit = {
+    dumpStringToFile(s"alias boot = ;reload ;project ${config.studentifiedBaseFolder} ;iflast shell", new File(targetFolder, ".sbtrc").getPath)
   }
 
   def addSbtStudentCommands(sbtStudentCommandsTemplateFolder: File, targetCourseFolder: File): Unit = {
@@ -224,14 +224,54 @@ object Helpers {
     selExcs
   }
 
-  def createBuildFile(targetFolder: File, multiJVM: Boolean): Unit = {
-    val buildFileTemplate =
+  def createBuildFile(targetFolder: File, multiJVM: Boolean)(implicit config: MasterSettings): Unit = {
+    val buildDef =
+      s"""
+         |import sbt._
+         |
+         |lazy val base = (project in file("."))
+         |  .aggregate(
+         |    common,
+         |    ${config.studentifiedBaseFolder}
+         |  )
+         |  .settings(CommonSettings.commonSettings: _*)
+         |lazy val common = project.settings(CommonSettings.commonSettings: _*)
+         |
+         |lazy val ${config.studentifiedBaseFolder} = project
+         |  .settings(CommonSettings.commonSettings: _*)
+         |  .dependsOn(common % "test->test;compile->compile")
+       """.stripMargin
+
+    val mJvmBuildDef =
+      s"""
+         |import sbt._
+         |
+         |lazy val base = (project in file("."))
+         |  .aggregate(
+         |    common,
+         |    ${config.studentifiedBaseFolder}
+         |  )
+         |  .settings(SbtMultiJvm.multiJvmSettings: _*)
+         |  .settings(CommonSettings.commonSettings: _*)
+         |  .configs(MultiJvm)
+         |
+         |lazy val common = project
+         |  .settings(SbtMultiJvm.multiJvmSettings: _*)
+         |  .settings(CommonSettings.commonSettings: _*)
+         |  .configs(MultiJvm)
+         |
+         |lazy val ${config.studentifiedBaseFolder} = project
+         |  .settings(SbtMultiJvm.multiJvmSettings: _*)
+         |  .settings(CommonSettings.commonSettings: _*)
+         |  .configs(MultiJvm)
+         |  .dependsOn(common % "test->test;compile->compile")
+       """.stripMargin
+
       if (multiJVM) {
-        "build-mjvm.sbt.template"
+        dumpStringToFile(mJvmBuildDef, new File(targetFolder, "build.sbt").getPath)
       } else {
-        "build.sbt.template"
+        dumpStringToFile(buildDef, new File(targetFolder, "build.sbt").getPath)
       }
-    sbtio.copyFile(new File(buildFileTemplate), new File(targetFolder, "build.sbt"))
   }
 
   def cleanUp(files: Seq[String], targetFolder: File): Unit = {
@@ -266,6 +306,7 @@ object Helpers {
          |
          |object SSettings {
          |  val testFolders = List(${masterSettings.testCodeFolders.map(s => s""""$s"""").mkString(", ")})
+         |  val studentifiedBaseFolder = "${masterSettings.studentifiedBaseFolder}"
          |}
        """.stripMargin, new File(targetFolder, "project/SSettings.scala").getPath)
   }

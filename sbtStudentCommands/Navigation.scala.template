@@ -101,7 +101,7 @@ object Navigation {
   def gotoFirstExercise: Command = Command.command("gotoFirstExercise") { state =>
     val firstExercise = state.get(mapNext).get.keys.toVector.sorted.head
     withZipFile(state, firstExercise) { () =>
-      val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), "exercises")
+      val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), SSettings.studentifiedBaseFolder)
       val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$firstExercise")
       for {
         f <- SSettings.testFolders
@@ -123,7 +123,7 @@ object Navigation {
   def gotoExercise: Command = Command("gotoExercise")(exerciseNameParser) { (state, arg) =>
     val (_, exercise) = arg
     withZipFile(state, exercise) { () =>
-      val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), "exercises")
+      val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), SSettings.studentifiedBaseFolder)
       val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$exercise")
       for {
         f <- SSettings.testFolders
@@ -156,7 +156,7 @@ object Navigation {
         exercises match {
           case exercise +: Nil =>
             withZipFile(state, exercise) { () =>
-              val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), "exercises")
+              val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), SSettings.studentifiedBaseFolder)
               val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$exercise")
               for {
                 f <- SSettings.testFolders
@@ -207,7 +207,7 @@ object Navigation {
         state
       case (toProjectName, _) =>
         withZipFile(state, toProjectName) { () =>
-          val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), "exercises")
+          val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), SSettings.studentifiedBaseFolder)
           val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$toProjectName")
           for {
             f <- SSettings.testFolders

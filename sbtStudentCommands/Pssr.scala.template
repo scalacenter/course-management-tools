@@ -40,7 +40,7 @@ object Pssr {
   def pullSolution: Command = Command.command("pullSolution") { state =>
     val currentExercise = getCurrentExercise(state)
     withZipFile(state, currentExercise) { () =>
-      val currentExerciseMain = new sbt.File(getRootFolder(state), "exercises")
+      val currentExerciseMain = new sbt.File(getRootFolder(state), SSettings.studentifiedBaseFolder)
       val cueFolder = getCueFolder(state)
       val solFolder = new sbt.File(cueFolder, currentExercise)
       IO.delete(currentExerciseMain)
@@ -53,7 +53,7 @@ object Pssr {
   def saveState: Command = Command.command("saveState") { state =>
     val currentExercise = getCurrentExercise(state)
     val saveFolder = new sbt.File(getSavedStateFolder(state), currentExercise)
-    val currentExerciseSrc = new sbt.File(getRootFolder(state), "exercises")
+    val currentExerciseSrc = new sbt.File(getRootFolder(state), SSettings.studentifiedBaseFolder)
     if (saveFolder exists) IO.delete(saveFolder)
     IO.copyDirectory(currentExerciseSrc, saveFolder)
     Console.println(Console.GREEN + "[INFO] " + Console.RESET + s"State for exercise " + Console.YELLOW + currentExercise + Console.RESET + " saved successfully")
@@ -66,7 +66,7 @@ object Pssr {
         val savedFolder = new sbt.File(getSavedStateFolder(state), exercise)
         if (savedFolder.exists()) {
           val savedStateFolder = savedFolder
-          val currentExerciseSrc = new sbt.File(getRootFolder(state), "exercises")
+          val currentExerciseSrc = new sbt.File(getRootFolder(state), SSettings.studentifiedBaseFolder)
           IO.delete(currentExerciseSrc)
           IO.copyDirectory(savedStateFolder, currentExerciseSrc)
           bookmark(exercise, state)
@@ -108,7 +108,7 @@ object Pssr {
         //Todo: make this function more user-friendly allowing for specifiying just the (unique) filename iso package/filename
         val currentExercise = getCurrentExercise(state)
         withZipFile(state, currentExercise) { () =>
-          val currentExerciseMain = new sbt.File(getRootFolder(state), "exercises/src/main")
+          val currentExerciseMain = new sbt.File(getRootFolder(state), SSettings.studentifiedBaseFolder + "/src/main")
           val cueFolder = getCueFolder(state)
           val solFolder = new sbt.File(cueFolder, currentExercise + "/src/main/")
           val templateFileSrc = new File(solFolder, templateFilePath)

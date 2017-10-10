@@ -150,17 +150,19 @@ object Helpers {
     ExerciseNameSpec.findFirstIn(folder.getPath).isDefined
   }
 
-  def copyMaster(masterRepo: File, targetFolder: File): Unit = {
-    sbtio.copyDirectory(masterRepo, targetFolder, overwrite = false, preserveLastModified = true)
+  def copyMaster(masterRepo: File, targetFolder: File)(implicit config: MasterSettings): Unit = {
+    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    sbtio.copyDirectory(relativeSourceFolder, targetFolder, overwrite = false, preserveLastModified = true)
   }
 
-  def getExerciseNames(masterRepo: File): Vector[String] = {
-    val exerciseFolders = sbtio.listFiles(masterRepo, FoldersOnly()).filter(isExerciseFolder)
+  def getExerciseNames(masterRepo: File)(implicit config: MasterSettings): Vector[String] = {
+    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val exerciseFolders = sbtio.listFiles(relativeSourceFolder, FoldersOnly()).filter(isExerciseFolder)
     exerciseFolders.map(folder => folder.getName).toVector.sorted
   }
 
-  def hideExerciseSolutions(targetFolder: File, selectedExercises: Seq[String]): Unit = {
-    val hiddenFolder = new File(targetFolder, Settings.solutionsFolder)
+  def hideExerciseSolutions(targetFolder: File, selectedExercises: Seq[String])(implicit config: MasterSettings): Unit = {
+    val hiddenFolder = new File(targetFolder, config.solutionsFolder)
     sbtio.createDirectory(hiddenFolder)
     val exercises = sbtio.listFiles(targetFolder, FoldersOnly()).filter(isExerciseFolder)
     exercises.foreach { exercise =>
@@ -185,7 +187,8 @@ object Helpers {
     }
   }
   def stageFirstExercise(firstEx: String, masterRepo: File, targetFolder: File)(implicit config: MasterSettings): Unit = {
-    val firstExercise = new File(masterRepo, firstEx)
+    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val firstExercise = new File(relativeSourceFolder, firstEx)
     sbtio.copyDirectory(firstExercise, new File(targetFolder, config.studentifiedBaseFolder), preserveLastModified = true)
   }
 
@@ -229,7 +232,7 @@ object Helpers {
       s"""
          |import sbt._
          |
-         |lazy val base = (project in file("."))
+         |lazy val ${config.studentifiedProjectName} = (project in file("."))
          |  .aggregate(
          |    common,
          |    ${config.studentifiedBaseFolder}
@@ -246,7 +249,7 @@ object Helpers {
       s"""
          |import sbt._
          |
-         |lazy val base = (project in file("."))
+         |lazy val ${config.studentifiedProjectName} = (project in file("."))
          |  .aggregate(
          |    common,
          |    ${config.studentifiedBaseFolder}
@@ -305,8 +308,17 @@ object Helpers {
       s"""package sbtstudent
          |
          |object SSettings {
+         |  import scala.Console._
+         |  val consoleColorMap: Map[String, String] =
+         |    Map("GREEN" -> GREEN, "RED" -> RED, "BLUE" -> BLUE, "CYAN" -> CYAN, "YELLOW" -> YELLOW, "WHITE" -> WHITE, "BLACK" -> BLACK, "MAGENTA" -> MAGENTA)
+         |
          |  val testFolders = List(${masterSettings.testCodeFolders.map(s => s""""$s"""").mkString(", ")})
+         |
          |  val studentifiedBaseFolder = "${masterSettings.studentifiedBaseFolder}"
+         |
+         |  val promptManColor         = "${masterSettings.Colors.promptManColor}"
+         |  val promptExerciseColor    = "${masterSettings.Colors.promptExerciseColor}"
+         |  val promptCourseNameColor = "${masterSettings.Colors.promptCourseNameColor}"
          |}
        """.stripMargin, new File(targetFolder, "project/SSettings.scala").getPath)
   }

@@ -32,13 +32,14 @@ object Linearize {
     if (cmdOptions.isEmpty) System.exit(-1)
     val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder) = cmdOptions.get
 
+    implicit val config: MasterSettings = new MasterSettings(masterRepo)
+
     exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
 
     val projectName = masterRepo.getName
     val exercises: Seq[String] = getExerciseNames(masterRepo)
-    val destinationFolder = new File(linearizedOutputFolder, projectName)
 
-    implicit val config: MasterSettings = new MasterSettings(masterRepo)
+    val destinationFolder = new File(linearizedOutputFolder, projectName)
 
     (destinationFolder.exists(), forceDeleteExistingDestinationFolder) match {
       case (true, false) =>

@@ -33,11 +33,14 @@ object StudentCommandsPlugin extends AutoPlugin {
   override lazy val projectSettings =
     Seq(
       shellPrompt := { state =>
+        val promptCourseNameColor = SSettings.consoleColorMap(SSettings.promptCourseNameColor)
+        val promptExerciseColor = SSettings.consoleColorMap(SSettings.promptExerciseColor)
+        val promptManColor = SSettings.consoleColorMap(SSettings.promptManColor)
         val base: File = Project.extract(state).get(sourceDirectory)
         val basePath: String = base + "/test/resources/README.md"
-        val exercise = Console.GREEN + IO.readLines(new sbt.File(basePath)).head + Console.RESET
-        val manRmnd = Console.RED + "man [e]" + Console.RESET
-        val prjNbrNme = IO.readLines(new sbt.File(new sbt.File(Project.extract(state).structure.root), ".courseName")).head
+        val exercise = promptExerciseColor + IO.readLines(new sbt.File(basePath)).head + Console.RESET
+        val manRmnd = promptManColor + "man [e]" + Console.RESET
+        val prjNbrNme = promptCourseNameColor + IO.readLines(new sbt.File(new sbt.File(Project.extract(state).structure.root), ".courseName")).head + Console.RESET
         s"$manRmnd > $prjNbrNme > $exercise > "
       }
     )

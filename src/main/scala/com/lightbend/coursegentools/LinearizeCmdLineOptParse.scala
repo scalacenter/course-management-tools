@@ -32,7 +32,7 @@ object LinearizeCmdLineOptParse {
         .text("base folder holding master course repository")
         .action { case (masterRepo, c) =>
           if (! folderExists(masterRepo)) {
-            println(s"base master repo folder (${masterRepo.getPath}) doesn't exist")
+            println(toConsoleRed(s"Base master repo folder (${masterRepo.getPath}) doesn't exist"))
             System.exit(-1)
           }
           c.copy(masterRepo = masterRepo)
@@ -42,7 +42,7 @@ object LinearizeCmdLineOptParse {
         .text("base folder for linearized version repo")
         .action { case (linearRepo, config) =>
           if (! folderExists(linearRepo)) {
-            println(s"base folder for linearized version repo (${linearRepo.getPath}) doesn't exist")
+            println(toConsoleRed(s"Base folder for linearized version repo (${linearRepo.getPath}) doesn't exist"))
             System.exit(-1)
           }
           config.copy(linearRepo = linearRepo)}

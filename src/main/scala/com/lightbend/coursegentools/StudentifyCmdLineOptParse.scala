@@ -33,7 +33,7 @@ object StudentifyCmdLineOptParse {
         .text("base folder holding master course repository")
         .action { case (masterRepo, c) =>
           if (! folderExists(masterRepo)) {
-            println(s"base master repo folder (${masterRepo.getPath}) doesn't exist")
+            println(toConsoleRed(s"Base master repo folder (${masterRepo.getPath}) doesn't exist"))
             System.exit(-1)
           }
           c.copy(masterRepo = masterRepo)
@@ -43,7 +43,7 @@ object StudentifyCmdLineOptParse {
         .text("base folder for student repo")
         .action { case (out, config) =>
           if (! folderExists(out)) {
-            println(s"base folder (${out.getPath}) doesn't exist")
+            println(toConsoleRed(s"Base folder (${out.getPath}) doesn't exist"))
             System.exit(-1)
           }
           config.copy(out = out)}

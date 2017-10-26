@@ -3,7 +3,7 @@
 MASTER_REPO=$1
 cd $MASTER_REPO
 
-print "CHECKING WORKSPACE in $MASTER_REPO"
+echo "CHECKING WORKSPACE in $MASTER_REPO"
 dirtyLines=`git status --porcelain|wc -l`
 
 if [ $dirtyLines -eq 0 ];then

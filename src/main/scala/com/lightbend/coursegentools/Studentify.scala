@@ -20,6 +20,8 @@ package com.lightbend.coursegentools
   * limitations under the License.
   */
 
+import com.typesafe.config.ConfigFactory
+
 object Studentify {
 
   private val filesToCleanup = List(
@@ -29,13 +31,15 @@ object Studentify {
     "navigation.sbt",
     "shell-prompt.sbt",
     "Jenkinsfile",
-    "Jenkinsfile.original"
+    "Jenkinsfile.original",
+    "course-management.conf"
   )
 
   def main(args: Array[String]): Unit = {
 
     import Helpers._
     import java.io.File
+    import sbt.io.{IO => sbtio}
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
@@ -47,7 +51,11 @@ object Studentify {
 
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)
-    val exercises: Seq[String] = getExerciseNames(cleanMasterRepo)
+
+    implicit val config: MasterSettings = new MasterSettings(masterRepo)
+    import config.testCodeFolders, config.studentifyModeClassic.studentifiedBaseFolder
+
+    val exercises: Seq[String] = getExerciseNames(cleanMasterRepo, Some(masterRepo))
 
     val selectedExercises: Seq[String] = getSelectedExercises(exercises, firstOpt, lastOpt)
     println(
@@ -56,16 +64,16 @@ object Studentify {
        """.stripMargin)
     val initialExercise = getInitialExercise(selectedFirstOpt, selectedExercises)
     val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
-    stageFirstExercise(initialExercise, cleanMasterRepo, targetCourseFolder)
+    stageFirstExercise(initialExercise, new File(cleanMasterRepo, config.relativeSourceFolder), targetCourseFolder)
     copyMaster(cleanMasterRepo, targetCourseFolder)
-    val solutionPaths = hideExerciseSolutions(targetCourseFolder, selectedExercises)
+    hideExerciseSolutions(targetCourseFolder, selectedExercises)
     createBookmarkFile(initialExercise, targetCourseFolder)
     createSbtRcFile(targetCourseFolder)
     createBuildFile(targetCourseFolder, multiJVM)
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
     loadStudentSettings(masterRepo, targetCourseFolder)
     cleanUp(filesToCleanup, targetCourseFolder)
-    sbt.IO.delete(tmpDir)
+    sbtio.delete(tmpDir)
 
   }
 

@@ -26,6 +26,8 @@ import java.nio.file.{Files, Paths}
 
 package object coursegentools {
 
+  def toConsoleRed(msg: String): String = Console.RED + msg + Console.RESET
+
   type Seq[+A] = scala.collection.immutable.Seq[A]
   val Seq = scala.collection.immutable.Seq
 

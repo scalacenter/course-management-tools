@@ -2,7 +2,7 @@ package com.lightbend.coursegentools
 
 import java.io.File
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.collection.JavaConverters._
 
@@ -33,9 +33,16 @@ class MasterSettings(masterRepo: File) {
 
   val testCodeFolders: List[String] = config.getStringList("studentify.test-code-folders").asScala.toList
 
-  val studentifiedBaseFolder: String = config.getString("studentify.studentified-base-folder")
+//  val studentifiedBaseFolder: String = config.getString("studentify.studentified-base-folder")
+
+  val studentifyModeSelect: String = config.getString("studentify.studentify-mode-select")
 
   val relativeSourceFolder: String = config.getString("studentify.relative-source-folder")
+
+  object studentifyModeClassic {
+    private val classicModeConfig = config.getConfig("studentify.studentify-mode-classic")
+    val studentifiedBaseFolder: String = classicModeConfig.getString("studentified-base-folder")
+  }
 
   val solutionsFolder: String = config.getString("studentify.solution-folder")
 

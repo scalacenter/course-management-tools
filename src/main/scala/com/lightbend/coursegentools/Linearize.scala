@@ -43,11 +43,11 @@ object Linearize {
 
     (destinationFolder.exists(), forceDeleteExistingDestinationFolder) match {
       case (true, false) =>
-        println(
-          s"""
+        println(toConsoleRed(
+          """
              |Destination folder ${destinationFolder.getPath} exists: Either remove this folder
              |manually or use the '-f' command-line option to delete it automatically
-             |""".stripMargin)
+             |""".stripMargin))
         System.exit(-1)
       case (true, true) =>
         sbtio.delete(destinationFolder)
@@ -57,16 +57,16 @@ object Linearize {
 
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)
-    println(s"cleanMasterRepo @ ${cleanMasterRepo.getPath}")
-    stageFirstExercise(exercises.head, cleanMasterRepo, cleanMasterRepo)
+    val relativeCleanMasterRepo = new File(cleanMasterRepo, config.relativeSourceFolder)
+    stageFirstExercise(exercises.head, relativeCleanMasterRepo, relativeCleanMasterRepo)
     removeExercisesFromCleanMaster(cleanMasterRepo, exercises)
     val linearizedProject = new File(linearizedOutputFolder, projectName)
     copyMaster(cleanMasterRepo, linearizedProject)
-    sbtio.delete(tmpDir)
     createBuildFile(linearizedProject, multiJVM)
     cleanUp(List(".git", "navigation.sbt"), linearizedProject)
     initializeGitRepo(linearizedProject)
     commitFirstExercise(exercises.head, linearizedProject)
     commitRemainingExercises(exercises.tail, masterRepo, linearizedProject)
+    sbtio.delete(tmpDir)
   }
 }

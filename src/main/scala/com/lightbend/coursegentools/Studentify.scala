@@ -31,7 +31,8 @@ object Studentify {
     "navigation.sbt",
     "shell-prompt.sbt",
     "Jenkinsfile",
-    "Jenkinsfile.original"
+    "Jenkinsfile.original",
+    "course-management.conf"
   )
 
   def main(args: Array[String]): Unit = {
@@ -52,12 +53,9 @@ object Studentify {
     val cleanMasterRepo = new File(tmpDir, projectName)
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo)
-    import config.{testCodeFolders, studentifiedBaseFolder}
+    import config.testCodeFolders, config.studentifyModeClassic.studentifiedBaseFolder
 
-    val exercises: Seq[String] = getExerciseNames(cleanMasterRepo)
-
-    println(s"testCodeFolders:        $testCodeFolders")
-    println(s"studentifiedBaseFolder: $studentifiedBaseFolder")
+    val exercises: Seq[String] = getExerciseNames(cleanMasterRepo, Some(masterRepo))
 
     val selectedExercises: Seq[String] = getSelectedExercises(exercises, firstOpt, lastOpt)
     println(
@@ -66,9 +64,9 @@ object Studentify {
        """.stripMargin)
     val initialExercise = getInitialExercise(selectedFirstOpt, selectedExercises)
     val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
-    stageFirstExercise(initialExercise, cleanMasterRepo, targetCourseFolder)
+    stageFirstExercise(initialExercise, new File(cleanMasterRepo, config.relativeSourceFolder), targetCourseFolder)
     copyMaster(cleanMasterRepo, targetCourseFolder)
-    val solutionPaths = hideExerciseSolutions(targetCourseFolder, selectedExercises)
+    hideExerciseSolutions(targetCourseFolder, selectedExercises)
     createBookmarkFile(initialExercise, targetCourseFolder)
     createSbtRcFile(targetCourseFolder)
     createBuildFile(targetCourseFolder, multiJVM)

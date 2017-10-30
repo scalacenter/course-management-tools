@@ -364,6 +364,8 @@ In the above example, a folder `fast-track-akka-scala` will be created under the
 
 > Note: `studentify` will copy over a number of files verbatim from the master build definition and overwrite or create a number of files in the student repo. A diagram, `images/sbtSourceCode.png` provides more details on this.
 
+![sbtSourceCode](images/sbtSourceCode.png)
+
 ### linearize
 
 `linearize` will generate a new git project in which every exercise is a commit in the project's history.

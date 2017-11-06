@@ -30,9 +30,9 @@ object Linearize {
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder) = cmdOptions.get
+    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile) = cmdOptions.get
 
-    implicit val config: MasterSettings = new MasterSettings(masterRepo)
+    implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
 
     exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
 

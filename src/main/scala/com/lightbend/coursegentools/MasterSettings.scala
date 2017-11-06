@@ -6,7 +6,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.collection.JavaConverters._
 
-class MasterSettings(masterRepo: File) {
+class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   import Console._
   private val consoleColors: Set[String] = Set("RESET", "GREEN", "RED", "BLUE", "CYAN", "YELLOW", "WHITE", "BLACK", "MAGENTA")
@@ -25,15 +25,37 @@ class MasterSettings(masterRepo: File) {
   }
 
   private val referenceConfig = ConfigFactory.load()
-  private val masterConfigFile = new File(masterRepo, "course-management.conf")
 
-  private val config = if (masterConfigFile.exists()) {
-    ConfigFactory.parseFile(masterConfigFile).withFallback(referenceConfig)
-  } else referenceConfig
+  private val cmdLineConfigFile: Option[File] =
+    if (optConfigurationFile.isDefined) {
+      val configurationFile = new File(masterRepo, optConfigurationFile.get)
+      if (!configurationFile.exists()) {
+        println(toConsoleRed(s"No such file: ${optConfigurationFile.get}"))
+        System.exit(-1)
+      }
+      Some(configurationFile)
+    } else {
+      None
+    }
+
+  private val defaultConfigFile: Option[File] = {
+    val configFile = new File(masterRepo, optConfigurationFile.getOrElse("course-management.conf"))
+    if (configFile.exists())
+      Some(configFile)
+    else None
+  }
+
+  private val config = (cmdLineConfigFile, defaultConfigFile) match {
+    case (Some(cfg), _) =>
+      ConfigFactory.parseFile(cfg).withFallback(referenceConfig)
+
+    case (None, Some(cfg)) =>
+      ConfigFactory.parseFile(cfg).withFallback(referenceConfig)
+
+    case _ => referenceConfig
+  }
 
   val testCodeFolders: List[String] = config.getStringList("studentify.test-code-folders").asScala.toList
-
-//  val studentifiedBaseFolder: String = config.getString("studentify.studentified-base-folder")
 
   val studentifyModeSelect: String = config.getString("studentify.studentify-mode-select")
 

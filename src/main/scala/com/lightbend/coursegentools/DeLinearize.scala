@@ -27,9 +27,9 @@ object DeLinearize {
 
     val cmdOptions = DeLinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val DeLinearizeCmdOptions(linearizedRepo, masterRepo) = cmdOptions.get
+    val DeLinearizeCmdOptions(linearizedRepo, masterRepo, optConfigurationFile) = cmdOptions.get
 
-    implicit val config: MasterSettings = new MasterSettings(masterRepo)
+    implicit val config: MasterSettings = new MasterSettings(masterRepo, optConfigurationFile)
 
     val exercisesInMaster = getExerciseNames(masterRepo)
     val exercisesAndSHAs = getExercisesAndSHAs(linearizedRepo)

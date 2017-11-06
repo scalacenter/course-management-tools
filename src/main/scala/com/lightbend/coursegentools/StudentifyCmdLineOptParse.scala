@@ -27,7 +27,7 @@ object StudentifyCmdLineOptParse {
   def parse(args: Array[String]): Option[StudentifyCmdOptions] = {
 
     val parser = new scopt.OptionParser[StudentifyCmdOptions]("studentify") {
-      head("studentify", "2.0")
+      head("studentify", "3.0")
 
       arg[File]("masterRepo")
         .text("base folder holding master course repository")
@@ -72,8 +72,17 @@ object StudentifyCmdLineOptParse {
       opt[String]("selected-first-exercise")
         .text("name of initial exercise on start")
         .abbr("sfe")
-        .action { case (selectedFirstEx, c) =>
-          c.copy(selectedFirst = Some(selectedFirstEx))
+        .action {
+          case (selectedFirstEx, c) =>
+            c.copy(selectedFirst = Some(selectedFirstEx))
+        }
+
+      opt[String]("config-file")
+        .text("configuration file")
+        .abbr("cfg")
+        .action {
+          case (cfgFile, c) =>
+            c.copy(configurationFile = Some(cfgFile))
         }
     }
 

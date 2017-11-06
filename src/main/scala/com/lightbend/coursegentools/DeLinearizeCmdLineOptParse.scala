@@ -27,7 +27,7 @@ object DeLinearizeCmdLineOptParse {
   def parse(args: Array[String]): Option[DeLinearizeCmdOptions] = {
 
     val parser = new scopt.OptionParser[DeLinearizeCmdOptions]("delinearize") {
-      head("delinearize", "1.0")
+      head("delinearize", "3.0")
 
       arg[File]("linearRepo")
         .text("base folder for linearized version repo")
@@ -47,6 +47,14 @@ object DeLinearizeCmdLineOptParse {
             System.exit(-1)
           }
           c.copy(masterRepo = masterRepo)
+        }
+
+      opt[String]("config-file")
+        .text("configuration file")
+        .abbr("cfg")
+        .action {
+          case (cfgFile, c) =>
+            c.copy(configurationFile = Some(cfgFile))
         }
     }
 

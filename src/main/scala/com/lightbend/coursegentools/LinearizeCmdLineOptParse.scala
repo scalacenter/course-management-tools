@@ -26,7 +26,7 @@ object LinearizeCmdLineOptParse {
   def parse(args: Array[String]): Option[LinearizeCmdOptions] = {
 
     val parser = new scopt.OptionParser[LinearizeCmdOptions]("linearize") {
-      head("linearize", "1.2")
+      head("linearize", "3.0")
 
       arg[File]("masterRepo")
         .text("base folder holding master course repository")
@@ -59,6 +59,14 @@ object LinearizeCmdLineOptParse {
         .abbr("f")
         .action { case (_, c) =>
           c.copy(forceDeleteExistingDestinationFolder = true)
+        }
+
+      opt[String]("config-file")
+        .text("configuration file")
+        .abbr("cfg")
+        .action {
+          case (cfgFile, c) =>
+            c.copy(configurationFile = Some(cfgFile))
         }
     }
 

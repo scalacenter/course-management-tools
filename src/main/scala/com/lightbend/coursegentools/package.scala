@@ -36,15 +36,18 @@ package object coursegentools {
                                   multiJVM: Boolean = false,
                                   first: Option[String] = None,
                                   last: Option[String] = None,
-                                  selectedFirst: Option[String] = None)
+                                  selectedFirst: Option[String] = None,
+                                  configurationFile: Option[String] = None)
 
   case class LinearizeCmdOptions(masterRepo: File = new File("."),
                                  linearRepo: File = new File("."),
                                  multiJVM: Boolean = false,
-                                 forceDeleteExistingDestinationFolder: Boolean = false)
+                                 forceDeleteExistingDestinationFolder: Boolean = false,
+                                 configurationFile: Option[String] = None)
 
   case class DeLinearizeCmdOptions(masterRepo: File = new File("."),
-                                   linearRepo: File = new File("."))
+                                   linearRepo: File = new File("."),
+                                   configurationFile: Option[String] = None)
 
   case class ExNameAndSHA(exName: String, exSHA: String)
 

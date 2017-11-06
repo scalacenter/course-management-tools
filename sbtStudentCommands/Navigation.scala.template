@@ -66,7 +66,7 @@ object Navigation {
       try {
         val mark: String = IO.read(bookmarkFile.get)
         val cmd: String = s"project $mark"
-        val newState = Command.process(cmd, state)
+        val newState = cmd :: state
         newState
       } catch {
         case e: java.io.FileNotFoundException => state

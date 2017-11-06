@@ -43,7 +43,7 @@ object Studentify {
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt) = cmdOptions.get
+    val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt, configurationFile) = cmdOptions.get
 
     exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
     val projectName = masterRepo.getName
@@ -52,7 +52,7 @@ object Studentify {
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)
 
-    implicit val config: MasterSettings = new MasterSettings(masterRepo)
+    implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
     import config.testCodeFolders, config.studentifyModeClassic.studentifiedBaseFolder
 
     val exercises: Seq[String] = getExerciseNames(cleanMasterRepo, Some(masterRepo))

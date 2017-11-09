@@ -13,7 +13,7 @@ import scala.util.matching._
 object Man {
   val manDetail: String = "Displays the README.md file. Use <noarg> for setup README.md or <e> for exercise README.md"
 
-  lazy val optArg = Space ~> StringBasic.?
+  lazy val optArg = OptSpace ~> StringBasic.?
 
   def man: Command = Command("man")(_ => optArg) { (state, arg) =>
     arg match {

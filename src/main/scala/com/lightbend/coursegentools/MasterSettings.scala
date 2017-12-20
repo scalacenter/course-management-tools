@@ -66,6 +66,7 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   val solutionsFolder: String = config.getString("studentify.solution-folder")
 
+  val masterBaseProjectName: String = config.getString("studentify.master-base-project-name")
   val studentifiedProjectName: String = config.getString("studentify.studentified-project-name")
 
   object Colors {

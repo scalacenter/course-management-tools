@@ -23,7 +23,6 @@ object MasterAdm {
       case true =>
         createMasterBuildFile(exercises, masterRepo, multiJVM)
 
-
       case _ => println(s"Nothing to do...")
 
     }

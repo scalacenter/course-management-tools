@@ -261,7 +261,7 @@ object Helpers {
 
     val buildDefinition = if (multiJVM) {
       s"""
-         |lazy val base = (project in file("."))
+         |lazy val ${config.masterBaseProjectName} = (project in file("."))
          |  .aggregate(
          |    common,
          |    $exerciseList
@@ -278,7 +278,7 @@ object Helpers {
        """.stripMargin
     } else {
       s"""
-         |lazy val base = (project in file("."))
+         |lazy val ${config.masterBaseProjectName} = (project in file("."))
          |  .aggregate(
          |    common,
          |    $exerciseList

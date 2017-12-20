@@ -40,9 +40,7 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   private val defaultConfigFile: Option[File] = {
     val configFile = new File(masterRepo, optConfigurationFile.getOrElse("course-management.conf"))
-    if (configFile.exists())
-      Some(configFile)
-    else None
+    if (configFile.exists()) Some(configFile) else None
   }
 
   private val config = (cmdLineConfigFile, defaultConfigFile) match {

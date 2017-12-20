@@ -31,6 +31,11 @@ package object coursegentools {
   type Seq[+A] = scala.collection.immutable.Seq[A]
   val Seq = scala.collection.immutable.Seq
 
+  case class MasterAdmCmdOptions(masterRepo: File = new File("."),
+                                 multiJVM: Boolean = false,
+                                 regenBuildFile: Boolean = false,
+                                 configurationFile: Option[String] = None)
+
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),
                                   multiJVM: Boolean = false,

@@ -57,6 +57,8 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   val studentifyModeSelect: String = config.getString("studentify.studentify-mode-select")
 
+  val studentifyFilesToCleanUp: List[String] = config.getStringList("studentify.studentify-files-to-clean-up").asScala.toList
+
   val relativeSourceFolder: String = config.getString("studentify.relative-source-folder")
 
   object studentifyModeClassic {

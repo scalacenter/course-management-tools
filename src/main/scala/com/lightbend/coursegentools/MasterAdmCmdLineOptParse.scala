@@ -52,6 +52,41 @@ object MasterAdmCmdLineOptParse {
             c.copy(regenBuildFile = true)
         }
 
+      opt[Int]("delete")
+        .text("")
+        .abbr("d")
+        .action { case (exNr, c) =>
+          c.copy(deleteExerciseNr = Some(exNr))
+        }
+
+      opt[Unit]("renumber")
+        .text("renumber exercises")
+        .abbr("r")
+        .action { case (_, c) =>
+            c.copy(renumberExercises = true)
+        }
+
+      opt[Int]("renumber-offset")
+        .text("renumber exercises - offset")
+        .abbr("ro")
+        .action { case (offset, c) =>
+            c.copy(renumberExercisesBase = offset)
+        }
+
+      opt[Int]("renumber-step")
+        .text("renumber exercises - step")
+        .abbr("rs")
+        .action { case (step, c) =>
+          c.copy(renumberExercisesStep = step)
+        }
+
+      opt[Int]("duplicate-insert-before")
+        .text("")
+        .abbr("dib")
+        .action { case (exNr, c) =>
+          c.copy(duplicateExerciseInsertBeforeNr = Some(exNr))
+        }
+
       opt[String]("config-file")
         .text("configuration file")
         .abbr("cfg")

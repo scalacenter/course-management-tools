@@ -238,6 +238,30 @@ object Helpers {
     selExcs
   }
 
+  def duplicateExercise(masterRepo: File,
+                        exercise: String,
+                        exerciseNr: Int)(implicit config: MasterSettings): Unit = {
+
+    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val newExercise = renumberExercise(exercise, exerciseNr) + "_copy"
+    sbtio.copyDirectory(new File(relativeSourceFolder, exercise), new File(relativeSourceFolder, newExercise), preserveLastModified = true)
+  }
+
+  def shiftExercisesUp(masterRepo: File,
+                       exercises: Vector[String],
+                       startFromExerciseNumber: Int,
+                       exerciseNumbers: Vector[Int])(implicit config: MasterSettings): Unit = {
+
+    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val exercisesToShift = exercises.dropWhile(exercise => extractExerciseNr(exercise) != startFromExerciseNumber)
+    val moves = for {
+      exercise <- exercisesToShift
+      oldExDir = new File(relativeSourceFolder, exercise)
+      newExDir = new File(relativeSourceFolder, renumberExercise(exercise, extractExerciseNr(exercise) + 1))
+    } yield (oldExDir, newExDir)
+    sbtio.move(moves)
+  }
+
   def createMasterBuildFile(exercises: Seq[String],
                             masterRepo: File,
                             multiJVM: Boolean)(implicit config: MasterSettings): Unit = {

@@ -94,6 +94,14 @@ object MasterAdmCmdLineOptParse {
           case (cfgFile, c) =>
             c.copy(configurationFile = Some(cfgFile))
         }
+
+      opt[Unit]("check-master-repo")
+        .text("verify soundness of master repository")
+        .abbr("c")
+        .action {
+          case (_, c) =>
+            c.copy(checkMaster = true)
+        }
     }
 
     parser.parse(args, MasterAdmCmdOptions())

@@ -59,7 +59,8 @@ package object coursegentools {
                                  renumberExercises: Boolean = false,
                                  renumberExercisesBase: Int = 0,
                                  renumberExercisesStep: Int = 1,
-                                 configurationFile: Option[String] = None)
+                                 configurationFile: Option[String] = None,
+                                 checkMaster: Boolean = false)
 
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),

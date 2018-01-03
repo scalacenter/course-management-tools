@@ -2,6 +2,7 @@ package com.lightbend.coursegentools
 
 import sbt.io.{IO => sbtio}
 import java.io.File
+import java.io.File.{ separatorChar => sep }
 import scala.sys.process.Process
 import scala.Console
 
@@ -53,6 +54,79 @@ object Helpers {
     val zipFile = new File(exFolder.getParentFile, s"${exFolder.getName}.zip")
     sbtio.zip(fl, zipFile)
     if (removeOriginal) sbtio.delete(exFolder)
+  }
+
+  def checkMasterRepo(masterRepo: File, exercises: Vector[String], exitOnFirstError: Boolean)(implicit config: MasterSettings): Unit = {
+    val requiredSbtProjectFiles =
+    List(
+    "CommonSettings.scala",
+    "AdditionalSettings.scala",
+    "CompileOptions.scala",
+    "Dependencies.scala",
+    "Man.scala",
+    "Navigation.scala",
+    "StudentCommandsPlugin.scala",
+    "StudentKeys.scala",
+    "build.properties"
+    )
+
+    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val sbtProjectFolder = new File(relativeSourceFolder, "project")
+
+    if (! new File(relativeSourceFolder, ".courseName").exists()) {
+      println(toConsoleRed(s"ERROR: missing .courseName file in project root folder"))
+      if (exitOnFirstError) System.exit(-1)
+    } else {
+      if (sbtio.readLines(new File(relativeSourceFolder, ".courseName")).isEmpty) {
+        println(toConsoleRed(s"ERROR: .courseName file in project folder should be non-empty"))
+        if (exitOnFirstError) System.exit(-1)
+      }
+    }
+
+    if (! new File(relativeSourceFolder, "README.md").exists()) {
+      println(toConsoleRed(s"ERROR: missing README.md file in project root folder"))
+      if (exitOnFirstError) System.exit(-1)
+    }
+
+    if (! new File(relativeSourceFolder, "common").exists()) {
+      println(toConsoleRed(s"ERROR: missing project 'common'"))
+      if (exitOnFirstError) System.exit(-1)
+    }
+
+    if (! new File(relativeSourceFolder, "build.sbt").exists) {
+      println(toConsoleRed(s"ERROR: missing build.sbt file"))
+      if (exitOnFirstError) System.exit(-1)
+    }
+
+    if (! sbtProjectFolder.exists()) {
+      println(toConsoleRed(s"ERROR: missing sbt 'project' folder"))
+      if (exitOnFirstError) System.exit(-1)
+    }
+
+    for { pfile <- requiredSbtProjectFiles } {
+      if ( ! new File(sbtProjectFolder, pfile).exists()) {
+        println(toConsoleRed(s"ERROR: missing file: project/$pfile"))
+        if (exitOnFirstError) System.exit(-1)
+      }
+    }
+
+    // Check all required README files are present
+    for { project <- "common" +: exercises} {
+      val projectFolder = new File(relativeSourceFolder, project)
+
+      val readmeFile = new File(projectFolder, "src" + sep + "test" + sep + "resources" + sep + "README.md")
+      if (! readmeFile.exists()) {
+        println(toConsoleRed(s"ERROR: missing README.md file in folder '${project + sep + "src" + sep + "test" + sep + "resources"}'"))
+        if (exitOnFirstError) System.exit(-1)
+      } else {
+        if (sbtio.readLines(readmeFile).isEmpty) {
+          println(toConsoleRed(s"ERROR: README.md file in folder '${project + sep + "src" + sep + "test"}' should have at least one line"))
+          if (exitOnFirstError) System.exit(-1)
+        }
+      }
+    }
+
+
   }
 
   def putBackToMaster(masterRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExNameAndSHA])(implicit config: MasterSettings): Unit = {

@@ -17,7 +17,8 @@ object MasterAdm {
                             renumberExercises,
                             renumberExercisesBase,
                             renumberExercisesStep,
-                            configurationFile) = cmdOptions.get
+                            configurationFile,
+                            checkMaster) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
 
@@ -27,17 +28,20 @@ object MasterAdm {
     (regenBuildFile,
      duplicateInsertBefore,
      deleteExerciseNr,
-     renumberExercises, renumberExercisesBase, renumberExercisesStep) match {
+     renumberExercises, renumberExercisesBase, renumberExercisesStep,
+     checkMaster) match {
       case (true,
             None,
             None,
-            false, _, _) =>
+            false, _, _,
+            false) =>
         createMasterBuildFile(exercises, masterRepo, multiJVM)
 
       case (false,
             Some(dibExNr),
             None,
-            false, _, _) if exerciseNumbers.contains(dibExNr) =>
+            false, _, _,
+            false) if exerciseNumbers.contains(dibExNr) =>
         val exercise = getExerciseName(exercises, dibExNr).get
         if (exerciseNumbers.contains(dibExNr - 1) || dibExNr == 0) {
           duplicateExercise(masterRepo, exercise, dibExNr)
@@ -50,14 +54,16 @@ object MasterAdm {
       case (false,
             Some(dibExNr),
             None,
-            false, _, _) =>
+            false, _, _,
+            false) =>
         println(toConsoleRed(s"Duplicate and insert before: no exercise with number $dibExNr"))
         System.exit(-1)
 
       case (false,
             None,
             Some(dibExNr),
-            false, _, _) if exerciseNumbers.contains(dibExNr) =>
+            false, _, _,
+            false) if exerciseNumbers.contains(dibExNr) =>
         import sbt.io.{IO => sbtio}
         val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
         val exercise = getExerciseName(exercises, dibExNr).get
@@ -67,14 +73,16 @@ object MasterAdm {
       case (false,
             None,
             Some(dibExNr),
-            false, _, _) =>
+            false, _, _,
+            false) =>
         println(toConsoleRed(s"Delete exercise: no exercise with number $dibExNr"))
         System.exit(-1)
 
       case (false,
             None,
             None,
-            true, offset, step) =>
+            true, offset, step,
+            false) =>
         import sbt.io.{IO => sbtio}
         val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
         val moves = for {
@@ -87,7 +95,19 @@ object MasterAdm {
         sbtio.move(moves)
         createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
 
-      case (false, None, None, false, _, _) => println(toConsoleGreen(s"Nothing to do..."))
+      case (false,
+            None,
+            None,
+            false, _, _,
+            true) =>
+        exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
+        val projectName = masterRepo.getName
+
+        val tmpDir = cleanMasterViaGit(masterRepo, projectName)
+        val cleanMasterRepo = new File(tmpDir, projectName)
+        checkMasterRepo(cleanMasterRepo, exercises, exitOnFirstError = false)
+
+      case (false, None, None, false, _, _, false) => println(toConsoleGreen(s"Nothing to do..."))
 
       case _ => println(toConsoleRed(s"Invalid combination of options"))
 

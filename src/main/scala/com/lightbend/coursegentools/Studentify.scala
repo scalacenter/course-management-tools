@@ -24,17 +24,6 @@ import com.typesafe.config.ConfigFactory
 
 object Studentify {
 
-  private val filesToCleanup = List(
-    ".git",
-    ".gitignore",
-    "man.sbt",
-    "navigation.sbt",
-    "shell-prompt.sbt",
-    "Jenkinsfile",
-    "Jenkinsfile.original",
-    "course-management.conf"
-  )
-
   def main(args: Array[String]): Unit = {
 
     import Helpers._
@@ -72,7 +61,7 @@ object Studentify {
     createBuildFile(targetCourseFolder, multiJVM)
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
     loadStudentSettings(masterRepo, targetCourseFolder)
-    cleanUp(filesToCleanup, targetCourseFolder)
+    cleanUp(config.studentifyFilesToCleanUp, targetCourseFolder)
     sbtio.delete(tmpDir)
 
   }

@@ -23,3 +23,4 @@ scalacOptions ++= List(
 addCommandAlias("studentify", "runMain com.lightbend.coursegentools.Studentify")
 addCommandAlias("linearize", "runMain com.lightbend.coursegentools.Linearize")
 addCommandAlias("delinearize", "runMain com.lightbend.coursegentools.DeLinearize")
+addCommandAlias("masteradm", "runMain com.lightbend.coursegentools.MasterAdm")

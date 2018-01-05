@@ -238,6 +238,86 @@ object Helpers {
     selExcs
   }
 
+  def duplicateExercise(masterRepo: File,
+                        exercise: String,
+                        exerciseNr: Int)(implicit config: MasterSettings): Unit = {
+
+    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val newExercise = renumberExercise(exercise, exerciseNr) + "_copy"
+    sbtio.copyDirectory(new File(relativeSourceFolder, exercise), new File(relativeSourceFolder, newExercise), preserveLastModified = true)
+  }
+
+  def shiftExercisesUp(masterRepo: File,
+                       exercises: Vector[String],
+                       startFromExerciseNumber: Int,
+                       exerciseNumbers: Vector[Int])(implicit config: MasterSettings): Unit = {
+
+    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val exercisesToShift = exercises.dropWhile(exercise => extractExerciseNr(exercise) != startFromExerciseNumber)
+    val moves = for {
+      exercise <- exercisesToShift
+      oldExDir = new File(relativeSourceFolder, exercise)
+      newExDir = new File(relativeSourceFolder, renumberExercise(exercise, extractExerciseNr(exercise) + 1))
+    } yield (oldExDir, newExDir)
+    sbtio.move(moves)
+  }
+
+  def createMasterBuildFile(exercises: Seq[String],
+                            masterRepo: File,
+                            multiJVM: Boolean)(implicit config: MasterSettings): Unit = {
+
+    val targetFolder = new File(masterRepo, config.relativeSourceFolder)
+
+    def exerciseDep(exercise: String): String = {
+      s"""lazy val $exercise = project
+         |  .settings(CommonSettings.commonSettings: _*)
+         |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
+    }
+
+    def exerciseMJvmDep(exercise: String): String = {
+      s"""lazy val $exercise = project
+         |  .settings(SbtMultiJvm.multiJvmSettings: _*)
+         |  .settings(CommonSettings.commonSettings: _*)
+         |  .dependsOn(common % "test->test;compile->compile")
+         |  .configs(MultiJvm)""".stripMargin
+    }
+    val exerciseList = exercises.mkString(",\n    ")
+
+    val buildDefinition = if (multiJVM) {
+      s"""
+         |lazy val ${config.masterBaseProjectName} = (project in file("."))
+         |  .aggregate(
+         |    common,
+         |    $exerciseList
+         | ).settings(SbtMultiJvm.multiJvmSettings: _*)
+         |  .settings(CommonSettings.commonSettings: _*)
+         |  .configs(MultiJvm)
+         |
+         |lazy val common = project
+         |  .settings(SbtMultiJvm.multiJvmSettings: _*)
+         |  .settings(CommonSettings.commonSettings: _*)
+         |  .configs(MultiJvm)
+         |
+         |${exercises.map{exrc => exerciseMJvmDep(exrc)}.mkString("\n\n")}
+       """.stripMargin
+    } else {
+      s"""
+         |lazy val ${config.masterBaseProjectName} = (project in file("."))
+         |  .aggregate(
+         |    common,
+         |    $exerciseList
+         | ).settings(CommonSettings.commonSettings: _*)
+         |
+         |lazy val common = project.settings(CommonSettings.commonSettings: _*)
+         |
+         |${exercises.map{exrc => exerciseDep(exrc)}.mkString("\n\n")}
+       """.stripMargin
+    }
+
+    dumpStringToFile(buildDefinition, new File(targetFolder, "build.sbt").getPath)
+
+  }
+
   def createBuildFile(targetFolder: File, multiJVM: Boolean)(implicit config: MasterSettings): Unit = {
     val buildDef =
       s"""

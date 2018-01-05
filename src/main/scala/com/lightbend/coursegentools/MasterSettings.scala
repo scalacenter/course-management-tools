@@ -40,9 +40,7 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   private val defaultConfigFile: Option[File] = {
     val configFile = new File(masterRepo, optConfigurationFile.getOrElse("course-management.conf"))
-    if (configFile.exists())
-      Some(configFile)
-    else None
+    if (configFile.exists()) Some(configFile) else None
   }
 
   private val config = (cmdLineConfigFile, defaultConfigFile) match {
@@ -59,6 +57,8 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   val studentifyModeSelect: String = config.getString("studentify.studentify-mode-select")
 
+  val studentifyFilesToCleanUp: List[String] = config.getStringList("studentify.studentify-files-to-clean-up").asScala.toList
+
   val relativeSourceFolder: String = config.getString("studentify.relative-source-folder")
 
   object studentifyModeClassic {
@@ -68,6 +68,7 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   val solutionsFolder: String = config.getString("studentify.solution-folder")
 
+  val masterBaseProjectName: String = config.getString("studentify.master-base-project-name")
   val studentifiedProjectName: String = config.getString("studentify.studentified-project-name")
 
   object Colors {

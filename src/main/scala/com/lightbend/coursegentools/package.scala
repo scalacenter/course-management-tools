@@ -24,12 +24,42 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 
+import scala.util.matching.Regex
+
 package object coursegentools {
 
   def toConsoleRed(msg: String): String = Console.RED + msg + Console.RESET
+  def toConsoleGreen(msg: String): String = Console.GREEN + msg + Console.RESET
 
   type Seq[+A] = scala.collection.immutable.Seq[A]
   val Seq = scala.collection.immutable.Seq
+
+  val ExerciseNumberSpec: Regex = """exercise_(\d{3})_.*""".r
+
+  def extractExerciseNr(exercise: String): Int = {
+    val ExerciseNumberSpec(d) = exercise
+    d.toInt
+  }
+
+  def renumberExercise(exercise: String, newNumber: Int): String = {
+    val newNumerLZ = f"exercise_$newNumber%03d_"
+    val oldNumberPrefix = f"exercise_${extractExerciseNr(exercise)}%03d_"
+    exercise.replaceFirst(oldNumberPrefix, newNumerLZ)
+  }
+
+  def getExerciseName(exercises: Vector[String], exerciseNumber: Int): Option[String] = {
+    exercises.find(exercise => extractExerciseNr(exercise) == exerciseNumber)
+  }
+
+  case class MasterAdmCmdOptions(masterRepo: File = new File("."),
+                                 multiJVM: Boolean = false,
+                                 regenBuildFile: Boolean = false,
+                                 duplicateExerciseInsertBeforeNr: Option[Int] = None,
+                                 deleteExerciseNr: Option[Int] = None,
+                                 renumberExercises: Boolean = false,
+                                 renumberExercisesBase: Int = 0,
+                                 renumberExercisesStep: Int = 1,
+                                 configurationFile: Option[String] = None)
 
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),

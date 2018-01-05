@@ -30,6 +30,7 @@ object DeLinearize {
     val DeLinearizeCmdOptions(linearizedRepo, masterRepo, optConfigurationFile) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, optConfigurationFile)
+    implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
 
     val exercisesInMaster = getExerciseNames(masterRepo)
     val exercisesAndSHAs = getExercisesAndSHAs(linearizedRepo)

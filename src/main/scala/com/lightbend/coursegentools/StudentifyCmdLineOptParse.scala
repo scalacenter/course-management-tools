@@ -26,26 +26,24 @@ object StudentifyCmdLineOptParse {
 
   def parse(args: Array[String]): Option[StudentifyCmdOptions] = {
 
+    implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
+
     val parser = new scopt.OptionParser[StudentifyCmdOptions]("studentify") {
       head("studentify", "3.0")
 
       arg[File]("masterRepo")
         .text("base folder holding master course repository")
         .action { case (masterRepo, c) =>
-          if (! folderExists(masterRepo)) {
-            println(toConsoleRed(s"Base master repo folder (${masterRepo.getPath}) doesn't exist"))
-            System.exit(-1)
-          }
+          if (! folderExists(masterRepo))
+            printError(s"Base master repo folder (${masterRepo.getPath}) doesn't exist")
           c.copy(masterRepo = masterRepo)
         }
 
       arg[File]("out")
         .text("base folder for student repo")
         .action { case (out, config) =>
-          if (! folderExists(out)) {
-            println(toConsoleRed(s"Base folder (${out.getPath}) doesn't exist"))
-            System.exit(-1)
-          }
+          if (! folderExists(out))
+            printError(s"Base folder (${out.getPath}) doesn't exist")
           config.copy(out = out)}
 
       opt[Unit]("multi-jvm")

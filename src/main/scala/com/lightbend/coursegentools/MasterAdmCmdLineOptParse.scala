@@ -25,16 +25,16 @@ import java.io.File
 object MasterAdmCmdLineOptParse {
   def parse(args: Array[String]): Option[MasterAdmCmdOptions] = {
 
+    implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
+
     val parser = new scopt.OptionParser[MasterAdmCmdOptions]("masteradm") {
       head("masteradm", "3.0")
 
       arg[File]("masterRepo")
         .text("base folder holding master course repository")
         .action { case (masterRepo, c) =>
-          if (! folderExists(masterRepo)) {
-            println(toConsoleRed(s"Base master repo folder (${masterRepo.getPath}) doesn't exist"))
-            System.exit(-1)
-          }
+          if (! folderExists(masterRepo))
+            printError(s"Base master repo folder (${masterRepo.getPath}) doesn't exist")
           c.copy(masterRepo = masterRepo)
         }
 

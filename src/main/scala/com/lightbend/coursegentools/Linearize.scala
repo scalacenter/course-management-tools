@@ -28,6 +28,8 @@ object Linearize {
     import java.io.File
     import sbt.io.{ IO => sbtio }
 
+    implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
+
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
     val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile) = cmdOptions.get
@@ -43,12 +45,11 @@ object Linearize {
 
     (destinationFolder.exists(), forceDeleteExistingDestinationFolder) match {
       case (true, false) =>
-        println(toConsoleRed(
+        printError(
           """
              |Destination folder ${destinationFolder.getPath} exists: Either remove this folder
              |manually or use the '-f' command-line option to delete it automatically
-             |""".stripMargin))
-        System.exit(-1)
+             |""".stripMargin)
       case (true, true) =>
         sbtio.delete(destinationFolder)
       case _ =>

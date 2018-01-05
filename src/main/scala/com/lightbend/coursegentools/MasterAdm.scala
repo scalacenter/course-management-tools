@@ -21,6 +21,7 @@ object MasterAdm {
                             checkMaster) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
+    implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
 
     val exercises: Vector[String] = getExerciseNames(masterRepo)
     val exerciseNumbers = exercises.map(extractExerciseNr)
@@ -56,8 +57,7 @@ object MasterAdm {
             None,
             false, _, _,
             false) =>
-        println(toConsoleRed(s"Duplicate and insert before: no exercise with number $dibExNr"))
-        System.exit(-1)
+        printError(s"ERROR: Duplicate and insert before: no exercise with number $dibExNr")
 
       case (false,
             None,
@@ -75,8 +75,7 @@ object MasterAdm {
             Some(dibExNr),
             false, _, _,
             false) =>
-        println(toConsoleRed(s"Delete exercise: no exercise with number $dibExNr"))
-        System.exit(-1)
+        printError(s"ERROR: Delete exercise: no exercise with number $dibExNr")
 
       case (false,
             None,
@@ -109,7 +108,7 @@ object MasterAdm {
 
       case (false, None, None, false, _, _, false) => println(toConsoleGreen(s"Nothing to do..."))
 
-      case _ => println(toConsoleRed(s"Invalid combination of options"))
+      case _ => printError(s"ERROR: Invalid combination of options")
 
     }
 

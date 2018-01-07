@@ -28,8 +28,6 @@ object MasterAdm {
     val exercises: Vector[String] = getExerciseNames(masterRepo)
     val exerciseNumbers = exercises.map(extractExerciseNr)
 
-    println(s"Exercises: $exercises")
-
     (regenBuildFile,
      duplicateInsertBefore,
      deleteExerciseNr,

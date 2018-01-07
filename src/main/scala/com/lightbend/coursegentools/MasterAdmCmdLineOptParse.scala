@@ -102,6 +102,14 @@ object MasterAdmCmdLineOptParse {
           case (_, c) =>
             c.copy(checkMaster = true)
         }
+
+      opt[Unit]("add-master-commands")
+        .text("add command files to master repository")
+        .abbr("amc")
+          .action {
+            case (_, c) =>
+              c.copy(addMasterCommands = true)
+          }
     }
 
     parser.parse(args, MasterAdmCmdOptions())

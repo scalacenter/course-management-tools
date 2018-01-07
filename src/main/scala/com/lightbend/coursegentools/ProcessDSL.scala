@@ -41,6 +41,11 @@ object ProcessDSL {
         System.exit(status.getOrElse(-1))
       }
     }
+
+    def run: Int = {
+      val status = Try(Process(cmd.cmd, cmd.workingDir).!)
+      status.getOrElse(-1)
+    }
   }
 
   implicit class StringToProcessExt(val command: String) extends AnyVal {

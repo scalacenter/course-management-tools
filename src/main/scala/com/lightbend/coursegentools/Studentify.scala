@@ -30,7 +30,7 @@ object Studentify {
     import java.io.File
     import sbt.io.{IO => sbtio}
 
-    implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
+    implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)

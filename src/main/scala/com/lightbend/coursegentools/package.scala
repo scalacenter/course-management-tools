@@ -36,6 +36,10 @@ package object coursegentools {
     if (eofe.exitOnFirstError) System.exit(-1)
   }
 
+  def printNotification(msg: String): Unit = {
+    println(toConsoleGreen(msg))
+  }
+
   type Seq[+A] = scala.collection.immutable.Seq[A]
   val Seq = scala.collection.immutable.Seq
 
@@ -67,7 +71,8 @@ package object coursegentools {
                                  renumberExercisesBase: Int = 0,
                                  renumberExercisesStep: Int = 1,
                                  configurationFile: Option[String] = None,
-                                 checkMaster: Boolean = false)
+                                 checkMaster: Boolean = false,
+                                 addMasterCommands: Boolean = false)
 
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),

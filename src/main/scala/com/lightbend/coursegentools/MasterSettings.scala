@@ -30,8 +30,8 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
     if (optConfigurationFile.isDefined) {
       val configurationFile = new File(masterRepo, optConfigurationFile.get)
       if (!configurationFile.exists()) {
-        println(toConsoleRed(s"No such file: ${optConfigurationFile.get}"))
-        System.exit(-1)
+        implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
+        printError(s"No such file: ${optConfigurationFile.get}")
       }
       Some(configurationFile)
     } else {

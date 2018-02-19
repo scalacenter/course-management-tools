@@ -31,6 +31,15 @@ package object coursegentools {
   def toConsoleRed(msg: String): String = Console.RED + msg + Console.RESET
   def toConsoleGreen(msg: String): String = Console.GREEN + msg + Console.RESET
 
+  def printError(msg: String)(implicit eofe: ExitOnFirstError): Unit = {
+    println(toConsoleRed(msg))
+    if (eofe.exitOnFirstError) System.exit(-1)
+  }
+
+  def printNotification(msg: String): Unit = {
+    println(toConsoleGreen(msg))
+  }
+
   type Seq[+A] = scala.collection.immutable.Seq[A]
   val Seq = scala.collection.immutable.Seq
 
@@ -51,6 +60,8 @@ package object coursegentools {
     exercises.find(exercise => extractExerciseNr(exercise) == exerciseNumber)
   }
 
+  case class ExitOnFirstError(exitOnFirstError: Boolean = false)
+
   case class MasterAdmCmdOptions(masterRepo: File = new File("."),
                                  multiJVM: Boolean = false,
                                  regenBuildFile: Boolean = false,
@@ -59,7 +70,9 @@ package object coursegentools {
                                  renumberExercises: Boolean = false,
                                  renumberExercisesBase: Int = 0,
                                  renumberExercisesStep: Int = 1,
-                                 configurationFile: Option[String] = None)
+                                 configurationFile: Option[String] = None,
+                                 checkMaster: Boolean = false,
+                                 addMasterCommands: Boolean = false)
 
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),

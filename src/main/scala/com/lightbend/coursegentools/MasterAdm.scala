@@ -5,6 +5,7 @@ import java.io.File
 object MasterAdm {
 
   def main(args: Array[String]): Unit = {
+    import ProcessDSL._
     import Helpers._
 
     val cmdOptions = MasterAdmCmdLineOptParse.parse(args)
@@ -17,9 +18,12 @@ object MasterAdm {
                             renumberExercises,
                             renumberExercisesBase,
                             renumberExercisesStep,
-                            configurationFile) = cmdOptions.get
+                            configurationFile,
+                            checkMaster,
+                            updateMasterCommands) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
+    implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)
 
     val exercises: Vector[String] = getExerciseNames(masterRepo)
     val exerciseNumbers = exercises.map(extractExerciseNr)
@@ -27,17 +31,23 @@ object MasterAdm {
     (regenBuildFile,
      duplicateInsertBefore,
      deleteExerciseNr,
-     renumberExercises, renumberExercisesBase, renumberExercisesStep) match {
+     renumberExercises, renumberExercisesBase, renumberExercisesStep,
+     checkMaster,
+     updateMasterCommands) match {
       case (true,
             None,
             None,
-            false, _, _) =>
+            false, _, _,
+            false,
+            false) =>
         createMasterBuildFile(exercises, masterRepo, multiJVM)
 
       case (false,
             Some(dibExNr),
             None,
-            false, _, _) if exerciseNumbers.contains(dibExNr) =>
+            false, _, _,
+            false,
+            false) if exerciseNumbers.contains(dibExNr) =>
         val exercise = getExerciseName(exercises, dibExNr).get
         if (exerciseNumbers.contains(dibExNr - 1) || dibExNr == 0) {
           duplicateExercise(masterRepo, exercise, dibExNr)
@@ -50,14 +60,17 @@ object MasterAdm {
       case (false,
             Some(dibExNr),
             None,
-            false, _, _) =>
-        println(toConsoleRed(s"Duplicate and insert before: no exercise with number $dibExNr"))
-        System.exit(-1)
+            false, _, _,
+            false,
+            false) =>
+        printError(s"ERROR: Duplicate and insert before: no exercise with number $dibExNr")
 
       case (false,
             None,
             Some(dibExNr),
-            false, _, _) if exerciseNumbers.contains(dibExNr) =>
+            false, _, _,
+            false,
+            false) if exerciseNumbers.contains(dibExNr) =>
         import sbt.io.{IO => sbtio}
         val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
         val exercise = getExerciseName(exercises, dibExNr).get
@@ -67,14 +80,17 @@ object MasterAdm {
       case (false,
             None,
             Some(dibExNr),
-            false, _, _) =>
-        println(toConsoleRed(s"Delete exercise: no exercise with number $dibExNr"))
-        System.exit(-1)
+            false, _, _,
+            false,
+            false) =>
+        printError(s"ERROR: Delete exercise: no exercise with number $dibExNr")
 
       case (false,
             None,
             None,
-            true, offset, step) =>
+            true, offset, step,
+            false,
+            false) =>
         import sbt.io.{IO => sbtio}
         val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
         val moves = for {
@@ -87,9 +103,39 @@ object MasterAdm {
         sbtio.move(moves)
         createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
 
-      case (false, None, None, false, _, _) => println(toConsoleGreen(s"Nothing to do..."))
+      case (false,
+            None,
+            None,
+            false, _, _,
+            true,
+            false) =>
 
-      case _ => println(toConsoleRed(s"Invalid combination of options"))
+        val tryGitVersion = "git --version".toProcessCmd(workingDir = masterRepo).run
+        if (tryGitVersion != 0)
+          printError(s"ERROR: git not found: makes sure git is properly installed")
+
+        val gitStatus = "git status".toProcessCmd(workingDir = masterRepo).run
+        if (gitStatus != 0)
+          printError(s"ERROR: Master repository is not a git project")
+
+        exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
+        val projectName = masterRepo.getName
+
+        val tmpDir = cleanMasterViaGit(masterRepo, projectName)
+        val cleanMasterRepo = new File(tmpDir, projectName)
+        checkMasterRepo(cleanMasterRepo, exercises, exitOnFirstError = false)
+
+      case (false,
+            None,
+            None,
+            false, _, _,
+            false,
+            true) =>
+        addMasterCommands(masterRepo)
+
+      case (false, None, None, false, _, _, false, false) => println(toConsoleGreen(s"Nothing to do..."))
+
+      case _ => printError(s"ERROR: Invalid combination of options")
 
     }
 

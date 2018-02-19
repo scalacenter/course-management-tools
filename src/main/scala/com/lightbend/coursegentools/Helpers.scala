@@ -2,8 +2,8 @@ package com.lightbend.coursegentools
 
 import sbt.io.{IO => sbtio}
 import java.io.File
+import java.io.File.{ separatorChar => sep }
 import scala.sys.process.Process
-import scala.Console
 
 /**
   * Copyright © 2016 Lightbend, Inc
@@ -55,6 +55,108 @@ object Helpers {
     if (removeOriginal) sbtio.delete(exFolder)
   }
 
+  def addMasterCommands(masterRepo: File)(implicit config: MasterSettings, exitOnFirstError: ExitOnFirstError): Unit = {
+    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val sbtProjectFolder = new File(relativeSourceFolder, "project")
+
+    if (! sbtProjectFolder.exists()) {
+      sbtio.createDirectory(sbtProjectFolder)
+    } else {
+      if (! sbtProjectFolder.isDirectory) {
+        printError(s"ERROR: $sbtProjectFolder should be a folder")
+      }
+    }
+
+    val sbtMasterCommandsTemplateFolder = new File("sbtMasterCommands")
+
+    val moves = for {
+      template <- sbtio.listFiles(sbtMasterCommandsTemplateFolder)
+      target = new File(sbtProjectFolder, template.getName.replaceAll(".template", ""))
+    } yield (template, target)
+    sbtio.copy(moves, overwrite = true, preserveLastModified = true, preserveExecutable = false)
+  }
+
+  def checkMasterRepo(masterRepo: File, exercises: Vector[String], exitOnFirstError: Boolean)(implicit config: MasterSettings): Unit = {
+    val requiredSbtProjectFiles =
+    List(
+    "CommonSettings.scala",
+    "AdditionalSettings.scala",
+    "CompileOptions.scala",
+    "Dependencies.scala",
+    "Man.scala",
+    "Navigation.scala",
+    "MPSelection.scala",
+    "StudentCommandsPlugin.scala",
+    "StudentKeys.scala",
+    "build.properties"
+    )
+
+    implicit val eofe: ExitOnFirstError = ExitOnFirstError(exitOnFirstError)
+
+    var numberOfErrors = 0
+
+    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val sbtProjectFolder = new File(relativeSourceFolder, "project")
+
+    if (! new File(relativeSourceFolder, ".courseName").exists()) {
+      printError(s"ERROR: missing .courseName file in project root folder")
+      numberOfErrors += 1
+    } else {
+      if (sbtio.readLines(new File(relativeSourceFolder, ".courseName")).isEmpty) {
+        printError(s"ERROR: .courseName file in project folder should be non-empty")
+        numberOfErrors += 1
+      }
+    }
+
+    if (! new File(relativeSourceFolder, "README.md").exists()) {
+      printError(s"ERROR: missing README.md file in project root folder")
+      numberOfErrors += 1
+    }
+
+    if (! new File(relativeSourceFolder, "common").exists()) {
+      printError(s"ERROR: missing project 'common'")
+      numberOfErrors += 1
+    }
+
+    if (! new File(relativeSourceFolder, "build.sbt").exists) {
+      printError(s"ERROR: missing build.sbt file")
+      numberOfErrors += 1
+    }
+
+    if (! sbtProjectFolder.exists()) {
+      printError(s"ERROR: missing sbt 'project' folder")
+      numberOfErrors += 1
+    }
+
+    for { pfile <- requiredSbtProjectFiles } {
+      if ( ! new File(sbtProjectFolder, pfile).exists()) {
+        printError(s"ERROR: missing file: project/$pfile")
+        numberOfErrors += 1
+      }
+    }
+
+    // Check all required README files are present
+    for { project <- "common" +: exercises} {
+      val projectFolder = new File(relativeSourceFolder, project)
+      val readmeFile = new File(projectFolder, "src" + sep + "test" + sep + "resources" + sep + "README.md")
+      if (! readmeFile.exists()) {
+        printError(s"ERROR: missing README.md file in folder '${project + sep + "src" + sep + "test" + sep + "resources"}'")
+        numberOfErrors += 1
+      }
+      else
+        if (sbtio.readLines(readmeFile).isEmpty) {
+          printError(s"ERROR: README.md file in folder '${project + sep + "src" + sep + "test"}' should have at least one line")
+          numberOfErrors += 1
+        }
+    }
+
+    if (numberOfErrors == 0)
+      printNotification(s"No issues found in master project")
+    else
+      printError(s"${numberOfErrors} issues found in master project")
+
+  }
+
   def putBackToMaster(masterRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExNameAndSHA])(implicit config: MasterSettings): Unit = {
 
     val masterRepoRelative = new File(masterRepo, config.relativeSourceFolder)
@@ -88,11 +190,9 @@ object Helpers {
       .reverse
   }
 
-  def checkReposMatch(exercisesInMaster: Vector[String], exercisesAndSHAs: Vector[ExNameAndSHA]): Unit = {
-    if (exercisesInMaster != exercisesAndSHAs.map(_.exName)) {
-      println(toConsoleRed(s"Repos are incompatible"))
-      System.exit(-1)
-    }
+  def checkReposMatch(exercisesInMaster: Vector[String], exercisesAndSHAs: Vector[ExNameAndSHA])(implicit eofe: ExitOnFirstError): Unit = {
+    if (exercisesInMaster != exercisesAndSHAs.map(_.exName))
+      printError(s"Repos are incompatible")
   }
 
   def commitRemainingExercises(exercises: Seq[String], masterRepo: File, linearizedProject: File)(implicit config: MasterSettings): Unit = {
@@ -129,7 +229,7 @@ object Helpers {
       .runAndExitIfFailed(toConsoleRed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"))
   }
 
-  def removeExercisesFromCleanMaster(cleanMasterRepo: File, exercises: Seq[String])(implicit config: MasterSettings): Unit = {
+  def removeExercisesFromCleanMaster(cleanMasterRepo: File, exercises: Seq[String])(implicit config: MasterSettings, eofe: ExitOnFirstError): Unit = {
     val cleanMasterRepoRelative = new File(cleanMasterRepo, config.relativeSourceFolder)
     for {
       exercise <- exercises
@@ -137,10 +237,8 @@ object Helpers {
       val exerciseFolder = new File(cleanMasterRepoRelative, exercise)
       if (exerciseFolder.exists()) {
         sbtio.delete(exerciseFolder)
-      } else {
-        println(toConsoleRed(s"Error in removeExercisesFromCleanMaster, bailing out"))
-        System.exit(-1)
-      }
+      } else
+        printError(s"Error in removeExercisesFromCleanMaster, bailing out")
     }
   }
 
@@ -187,13 +285,12 @@ object Helpers {
     }
   }
 
-  def getInitialExercise(selectedFirstOpt: Option[String], selectedExercises: Seq[String]): String = {
+  def getInitialExercise(selectedFirstOpt: Option[String], selectedExercises: Seq[String])(implicit eofe: ExitOnFirstError): String = {
     val selectedExercise = selectedFirstOpt.getOrElse(selectedExercises.head)
     if (selectedExercises contains selectedExercise)
       selectedExercise
     else {
-      println(toConsoleRed(s"Exercise on start not in selected range of exercises"))
-      System.exit(-1)
+      printError(s"Exercise on start not in selected range of exercises")
       selectedExercise
     }
   }
@@ -222,7 +319,7 @@ object Helpers {
 
   }
 
-  def getSelectedExercises(exercises: Seq[String], firstOpt: Option[String], lastOpt: Option[String]): Seq[String] = {
+  def getSelectedExercises(exercises: Seq[String], firstOpt: Option[String], lastOpt: Option[String])(implicit eofe: ExitOnFirstError): Seq[String] = {
     val (firstExercise, lastExercise) = (exercises.head, exercises.last)
     val selExcs = (firstOpt.getOrElse(exercises.head), lastOpt.getOrElse(exercises.last)) match {
       case (`firstExercise`, `lastExercise`) =>
@@ -231,10 +328,7 @@ object Helpers {
         exercises.dropWhile(_ != first).reverse.dropWhile(_ != last).reverse
 
     }
-    if (selExcs isEmpty) {
-      println(toConsoleRed(s"Invalid exercise selection"))
-      System.exit(-1)
-    }
+    if (selExcs.isEmpty) printError(s"Invalid exercise selection")
     selExcs
   }
 

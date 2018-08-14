@@ -58,16 +58,24 @@ object Linearize {
 
     val tmpDir = cleanMasterViaGit(masterRepo, projectName)
     val cleanMasterRepo = new File(tmpDir, projectName)
+    printNotification(s"Cleaned master repo: $cleanMasterRepo")
     val relativeCleanMasterRepo = new File(cleanMasterRepo, config.relativeSourceFolder)
-    stageFirstExercise(exercises.head, relativeCleanMasterRepo, relativeCleanMasterRepo)
-    removeExercisesFromCleanMaster(cleanMasterRepo, exercises)
     val linearizedProject = new File(linearizedOutputFolder, projectName)
+    val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
+
     copyMaster(cleanMasterRepo, linearizedProject)
     createBuildFile(linearizedProject, multiJVM)
+    createBookmarkFile(exercises.head, linearizedProject)
+    addSbtStudentCommands(sbtStudentCommandsTemplateFolder, linearizedProject)
+    loadStudentSettings(masterRepo, linearizedProject)
     cleanUp(List(".git", "navigation.sbt"), linearizedProject)
+
+    removeExercisesFromCleanMaster(linearizedProject, exercises)
+    stageFirstExercise(exercises.head, relativeCleanMasterRepo, linearizedProject)
     initializeGitRepo(linearizedProject)
     commitFirstExercise(exercises.head, linearizedProject)
-    commitRemainingExercises(exercises.tail, masterRepo, linearizedProject)
+    commitRemainingExercises(exercises.tail, cleanMasterRepo, linearizedProject)
+
     sbtio.delete(tmpDir)
   }
 }

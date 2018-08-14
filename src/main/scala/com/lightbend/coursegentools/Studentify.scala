@@ -34,7 +34,7 @@ object Studentify {
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt, configurationFile) = cmdOptions.get
+    val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt, configurationFile, useConfigureForProjects) = cmdOptions.get
 
     exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
     val projectName = masterRepo.getName
@@ -60,7 +60,7 @@ object Studentify {
     hideExerciseSolutions(targetCourseFolder, selectedExercises)
     createBookmarkFile(initialExercise, targetCourseFolder)
     createSbtRcFile(targetCourseFolder)
-    createBuildFile(targetCourseFolder, multiJVM)
+    createStudentifiedBuildFile(targetCourseFolder, multiJVM)
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
     loadStudentSettings(masterRepo, targetCourseFolder)
     cleanUp(config.studentifyFilesToCleanUp, targetCourseFolder)

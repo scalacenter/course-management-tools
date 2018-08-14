@@ -20,7 +20,8 @@ object MasterAdm {
                             renumberExercisesStep,
                             configurationFile,
                             checkMaster,
-                            updateMasterCommands) = cmdOptions.get
+                            updateMasterCommands,
+                            useConfigureForProjects) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
     implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)

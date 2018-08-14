@@ -61,6 +61,8 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   val relativeSourceFolder: String = config.getString("studentify.relative-source-folder")
 
+  val useConfigureForProjects: Boolean = config.getBoolean("studentify.use-configure-for-projects")
+
   object studentifyModeClassic {
     private val classicModeConfig = config.getConfig("studentify.studentify-mode-classic")
     val studentifiedBaseFolder: String = classicModeConfig.getString("studentified-base-folder")

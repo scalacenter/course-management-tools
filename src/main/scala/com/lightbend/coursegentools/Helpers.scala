@@ -363,9 +363,15 @@ object Helpers {
     val targetFolder = new File(masterRepo, config.relativeSourceFolder)
 
     def exerciseDep(exercise: String): String = {
-      s"""lazy val $exercise = project
-         |  .settings(CommonSettings.commonSettings: _*)
-         |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
+      if (config.useConfigureForProjects) {
+        s"""lazy val $exercise = project
+           |  .configure(CommonSettings.configure)
+           |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
+      } else {
+        s"""lazy val $exercise = project
+           |  .settings(CommonSettings.commonSettings: _*)
+           |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
+      }
     }
 
     def exerciseMJvmDep(exercise: String): String = {
@@ -412,7 +418,7 @@ object Helpers {
 
   }
 
-  def createBuildFile(targetFolder: File, multiJVM: Boolean)(implicit config: MasterSettings): Unit = {
+  def createStudentifiedBuildFile(targetFolder: File, multiJVM: Boolean)(implicit config: MasterSettings): Unit = {
     val buildDef =
       s"""
          |import sbt._
@@ -426,7 +432,7 @@ object Helpers {
          |lazy val common = project.settings(CommonSettings.commonSettings: _*)
          |
          |lazy val ${config.studentifyModeClassic.studentifiedBaseFolder} = project
-         |  .settings(CommonSettings.commonSettings: _*)
+         |  ${if (config.useConfigureForProjects) ".configure(CommonSettings.configure)" else ".settings(CommonSettings.commonSettings: _*)"}
          |  .dependsOn(common % "test->test;compile->compile")
        """.stripMargin
 
@@ -450,7 +456,7 @@ object Helpers {
          |
          |lazy val ${config.studentifyModeClassic.studentifiedBaseFolder} = project
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
-         |  .settings(CommonSettings.commonSettings: _*)
+         |  ${if (config.useConfigureForProjects) ".settings(CommonSettings.commonSettings: _*)" else ".configure(CommonSettings.configure)"}
          |  .configs(MultiJvm)
          |  .dependsOn(common % "test->test;compile->compile")
        """.stripMargin

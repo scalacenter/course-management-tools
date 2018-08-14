@@ -72,7 +72,8 @@ package object coursegentools {
                                  renumberExercisesStep: Int = 1,
                                  configurationFile: Option[String] = None,
                                  checkMaster: Boolean = false,
-                                 addMasterCommands: Boolean = false)
+                                 addMasterCommands: Boolean = false,
+                                 useConfigureForProjects: Boolean = false)
 
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),
@@ -80,7 +81,8 @@ package object coursegentools {
                                   first: Option[String] = None,
                                   last: Option[String] = None,
                                   selectedFirst: Option[String] = None,
-                                  configurationFile: Option[String] = None)
+                                  configurationFile: Option[String] = None,
+                                  useConfigureForProjects: Boolean = false)
 
   case class LinearizeCmdOptions(masterRepo: File = new File("."),
                                  linearRepo: File = new File("."),

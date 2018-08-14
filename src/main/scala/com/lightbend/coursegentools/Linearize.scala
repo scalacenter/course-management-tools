@@ -64,7 +64,7 @@ object Linearize {
     val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
 
     copyMaster(cleanMasterRepo, linearizedProject)
-    createBuildFile(linearizedProject, multiJVM)
+    createStudentifiedBuildFile(linearizedProject, multiJVM)
     createBookmarkFile(exercises.head, linearizedProject)
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, linearizedProject)
     loadStudentSettings(masterRepo, linearizedProject)

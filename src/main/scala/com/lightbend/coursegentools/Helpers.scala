@@ -29,7 +29,7 @@ object Helpers {
 
   import ProcessDSL._
 
-  val ExerciseNameSpec = """.*/exercise_[0-9][0-9][0-9]_\w+$""".r
+  val ExerciseNameSpec = """.*[/\\\\]exercise_[0-9][0-9][0-9]_\w+$""".r
 
   def fileList(base: File): Vector[File] = {
     @scala.annotation.tailrec

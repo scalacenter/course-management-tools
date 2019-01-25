@@ -31,20 +31,20 @@ object DeLinearizeCmdLineOptParse {
     val parser = new scopt.OptionParser[DeLinearizeCmdOptions]("delinearize") {
       head("delinearize", "3.0")
 
-      arg[File]("linearRepo")
-        .text("base folder for linearized version repo")
-        .action { case (linearRepo, config) =>
-          if (!folderExists(linearRepo))
-            printError(s"Base folder for linearized version repo (${linearRepo.getPath}) doesn't exist")
-          config.copy(linearRepo = linearRepo)
-        }
-
       arg[File]("masterRepo")
         .text("base folder holding master course repository")
         .action { case (masterRepo, c) =>
           if (!folderExists(masterRepo))
             printError(s"Base master repo folder (${masterRepo.getPath}) doesn't exist")
           c.copy(masterRepo = masterRepo)
+        }
+
+      arg[File]("linearRepo")
+        .text("linearized version repo")
+        .action { case (linearRepo, config) =>
+          if (!folderExists(linearRepo))
+            printError(s"Base folder for linearized version repo (${linearRepo.getPath}) doesn't exist")
+          config.copy(linearRepo = linearRepo)
         }
 
       opt[String]("config-file")

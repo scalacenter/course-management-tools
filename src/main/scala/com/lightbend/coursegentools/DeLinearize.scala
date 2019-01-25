@@ -27,7 +27,7 @@ object DeLinearize {
 
     val cmdOptions = DeLinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val DeLinearizeCmdOptions(linearizedRepo, masterRepo, optConfigurationFile) = cmdOptions.get
+    val DeLinearizeCmdOptions(masterRepo, linearizedRepo, optConfigurationFile) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, optConfigurationFile)
     implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)

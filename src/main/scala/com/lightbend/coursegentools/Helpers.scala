@@ -230,11 +230,10 @@ object Helpers {
   }
 
   def removeExercisesFromCleanMaster(cleanMasterRepo: File, exercises: Seq[String])(implicit config: MasterSettings, eofe: ExitOnFirstError): Unit = {
-    val cleanMasterRepoRelative = new File(cleanMasterRepo, config.relativeSourceFolder)
     for {
       exercise <- exercises
     } {
-      val exerciseFolder = new File(cleanMasterRepoRelative, exercise)
+      val exerciseFolder = new File(cleanMasterRepo, exercise)
       if (exerciseFolder.exists()) {
         sbtio.delete(exerciseFolder)
       } else

@@ -55,6 +55,8 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   val testCodeFolders: List[String] = config.getStringList("studentify.test-code-folders").asScala.toList
 
+  val exerciseProjectPrefix: String = config.getString("studentify.exercise-project-prefix")
+
   val studentifyModeSelect: String = config.getString("studentify.studentify-mode-select")
 
   val studentifyFilesToCleanUp: List[String] = config.getStringList("studentify.studentify-files-to-clean-up").asScala.toList

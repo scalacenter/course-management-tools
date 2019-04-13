@@ -29,8 +29,6 @@ object Helpers {
 
   import ProcessDSL._
 
-  val ExerciseNameSpec = """.*[/\\\\]exercise_[0-9][0-9][0-9]_\w+$""".r
-
   def fileList(base: File): Vector[File] = {
     @scala.annotation.tailrec
     def fileList(filesSoFar: Vector[File], folders: Vector[File]): Vector[File] = {
@@ -53,6 +51,11 @@ object Helpers {
     val zipFile = new File(exFolder.getParentFile, s"${exFolder.getName}.zip")
     sbtio.zip(fl, zipFile)
     if (removeOriginal) sbtio.delete(exFolder)
+  }
+
+  def cleanDestinationFolder(targetCourseFolder: File): Unit = {
+    val fl = fileList(targetCourseFolder).map(f => (f, sbtio.relativize(targetCourseFolder.getParentFile, f).get))
+    println(fl.mkString("\n"))
   }
 
   def addMasterCommands(masterRepo: File)(implicit config: MasterSettings, exitOnFirstError: ExitOnFirstError): Unit = {
@@ -248,7 +251,10 @@ object Helpers {
     tmpDir
   }
 
-  def isExerciseFolder(folder: File): Boolean = {
+  def isExerciseFolder(folder: File)(implicit config: MasterSettings): Boolean = {
+
+    val ExerciseNameSpec = s""".*[/\\\\]${config.exerciseProjectPrefix}_[0-9][0-9][0-9]_\\w+$$""".r
+
     ExerciseNameSpec.findFirstIn(folder.getPath).isDefined
   }
 
@@ -336,7 +342,7 @@ object Helpers {
                         exerciseNr: Int)(implicit config: MasterSettings): Unit = {
 
     val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
-    val newExercise = renumberExercise(exercise, exerciseNr) + "_copy"
+    val newExercise =   renumberExercise(exercise, exerciseNr) + "_copy"
     sbtio.copyDirectory(new File(relativeSourceFolder, exercise), new File(relativeSourceFolder, newExercise), preserveLastModified = true)
   }
 

@@ -21,7 +21,7 @@ object Navigation {
       .toList
       .map(r => r.project)
       // By convention, a project exercise has a 3-digit number in it enclosed in underscores
-      .filter(_.matches(""".*_[0-9][0-9][0-9]_.*"""))
+      .filter(_.matches(""".*_\d{3}_.*"""))
       .sorted
     if (refs.nonEmpty)
       Command.process(s"project ${refs.head}", state)

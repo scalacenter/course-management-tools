@@ -253,7 +253,7 @@ object Helpers {
 
   def isExerciseFolder(folder: File)(implicit config: MasterSettings): Boolean = {
 
-    val ExerciseNameSpec = s""".*[/\\\\]${config.exerciseProjectPrefix}_[0-9][0-9][0-9]_\\w+$$""".r
+    val ExerciseNameSpec = s""".*[/\\\\]${config.exerciseProjectPrefix}_\\d{3}_\\w+$$""".r
 
     ExerciseNameSpec.findFirstIn(folder.getPath).isDefined
   }

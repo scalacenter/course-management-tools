@@ -44,6 +44,7 @@ object Studentify {
     val cleanMasterRepo = new File(tmpDir, projectName)
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
+
     import config.testCodeFolders, config.studentifyModeClassic.studentifiedBaseFolder
 
     val exercises: Seq[String] = getExerciseNames(cleanMasterRepo, Some(masterRepo))

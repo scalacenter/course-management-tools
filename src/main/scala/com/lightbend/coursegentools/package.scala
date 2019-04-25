@@ -43,16 +43,16 @@ package object coursegentools {
   type Seq[+A] = scala.collection.immutable.Seq[A]
   val Seq = scala.collection.immutable.Seq
 
-  val ExerciseNumberSpec: Regex = """exercise_(\d{3})_.*""".r
+  val ExerciseNumberSpec: Regex = """.*_(\d{3})_.*""".r
 
   def extractExerciseNr(exercise: String): Int = {
     val ExerciseNumberSpec(d) = exercise
     d.toInt
   }
 
-  def renumberExercise(exercise: String, newNumber: Int): String = {
-    val newNumerLZ = f"exercise_$newNumber%03d_"
-    val oldNumberPrefix = f"exercise_${extractExerciseNr(exercise)}%03d_"
+  def renumberExercise(exercise: String, newNumber: Int)(implicit config: MasterSettings): String = {
+    val newNumerLZ = f"${config.exerciseProjectPrefix}_$newNumber%03d_"
+    val oldNumberPrefix = f"${config.exerciseProjectPrefix}_${extractExerciseNr(exercise)}%03d_"
     exercise.replaceFirst(oldNumberPrefix, newNumerLZ)
   }
 

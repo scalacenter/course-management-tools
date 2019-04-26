@@ -50,7 +50,7 @@ object Navigation {
     s.put(allExercises, Space ~ Parser.oneOf(ex))
   }
 
-  val setupNavAttrs: (State) => State = (s: State) => {
+  val setupNavAttrs: State => State = (s: State) => {
 
     val mark: File = s get bookmark getOrElse new sbt.File(new sbt.File(Project.extract(s).structure.root), ".bookmark")
     val prev: Map[String, String] = s get mapPrev getOrElse mapExercises(s, reverse = true)
@@ -92,6 +92,11 @@ object Navigation {
     state
   }
 
+  def copyExerciseReadme(newExerciseSrc: sbt.File, src: sbt.File): Unit = {
+    if (SSettings.readmeFilesInExerciseRootFolder)
+      IO.copyFile(new File(newExerciseSrc, "README.md"), new File(src, "README.md"))
+  }
+
   private lazy val ExerciseNr = Space ~> IntBasic.?
 
   def gotoFirstExercise: Command = Command.command("gotoFirstExercise") { state =>
@@ -99,6 +104,7 @@ object Navigation {
     withZipFile(state, firstExercise) { () =>
       val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), SSettings.studentifiedBaseFolder)
       val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$firstExercise")
+      copyExerciseReadme(newExerciseSrc, src)
       for {
         f <- SSettings.testFolders
         fromFolder = new File(newExerciseSrc, f)
@@ -121,6 +127,7 @@ object Navigation {
     withZipFile(state, exercise) { () =>
       val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), SSettings.studentifiedBaseFolder)
       val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$exercise")
+      copyExerciseReadme(newExerciseSrc, src)
       for {
         f <- SSettings.testFolders
         fromFolder = new File(newExerciseSrc, f)
@@ -137,7 +144,7 @@ object Navigation {
   }
 
   def gotoExerciseNr: Command = Command("gotoExerciseNr")(s => ExerciseNr) { (state, arg) =>
-    val ExerciseFmt = """.*exercise_([0-9][0-9][0-9])_\w+$""".r
+    val ExerciseFmt = """.*_([0-9][0-9][0-9])_\w+$""".r
     arg match {
       case Some(exerciseNr) =>
         val exercises =
@@ -154,6 +161,7 @@ object Navigation {
             withZipFile(state, exercise) { () =>
               val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), SSettings.studentifiedBaseFolder)
               val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$exercise")
+              copyExerciseReadme(newExerciseSrc, src)
               for {
                 f <- SSettings.testFolders
                 fromFolder = new File(newExerciseSrc, f)
@@ -205,6 +213,8 @@ object Navigation {
         withZipFile(state, toProjectName) { () =>
           val src = new sbt.File(new sbt.File(Project.extract(state).structure.root), SSettings.studentifiedBaseFolder)
           val newExerciseSrc = new sbt.File(new sbt.File(Project.extract(state).structure.root), s".cue/$toProjectName")
+          copyExerciseReadme(newExerciseSrc, src)
+          println(s"~~> newExerciseSrc = ${newExerciseSrc} - src = $src")
           for {
             f <- SSettings.testFolders
             fromFolder = new File(newExerciseSrc, f)

@@ -5,7 +5,7 @@ package sbtstudent
  */
 
 import sbt.Keys._
-import sbt._
+import sbt.{Def, _}
 
 import scala.Console
 
@@ -30,17 +30,28 @@ object StudentCommandsPlugin extends AutoPlugin {
       }
     )
 
-  override lazy val projectSettings =
+  def extractCurrentExerciseDesc(state: State): String = {
+    val currentExercise = IO.readLines(new sbt.File(new sbt.File(Project.extract(state).structure.root), ".bookmark")).head
+
+    currentExercise
+      .replaceFirst("""^.*_\d{3}_""", "")
+      .replaceAll("_", " ")
+  }
+
+  def extractProjectName(state: State): String = {
+    IO.readLines(new sbt.File(new sbt.File(Project.extract(state).structure.root), ".courseName")).head
+  }
+
+  override lazy val projectSettings: Seq[Def.Setting[State => String]] =
     Seq(
       shellPrompt := { state =>
         val promptCourseNameColor = SSettings.consoleColorMap(SSettings.promptCourseNameColor)
         val promptExerciseColor = SSettings.consoleColorMap(SSettings.promptExerciseColor)
         val promptManColor = SSettings.consoleColorMap(SSettings.promptManColor)
-        val base: File = Project.extract(state).get(sourceDirectory)
-        val basePath: String = base + "/test/resources/README.md"
-        val exercise = promptExerciseColor + IO.readLines(new sbt.File(basePath)).head + Console.RESET
+        val exercise = promptExerciseColor + extractCurrentExerciseDesc(state) + Console.RESET
         val manRmnd = promptManColor + "man [e]" + Console.RESET
-        val prjNbrNme = promptCourseNameColor + IO.readLines(new sbt.File(new sbt.File(Project.extract(state).structure.root), ".courseName")).head + Console.RESET
+        val prjNbrNme = promptCourseNameColor + extractProjectName(state) + Console.RESET
+
         s"$manRmnd > $prjNbrNme > $exercise > "
       }
     )

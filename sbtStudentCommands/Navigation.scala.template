@@ -85,14 +85,10 @@ object Navigation {
   }
 
   def listExercises: Command = Command.command("listExercises") { state =>
-    val ExFmt =
-      s""".*_(\d+)_(.*)""".r
-    val exList = mapExercises(state).toList.map(_._1).sorted.zipWithIndex
-        .foreach { case (exName, seq) =>
-          val ExFmt(exNr, exDesc)= exName
-          val ed = f"Exercise ${exNr.toInt}%d > ${exDesc.split("_").map(s => s"${s.head.toUpper}${s.tail}").mkString(" ")}"
-          Console.println(Console.RED + s"${seq.toInt}. " + Console.RESET + s"$ed")
-        }
+    mapExercises(state).toList.map(_._1).sorted.zipWithIndex
+      .foreach { case (exName, seq) =>
+        Console.println(Console.GREEN + f"${seq.toInt + 1}%3d. " + Console.RESET + s"$exName")
+      }
     state
   }
 

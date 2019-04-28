@@ -63,7 +63,7 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   val relativeSourceFolder: String = config.getString("studentify.relative-source-folder")
 
-  val readmeFilesInExerciseRootFolder: Boolean = config.getBoolean("studentify.readme-files-in-exercise-root-folder")
+  val readmeInTestResources: Boolean = config.getBoolean("studentify.readme-in-test-resources")
 
   val useConfigureForProjects: Boolean = config.getBoolean("studentify.use-configure-for-projects")
 

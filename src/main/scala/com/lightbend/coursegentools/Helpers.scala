@@ -512,7 +512,7 @@ object Helpers {
          |
          |  val studentifiedBaseFolder = "${masterSettings.studentifyModeClassic.studentifiedBaseFolder}"
          |
-         |  val readmeFilesInExerciseRootFolder: Boolean = ${masterSettings.readmeFilesInExerciseRootFolder}
+         |  val readmeInTestResources: Boolean = ${masterSettings.readmeInTestResources}
          |
          |  val promptManColor         = "${masterSettings.Colors.promptManColor}"
          |  val promptExerciseColor    = "${masterSettings.Colors.promptExerciseColor}"

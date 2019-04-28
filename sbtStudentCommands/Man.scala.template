@@ -19,10 +19,10 @@ object Man {
     arg match {
       case Some(a) if a == "e" =>
         val readmeFile: File =
-          if (SSettings.readmeFilesInExerciseRootFolder)
-            new File(new File(Project.extract(state).structure.root.getPath, SSettings.studentifiedBaseFolder), "README.md")
-          else
+          if (SSettings.readmeInTestResources)
             new File(Project.extract(state).get(sourceDirectory), "test/resources/README.md")
+          else
+            new File(new File(Project.extract(state).structure.root.getPath, SSettings.studentifiedBaseFolder), "README.md")
         printOut(readmeFile)
         Console.print("\n")
         state

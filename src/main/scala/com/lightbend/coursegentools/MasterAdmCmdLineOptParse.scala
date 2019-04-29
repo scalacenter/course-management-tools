@@ -110,6 +110,14 @@ object MasterAdmCmdLineOptParse {
             case (_, c) =>
               c.copy(addMasterCommands = true)
           }
+
+      opt[File]("generate-tests-script")
+        .text("generate a script that tests master repo, studentified repo functionality and linearize/delinearize")
+        .abbr("t")
+        .action {
+          case (testFile, c) =>
+            c.copy(testFile = Some(testFile))
+        }
     }
 
     parser.parse(args, MasterAdmCmdOptions())

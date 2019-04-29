@@ -1,6 +1,7 @@
 package com.lightbend.coursegentools
 
 import java.io.File
+import GenTests.generateTestScript
 
 object MasterAdm {
 
@@ -21,7 +22,8 @@ object MasterAdm {
                             configurationFile,
                             checkMaster,
                             updateMasterCommands,
-                            useConfigureForProjects) = cmdOptions.get
+                            useConfigureForProjects,
+                            genTests) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
     implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)
@@ -34,107 +36,138 @@ object MasterAdm {
      deleteExerciseNr,
      renumberExercises, renumberExercisesBase, renumberExercisesStep,
      checkMaster,
-     updateMasterCommands) match {
-      case (true,
-            None,
-            None,
-            false, _, _,
-            false,
-            false) =>
-        createMasterBuildFile(exercises, masterRepo, multiJVM)
+     updateMasterCommands,
+     genTests) match {
+      case (
+        true,  // Re-generate master build file
+        None,
+        None,
+        false, _, _,
+        false,
+        false,
+        None) =>
+          createMasterBuildFile(exercises, masterRepo, multiJVM)
 
-      case (false,
-            Some(dibExNr),
-            None,
-            false, _, _,
-            false,
-            false) if exerciseNumbers.contains(dibExNr) =>
-        val exercise = getExerciseName(exercises, dibExNr).get
-        if (exerciseNumbers.contains(dibExNr - 1) || dibExNr == 0) {
-          duplicateExercise(masterRepo, exercise, dibExNr)
-          shiftExercisesUp(masterRepo, exercises, dibExNr, exerciseNumbers)
-        } else {
-          duplicateExercise(masterRepo, exercise, dibExNr - 1)
-        }
-        createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
+      case (
+        false,
+        Some(dibExNr), // Duplicate selected exercise and insert before
+        None,
+        false, _, _,
+        false,
+        false,
+        None) if exerciseNumbers.contains(dibExNr) =>
+          val exercise = getExerciseName(exercises, dibExNr).get
+          if (exerciseNumbers.contains(dibExNr - 1) || dibExNr == 0) {
+            duplicateExercise(masterRepo, exercise, dibExNr)
+            shiftExercisesUp(masterRepo, exercises, dibExNr, exerciseNumbers)
+          } else {
+            duplicateExercise(masterRepo, exercise, dibExNr - 1)
+          }
+          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
 
-      case (false,
-            Some(dibExNr),
-            None,
-            false, _, _,
-            false,
-            false) =>
-        printError(s"ERROR: Duplicate and insert before: no exercise with number $dibExNr")
+      case (
+        false,
+        Some(dibExNr), // Try to duplicate a non-existing exercise
+        None,
+        false, _, _,
+        false,
+        false,
+        None) =>
+          printError(s"ERROR: Duplicate and insert before: no exercise with number $dibExNr")
 
-      case (false,
-            None,
-            Some(dibExNr),
-            false, _, _,
-            false,
-            false) if exerciseNumbers.contains(dibExNr) =>
-        import sbt.io.{IO => sbtio}
-        val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
-        val exercise = getExerciseName(exercises, dibExNr).get
-        sbtio.delete(new File(relativeSourceFolder, exercise))
-        createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
+      case (
+        false,
+        None,
+        Some(dibExNr), // Delete selected exercise
+        false, _, _,
+        false,
+        false,
+        None) if exerciseNumbers.contains(dibExNr) =>
+          import sbt.io.{IO => sbtio}
+          val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+          val exercise = getExerciseName(exercises, dibExNr).get
+          sbtio.delete(new File(relativeSourceFolder, exercise))
+          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
 
-      case (false,
-            None,
-            Some(dibExNr),
-            false, _, _,
-            false,
-            false) =>
-        printError(s"ERROR: Delete exercise: no exercise with number $dibExNr")
+      case (
+        false,
+        None,
+        Some(dibExNr), // Try to delete a non-existing exercise
+        false, _, _,
+        false,
+        false,
+        None) =>
+          printError(s"ERROR: Delete exercise: no exercise with number $dibExNr")
 
-      case (false,
-            None,
-            None,
-            true, offset, step,
-            false,
-            false) =>
-        import sbt.io.{IO => sbtio}
-        val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
-        val moves = for {
-          (exercise, index) <- exercises.zipWithIndex
-          newIndex = offset + index * step
-          oldExDir = new File(relativeSourceFolder, exercise)
-          newExDir = new File(relativeSourceFolder, renumberExercise(exercise, newIndex))
-            if oldExDir != newExDir
-        } yield (oldExDir, newExDir)
-        sbtio.move(moves)
-        createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
+      case (
+        false,
+        None,
+        None,
+        true, offset, step, // Renumber all exercises with start offset & step size
+        false,
+        false,
+        None) =>
+          import sbt.io.{IO => sbtio}
+          val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+          val moves = for {
+            (exercise, index) <- exercises.zipWithIndex
+            newIndex = offset + index * step
+            oldExDir = new File(relativeSourceFolder, exercise)
+            newExDir = new File(relativeSourceFolder, renumberExercise(exercise, newIndex))
+              if oldExDir != newExDir
+          } yield (oldExDir, newExDir)
+          sbtio.move(moves)
+          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
 
-      case (false,
-            None,
-            None,
-            false, _, _,
-            true,
-            false) =>
+      case (
+        false,
+        None,
+        None,
+        false, _, _,
+        true,   // Check sanity of master repository
+        false,
+        None) =>
 
-        val tryGitVersion = "git --version".toProcessCmd(workingDir = masterRepo).run
-        if (tryGitVersion != 0)
-          printError(s"ERROR: git not found: makes sure git is properly installed")
+          val tryGitVersion = "git --version".toProcessCmd(workingDir = masterRepo).run
+          if (tryGitVersion != 0)
+            printError(s"ERROR: git not found: makes sure git is properly installed")
 
-        val gitStatus = "git status".toProcessCmd(workingDir = masterRepo).run
-        if (gitStatus != 0)
-          printError(s"ERROR: Master repository is not a git project")
+          val gitStatus = "git status".toProcessCmd(workingDir = masterRepo).run
+          if (gitStatus != 0)
+            printError(s"ERROR: Master repository is not a git project")
 
-        exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
-        val projectName = masterRepo.getName
+          exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
+          val projectName = masterRepo.getName
 
-        val tmpDir = cleanMasterViaGit(masterRepo, projectName)
-        val cleanMasterRepo = new File(tmpDir, projectName)
-        checkMasterRepo(cleanMasterRepo, exercises, exitOnFirstError = false)
+          val tmpDir = cleanMasterViaGit(masterRepo, projectName)
+          val cleanMasterRepo = new File(tmpDir, projectName)
+          checkMasterRepo(cleanMasterRepo, exercises, exitOnFirstError = false)
 
-      case (false,
-            None,
-            None,
-            false, _, _,
-            false,
-            true) =>
-        addMasterCommands(masterRepo)
+      case (
+        false,
+        None,
+        None,
+        false, _, _,
+        false,
+        true, // update master commands in master repo
+        None) =>
 
-      case (false, None, None, false, _, _, false, false) => println(toConsoleGreen(s"Nothing to do..."))
+          addMasterCommands(masterRepo)
+
+
+      case (
+        false,
+        None,
+        None,
+        false, _, _,
+        false,
+        false,
+        Some(testFile) // generate test scripts
+        ) =>
+          generateTestScript(masterRepo, config.relativeSourceFolder, configurationFile ,testFile, exercises, exerciseNumbers)
+
+
+      case (false, None, None, false, _, _, false, false, None) => println(toConsoleGreen(s"Nothing to do..."))
 
       case _ => printError(s"ERROR: Invalid combination of options")
 

@@ -19,7 +19,7 @@ object GenTests {
     val configurationFileArgument = if(configurationFile.isDefined) s"-cfg ${configurationFile.get}" else ""
 
     val script: String =
-      s"""#!/bin/bash
+      s"""#!/bin/bash -e -o pipefail
         |
         |CMT_FOLDER=$cmtFolder # This should become a script argument at some stage
         |

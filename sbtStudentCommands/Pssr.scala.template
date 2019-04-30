@@ -83,7 +83,7 @@ object Pssr {
 
   def savedStates: Command = Command.command("savedStates") { state =>
     val savedState = getSavedStateFolder(state)
-    val savedExercises = IO.listFiles(savedState).map(_.getName).toList
+    val savedExercises = IO.listFiles(savedState).map(_.getName).toList.sorted
     if (savedExercises.isEmpty) {
       Console.println(Console.YELLOW + "[WARN] " + Console.RESET + s"No previously saved exercise states found")
     } else {

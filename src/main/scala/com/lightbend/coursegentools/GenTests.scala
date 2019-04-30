@@ -38,7 +38,7 @@ object GenTests {
         |cd $$TMP_DIR/${masterRepo.getName}
         |sbt "${genStudentifiedTestCmds(exercises)}"
         |
-        |${separator("Test studentified project:\n  Exercise 'gotoExercise', 'gotoExerciseNr', 'pullSolution', 'test', 'listExercises'")}
+        |${separator("Test studentified project:\n  Exercise 'gotoExercise', 'gotoExerciseNr', 'pullSolution', 'test', 'listExercises, 'saveState', savedStates', 'restoreState''")}
         |sbt "${genGotoExerciseTestCmds(exercises, exerciseNumbers)}"
         |
         |# Clean up after ourselves
@@ -70,8 +70,8 @@ object GenTests {
   def genGotoExerciseTestCmds(exercises: Vector[String], exerciseNumbers: Vector[Int]): String = {
     Random.shuffle(exercises).zip(Random.shuffle(exerciseNumbers))
       .map{ case (exercise, exerciseNumber) =>
-        s""";gotoExercise $exercise; pullSolution; listExercises; test; prevExercise
-           |;gotoExerciseNr $exerciseNumber; pullSolution; listExercises; test; man e; prevExercise""".stripMargin}
+        s""";gotoExercise $exercise; pullSolution; saveState; savedStates; listExercises; test; prevExercise
+           |;gotoExerciseNr $exerciseNumber; pullSolution; listExercises; test; man e; prevExercise; restoreState $exercise""".stripMargin}
       .mkString("\n", "\n", "")
   }
 }

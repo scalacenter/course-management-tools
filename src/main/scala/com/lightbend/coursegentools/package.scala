@@ -73,7 +73,8 @@ package object coursegentools {
                                  configurationFile: Option[String] = None,
                                  checkMaster: Boolean = false,
                                  addMasterCommands: Boolean = false,
-                                 useConfigureForProjects: Boolean = false)
+                                 useConfigureForProjects: Boolean = false,
+                                 testFile: Option[File] = None)
 
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),

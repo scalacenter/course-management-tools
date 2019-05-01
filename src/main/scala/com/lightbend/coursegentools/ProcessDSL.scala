@@ -50,8 +50,13 @@ object ProcessDSL {
 
   implicit class StringToProcessExt(val command: String) extends AnyVal {
     def toProcessCmd(workingDir: File): ProcessCmd = {
-      val cmdSeq = command.split("""\s+""").toVector
-      ProcessCmd(cmdSeq, workingDir)
+      val SplitRegex = "([^\"]\\S*|\".+?\")\\s*".r
+      val cmdArgs =
+        SplitRegex
+          .findAllMatchIn(command)
+          .map(_.toString.replaceAll(" $", "").replaceAll(""""""", ""))
+          .toVector
+      ProcessCmd(cmdArgs, workingDir)
     }
   }
 }

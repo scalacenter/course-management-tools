@@ -20,21 +20,20 @@ package com.lightbend.coursegentools
   * limitations under the License.
   */
 
-import com.typesafe.config.ConfigFactory
+import java.io.File
 
 object Studentify {
 
   def main(args: Array[String]): Unit = {
 
     import Helpers._
-    import java.io.File
     import sbt.io.{IO => sbtio}
 
     implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt, configurationFile, useConfigureForProjects) = cmdOptions.get
+    val StudentifyCmdOptions(masterRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt, configurationFile, useConfigureForProjects, initAsGitRepo) = cmdOptions.get
 
     exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
     val projectName = masterRepo.getName
@@ -44,8 +43,6 @@ object Studentify {
     val cleanMasterRepo = new File(tmpDir, projectName)
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
-
-    import config.testCodeFolders, config.studentifyModeClassic.studentifiedBaseFolder
 
     val exercises: Seq[String] = getExerciseNames(cleanMasterRepo, Some(masterRepo))
 
@@ -66,7 +63,60 @@ object Studentify {
     loadStudentSettings(masterRepo, targetCourseFolder)
     cleanUp(config.studentifyFilesToCleanUp, targetCourseFolder)
     sbtio.delete(tmpDir)
+    if (initAsGitRepo) initialiseAsGit(targetCourseFolder)
 
   }
 
+  def initialiseAsGit(studentifiedRepo: File): Unit = {
+    import ProcessDSL._
+
+    val gitIgnore =
+      s"""*.class
+         |*.log
+         |.bookmark
+         |
+         |# sbt specific
+         |.cache/
+         |.history/
+         |.lib/
+         |dist/*
+         |target/
+         |lib_managed/
+         |src_managed/
+         |project/boot/
+         |project/plugins/project/
+         |
+         |# Scala-IDE specific
+         |.scala_dependencies
+         |.worksheet
+         |.target
+         |.cache
+         |.classpath
+         |.project
+         |.settings/
+         |
+         |# Intellij specific
+         |*.iml
+         |*.idea/
+         |*.idea_modules/
+         |
+         |# Sublime specific
+         |*.sublime-project
+         |*.sublime-workspace
+         |
+         |# OS specific
+         |.DS_Store
+       """.stripMargin
+
+    dumpStringToFile(gitIgnore, new File(studentifiedRepo, ".gitignore").getPath)
+    s"git init"
+      .toProcessCmd(workingDir = studentifiedRepo)
+      .runAndExitIfFailed(toConsoleRed(s"'git init' failed on ${studentifiedRepo.getAbsolutePath}"))
+    s"git add -A"
+      .toProcessCmd(workingDir = studentifiedRepo)
+      .runAndExitIfFailed(toConsoleRed(s"'Failed to add initial file-set on ${studentifiedRepo.getAbsolutePath}"))
+    s"""git commit -m "Initial commit""""
+      .toProcessCmd(workingDir = studentifiedRepo)
+      .runAndExitIfFailed(toConsoleRed(s"'Initial commit failed on ${studentifiedRepo.getAbsolutePath}"))
+  }
 }

@@ -82,6 +82,13 @@ object StudentifyCmdLineOptParse {
           case (cfgFile, c) =>
             c.copy(configurationFile = Some(cfgFile))
         }
+
+      opt[Unit]("git")
+        .text("initialise studentified repository as a git repository")
+        .abbr("g")
+        .action { case (_, c) =>
+          c.copy(initAsGitRepo = true)
+        }
     }
 
     parser.parse(args, StudentifyCmdOptions())

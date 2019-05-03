@@ -83,7 +83,8 @@ package object coursegentools {
                                   last: Option[String] = None,
                                   selectedFirst: Option[String] = None,
                                   configurationFile: Option[String] = None,
-                                  useConfigureForProjects: Boolean = false)
+                                  useConfigureForProjects: Boolean = false,
+                                  initAsGitRepo: Boolean = false)
 
   case class LinearizeCmdOptions(masterRepo: File = new File("."),
                                  linearRepo: File = new File("."),

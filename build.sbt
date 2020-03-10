@@ -7,8 +7,8 @@ version := "1.0.0"
 scalaVersion := Version.scalaVer
 
 // The Typesafe repository
-resolvers += "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
-resolvers += Resolver.url("Typesafe Ivy Releases", url("http://repo.typesafe.com/typesafe/ivy-releases/"))(Resolver.ivyStylePatterns)
+resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
+resolvers += Resolver.url("Typesafe Ivy Releases", url("https://repo.typesafe.com/typesafe/ivy-releases/"))(Resolver.ivyStylePatterns)
 
 libraryDependencies ++= Dependencies.studentify
 

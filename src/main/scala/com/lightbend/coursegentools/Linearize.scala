@@ -64,7 +64,7 @@ object Linearize {
     val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
 
     copyMaster(cleanMasterRepo, linearizedProject)
-    createStudentifiedBuildFile(linearizedProject, multiJVM)
+    createStudentifiedBuildFile(linearizedProject, multiJVM, isADottyProject = false) // TODO: Add dotty support in Linearize
     createBookmarkFile(exercises.head, linearizedProject)
     addSbtStudentCommands(sbtStudentCommandsTemplateFolder, linearizedProject)
     loadStudentSettings(masterRepo, linearizedProject)

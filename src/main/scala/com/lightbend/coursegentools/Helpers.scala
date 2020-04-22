@@ -425,20 +425,30 @@ object Helpers {
 
   }
 
-  def createStudentifiedBuildFile(targetFolder: File, multiJVM: Boolean)(implicit config: MasterSettings): Unit = {
+  def createStudentifiedBuildFile(targetFolder: File, multiJVM: Boolean, isADottyProject: Boolean)
+                                 (implicit config: MasterSettings): Unit = {
+    val (dottyPreamble, setScalaVersion) = if (isADottyProject) (
+      """
+        |val dottyVersion = "0.23.0-RC1"
+        |""".stripMargin,
+      """
+        |  .settings(scalaVersion := dottyVersion)""".stripMargin
+      ) else
+      ("", "")
     val buildDef =
-      s"""
-         |import sbt._
-         |
+      s"""import sbt._
+         |$dottyPreamble
          |lazy val `${config.studentifiedProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
          |    `${config.studentifyModeClassic.studentifiedBaseFolder}`
-         |  )
+         |  )${setScalaVersion}
          |  .settings(CommonSettings.commonSettings: _*)
-         |lazy val common = project.settings(CommonSettings.commonSettings: _*)
          |
-         |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
+         |lazy val common = project${setScalaVersion}
+         |  .settings(CommonSettings.commonSettings: _*)
+         |
+         |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project${setScalaVersion}
          |  ${if (config.useConfigureForProjects) ".configure(CommonSettings.configure)" else ".settings(CommonSettings.commonSettings: _*)"}
          |  .dependsOn(common % "test->test;compile->compile")
        """.stripMargin
@@ -446,22 +456,22 @@ object Helpers {
     val mJvmBuildDef =
       s"""
          |import sbt._
-         |
+         |$dottyPreamble
          |lazy val `${config.studentifiedProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
          |    `${config.studentifyModeClassic.studentifiedBaseFolder}`
-         |  )
+         |  )${setScalaVersion}
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .configs(MultiJvm)
          |
-         |lazy val common = project
+         |lazy val common = project${setScalaVersion}
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .configs(MultiJvm)
          |
-         |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
+         |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project${setScalaVersion}
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  ${if (config.useConfigureForProjects) ".settings(CommonSettings.commonSettings: _*)" else ".configure(CommonSettings.configure)"}
          |  .configs(MultiJvm)

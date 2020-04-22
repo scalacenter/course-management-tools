@@ -89,6 +89,13 @@ object StudentifyCmdLineOptParse {
         .action { case (_, c) =>
           c.copy(initAsGitRepo = true)
         }
+
+      opt[Unit]("dotty")
+        .text("studentified repository is a Dotty project")
+        .abbr("dot")
+        .action { case (_, c) =>
+          c.copy(isADottyProject = true)
+        }
     }
 
     parser.parse(args, StudentifyCmdOptions())

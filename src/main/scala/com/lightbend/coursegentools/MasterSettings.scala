@@ -67,6 +67,11 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   val useConfigureForProjects: Boolean = config.getBoolean("studentify.use-configure-for-projects")
 
+  object dottyConfig {
+    private val dottyConfig = config.getConfig("studentify.dotty")
+    val dottyVersion: String = dottyConfig.getString("version")
+  }
+
   object studentifyModeClassic {
     private val classicModeConfig = config.getConfig("studentify.studentify-mode-classic")
     val studentifiedBaseFolder: String = classicModeConfig.getString("studentified-base-folder")

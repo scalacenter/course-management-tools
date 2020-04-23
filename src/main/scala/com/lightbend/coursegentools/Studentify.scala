@@ -59,7 +59,7 @@ object Studentify {
     createBookmarkFile(initialExercise, targetCourseFolder)
     createSbtRcFile(targetCourseFolder)
     createStudentifiedBuildFile(targetCourseFolder, multiJVM, isADottyProject)
-    addSbtStudentCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
+    addSbtCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
     loadStudentSettings(masterRepo, targetCourseFolder)
     cleanUp(config.studentifyFilesToCleanUp, targetCourseFolder)
     sbtio.delete(tmpDir)

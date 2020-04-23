@@ -66,6 +66,13 @@ object LinearizeCmdLineOptParse {
           case (cfgFile, c) =>
             c.copy(configurationFile = Some(cfgFile))
         }
+
+      opt[Unit]("dotty")
+        .text("studentified repository is a Dotty project")
+        .abbr("dot")
+        .action { case (_, c) =>
+          c.copy(isADottyProject = true)
+        }
     }
 
     parser.parse(args, LinearizeCmdOptions())

@@ -32,7 +32,7 @@ object Linearize {
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile) = cmdOptions.get
+    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile, isADottyProject) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
 
@@ -61,12 +61,12 @@ object Linearize {
     printNotification(s"Cleaned master repo: $cleanMasterRepo")
     val relativeCleanMasterRepo = new File(cleanMasterRepo, config.relativeSourceFolder)
     val linearizedProject = new File(linearizedOutputFolder, projectName)
-    val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
+    val sbtLinearizeCommandsTemplateFolder = new File("sbtLinearizeCommands")
 
     copyMaster(cleanMasterRepo, linearizedProject)
-    createStudentifiedBuildFile(linearizedProject, multiJVM, isADottyProject = false) // TODO: Add dotty support in Linearize
-    createBookmarkFile(exercises.head, linearizedProject)
-    addSbtStudentCommands(sbtStudentCommandsTemplateFolder, linearizedProject)
+    createStudentifiedBuildFile(linearizedProject, multiJVM, isADottyProject)
+    createBookmarkFile(config.studentifyModeClassic.studentifiedBaseFolder, linearizedProject)
+    addSbtCommands(sbtLinearizeCommandsTemplateFolder, linearizedProject)
     loadStudentSettings(masterRepo, linearizedProject)
     cleanUp(List(".git", "navigation.sbt"), linearizedProject)
 

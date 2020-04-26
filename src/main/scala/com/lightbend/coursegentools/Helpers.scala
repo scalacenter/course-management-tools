@@ -314,7 +314,7 @@ object Helpers {
     dumpStringToFile(s"alias boot = ;reload ;project ${config.studentifyModeClassic.studentifiedBaseFolder} ;iflast shell", new File(targetFolder, ".sbtrc").getPath)
   }
 
-  def addSbtStudentCommands(sbtStudentCommandsTemplateFolder: File, targetCourseFolder: File): Unit = {
+  def addSbtCommands(sbtStudentCommandsTemplateFolder: File, targetCourseFolder: File): Unit = {
     val projectFolder = new File(targetCourseFolder, "project")
     val moves = for {
       template <- sbtio.listFiles(sbtStudentCommandsTemplateFolder)

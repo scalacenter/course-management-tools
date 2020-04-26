@@ -91,7 +91,8 @@ package object coursegentools {
                                  linearRepo: File = new File("."),
                                  multiJVM: Boolean = false,
                                  forceDeleteExistingDestinationFolder: Boolean = false,
-                                 configurationFile: Option[String] = None)
+                                 configurationFile: Option[String] = None,
+                                 isADottyProject: Boolean = false)
 
   case class DeLinearizeCmdOptions(masterRepo: File = new File("."),
                                    linearRepo: File = new File("."),

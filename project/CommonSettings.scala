@@ -19,7 +19,7 @@ object CommonSettings {
     scalacOptions ++= CompileOptions.compileOptions,
     unmanagedSourceDirectories in Compile := List((scalaSource in Compile).value),
     unmanagedSourceDirectories in Test := List((scalaSource in Test).value),
-    EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
+    EclipseKeys.createSrc := EclipseCreateSrc.Default,
     EclipseKeys.eclipseOutput := Some(".target"),
     EclipseKeys.withSource := true,
     EclipseKeys.skipParents in ThisBuild := true,

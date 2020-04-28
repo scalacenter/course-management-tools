@@ -2,9 +2,9 @@ package com.lightbend.coursegentools
 
 import java.io.File
 
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.ConfigFactory
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 

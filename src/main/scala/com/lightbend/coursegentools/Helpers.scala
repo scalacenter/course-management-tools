@@ -363,26 +363,29 @@ object Helpers {
 
   def createMasterBuildFile(exercises: Seq[String],
                             masterRepo: File,
-                            multiJVM: Boolean)(implicit config: MasterSettings): Unit = {
+                            multiJVM: Boolean,
+                            isADottyProject: Boolean)(implicit config: MasterSettings): Unit = {
 
     val targetFolder = new File(masterRepo, config.relativeSourceFolder)
 
     val exercisesBackTicked = exercises.map(exrc => s"`$exrc`")
 
+    val (dottyPreamble, setScalaVersion) = scalaDottyPreamble(isADottyProject)
+
     def exerciseDep(exercise: String): String = {
       if (config.useConfigureForProjects) {
-        s"""lazy val $exercise = project
+        s"""lazy val $exercise = project${setScalaVersion}
            |  .configure(CommonSettings.configure)
            |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
       } else {
-        s"""lazy val $exercise = project
+        s"""lazy val $exercise = project${setScalaVersion}
            |  .settings(CommonSettings.commonSettings: _*)
            |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
       }
     }
 
     def exerciseMJvmDep(exercise: String): String = {
-      s"""lazy val $exercise = project
+      s"""lazy val $exercise = project${setScalaVersion}
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .dependsOn(common % "test->test;compile->compile")
@@ -391,16 +394,18 @@ object Helpers {
     val exerciseList = exercisesBackTicked.mkString(",\n    ")
 
     val buildDefinition = if (multiJVM) {
-      s"""
+      s"""import sbt._
+         |$dottyPreamble
          |lazy val `${config.masterBaseProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
          |    $exerciseList
-         | ).settings(SbtMultiJvm.multiJvmSettings: _*)
+         | )${setScalaVersion}
+         |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .configs(MultiJvm)
          |
-         |lazy val common = project
+         |lazy val common = project${setScalaVersion}
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .configs(MultiJvm)
@@ -408,14 +413,17 @@ object Helpers {
          |${exercisesBackTicked.map{ exrc => exerciseMJvmDep(exrc)}.mkString("\n\n")}
        """.stripMargin
     } else {
-      s"""
+      s"""import sbt._
+         |$dottyPreamble
          |lazy val `${config.masterBaseProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
          |    $exerciseList
-         | ).settings(CommonSettings.commonSettings: _*)
+         | )${setScalaVersion}
+         | .settings(CommonSettings.commonSettings: _*)
          |
-         |lazy val common = project.settings(CommonSettings.commonSettings: _*)
+         |lazy val common = project${setScalaVersion}
+         |  .settings(CommonSettings.commonSettings: _*)
          |
          |${exercisesBackTicked.map{ exrc => exerciseDep(exrc)}.mkString("\n\n")}
        """.stripMargin
@@ -425,16 +433,20 @@ object Helpers {
 
   }
 
-  def createStudentifiedBuildFile(targetFolder: File, multiJVM: Boolean, isADottyProject: Boolean)
-                                 (implicit config: MasterSettings): Unit = {
-    val (dottyPreamble, setScalaVersion) = if (isADottyProject) (
+  def scalaDottyPreamble(isADottyProject: Boolean): (String, String) = {
+    if (isADottyProject) (
       """
         |val dottyVersion = "0.23.0-RC1"
         |""".stripMargin,
       """
         |  .settings(scalaVersion := dottyVersion)""".stripMargin
-      ) else
+    ) else
       ("", "")
+  }
+
+  def createStudentifiedBuildFile(targetFolder: File, multiJVM: Boolean, isADottyProject: Boolean)
+                                 (implicit config: MasterSettings): Unit = {
+    val (dottyPreamble, setScalaVersion) = scalaDottyPreamble(isADottyProject)
     val buildDef =
       s"""import sbt._
          |$dottyPreamble

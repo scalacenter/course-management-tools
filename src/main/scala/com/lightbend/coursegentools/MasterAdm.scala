@@ -23,7 +23,8 @@ object MasterAdm {
                             checkMaster,
                             updateMasterCommands,
                             useConfigureForProjects,
-                            genTests) = cmdOptions.get
+                            genTests,
+                            isADottyProject) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
     implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)
@@ -37,7 +38,8 @@ object MasterAdm {
      renumberExercises, renumberExercisesBase, renumberExercisesStep,
      checkMaster,
      updateMasterCommands,
-     genTests) match {
+     genTests,
+     isADottyProject) match {
       case (
         true,  // Re-generate master build file
         None,
@@ -45,8 +47,9 @@ object MasterAdm {
         false, _, _,
         false,
         false,
-        None) =>
-          createMasterBuildFile(exercises, masterRepo, multiJVM)
+        None,
+        _) =>
+          createMasterBuildFile(exercises, masterRepo, multiJVM, isADottyProject)
 
       case (
         false,
@@ -55,7 +58,8 @@ object MasterAdm {
         false, _, _,
         false,
         false,
-        None) if exerciseNumbers.contains(dibExNr) =>
+        None,
+        _) if exerciseNumbers.contains(dibExNr) =>
           val exercise = getExerciseName(exercises, dibExNr).get
           if (exerciseNumbers.contains(dibExNr - 1) || dibExNr == 0) {
             duplicateExercise(masterRepo, exercise, dibExNr)
@@ -63,7 +67,7 @@ object MasterAdm {
           } else {
             duplicateExercise(masterRepo, exercise, dibExNr - 1)
           }
-          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
+          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM, isADottyProject)
 
       case (
         false,
@@ -72,7 +76,8 @@ object MasterAdm {
         false, _, _,
         false,
         false,
-        None) =>
+        None,
+        _) =>
           printError(s"ERROR: Duplicate and insert before: no exercise with number $dibExNr")
 
       case (
@@ -82,12 +87,12 @@ object MasterAdm {
         false, _, _,
         false,
         false,
-        None) if exerciseNumbers.contains(dibExNr) =>
+        None,_) if exerciseNumbers.contains(dibExNr) =>
           import sbt.io.{IO => sbtio}
           val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
           val exercise = getExerciseName(exercises, dibExNr).get
           sbtio.delete(new File(relativeSourceFolder, exercise))
-          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
+          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM, isADottyProject)
 
       case (
         false,
@@ -96,7 +101,7 @@ object MasterAdm {
         false, _, _,
         false,
         false,
-        None) =>
+        None,_) =>
           printError(s"ERROR: Delete exercise: no exercise with number $dibExNr")
 
       case (
@@ -106,7 +111,8 @@ object MasterAdm {
         true, offset, step, // Renumber all exercises with start offset & step size
         false,
         false,
-        None) =>
+        None,
+        _) =>
           import sbt.io.{IO => sbtio}
           val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
           val moves = for {
@@ -117,7 +123,7 @@ object MasterAdm {
               if oldExDir != newExDir
           } yield (oldExDir, newExDir)
           sbtio.move(moves)
-          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM)
+          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM, isADottyProject)
 
       case (
         false,
@@ -126,7 +132,8 @@ object MasterAdm {
         false, _, _,
         true,   // Check sanity of master repository
         false,
-        None) =>
+        None,
+        _) =>
 
           val tryGitVersion = "git --version".toProcessCmd(workingDir = masterRepo).run
           if (tryGitVersion != 0)
@@ -150,7 +157,8 @@ object MasterAdm {
         false, _, _,
         false,
         true, // update master commands in master repo
-        None) =>
+        None,
+        _) =>
 
           addMasterCommands(masterRepo)
 
@@ -162,12 +170,12 @@ object MasterAdm {
         false, _, _,
         false,
         false,
-        Some(testFile) // generate test scripts
-        ) =>
+        Some(testFile), // generate test scripts
+        _) =>
           generateTestScript(masterRepo, config.relativeSourceFolder, configurationFile ,testFile, exercises, exerciseNumbers)
 
 
-      case (false, None, None, false, _, _, false, false, None) => println(toConsoleGreen(s"Nothing to do..."))
+      case (false, None, None, false, _, _, false, false, None, _) => println(toConsoleGreen(s"Nothing to do..."))
 
       case _ => printError(s"ERROR: Invalid combination of options")
 

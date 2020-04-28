@@ -74,7 +74,8 @@ package object coursegentools {
                                  checkMaster: Boolean = false,
                                  addMasterCommands: Boolean = false,
                                  useConfigureForProjects: Boolean = false,
-                                 testFile: Option[File] = None)
+                                 testFile: Option[File] = None,
+                                 isADottyProject: Boolean = false)
 
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),

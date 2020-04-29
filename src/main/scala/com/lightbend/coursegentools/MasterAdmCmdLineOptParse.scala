@@ -118,6 +118,13 @@ object MasterAdmCmdLineOptParse {
           case (testFile, c) =>
             c.copy(testFile = Some(testFile))
         }
+
+      opt[Unit]("dotty")
+        .text("studentified repository is a Dotty project")
+        .abbr("dot")
+        .action { case (_, c) =>
+          c.copy(isADottyProject = true)
+        }
     }
 
     parser.parse(args, MasterAdmCmdOptions())

@@ -428,7 +428,6 @@ object Helpers {
          |${exercisesBackTicked.map{ exrc => exerciseDep(exrc)}.mkString("\n\n")}
        """.stripMargin
     }
-
     dumpStringToFile(buildDefinition, new File(targetFolder, "build.sbt").getPath)
 
   }

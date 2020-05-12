@@ -232,7 +232,7 @@ object Helpers {
       .runAndExitIfFailed(toConsoleRed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"))
   }
 
-  def removeExercisesFromCleanMaster(cleanMasterRepo: File, exercises: Seq[String])(implicit config: MasterSettings, eofe: ExitOnFirstError): Unit = {
+  def removeExercisesFromCleanMaster(cleanMasterRepo: File, exercises: Seq[String])(implicit eofe: ExitOnFirstError): Unit = {
     for {
       exercise <- exercises
     } {
@@ -247,7 +247,7 @@ object Helpers {
   def cleanMasterViaGit(srcFolder: File, projectName: String): File = {
     val tmpDir = sbtio.createTemporaryDirectory
     val curDir = new File(System.getProperty("user.dir"))
-    val status = Process(Seq("./cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), curDir).!
+    Process(Seq("./cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), curDir).!
     tmpDir
   }
 
@@ -370,22 +370,22 @@ object Helpers {
 
     val exercisesBackTicked = exercises.map(exrc => s"`$exrc`")
 
-    val (dottyPreamble, setScalaVersion) = scalaDottyPreamble(isADottyProject)
+    val setScalaVersion = scalaDottyVersion(isADottyProject)
 
     def exerciseDep(exercise: String): String = {
       if (config.useConfigureForProjects) {
-        s"""lazy val $exercise = project${setScalaVersion}
+        s"""lazy val $exercise = project
            |  .configure(CommonSettings.configure)
            |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
       } else {
-        s"""lazy val $exercise = project${setScalaVersion}
+        s"""lazy val $exercise = project
            |  .settings(CommonSettings.commonSettings: _*)
            |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
       }
     }
 
     def exerciseMJvmDep(exercise: String): String = {
-      s"""lazy val $exercise = project${setScalaVersion}
+      s"""lazy val $exercise = project
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .dependsOn(common % "test->test;compile->compile")
@@ -395,17 +395,17 @@ object Helpers {
 
     val buildDefinition = if (multiJVM) {
       s"""import sbt._
-         |$dottyPreamble
+         |
          |lazy val `${config.masterBaseProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
          |    $exerciseList
-         | )${setScalaVersion}
+         |  )${setScalaVersion}
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .configs(MultiJvm)
          |
-         |lazy val common = project${setScalaVersion}
+         |lazy val common = project
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .configs(MultiJvm)
@@ -414,15 +414,15 @@ object Helpers {
        """.stripMargin
     } else {
       s"""import sbt._
-         |$dottyPreamble
+         |
          |lazy val `${config.masterBaseProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
          |    $exerciseList
-         | )${setScalaVersion}
-         | .settings(CommonSettings.commonSettings: _*)
+         |  )${setScalaVersion}
+         |  .settings(CommonSettings.commonSettings: _*)
          |
-         |lazy val common = project${setScalaVersion}
+         |lazy val common = project
          |  .settings(CommonSettings.commonSettings: _*)
          |
          |${exercisesBackTicked.map{ exrc => exerciseDep(exrc)}.mkString("\n\n")}
@@ -432,23 +432,19 @@ object Helpers {
 
   }
 
-  def scalaDottyPreamble(isADottyProject: Boolean): (String, String) = {
-    if (isADottyProject) (
-      """
-        |val dottyVersion = "0.23.0-RC1"
-        |""".stripMargin,
-      """
-        |  .settings(scalaVersion := dottyVersion)""".stripMargin
-    ) else
-      ("", "")
+  def scalaDottyVersion(isADottyProject: Boolean): String = {
+    if (isADottyProject) """
+        |  .settings(ThisBuild / scalaVersion := Version.scalaVersion)""".stripMargin
+    else
+      ""
   }
 
   def createStudentifiedBuildFile(targetFolder: File, multiJVM: Boolean, isADottyProject: Boolean)
                                  (implicit config: MasterSettings): Unit = {
-    val (dottyPreamble, setScalaVersion) = scalaDottyPreamble(isADottyProject)
+    val setScalaVersion = scalaDottyVersion(isADottyProject)
     val buildDef =
       s"""import sbt._
-         |$dottyPreamble
+         |
          |lazy val `${config.studentifiedProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
@@ -456,10 +452,10 @@ object Helpers {
          |  )${setScalaVersion}
          |  .settings(CommonSettings.commonSettings: _*)
          |
-         |lazy val common = project${setScalaVersion}
+         |lazy val common = project
          |  .settings(CommonSettings.commonSettings: _*)
          |
-         |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project${setScalaVersion}
+         |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
          |  ${if (config.useConfigureForProjects) ".configure(CommonSettings.configure)" else ".settings(CommonSettings.commonSettings: _*)"}
          |  .dependsOn(common % "test->test;compile->compile")
        """.stripMargin
@@ -467,7 +463,7 @@ object Helpers {
     val mJvmBuildDef =
       s"""
          |import sbt._
-         |$dottyPreamble
+         |
          |lazy val `${config.studentifiedProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
@@ -477,12 +473,12 @@ object Helpers {
          |  .settings(CommonSettings.commonSettings: _*)
          |  .configs(MultiJvm)
          |
-         |lazy val common = project${setScalaVersion}
+         |lazy val common = project
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .configs(MultiJvm)
          |
-         |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project${setScalaVersion}
+         |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  ${if (config.useConfigureForProjects) ".settings(CommonSettings.commonSettings: _*)" else ".configure(CommonSettings.configure)"}
          |  .configs(MultiJvm)

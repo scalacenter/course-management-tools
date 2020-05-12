@@ -64,7 +64,6 @@ object Studentify {
     cleanUp(config.studentifyFilesToCleanUp, targetCourseFolder)
     sbtio.delete(tmpDir)
     if (initAsGitRepo) initialiseAsGit(targetCourseFolder)
-
   }
 
   def initialiseAsGit(studentifiedRepo: File): Unit = {

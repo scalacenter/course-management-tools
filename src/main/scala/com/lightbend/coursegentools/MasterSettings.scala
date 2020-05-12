@@ -10,8 +10,6 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   import Console._
   private val consoleColors: Set[String] = Set("RESET", "GREEN", "RED", "BLUE", "CYAN", "YELLOW", "WHITE", "BLACK", "MAGENTA")
-  private val consoleColorMap: Map[String, String] =
-    Map("RESET" -> RESET, "GREEN" -> GREEN, "RED" -> RED, "BLUE" -> BLUE, "CYAN" -> CYAN, "YELLOW" -> YELLOW, "WHITE" -> WHITE, "BLACK" -> BLACK, "MAGENTA" -> MAGENTA)
 
   private def validateColor(settingKey: String): String = {
     val color = config.getString(settingKey)
@@ -66,11 +64,6 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
   val readmeInTestResources: Boolean = config.getBoolean("studentify.readme-in-test-resources")
 
   val useConfigureForProjects: Boolean = config.getBoolean("studentify.use-configure-for-projects")
-
-  object dottyConfig {
-    private val dottyConfig = config.getConfig("studentify.dotty")
-    val dottyVersion: String = dottyConfig.getString("version")
-  }
 
   object studentifyModeClassic {
     private val classicModeConfig = config.getConfig("studentify.studentify-mode-classic")

@@ -232,7 +232,7 @@ object Helpers {
       .runAndExitIfFailed(toConsoleRed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"))
   }
 
-  def removeExercisesFromCleanMaster(cleanMasterRepo: File, exercises: Seq[String])(implicit config: MasterSettings, eofe: ExitOnFirstError): Unit = {
+  def removeExercisesFromCleanMaster(cleanMasterRepo: File, exercises: Seq[String])(implicit eofe: ExitOnFirstError): Unit = {
     for {
       exercise <- exercises
     } {
@@ -247,7 +247,7 @@ object Helpers {
   def cleanMasterViaGit(srcFolder: File, projectName: String): File = {
     val tmpDir = sbtio.createTemporaryDirectory
     val curDir = new File(System.getProperty("user.dir"))
-    val status = Process(Seq("./cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), curDir).!
+    Process(Seq("./cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), curDir).!
     tmpDir
   }
 
@@ -422,7 +422,7 @@ object Helpers {
          |  )${setScalaVersion}
          |  .settings(CommonSettings.commonSettings: _*)
          |
-         |lazy val common = project${setScalaVersion}
+         |lazy val common = project
          |  .settings(CommonSettings.commonSettings: _*)
          |
          |${exercisesBackTicked.map{ exrc => exerciseDep(exrc)}.mkString("\n\n")}

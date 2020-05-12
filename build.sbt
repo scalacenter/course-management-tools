@@ -10,15 +10,9 @@ scalaVersion := Version.scalaVer
 resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 resolvers += Resolver.url("Typesafe Ivy Releases", url("https://repo.typesafe.com/typesafe/ivy-releases/"))(Resolver.ivyStylePatterns)
 
-libraryDependencies ++= Dependencies.studentify
-
-scalacOptions ++= List(
-  "-unchecked",
-  "-deprecation",
-  "-language:_",
-  "-target:jvm-1.8",
-  "-encoding", "UTF-8"
-)
+lazy val `course-management-tools` =
+  (project in file("."))
+  .settings(CommonSettings.commonSettings: _*)
 
 addCommandAlias("studentify", "runMain com.lightbend.coursegentools.Studentify")
 addCommandAlias("linearize", "runMain com.lightbend.coursegentools.Linearize")

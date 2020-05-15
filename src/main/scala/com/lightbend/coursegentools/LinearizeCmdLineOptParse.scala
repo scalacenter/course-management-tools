@@ -73,6 +73,12 @@ object LinearizeCmdLineOptParse {
         .action { case (_, c) =>
           c.copy(isADottyProject = true)
         }
+      opt[Unit]("no-auto-reload-sbt")
+        .text("no automatic reload on build definition change")
+        .abbr("nar")
+        .action { case (_, c) =>
+          c.copy(autoReloadOnBuildDefChange = false)
+        }
     }
 
     parser.parse(args, LinearizeCmdOptions())

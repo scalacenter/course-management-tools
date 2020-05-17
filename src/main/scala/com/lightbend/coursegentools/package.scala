@@ -75,7 +75,8 @@ package object coursegentools {
                                  addMasterCommands: Boolean = false,
                                  useConfigureForProjects: Boolean = false,
                                  testFile: Option[File] = None,
-                                 isADottyProject: Boolean = false)
+                                 isADottyProject: Boolean = false,
+                                 autoReloadOnBuildDefChange: Boolean = true)
 
   case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                   out: File = new File("."),
@@ -86,14 +87,16 @@ package object coursegentools {
                                   configurationFile: Option[String] = None,
                                   useConfigureForProjects: Boolean = false,
                                   initAsGitRepo: Boolean = false,
-                                  isADottyProject: Boolean = false)
+                                  isADottyProject: Boolean = false,
+                                  autoReloadOnBuildDefChange: Boolean = true)
 
   case class LinearizeCmdOptions(masterRepo: File = new File("."),
                                  linearRepo: File = new File("."),
                                  multiJVM: Boolean = false,
                                  forceDeleteExistingDestinationFolder: Boolean = false,
                                  configurationFile: Option[String] = None,
-                                 isADottyProject: Boolean = false)
+                                 isADottyProject: Boolean = false,
+                                 autoReloadOnBuildDefChange: Boolean = true)
 
   case class DeLinearizeCmdOptions(masterRepo: File = new File("."),
                                    linearRepo: File = new File("."),

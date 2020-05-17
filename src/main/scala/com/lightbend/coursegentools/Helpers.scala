@@ -364,7 +364,9 @@ object Helpers {
   def createMasterBuildFile(exercises: Seq[String],
                             masterRepo: File,
                             multiJVM: Boolean,
-                            isADottyProject: Boolean)(implicit config: MasterSettings): Unit = {
+                            isADottyProject: Boolean,
+                            autoReloadOnBuildDefChange: Boolean
+                           )(implicit config: MasterSettings): Unit = {
 
     val targetFolder = new File(masterRepo, config.relativeSourceFolder)
 
@@ -395,7 +397,7 @@ object Helpers {
 
     val buildDefinition = if (multiJVM) {
       s"""import sbt._
-         |
+         |${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
          |lazy val `${config.masterBaseProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
@@ -414,7 +416,7 @@ object Helpers {
        """.stripMargin
     } else {
       s"""import sbt._
-         |
+         |${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
          |lazy val `${config.masterBaseProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
@@ -439,12 +441,23 @@ object Helpers {
       ""
   }
 
-  def createStudentifiedBuildFile(targetFolder: File, multiJVM: Boolean, isADottyProject: Boolean)
+  def reloadBuildDefOnChange(autoReloadOnBuildDefChange: Boolean): String = {
+    if (autoReloadOnBuildDefChange)
+      """
+        |Global / onChangedBuildSource := ReloadOnSourceChanges
+        |""".stripMargin
+    else
+      ""
+  }
+
+  def createStudentifiedBuildFile(targetFolder: File, multiJVM: Boolean,
+                                  isADottyProject: Boolean,
+                                  autoReloadOnBuildDefChange: Boolean)
                                  (implicit config: MasterSettings): Unit = {
     val setScalaVersion = scalaDottyVersion(isADottyProject)
     val buildDef =
       s"""import sbt._
-         |
+         |${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
          |lazy val `${config.studentifiedProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
@@ -461,7 +474,7 @@ object Helpers {
        """.stripMargin
 
     val mJvmBuildDef =
-      s"""
+      s"""${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
          |import sbt._
          |
          |lazy val `${config.studentifiedProjectName}` = (project in file("."))

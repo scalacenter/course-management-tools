@@ -24,7 +24,8 @@ object MasterAdm {
                             updateMasterCommands,
                             useConfigureForProjects,
                             genTests,
-                            isADottyProject) = cmdOptions.get
+                            isADottyProject,
+                            autoReloadOnBuildDefChange) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
     implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)
@@ -49,7 +50,7 @@ object MasterAdm {
         false,
         None,
         _) =>
-          createMasterBuildFile(exercises, masterRepo, multiJVM, isADottyProject)
+          createMasterBuildFile(exercises, masterRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
 
       case (
         false,
@@ -67,7 +68,7 @@ object MasterAdm {
           } else {
             duplicateExercise(masterRepo, exercise, dibExNr - 1)
           }
-          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM, isADottyProject)
+          createMasterBuildFile(getExerciseNames(masterRepo),masterRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
 
       case (
         false,
@@ -92,7 +93,7 @@ object MasterAdm {
           val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
           val exercise = getExerciseName(exercises, dibExNr).get
           sbtio.delete(new File(relativeSourceFolder, exercise))
-          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM, isADottyProject)
+          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
 
       case (
         false,
@@ -123,7 +124,7 @@ object MasterAdm {
               if oldExDir != newExDir
           } yield (oldExDir, newExDir)
           sbtio.move(moves)
-          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM, isADottyProject)
+          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
 
       case (
         false,

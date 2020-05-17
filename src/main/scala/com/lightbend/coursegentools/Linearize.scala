@@ -32,7 +32,7 @@ object Linearize {
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile, isADottyProject) = cmdOptions.get
+    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile, isADottyProject, autoReloadOnBuildDefChange) = cmdOptions.get
 
     implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
 
@@ -64,7 +64,7 @@ object Linearize {
     val sbtLinearizeCommandsTemplateFolder = new File("sbtLinearizeCommands")
 
     copyMaster(cleanMasterRepo, linearizedProject)
-    createStudentifiedBuildFile(linearizedProject, multiJVM, isADottyProject)
+    createStudentifiedBuildFile(linearizedProject, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
     createBookmarkFile(config.studentifyModeClassic.studentifiedBaseFolder, linearizedProject)
     addSbtCommands(sbtLinearizeCommandsTemplateFolder, linearizedProject)
     loadStudentSettings(masterRepo, linearizedProject)

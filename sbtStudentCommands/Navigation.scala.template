@@ -64,7 +64,7 @@ object Navigation {
       val key: AttributeKey[File] = AttributeKey[File](bookmarkKeyName)
       val bookmarkFile: Option[File] = state get key
       try {
-        val mark: String = IO.read(bookmarkFile.get)
+        val mark: String = IO.read(bookmarkFile.get).trim()
         val cmd: String = s"project $mark"
         val newState = cmd :: state
         newState

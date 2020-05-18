@@ -160,11 +160,11 @@ object Helpers {
 
   }
 
-  def putBackToMaster(masterRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExNameAndSHA])(implicit config: MasterSettings): Unit = {
+  def putBackToMaster(masterRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExerciseNameAndSHA])(implicit config: MasterSettings): Unit = {
 
     val masterRepoRelative = new File(masterRepo, config.relativeSourceFolder)
 
-    for (ExNameAndSHA(exercise, sha) <- exercisesAndSHAs) {
+    for (ExerciseNameAndSHA(exercise, sha) <- exercisesAndSHAs) {
       s"git checkout $sha"
         .toProcessCmd(linearizedRepo)
         .runAndExitIfFailed(toConsoleRed(s"Unable to checkout commit($sha) corresponding to exercise: $exercise"))
@@ -176,10 +176,10 @@ object Helpers {
     s"git checkout master".toProcessCmd(linearizedRepo).runAndExitIfFailed(toConsoleRed(s"Unable to checkout master in linearized repo"))
   }
 
-  def getExercisesAndSHAs(linearizedOutputFolder: File): Vector[ExNameAndSHA] = {
-    def convertToExNameAndSHA(v: Vector[String]): ExNameAndSHA = {
+  def getExercisesAndSHAs(linearizedOutputFolder: File): Vector[ExerciseNameAndSHA] = {
+    def convertToExNameAndSHA(v: Vector[String]): ExerciseNameAndSHA = {
       v match {
-        case sha +: name +: _ => ExNameAndSHA(name, sha)
+        case sha +: name +: _ => ExerciseNameAndSHA(name, sha)
       }
     }
     def splitSHAandExName(shaAndExname: String): Vector[String] = {
@@ -193,7 +193,7 @@ object Helpers {
       .reverse
   }
 
-  def checkReposMatch(exercisesInMaster: Vector[String], exercisesAndSHAs: Vector[ExNameAndSHA])(implicit eofe: ExitOnFirstError): Unit = {
+  def checkReposMatch(exercisesInMaster: Vector[String], exercisesAndSHAs: Vector[ExerciseNameAndSHA])(implicit eofe: ExitOnFirstError): Unit = {
     if (exercisesInMaster != exercisesAndSHAs.map(_.exName))
       printError(s"Repos are incompatible")
   }

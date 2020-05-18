@@ -6,7 +6,7 @@ object CompileOptions {
   val compileOptions = Seq(
     "-unchecked",
     "-deprecation",
-    "-Xlint:unused",
+    "-Xlint:_",
     "-encoding", "UTF-8"
   )
 }

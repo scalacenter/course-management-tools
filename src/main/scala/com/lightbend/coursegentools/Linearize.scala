@@ -46,7 +46,7 @@ object Linearize {
     (destinationFolder.exists(), forceDeleteExistingDestinationFolder) match {
       case (true, false) =>
         printError(
-          """
+          s"""
              |Destination folder ${destinationFolder.getPath} exists: Either remove this folder
              |manually or use the '-f' command-line option to delete it automatically
              |""".stripMargin)

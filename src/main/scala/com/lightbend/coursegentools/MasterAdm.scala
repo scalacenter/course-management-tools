@@ -173,7 +173,7 @@ object MasterAdm {
         false,
         Some(testFile), // generate test scripts
         _) =>
-          generateTestScript(masterRepo, config.relativeSourceFolder, configurationFile ,testFile, exercises, exerciseNumbers)
+          generateTestScript(masterRepo, config.relativeSourceFolder, configurationFile ,testFile, exercises, exerciseNumbers, isADottyProject)
 
 
       case (false, None, None, false, _, _, false, false, None, _) => println(toConsoleGreen(s"Nothing to do..."))

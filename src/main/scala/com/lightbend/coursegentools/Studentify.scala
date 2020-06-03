@@ -66,48 +66,59 @@ object Studentify {
     if (initAsGitRepo) initialiseAsGit(targetCourseFolder)
   }
 
+  def defaultGitIgnoreContent: String = {
+    s"""*.class
+       |*.log
+       |.bookmark
+       |
+       |# VSCode specific
+       |.vscode
+       |*.code-workspace
+       |
+       |# Metals/Bloop specific
+       |.bloop/
+       |.metals/
+       |.swp
+       |project/metals.sbt
+       |
+       |# sbt specific
+       |.cache/
+       |.history/
+       |.lib/
+       |dist/*
+       |target/
+       |lib_managed/
+       |src_managed/
+       |project/boot/
+       |project/plugins/project/
+       |
+       |# Scala-IDE specific
+       |.scala_dependencies
+       |.worksheet
+       |.target
+       |.cache
+       |.classpath
+       |.project
+       |.settings/
+       |
+       |# Intellij specific
+       |*.iml
+       |*.idea/
+       |*.idea_modules/
+       |
+       |# Sublime specific
+       |*.sublime-project
+       |*.sublime-workspace
+       |
+       |# OS specific
+       |.DS_Store
+       """.stripMargin
+  }
+
   def initialiseAsGit(studentifiedRepo: File): Unit = {
     import ProcessDSL._
 
-    val gitIgnore =
-      s"""*.class
-         |*.log
-         |.bookmark
-         |
-         |# sbt specific
-         |.cache/
-         |.history/
-         |.lib/
-         |dist/*
-         |target/
-         |lib_managed/
-         |src_managed/
-         |project/boot/
-         |project/plugins/project/
-         |
-         |# Scala-IDE specific
-         |.scala_dependencies
-         |.worksheet
-         |.target
-         |.cache
-         |.classpath
-         |.project
-         |.settings/
-         |
-         |# Intellij specific
-         |*.iml
-         |*.idea/
-         |*.idea_modules/
-         |
-         |# Sublime specific
-         |*.sublime-project
-         |*.sublime-workspace
-         |
-         |# OS specific
-         |.DS_Store
-       """.stripMargin
-
-    dumpStringToFile(gitIgnore, new File(studentifiedRepo, ".gitignore").getPath)
+    dumpStringToFile(defaultGitIgnoreContent, new File(studentifiedRepo, ".gitignore").getPath)
     s"git init"
       .toProcessCmd(workingDir = studentifiedRepo)
       .runAndExitIfFailed(toConsoleRed(s"'git init' failed on ${studentifiedRepo.getAbsolutePath}"))

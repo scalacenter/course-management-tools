@@ -10,13 +10,15 @@ object GenTests {
                          configurationFile: Option[String],
                          testScript: File,
                          exercises: Vector[String],
-                         exerciseNumbers: Vector[Int]): Unit = {
+                         exerciseNumbers: Vector[Int],
+                         isADottyProject: Boolean): Unit = {
     val masterRepoPath = masterRepo.getAbsolutePath
     val exerciseFolderPath: String =
       if (relativeSourceFolder != "") new File(masterRepo, relativeSourceFolder).getAbsolutePath else masterRepoPath
 
     val cmtFolder = System.getProperty("user.dir")
     val configurationFileArgument = if(configurationFile.isDefined) s"-cfg ${configurationFile.get}" else ""
+    val isADottyProjectOption = if (isADottyProject) "-dot" else ""
 
     val script: String =
       s"""#!/bin/bash -e -o pipefail
@@ -32,7 +34,7 @@ object GenTests {
         |cd $$CMT_FOLDER
         |
         |${separator("Studentify the project")}
-        |sbt "studentify $configurationFileArgument $masterRepoPath $$TMP_DIR"
+        |sbt "studentify $configurationFileArgument $isADottyProjectOption $masterRepoPath $$TMP_DIR"
         |
         |${separator("Test studentified project:\n  Exercise 'nextExercise', 'pullSolution', 'listExercises', 'man e' commands")}
         |cd $$TMP_DIR/${masterRepo.getName}

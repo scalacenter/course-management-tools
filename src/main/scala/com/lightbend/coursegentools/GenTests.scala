@@ -21,7 +21,10 @@ object GenTests {
     val isADottyProjectOption = if (isADottyProject) "-dot" else ""
 
     val script: String =
-      s"""#!/bin/bash -e -o pipefail
+      s"""#!/bin/bash
+        |
+        |set -e
+        |set -o pipefail
         |
         |CMT_FOLDER=$cmtFolder # This should become a script argument at some stage
         |

@@ -27,7 +27,7 @@ mkdir ${REMOTE_REPO}                              &&
 git init --bare $REMOTE_REPO                      &&
 # Get its path...
 cd $REMOTE_REPO                                   &&
-REPO=$( pwd )                                        &&
+REPO=$( pwd )                                     &&
 # Switch back to our master repo
 cd $MASTER                                        &&
 # ...and push whatever is in the current branch

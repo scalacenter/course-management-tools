@@ -5,16 +5,16 @@ import java.io.File
 import scala.util.Random
 
 object GenTests {
-  def generateTestScript(masterRepo: File,
+  def generateTestScript(mainRepo: File,
                          relativeSourceFolder: String,
                          configurationFile: Option[String],
                          testScript: File,
                          exercises: Vector[String],
                          exerciseNumbers: Vector[Int],
                          isADottyProject: Boolean): Unit = {
-    val masterRepoPath = masterRepo.getAbsolutePath
+    val mainRepoPath = mainRepo.getAbsolutePath
     val exerciseFolderPath: String =
-      if (relativeSourceFolder != "") new File(masterRepo, relativeSourceFolder).getAbsolutePath else masterRepoPath
+      if (relativeSourceFolder != "") new File(mainRepo, relativeSourceFolder).getAbsolutePath else mainRepoPath
 
     val cmtFolder = System.getProperty("user.dir")
     val configurationFileArgument = if(configurationFile.isDefined) s"-cfg ${configurationFile.get}" else ""
@@ -28,19 +28,19 @@ object GenTests {
         |
         |CMT_FOLDER=$cmtFolder # This should become a script argument at some stage
         |
-        |${separator("Test master repo 'man e', 'test'")}
+        |${separator("Test main repo 'man e', 'test'")}
         |cd $exerciseFolderPath
-        |sbt "${genMasterExerciseTestCmds(exercises)}"
+        |sbt "${genMainExerciseTestCmds(exercises)}"
         |
         |${separator("Create a temporary folder to hold studentified version")}
         |TMP_DIR=$$(mktemp -d /tmp/CMT.XXXXXX)
         |cd $$CMT_FOLDER
         |
         |${separator("Studentify the project")}
-        |sbt "studentify $configurationFileArgument $isADottyProjectOption $masterRepoPath $$TMP_DIR"
+        |sbt "studentify $configurationFileArgument $isADottyProjectOption $mainRepoPath $$TMP_DIR"
         |
         |${separator("Test studentified project:\n  Exercise 'nextExercise', 'pullSolution', 'listExercises', 'man e' commands")}
-        |cd $$TMP_DIR/${masterRepo.getName}
+        |cd $$TMP_DIR/${mainRepo.getName}
         |sbt "${genStudentifiedTestCmds(exercises)}"
         |
         |${separator("Test studentified project:\n  Exercise 'gotoExercise', 'gotoExerciseNr', 'pullSolution', 'test', 'listExercises, 'saveState', savedStates', 'restoreState''")}
@@ -63,7 +63,7 @@ object GenTests {
      """.stripMargin
   }
 
-  def genMasterExerciseTestCmds(exercises: Vector[String]): String = {
+  def genMainExerciseTestCmds(exercises: Vector[String]): String = {
     exercises.map(exercise => s";project $exercise;compile;test;man e").mkString("\n", "\n", "")
   }
 

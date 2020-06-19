@@ -32,14 +32,14 @@ object Linearize {
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val LinearizeCmdOptions(masterRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile, isADottyProject, autoReloadOnBuildDefChange) = cmdOptions.get
+    val LinearizeCmdOptions(mainRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile, isADottyProject, autoReloadOnBuildDefChange) = cmdOptions.get
 
-    implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
+    implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
 
-    exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
+    exitIfGitIndexOrWorkspaceIsntClean(mainRepo)
 
-    val projectName = masterRepo.getName
-    val exercises: Seq[String] = getExerciseNames(masterRepo)
+    val projectName = mainRepo.getName
+    val exercises: Seq[String] = getExerciseNames(mainRepo)
 
     val destinationFolder = new File(linearizedOutputFolder, projectName)
 
@@ -56,25 +56,26 @@ object Linearize {
 
     }
 
-    val tmpDir = cleanMasterViaGit(masterRepo, projectName)
-    val cleanMasterRepo = new File(tmpDir, projectName)
-    printNotification(s"Cleaned master repo: $cleanMasterRepo")
-    val relativeCleanMasterRepo = new File(cleanMasterRepo, config.relativeSourceFolder)
+    val tmpDir = cleanMainViaGit(mainRepo, projectName)
+    val cleanMainRepo = new File(tmpDir, projectName)
+    printNotification(s"Cleaned main repo: $cleanMainRepo")
+    val relativeCleanMainRepo = new File(cleanMainRepo, config.relativeSourceFolder)
     val linearizedProject = new File(linearizedOutputFolder, projectName)
     val sbtLinearizeCommandsTemplateFolder = new File("sbtLinearizeCommands")
 
-    copyMaster(cleanMasterRepo, linearizedProject)
+    copyMain(cleanMainRepo, linearizedProject)
     createStudentifiedBuildFile(linearizedProject, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
     createBookmarkFile(config.studentifyModeClassic.studentifiedBaseFolder, linearizedProject)
     addSbtCommands(sbtLinearizeCommandsTemplateFolder, linearizedProject)
-    loadStudentSettings(masterRepo, linearizedProject)
+    loadStudentSettings(mainRepo, linearizedProject)
     cleanUp(List(".git", "navigation.sbt"), linearizedProject)
 
-    removeExercisesFromCleanMaster(linearizedProject, exercises)
-    stageFirstExercise(exercises.head, relativeCleanMasterRepo, linearizedProject)
+    removeExercisesFromCleanMain(linearizedProject, exercises)
+    stageFirstExercise(exercises.head, relativeCleanMainRepo, linearizedProject)
     initializeGitRepo(linearizedProject)
     commitFirstExercise(exercises.head, linearizedProject)
-    commitRemainingExercises(exercises.tail, cleanMasterRepo, linearizedProject)
+    commitRemainingExercises(exercises.tail, cleanMainRepo, linearizedProject)
+    renameMainBranch(linearizedProject)
 
     sbtio.delete(tmpDir)
   }

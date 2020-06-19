@@ -31,12 +31,12 @@ object DeLinearizeCmdLineOptParse {
     val parser = new scopt.OptionParser[DeLinearizeCmdOptions]("delinearize") {
       head("delinearize", "3.0")
 
-      arg[File]("masterRepo")
-        .text("base folder holding master course repository")
-        .action { case (masterRepo, c) =>
-          if (!folderExists(masterRepo))
-            printError(s"Base master repo folder (${masterRepo.getPath}) doesn't exist")
-          c.copy(masterRepo = masterRepo)
+      arg[File]("mainRepo")
+        .text("base folder holding main course repository")
+        .action { case (mainRepo, c) =>
+          if (!folderExists(mainRepo))
+            printError(s"Base main repo folder (${mainRepo.getPath}) doesn't exist")
+          c.copy(mainRepo = mainRepo)
         }
 
       arg[File]("linearRepo")

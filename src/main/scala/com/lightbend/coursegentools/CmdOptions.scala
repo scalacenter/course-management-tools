@@ -2,23 +2,23 @@ package com.lightbend.coursegentools
 
 import java.io.File
 
-case class MasterAdmCmdOptions(masterRepo: File = new File("."),
-                               multiJVM: Boolean = false,
-                               regenBuildFile: Boolean = false,
-                               duplicateExerciseInsertBeforeNr: Option[Int] = None,
-                               deleteExerciseNr: Option[Int] = None,
-                               renumberExercises: Boolean = false,
-                               renumberExercisesBase: Int = 0,
-                               renumberExercisesStep: Int = 1,
-                               configurationFile: Option[String] = None,
-                               checkMaster: Boolean = false,
-                               addMasterCommands: Boolean = false,
-                               useConfigureForProjects: Boolean = false,
-                               testFile: Option[File] = None,
-                               isADottyProject: Boolean = false,
-                               autoReloadOnBuildDefChange: Boolean = true)
+case class MainAdmCmdOptions(mainRepo: File = new File("."),
+                             multiJVM: Boolean = false,
+                             regenBuildFile: Boolean = false,
+                             duplicateExerciseInsertBeforeNr: Option[Int] = None,
+                             deleteExerciseNr: Option[Int] = None,
+                             renumberExercises: Boolean = false,
+                             renumberExercisesBase: Int = 0,
+                             renumberExercisesStep: Int = 1,
+                             configurationFile: Option[String] = None,
+                             checkMain: Boolean = false,
+                             addMainCommands: Boolean = false,
+                             useConfigureForProjects: Boolean = false,
+                             testFile: Option[File] = None,
+                             isADottyProject: Boolean = false,
+                             autoReloadOnBuildDefChange: Boolean = true)
 
-case class StudentifyCmdOptions(masterRepo: File = new File("."),
+case class StudentifyCmdOptions(mainRepo: File = new File("."),
                                 out: File = new File("."),
                                 multiJVM: Boolean = false,
                                 first: Option[String] = None,
@@ -30,7 +30,7 @@ case class StudentifyCmdOptions(masterRepo: File = new File("."),
                                 isADottyProject: Boolean = false,
                                 autoReloadOnBuildDefChange: Boolean = true)
 
-case class LinearizeCmdOptions(masterRepo: File = new File("."),
+case class LinearizeCmdOptions(mainRepo: File = new File("."),
                                linearRepo: File = new File("."),
                                multiJVM: Boolean = false,
                                forceDeleteExistingDestinationFolder: Boolean = false,
@@ -38,6 +38,6 @@ case class LinearizeCmdOptions(masterRepo: File = new File("."),
                                isADottyProject: Boolean = false,
                                autoReloadOnBuildDefChange: Boolean = true)
 
-case class DeLinearizeCmdOptions(masterRepo: File = new File("."),
+case class DeLinearizeCmdOptions(mainRepo: File = new File("."),
                                  linearRepo: File = new File("."),
                                  configurationFile: Option[String] = None)

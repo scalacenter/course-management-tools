@@ -6,7 +6,7 @@ import com.typesafe.config.ConfigFactory
 
 import scala.jdk.CollectionConverters._
 
-class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
+class MainSettings(mainRepo: File, optConfigurationFile: Option[String]) {
 
   import Console._
   private val consoleColors: Set[String] = Set("RESET", "GREEN", "RED", "BLUE", "CYAN", "YELLOW", "WHITE", "BLACK", "MAGENTA")
@@ -26,7 +26,7 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   private val cmdLineConfigFile: Option[File] =
     if (optConfigurationFile.isDefined) {
-      val configurationFile = new File(masterRepo, optConfigurationFile.get)
+      val configurationFile = new File(mainRepo, optConfigurationFile.get)
       if (!configurationFile.exists()) {
         implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
         printError(s"No such file: ${optConfigurationFile.get}")
@@ -37,7 +37,7 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
     }
 
   private val defaultConfigFile: Option[File] = {
-    val configFile = new File(masterRepo, optConfigurationFile.getOrElse("course-management.conf"))
+    val configFile = new File(mainRepo, optConfigurationFile.getOrElse("course-management.conf"))
     if (configFile.exists()) Some(configFile) else None
   }
 
@@ -72,7 +72,7 @@ class MasterSettings(masterRepo: File, optConfigurationFile: Option[String]) {
 
   val solutionsFolder: String = config.getString("studentify.solution-folder")
 
-  val masterBaseProjectName: String = config.getString("studentify.master-base-project-name")
+  val mainBaseProjectName: String = config.getString("studentify.main-base-project-name")
   val studentifiedProjectName: String = config.getString("studentify.studentified-project-name")
 
   object Colors {

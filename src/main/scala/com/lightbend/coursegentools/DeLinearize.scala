@@ -27,14 +27,14 @@ object DeLinearize {
 
     val cmdOptions = DeLinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val DeLinearizeCmdOptions(masterRepo, linearizedRepo, optConfigurationFile) = cmdOptions.get
+    val DeLinearizeCmdOptions(mainRepo, linearizedRepo, optConfigurationFile) = cmdOptions.get
 
-    implicit val config: MasterSettings = new MasterSettings(masterRepo, optConfigurationFile)
+    implicit val config: MainSettings = new MainSettings(mainRepo, optConfigurationFile)
     implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
 
-    val exercisesInMaster = getExerciseNames(masterRepo)
+    val exercisesInMain = getExerciseNames(mainRepo)
     val exercisesAndSHAs = getExercisesAndSHAs(linearizedRepo)
-    checkReposMatch(exercisesInMaster, exercisesAndSHAs)
-    putBackToMaster(masterRepo, linearizedRepo, exercisesAndSHAs)
+    checkReposMatch(exercisesInMain, exercisesAndSHAs)
+    putBackToMain(mainRepo, linearizedRepo, exercisesAndSHAs)
   }
 }

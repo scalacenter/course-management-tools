@@ -104,8 +104,8 @@ object MPSelection {
     ExercisePathSpec.findFirstIn(folder.getPath).isDefined
   }
 
-  def getExerciseNames(masterRepo: File): Vector[String] = {
-    val exerciseFolders = sbtio.listFiles(masterRepo, FoldersOnly()).filter(isExerciseFolder)
+  def getExerciseNames(mainRepo: File): Vector[String] = {
+    val exerciseFolders = sbtio.listFiles(mainRepo, FoldersOnly()).filter(isExerciseFolder)
     exerciseFolders.map(folder => folder.getName).toVector.sorted
   }
 

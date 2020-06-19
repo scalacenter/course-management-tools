@@ -7,21 +7,21 @@ Over the last couple of years, a specific set of tools and workflow were used to
 - Maintain a regular history of course versions in git
 	- Easy retrieval of current and older version of a course and allow for *normal* handling of pull requests
  
-- Ability to linearize and de-linearize (using the `linearize` and `delinearize` commands respectively) a version of a course exercise master. A linearized course master can be changed using `git` interactive rebasing
+- Ability to linearize and de-linearize (using the `linearize` and `delinearize` commands respectively) a version of a course exercise main project. A linearized course main can be changed using `git` interactive rebasing
 
-- The ability to run *all* tests for *all* exercises in a course master repository
+- The ability to run *all* tests for *all* exercises in a course main repository
 
 - Generation of self-contained student exercise repositories using `studentify`
 	- The student repository has no external dependencies except:
 		- Java (8) SDK
 		- sbt (Scala build tool, version 0.13.13 or higher)
-		- dependencies defined as part of the course master itself
+		- dependencies defined as part of the course main itself
 	- Ability to *save* the current state of an exercise with the possibility to restore it at a later moment
 	- Ability to *pull* the complete solution of an exercise
 	- Ability to selectively *pull* source files from the complete solution of an exercise
 	- Generalization of the use of *manual pages* for all exercises
 	- Support for (*Akka*) *multi-jvm* tests
-	- Ability to *list* all the exercises in a master repository
+	- Ability to *list* all the exercises in a main repository
 	- Ability to *jump* to an exercise based on its sequence number
 	- A brief (13') demo of the student repo functionality is available [here](https://www.youtube.com/watch?v=coPOCe8erzc)
 	
@@ -31,11 +31,11 @@ Over the last couple of years, a specific set of tools and workflow were used to
 
 > Note: Testing has revealed that some 'older' version of `git` pose problems. `git` version 2.10.0 should be fine.
 	
-## Course master repository structure
+## Course main repository structure
 
 ### Getting started
 
-The following section details the structure of a course master project.
+The following section details the structure of a course main project.
 
 To give anyone who wants to use this approach a leg-up, a template project is available [here](https://github.com/lightbend-training/course-master-template). Next:
 
@@ -45,25 +45,25 @@ To give anyone who wants to use this approach a leg-up, a template project is av
    - `git init`
 - ... and start hacking! 
 
-### Course master set-up
+### Course main set-up
 
-A course master repository is a multi-project sbt build that needs to adhere to a few conventions:
+A course main repository is a multi-project sbt build that needs to adhere to a few conventions:
 
 - Each exercise is an sbt project who's name has to start with `exercise_[0-9][0-9][0-9]` followed by a description of the exercise (for example `exercise_001_create_a_class`)
 - There should be an `sbt` project containing *common* code with the exact name `common`
-- The `build.sbt` file in the root folder of the master repository uses a fixed layout described in more detail below
-- There should be a `.sbtopts` file in the root folder of the master repository which sets a number of options that are important when running integration tests.
+- The `build.sbt` file in the root folder of the main repository uses a fixed layout described in more detail below
+- There should be a `.sbtopts` file in the root folder of the main repository which sets a number of options that are important when running integration tests.
 - README files:
 	- There should be a global `README.md` file containing the overall course description for students and a list of `sbt` commands that the user can use to 'navigate' the course.
 	- Each exercise project should have a `README.md` file containing a description of the exercise and 'run', 'test' and 'next step' instructions and should be located at `exercises_xxx_.../src/test/resources`
 	- The `common` project should have a `README.md` file located under `common/src/test/resources`
 	- The `base` project should have a `README.md` file located under `src/test/resources`
 	- Note that the `listExercises` command, available on a _studentified_ repo extracts the exercise descriptions from the exercise project name. For example, the exercise project name `exercise_001_create_a_class` generates `1. Exercise 1 > Define A Class` in the output of the command. 
-- By default, test code is assumed to be located in a `src/test` folder in each exercise folder. As of `studentify` version 2.0, this has become configurable by creating a file `.student-settings.conf` in the course master repo with a line that sets the `TestCodeFolders` option.
+- By default, test code is assumed to be located in a `src/test` folder in each exercise folder. As of `studentify` version 2.0, this has become configurable by creating a file `.student-settings.conf` in the course main repo with a line that sets the `TestCodeFolders` option.
 
-### Course master project structure
+### Course main project structure
 
-The following diagram depicts structure of a course master with 3 exercises:
+The following diagram depicts structure of a course main with 3 exercises:
 
 ```
                  base
@@ -141,23 +141,23 @@ It is recommended to use the following file structure in the `project` folder:
 
 ```
 
-When settings up a new course master repository, the easiest way to get started is to follow the instructions in the _Getting started_ section above. 
+When settings up a new course main repository, the easiest way to get started is to follow the instructions in the _Getting started_ section above. 
 
-> Note: a new command, `masteradm`, has been added to generate the root `build.sbt` file based on the master folder structure. It assumes that all the exercises are in folders named `exercise_\d{3}_.*` (using regular expression specification). See section "The `masteradm` command".
+> Note: a new command, `mainadm`, has been added to generate the root `build.sbt` file based on the main folder structure. It assumes that all the exercises are in folders named `exercise_\d{3}_.*` (using regular expression specification). See section "The `mainadm` command".
 
 > Note: Many options for generating a course can now be set via configuration. See section `Tweaking tool behaviour via configuration`.
 
-## Course master editing approach
+## Course main editing approach
 
-Once the initial set-up of a course master repository has been completed, the question arises about how to evolve it.
+Once the initial set-up of a course main repository has been completed, the question arises about how to evolve it.
 
 There's a recommended workflow and a set of tools that can be used for this.
 
 ### Tools
 
-The course management tools contain two utilities that can convert a multi-project course master project with one project per exercise into a so-called '*linearized*' git repository with one commit per exercise. A second command named 'delinearize' performs the opposite conversion: it applies the changes made in the linearized version of the course master on the course master repo itself.
+The course management tools contain two utilities that can convert a multi-project course main project with one project per exercise into a so-called '*linearized*' git repository with one commit per exercise. A second command named 'delinearize' performs the opposite conversion: it applies the changes made in the linearized version of the course main on the course main repo itself.
 
-Hence, one can choose different approaches to implement a certain modification to the exercises in the course master.
+Hence, one can choose different approaches to implement a certain modification to the exercises in the course main.
 
 #### Applying changes to common files
 
@@ -169,51 +169,51 @@ When the changes have been made, it is very easy to verify if all the tests in t
 
 Two possible approaches can be utilized.
 
-#### First approach: direct changes to files in course master
+#### First approach: direct changes to files in course main
 
 One can apply changes directly to files in the exercise project(s) and verify correctness by running, possibly modified, tests. (run `base/test:test` in sbt). In most cases, any change made in a particular exercise, will have an impact on subsequent exercises. As such, making changes implies being able to efficiently search for occurrences of certain classes, methods and variable names. A very nice tool that can assist in this process is the 'Silver Searcher' (<https://github.com/ggreer/the_silver_searcher>). It's basically a `find`/`grep`/`awk` on steroids.
 
-Combined with some simple scripting, many changes can be implemented very efficiently. A video recording showing this approach can be viewed at: [course master editing workflow](https://www.youtube.com/watch?v=yLMPoN13eMM).
+Combined with some simple scripting, many changes can be implemented very efficiently. A video recording showing this approach can be viewed at: [course main editing workflow](https://www.youtube.com/watch?v=yLMPoN13eMM).
 
 Of course, the (best) practice to commit often in `git` applies here.
 
-#### Second approach: applying changes to a linearized version of the course master
+#### Second approach: applying changes to a linearized version of the course main
 
-In some cases, applying changes to a linearized version of a course master repo may be easier than applying them directly on the master. 
+In some cases, applying changes to a linearized version of a course main repo may be easier than applying them directly on the main. 
 
-Suppose we have a course master repo and an empty folder that will hold the linearized version of the master repo. Suppose that these are located in folders `/lbt/FTTAS-v1.3.0/fast-track-akka-scala` and `/lbt/Studentify/as-linearized` respectively.
+Suppose we have a course main repo and an empty folder that will hold the linearized version of the main repo. Suppose that these are located in folders `/lbt/FTTAS-v1.3.0/fast-track-akka-scala` and `/lbt/Studentify/as-linearized` respectively.
 
 The editing workflow looks as follows:
 
-1. Linearize the master repo: `linearize /lbt/AS-v1.2.0/fast-track-scala-advanced-scala /lbt/Studentify/as-linearized`
-> Note: always make sure that, when running `linearize`, the `workspace` and `index` in the course master repository is clean: any modifications in the `index` and `workspace` will not be carried over to the linearized repo. 
+1. Linearize the main repo: `linearize /lbt/AS-v1.2.0/fast-track-scala-advanced-scala /lbt/Studentify/as-linearized`
+> Note: always make sure that, when running `linearize`, the `workspace` and `index` in the course main repository is clean: any modifications in the `index` and `workspace` will not be carried over to the linearized repo. 
 
 2. Apply changes to the linearized repo in `/lbt/Studentify/as-linearized/fast-track-scala-advanced-scala` using git interactive rebasing (e.g. `git rebase -i --root`)
 > Note: When `git` gives you the possibility to change the commit message, **don't change it**. Any change to a commit message will result in `delinearize` refusing to do its job. Also, don't add or delete commits in the linearized repo.
 
 3. Test the modified exercise(s) as far as possible in the linearized git repo
 
-4. Apply the changes made in the previous step by delinearizing the linearized repo back on the course master: `delinearize /lbt/AS-v1.2.0/fast-track-scala-advanced-scala /lbt/Studentify/as-linearized/fast-track-scala-advanced-scala`
-> Note: always make sure that, when running `delinearize`, the `workspace` and `index` in the course master repository is clean. If this is not the case, modifications in the `index` and `workspace` may be silently overwritten.
-5. Run **all** tests on the master repo: `base/test:test`.
+4. Apply the changes made in the previous step by delinearizing the linearized repo back on the course main: `delinearize /lbt/AS-v1.2.0/fast-track-scala-advanced-scala /lbt/Studentify/as-linearized/fast-track-scala-advanced-scala`
+> Note: always make sure that, when running `delinearize`, the `workspace` and `index` in the course main repository is clean. If this is not the case, modifications in the `index` and `workspace` may be silently overwritten.
+5. Run **all** tests on the main repo: `base/test:test`.
 
-6. If the tests pass, commit the changes on the master repo. If they don't, reset the `git` `workspace`/`index` to the last commit that was 'ok' 
+6. If the tests pass, commit the changes on the main repo. If they don't, reset the `git` `workspace`/`index` to the last commit that was 'ok' 
 
 7. Repeat this process as often as necessary by repeating the process from step 2 onward.
 
 > Note1: consider making many 'small' changes that are delinearized and commited. Once a successful result is obtained, the linearized repo should be discarded, and, if desired, the sequence of commits that were made during the repetitive execution of this process can be squashed into one or a limited number of commits
 
-> Note2: even though the 'common' (project `common`, `project/*`) content will appear in the delinearized repo, ***don't change them in the linearized repo*** as any change will **not** be brought back to the master repo during delinearization. Apply such changes directly on the course master. 
+> Note2: even though the 'common' (project `common`, `project/*`) content will appear in the delinearized repo, ***don't change them in the linearized repo*** as any change will **not** be brought back to the main repo during delinearization. Apply such changes directly on the course main. 
 
 #### Combining approaches
 
-Of course, the two approaches described above can be combined repeatedly and in different combinations in a workflow. However, when a linearized repo exists and subsequently changes are made to the master repo, the linearized version should be discarded and re-created using `linearize`.
+Of course, the two approaches described above can be combined repeatedly and in different combinations in a workflow. However, when a linearized repo exists and subsequently changes are made to the main repo, the linearized version should be discarded and re-created using `linearize`.
 
 ### Selecting a particular *exercise* (sbt project)
 
 It is recommended to use the regular `project` and `projects` `sbt` commands.
 
-`projects` will list all projects in the build. For a course master repo, it will show project `base`, `common` and all of the exercises.
+`projects` will list all projects in the build. For a course main repo, it will show project `base`, `common` and all of the exercises.
 
 Selecting a particular exercise or project can be done with the `project` command as shown here:
 
@@ -255,17 +255,17 @@ As mentioned before, the `studentify` command can be used to generate a self-con
 
 The `studentify` command has a few options to customize the generated repository.
 
-First of all, one can generate a student repo that contains a subset of the exercises available in the course master repo.
+First of all, one can generate a student repo that contains a subset of the exercises available in the course main repo.
 
 This is done by using the `-fe` (first exercise) and `-le` (last exercise) options. Either of them can be omitted resulting respectively in selecting all exercises up-to the last exercise or from the first exercise.
 
 There's also the `-sfe` option that allows one to 'bookmark' an exercise in the generated student repo. When the student runs `sbt`, he/she will be positioned at the selected exercise.
 
-These three options come in handy when a course master contains exercises for more than one course (e.g. `Fast Track to Scala` and `Advanced Scala`)
+These three options come in handy when a course main contains exercises for more than one course (e.g. `Fast Track to Scala` and `Advanced Scala`)
 
 Finally, there's the `-mjvm` option that will generate a `build.sbt` file that support `Akka`'s `multi-jvm` testing.
 
-> Note: Course master repos that use `multi-jvm` should include the dependencies required for this feature (see the `Advanced Akka with Scala` course for an example).
+> Note: Course main repos that use `multi-jvm` should include the dependencies required for this feature (see the `Advanced Akka with Scala` course for an example).
 
 ## Navigating student repositories
 
@@ -285,7 +285,7 @@ To navigate through a student repository you can leverage the following commands
 
 ## Validating student repositories
 
-While all the tests for a project can be run in the Master project, it is also valuable to verify that all the tests
+While all the tests for a project can be run in the Main project, it is also valuable to verify that all the tests
 still run correctly once the repository has been converted to the student version. This can be accomplished using the
 `validateStudentRepo.sh` script. To use this script you simply run it and pass in the path to the student repo you want
 to validate. For example: `./validateStudentRepo.sh ../FTTS-fast-track-scala`.
@@ -297,7 +297,7 @@ tests against that solution to verify that they work. It completes once it reach
 
 When you are ready to release your student repo into the wild, you can create a versioned zip file to distribute.
 This zip file is easily created using the `createRelease.sh` script. To use this script you run it, passing in a path
-to the master repo that you want to release. This script will generate the student repo, validate it using the
+to the main repo that you want to release. This script will generate the student repo, validate it using the
 `validateStudentRepo.sh`, package it into a zip file, and attach a version number to that zip. It also embeds a file in
 the zip that contains the version number. This zip file is now ready to distribute.
 
@@ -309,25 +309,25 @@ So to release Fast Track to Scala version 2.0.0 you would run a command such as:
 It is important to note that the final zip name is determined by the name of the repo that you pass in. So in the above
 scenario, the final zip generated would be `FTTS-fast-track-scala-exercises-2.0.0.zip`
 
-## The __masteradm__ command
+## The __mainadm__ command
 
-The `masteradm` command was added to allow the following operations on a master repository:
+The `mainadm` command was added to allow the following operations on a main repository:
 
 - Delete an exercise
-    - Run `masteradm -d  <exercise number> <masterRepo>`
+    - Run `mainadm -d  <exercise number> <mainRepo>`
     
-    This will delete the exercise from your master repository and re-create the root `build.sbt` file. Note that the numbering of the remaining exercises doesn't change.
+    This will delete the exercise from your main repository and re-create the root `build.sbt` file. Note that the numbering of the remaining exercises doesn't change.
     
 - Add an exercise by duplicating an existing one and insert it before that exercise
-    - Run `masteradm -dib <exercise number> <masterRepo>`
+    - Run `mainadm -dib <exercise number> <mainRepo>`
     
     This will duplicate the exercise with the given number and insert it before the specified exercise. In case this leads to a duplicate exercise number, all exercises, starting from the specified exercise, will be renumbered upwards by one. Otherwise, the exercise numbers remain unchanged. The duplicated exercise name will be copied from the specified exercise with `_copy` appended to it. The root `build.sbt` file will be regenerated.
  
-- (Re-)generate the root build.sbt file based on the master repo folder structure
-     - Run `masteradm -b <masterRepo>` 
+- (Re-)generate the root build.sbt file based on the main repo folder structure
+     - Run `mainadm -b <mainRepo>` 
 
 - Renumber exercises (with an optional _offset_ and _step_ size between consecutive exercises)
-    - Run `masteradm -r [-ro offset] [-rs step] <masterRepo>`
+    - Run `mainadm -r [-ro offset] [-rs step] <mainRepo>`
     
     By default, this will renumber all exercises starting from offset 0 with a step size of 1 between consecutive exercises. Optionally, `-ro offset` can be specified to start numbering from that offset. Also, an optional step size between exercises can be specified (`-rs step`). The root `build.sbt` file will be regenerated.
 
@@ -337,7 +337,7 @@ Many options can now be set via [Typesafe] configuration.
 
 The reference configuration can be found in `src/main/resources/reference.conf`. 
 
-By default, the tools will look for a file `course-management.conf` in the root folder of your master project. All tools allow you to point to a specific configuration file via a command line option. Simply add `-cfg <configuration-file> to any command.
+By default, the tools will look for a file `course-management.conf` in the root folder of your main project. All tools allow you to point to a specific configuration file via a command line option. Simply add `-cfg <configuration-file> to any command.
 
 At present, the following configuration parameters are available:
 
@@ -347,21 +347,21 @@ At present, the following configuration parameters are available:
 
 > Note: restrictions apply to this name (e.g. no `-` characters, etc.) This isn't checked, so you're warned!
 
-- `studentify.relative-source-folder`: The tools now allow you to have multiple master projects in a single git repository. For example, you might have a java and a Scala version of your code which are put in separate folders each with the same layout as any other "normal" master project. This option allows you to point to the root folder your want to work with (e.g. the java version).
+- `studentify.relative-source-folder`: The tools now allow you to have multiple main projects in a single git repository. For example, you might have a java and a Scala version of your code which are put in separate folders each with the same layout as any other "normal" main project. This option allows you to point to the root folder your want to work with (e.g. the java version).
 
 > Note: In the example of a java and a scala version, you might have two corresponding project configuration files and point to the appropriate one by using the `-cfg` command line option.
 
 - `studentify.solution-folder`: name of the folder in the studentified version of the project in which the exercise solution will be hidden. Default is `.cue`.
-- `studentify.master-base-project-name`: project name of the root project in your master repo. This name will be selected when the `masteradm` command regenerates the root `build.sbt` file.
-- `studentify.studentified-project-name`: equivalent for the name of the root project of a studentified version of your master repo.
+- `studentify.main-base-project-name`: project name of the root project in your main repo. This name will be selected when the `mainadm` command regenerates the root `build.sbt` file.
+- `studentify.studentified-project-name`: equivalent for the name of the root project of a studentified version of your main repo.
 - `studentify.console-colors`: Allows one to customise some colors in the output of a studentified project.
-- `studentify.studentify-files-to-clean-up`: A list of files/folders that are present in your master repo but that will be deleted from the studentified version of that repo.
+- `studentify.studentify-files-to-clean-up`: A list of files/folders that are present in your main repo but that will be deleted from the studentified version of that repo.
 
 ## Appendix 1 - Course management tools summary
 
 ### studentify
 
-`studentify` generates a *student* repository from a given course master repository.
+`studentify` generates a *student* repository from a given course main repository.
 
 A student will clone a copy of the generated student repository, load it in his/her favorite IDE (IntelliJ or Scala IDE (Eclipse)).
 
@@ -377,9 +377,9 @@ The `listExercises` command will generate a list of exercises and their descript
 
 #### Requirements:
 
-* a master repository and its file-path
+* a main repository and its file-path
 * the path to an (empty) folder in which the student distribution will be created
-* an optional configuration file `.student-settings.conf` in the course master repository may specify the folders from which test code will be copied. Suppose that we have a course master that has test code in three folders: `src/test`, `ServiceLocatorImpl/test` and `ServiceAdmImpl/test`. Setting the `TestCodeFolders` option as shown below will do the trick:
+* an optional configuration file `.student-settings.conf` in the course main repository may specify the folders from which test code will be copied. Suppose that we have a course main that has test code in three folders: `src/test`, `ServiceLocatorImpl/test` and `ServiceAdmImpl/test`. Setting the `TestCodeFolders` option as shown below will do the trick:
 
 ```
 [ericloots@Eric-Loots-MacBook-Pro] $ cat .student-settings.conf
@@ -390,9 +390,9 @@ TestCodeFolders=src/test:ServiceLocatorImpl/test:ServiceAdmImpl/test
 
 ```
 studentify 3.0
-Usage: studentify [options] masterRepo out
+Usage: studentify [options] mainRepo out
 
-  masterRepo               base folder holding master course repository
+  mainRepo               base folder holding main course repository
   out                      base folder for student repo
   -mjvm, --multi-jvm       generate multi-jvm build file
   -fe, --first-exercise <value>
@@ -414,7 +414,7 @@ Usage: studentify [options] masterRepo out
 
 In the above example, a folder `fast-track-akka-scala` will be created under the `out` folder.
 
-> Note: `studentify` will copy over a number of files verbatim from the master build definition and overwrite or create a number of files in the student repo. A diagram, `images/sbtSourceCode.png` provides more details on this.
+> Note: `studentify` will copy over a number of files verbatim from the main build definition and overwrite or create a number of files in the student repo. A diagram, `images/sbtSourceCode.png` provides more details on this.
 
 ![sbtSourceCode](images/sbtSourceCode.png)
 
@@ -428,9 +428,9 @@ This repo can then be utilized to apply changes to the exercises via interactive
 
 ```
 linearize 3.0
-Usage: linearize [options] masterRepo linearRepo
+Usage: linearize [options] mainRepo linearRepo
 
-  masterRepo          base folder holding master course repository
+  mainRepo          base folder holding main course repository
   linearRepo          base folder for linearized version repo
   -mjvm, --multi-jvm  generate multi-jvm build file
   -f, --force-delete  Force-delete a pre-existing destination folder
@@ -480,7 +480,7 @@ This repository is well suited to apply changes to exercises using interactive r
 
 #### Note
 
-In each commit, apply changes to files in the `exercises` project.  **Important**: Any changes applied on files outside of the `exercises` folder will be discarded when the repo is `delinearized`. If changes need to be applied outside of the `exercises` folder, apply them directly on the course master instead.
+In each commit, apply changes to files in the `exercises` project.  **Important**: Any changes applied on files outside of the `exercises` folder will be discarded when the repo is `delinearized`. If changes need to be applied outside of the `exercises` folder, apply them directly on the course main instead.
 
 #### Example course editing flow
 
@@ -536,14 +536,14 @@ After applying the change, we `delinearize` the project.
 delinearize /lbt/FTTAS-v1.3.0/fast-track-akka-scala /lbt/Studentify/fttas-linearized/fast-track-akka-scala
 ```
 
-Let's see that that did to the (clean) master course repo.
+Let's see that that did to the (clean) main course repo.
 
 ```
 [ericloots@Eric-Loots-MBP] $ cd FTTAS-v1.3.0/fast-track-akka-scala/
 
 [ericloots@Eric-Loots-MBP] $ git st
-On branch master
-Your branch is up-to-date with 'origin/master'.
+On branch main
+Your branch is up-to-date with 'origin/main'.
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
 
@@ -566,17 +566,17 @@ nothing added to commit but untracked files present (use "git add" to track)
 
 ```
 delinearize 3.0
-Usage: delinearize [options] linearRepo masterRepo
+Usage: delinearize [options] linearRepo mainRepo
 
   linearRepo               base folder for linearized version repo
-  masterRepo               base folder holding master course repository
+  mainRepo               base folder holding main course repository
   -cfg, --config-file <value>
                            configuration file
 ```
 
 #### Notes
 
-- Never forget that `delinearize` will only write modifications applied in the `exercises` project. Any other changes will be discarded. Directly apply these type of changes on the master course repo.
+- Never forget that `delinearize` will only write modifications applied in the `exercises` project. Any other changes will be discarded. Directly apply these type of changes on the main course repo.
 
 ### Example (continued from the previous example)
 
@@ -630,11 +630,11 @@ Let's undo the changes applied in the previous example, *and* add another text f
 [ericloots@Eric-Loots-MBP] $ git rebase --continue
 
 [ericloots@Eric-Loots-MBP] $ git st
-On branch master
+On branch main
 nothing to commit, working directory clean
 ```
 
-Next, we `delinearize` the project and see what the impact is on the master course repo:
+Next, we `delinearize` the project and see what the impact is on the main course repo:
 
 ```
 delinearize /lbt/FTTAS-v1.3.0/fast-track-akka-scala /lbt/Studentify/fttas-linearized/fast-track-akka-scala
@@ -644,8 +644,8 @@ delinearize /lbt/FTTAS-v1.3.0/fast-track-akka-scala /lbt/Studentify/fttas-linear
 [ericloots@Eric-Loots-MBP] $ cd /lbt/FTTAS-v1.3.0/fast-track-akka-scala
 
 [ericloots@Eric-Loots-MBP] $ git st
-On branch master
-Your branch is up-to-date with 'origin/master'.
+On branch main
+Your branch is up-to-date with 'origin/main'.
 Untracked files:
   (use "git add <file>..." to include in what will be committed)
 
@@ -687,7 +687,7 @@ being passed to studentify in the format:
 STUDENTIFY_ARGS="-mjvm"
 ```
 
-> Note: Many of the appendixes that were in previous version of this document have been removed. They showed sample code for various parts of a master project. Plan is to move these to specific project templates.
+> Note: Many of the appendixes that were in previous version of this document have been removed. They showed sample code for various parts of a main project. Plan is to move these to specific project templates.
 
 ## Appendix 2 - Demonstration Videos
 

@@ -50,7 +50,7 @@ package object coursegentools {
     d.toInt
   }
 
-  def renumberExercise(exercise: String, newNumber: Int)(implicit config: MasterSettings): String = {
+  def renumberExercise(exercise: String, newNumber: Int)(implicit config: MainSettings): String = {
     val newNumerLZ = f"${config.exerciseProjectPrefix}_$newNumber%03d_"
     val oldNumberPrefix = f"${config.exerciseProjectPrefix}_${extractExerciseNr(exercise)}%03d_"
     exercise.replaceFirst(oldNumberPrefix, newNumerLZ)

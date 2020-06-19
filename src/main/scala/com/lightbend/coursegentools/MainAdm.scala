@@ -3,46 +3,46 @@ package com.lightbend.coursegentools
 import java.io.File
 import GenTests.generateTestScript
 
-object MasterAdm {
+object MainAdm {
 
   def main(args: Array[String]): Unit = {
     import ProcessDSL._
     import Helpers._
 
-    val cmdOptions = MasterAdmCmdLineOptParse.parse(args)
+    val cmdOptions = MainAdmCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val MasterAdmCmdOptions(masterRepo,
-                            multiJVM,
-                            regenBuildFile,
-                            duplicateInsertBefore,
-                            deleteExerciseNr,
-                            renumberExercises,
-                            renumberExercisesBase,
-                            renumberExercisesStep,
-                            configurationFile,
-                            checkMaster,
-                            updateMasterCommands,
-                            useConfigureForProjects,
-                            genTests,
-                            isADottyProject,
-                            autoReloadOnBuildDefChange) = cmdOptions.get
+    val MainAdmCmdOptions(mainRepo,
+                          multiJVM,
+                          regenBuildFile,
+                          duplicateInsertBefore,
+                          deleteExerciseNr,
+                          renumberExercises,
+                          renumberExercisesBase,
+                          renumberExercisesStep,
+                          configurationFile,
+                          checkMain,
+                          updateMainCommands,
+                          useConfigureForProjects,
+                          genTests,
+                          isADottyProject,
+                          autoReloadOnBuildDefChange) = cmdOptions.get
 
-    implicit val config: MasterSettings = new MasterSettings(masterRepo, configurationFile)
+    implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
     implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)
 
-    val exercises: Vector[String] = getExerciseNames(masterRepo)
+    val exercises: Vector[String] = getExerciseNames(mainRepo)
     val exerciseNumbers = exercises.map(extractExerciseNr)
 
     (regenBuildFile,
      duplicateInsertBefore,
      deleteExerciseNr,
      renumberExercises, renumberExercisesBase, renumberExercisesStep,
-     checkMaster,
-     updateMasterCommands,
+     checkMain,
+     updateMainCommands,
      genTests,
      isADottyProject) match {
       case (
-        true,  // Re-generate master build file
+        true,  // Re-generate main build file
         None,
         None,
         false, _, _,
@@ -50,7 +50,7 @@ object MasterAdm {
         false,
         None,
         _) =>
-          createMasterBuildFile(exercises, masterRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
+          createMainBuildFile(exercises, mainRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
 
       case (
         false,
@@ -63,12 +63,12 @@ object MasterAdm {
         _) if exerciseNumbers.contains(dibExNr) =>
           val exercise = getExerciseName(exercises, dibExNr).get
           if (exerciseNumbers.contains(dibExNr - 1) || dibExNr == 0) {
-            duplicateExercise(masterRepo, exercise, dibExNr)
-            shiftExercisesUp(masterRepo, exercises, dibExNr, exerciseNumbers)
+            duplicateExercise(mainRepo, exercise, dibExNr)
+            shiftExercisesUp(mainRepo, exercises, dibExNr, exerciseNumbers)
           } else {
-            duplicateExercise(masterRepo, exercise, dibExNr - 1)
+            duplicateExercise(mainRepo, exercise, dibExNr - 1)
           }
-          createMasterBuildFile(getExerciseNames(masterRepo),masterRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
+          createMainBuildFile(getExerciseNames(mainRepo),mainRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
 
       case (
         false,
@@ -90,10 +90,10 @@ object MasterAdm {
         false,
         None,_) if exerciseNumbers.contains(dibExNr) =>
           import sbt.io.{IO => sbtio}
-          val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+          val relativeSourceFolder = new File(mainRepo, config.relativeSourceFolder)
           val exercise = getExerciseName(exercises, dibExNr).get
           sbtio.delete(new File(relativeSourceFolder, exercise))
-          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
+          createMainBuildFile(getExerciseNames(mainRepo), mainRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
 
       case (
         false,
@@ -115,7 +115,7 @@ object MasterAdm {
         None,
         _) =>
           import sbt.io.{IO => sbtio}
-          val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+          val relativeSourceFolder = new File(mainRepo, config.relativeSourceFolder)
           val moves = for {
             (exercise, index) <- exercises.zipWithIndex
             newIndex = offset + index * step
@@ -124,32 +124,32 @@ object MasterAdm {
               if oldExDir != newExDir
           } yield (oldExDir, newExDir)
           sbtio.move(moves)
-          createMasterBuildFile(getExerciseNames(masterRepo), masterRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
+          createMainBuildFile(getExerciseNames(mainRepo), mainRepo, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
 
       case (
         false,
         None,
         None,
         false, _, _,
-        true,   // Check sanity of master repository
+        true,   // Check sanity of main repository
         false,
         None,
         _) =>
 
-          val tryGitVersion = "git --version".toProcessCmd(workingDir = masterRepo).run
+          val tryGitVersion = "git --version".toProcessCmd(workingDir = mainRepo).run
           if (tryGitVersion != 0)
             printError(s"ERROR: git not found: makes sure git is properly installed")
 
-          val gitStatus = "git status".toProcessCmd(workingDir = masterRepo).run
+          val gitStatus = "git status".toProcessCmd(workingDir = mainRepo).run
           if (gitStatus != 0)
-            printError(s"ERROR: Master repository is not a git project")
+            printError(s"ERROR: Main repository is not a git project")
 
-          exitIfGitIndexOrWorkspaceIsntClean(masterRepo)
-          val projectName = masterRepo.getName
+          exitIfGitIndexOrWorkspaceIsntClean(mainRepo)
+          val projectName = mainRepo.getName
 
-          val tmpDir = cleanMasterViaGit(masterRepo, projectName)
-          val cleanMasterRepo = new File(tmpDir, projectName)
-          checkMasterRepo(cleanMasterRepo, exercises, exitOnFirstError = false)
+          val tmpDir = cleanMainViaGit(mainRepo, projectName)
+          val cleanMainRepo = new File(tmpDir, projectName)
+          checkMainRepo(cleanMainRepo, exercises, exitOnFirstError = false)
 
       case (
         false,
@@ -157,11 +157,11 @@ object MasterAdm {
         None,
         false, _, _,
         false,
-        true, // update master commands in master repo
+        true, // update main commands in main repo
         None,
         _) =>
 
-          addMasterCommands(masterRepo)
+          addMainCommands(mainRepo)
 
 
       case (
@@ -173,7 +173,7 @@ object MasterAdm {
         false,
         Some(testFile), // generate test scripts
         _) =>
-          generateTestScript(masterRepo, config.relativeSourceFolder, configurationFile ,testFile, exercises, exerciseNumbers, isADottyProject)
+          generateTestScript(mainRepo, config.relativeSourceFolder, configurationFile ,testFile, exercises, exerciseNumbers, isADottyProject)
 
 
       case (false, None, None, false, _, _, false, false, None, _) => println(toConsoleGreen(s"Nothing to do..."))

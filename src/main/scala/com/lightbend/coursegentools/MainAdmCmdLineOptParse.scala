@@ -22,20 +22,20 @@ import java.io.File
   * limitations under the License.
   */
 
-object MasterAdmCmdLineOptParse {
-  def parse(args: Array[String]): Option[MasterAdmCmdOptions] = {
+object MainAdmCmdLineOptParse {
+  def parse(args: Array[String]): Option[MainAdmCmdOptions] = {
 
     implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
 
-    val parser = new scopt.OptionParser[MasterAdmCmdOptions]("masteradm") {
-      head("masteradm", "3.0")
+    val parser = new scopt.OptionParser[MainAdmCmdOptions]("mainadm") {
+      head("mainadm", "3.0")
 
-      arg[File]("masterRepo")
-        .text("base folder holding master course repository")
-        .action { case (masterRepo, c) =>
-          if (! folderExists(masterRepo))
-            printError(s"Base master repo folder (${masterRepo.getPath}) doesn't exist")
-          c.copy(masterRepo = masterRepo)
+      arg[File]("mainRepo")
+        .text("base folder holding main course repository")
+        .action { case (mainRepo, c) =>
+          if (! folderExists(mainRepo))
+            printError(s"Base main repo folder (${mainRepo.getPath}) doesn't exist")
+          c.copy(mainRepo = mainRepo)
         }
 
       opt[Unit]("multi-jvm")
@@ -95,24 +95,24 @@ object MasterAdmCmdLineOptParse {
             c.copy(configurationFile = Some(cfgFile))
         }
 
-      opt[Unit]("check-master-repo")
-        .text("verify soundness of master repository")
+      opt[Unit]("check-main-repo")
+        .text("verify soundness of main repository")
         .abbr("c")
         .action {
           case (_, c) =>
-            c.copy(checkMaster = true)
+            c.copy(checkMain = true)
         }
 
-      opt[Unit]("add-master-commands")
-        .text("add command files to master repository")
+      opt[Unit]("add-main-commands")
+        .text("add command files to main repository")
         .abbr("amc")
           .action {
             case (_, c) =>
-              c.copy(addMasterCommands = true)
+              c.copy(addMainCommands = true)
           }
 
       opt[File]("generate-tests-script")
-        .text("generate a script that tests master repo, studentified repo functionality and linearize/delinearize")
+        .text("generate a script that tests main repo, studentified repo functionality and linearize/delinearize")
         .abbr("t")
         .action {
           case (testFile, c) =>
@@ -134,6 +134,6 @@ object MasterAdmCmdLineOptParse {
         }
     }
 
-    parser.parse(args, MasterAdmCmdOptions())
+    parser.parse(args, MainAdmCmdOptions())
   }
 }

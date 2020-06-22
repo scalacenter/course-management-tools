@@ -45,15 +45,13 @@ object Linearize {
 
     (destinationFolder.exists(), forceDeleteExistingDestinationFolder) match {
       case (true, false) =>
-        printError(
-          s"""
-             |Destination folder ${destinationFolder.getPath} exists: Either remove this folder
-             |manually or use the '-f' command-line option to delete it automatically
-             |""".stripMargin)
+        printError(s"""
+                      |Destination folder ${destinationFolder.getPath} exists: Either remove this folder
+                      |manually or use the '-f' command-line option to delete it automatically
+                      |""".stripMargin)
       case (true, true) =>
         sbtio.delete(destinationFolder)
       case _ =>
-
     }
 
     val tmpDir = cleanMainViaGit(mainRepo, projectName)

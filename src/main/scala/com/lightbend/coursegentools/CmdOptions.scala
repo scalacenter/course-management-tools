@@ -16,7 +16,8 @@ case class MainAdmCmdOptions(mainRepo: File = new File("."),
                              useConfigureForProjects: Boolean = false,
                              testFile: Option[File] = None,
                              isADottyProject: Boolean = false,
-                             autoReloadOnBuildDefChange: Boolean = true)
+                             autoReloadOnBuildDefChange: Boolean = true
+)
 
 case class StudentifyCmdOptions(mainRepo: File = new File("."),
                                 out: File = new File("."),
@@ -28,7 +29,8 @@ case class StudentifyCmdOptions(mainRepo: File = new File("."),
                                 useConfigureForProjects: Boolean = false,
                                 initAsGitRepo: Boolean = false,
                                 isADottyProject: Boolean = false,
-                                autoReloadOnBuildDefChange: Boolean = true)
+                                autoReloadOnBuildDefChange: Boolean = true
+)
 
 case class LinearizeCmdOptions(mainRepo: File = new File("."),
                                linearRepo: File = new File("."),
@@ -36,8 +38,7 @@ case class LinearizeCmdOptions(mainRepo: File = new File("."),
                                forceDeleteExistingDestinationFolder: Boolean = false,
                                configurationFile: Option[String] = None,
                                isADottyProject: Boolean = false,
-                               autoReloadOnBuildDefChange: Boolean = true)
+                               autoReloadOnBuildDefChange: Boolean = true
+)
 
-case class DeLinearizeCmdOptions(mainRepo: File = new File("."),
-                                 linearRepo: File = new File("."),
-                                 configurationFile: Option[String] = None)
+case class DeLinearizeCmdOptions(mainRepo: File = new File("."), linearRepo: File = new File("."), configurationFile: Option[String] = None)

@@ -32,11 +32,10 @@ object ProcessDSL {
     def runAndExitIfFailed(errorMsg: String): Unit = {
       val status = Try(Process(cmd.cmd, cmd.workingDir).!)
       if (status.getOrElse(-1) != 0) {
-        println(
-          s"""
-             |$errorMsg
-             |  Executed command: ${cmd.cmd.mkString(" ")}
-             |  Working directory: ${cmd.workingDir}
+        println(s"""
+                   |$errorMsg
+                   |  Executed command: ${cmd.cmd.mkString(" ")}
+                   |  Working directory: ${cmd.workingDir}
            """.stripMargin)
         System.exit(status.getOrElse(-1))
       }

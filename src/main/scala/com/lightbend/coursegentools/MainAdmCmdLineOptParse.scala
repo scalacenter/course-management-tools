@@ -32,59 +32,67 @@ object MainAdmCmdLineOptParse {
 
       arg[File]("mainRepo")
         .text("base folder holding main course repository")
-        .action { case (mainRepo, c) =>
-          if (! folderExists(mainRepo))
-            printError(s"Base main repo folder (${mainRepo.getPath}) doesn't exist")
-          c.copy(mainRepo = mainRepo)
+        .action {
+          case (mainRepo, c) =>
+            if (!folderExists(mainRepo))
+              printError(s"Base main repo folder (${mainRepo.getPath}) doesn't exist")
+            c.copy(mainRepo = mainRepo)
         }
 
       opt[Unit]("multi-jvm")
         .text("generate multi-jvm build file")
         .abbr("mjvm")
-        .action { case (_, c) =>
-          c.copy(multiJVM = true)
+        .action {
+          case (_, c) =>
+            c.copy(multiJVM = true)
         }
 
       opt[Unit]("build-file-regen")
         .text("regenerate project root build file")
         .abbr("b")
-        .action { case (_, c) =>
+        .action {
+          case (_, c) =>
             c.copy(regenBuildFile = true)
         }
 
       opt[Int]("delete")
         .text("")
         .abbr("d")
-        .action { case (exNr, c) =>
-          c.copy(deleteExerciseNr = Some(exNr))
+        .action {
+          case (exNr, c) =>
+            c.copy(deleteExerciseNr = Some(exNr))
         }
 
       opt[Unit]("renumber")
         .text("renumber exercises")
         .abbr("r")
-        .action { case (_, c) =>
+        .action {
+          case (_, c) =>
             c.copy(renumberExercises = true)
         }
 
       opt[Int]("renumber-offset")
         .text("renumber exercises - offset")
         .abbr("ro")
-        .action { case (offset, c) =>
+        .action {
+          case (offset, c) =>
             c.copy(renumberExercisesBase = offset)
         }
 
       opt[Int]("renumber-step")
         .text("renumber exercises - step")
         .abbr("rs")
-        .action { case (step, c) =>
-          c.copy(renumberExercisesStep = step)
+        .action {
+          case (step, c) =>
+            c.copy(renumberExercisesStep = step)
         }
 
       opt[Int]("duplicate-insert-before")
         .text("")
         .abbr("dib")
-        .action { case (exNr, c) =>
-          c.copy(duplicateExerciseInsertBeforeNr = Some(exNr))
+        .action {
+          case (exNr, c) =>
+            c.copy(duplicateExerciseInsertBeforeNr = Some(exNr))
         }
 
       opt[String]("config-file")
@@ -106,13 +114,15 @@ object MainAdmCmdLineOptParse {
       opt[Unit]("add-main-commands")
         .text("add command files to main repository")
         .abbr("amc")
-          .action {
-            case (_, c) =>
-              c.copy(addMainCommands = true)
-          }
+        .action {
+          case (_, c) =>
+            c.copy(addMainCommands = true)
+        }
 
       opt[File]("generate-tests-script")
-        .text("generate a script that tests main repo, studentified repo functionality and linearize/delinearize")
+        .text(
+          "generate a script that tests main repo, studentified repo functionality and linearize/delinearize"
+        )
         .abbr("t")
         .action {
           case (testFile, c) =>
@@ -122,15 +132,17 @@ object MainAdmCmdLineOptParse {
       opt[Unit]("dotty")
         .text("studentified repository is a Dotty project")
         .abbr("dot")
-        .action { case (_, c) =>
-          c.copy(isADottyProject = true)
+        .action {
+          case (_, c) =>
+            c.copy(isADottyProject = true)
         }
 
       opt[Unit]("no-auto-reload-sbt")
         .text("no automatic reload on build definition change")
         .abbr("nar")
-        .action { case (_, c) =>
-          c.copy(autoReloadOnBuildDefChange = false)
+        .action {
+          case (_, c) =>
+            c.copy(autoReloadOnBuildDefChange = false)
         }
     }
 

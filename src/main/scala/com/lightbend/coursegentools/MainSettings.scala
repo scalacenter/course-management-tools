@@ -9,13 +9,14 @@ import scala.jdk.CollectionConverters._
 class MainSettings(mainRepo: File, optConfigurationFile: Option[String]) {
 
   import Console._
-  private val consoleColors: Set[String] = Set("RESET", "GREEN", "RED", "BLUE", "CYAN", "YELLOW", "WHITE", "BLACK", "MAGENTA")
+  private val consoleColors: Set[String] =
+    Set("RESET", "GREEN", "RED", "BLUE", "CYAN", "YELLOW", "WHITE", "BLACK", "MAGENTA")
 
   private def validateColor(settingKey: String): String = {
     val color = config.getString(settingKey)
     val colorUC = color.toUpperCase
 
-    if (! consoleColors.contains(colorUC)) {
+    if (!consoleColors.contains(colorUC)) {
       println(s"Setting $settingKey: unknown color $color ")
       System.exit(-1)
     }
@@ -32,9 +33,9 @@ class MainSettings(mainRepo: File, optConfigurationFile: Option[String]) {
         printError(s"No such file: ${optConfigurationFile.get}")
       }
       Some(configurationFile)
-    } else {
-      None
     }
+    else
+      None
 
   private val defaultConfigFile: Option[File] = {
     val configFile = new File(mainRepo, optConfigurationFile.getOrElse("course-management.conf"))
@@ -51,13 +52,15 @@ class MainSettings(mainRepo: File, optConfigurationFile: Option[String]) {
     case _ => referenceConfig
   }
 
-  val testCodeFolders: List[String] = config.getStringList("studentify.test-code-folders").asScala.toList
+  val testCodeFolders: List[String] =
+    config.getStringList("studentify.test-code-folders").asScala.toList
 
   val exerciseProjectPrefix: String = config.getString("studentify.exercise-project-prefix")
 
   val studentifyModeSelect: String = config.getString("studentify.studentify-mode-select")
 
-  val studentifyFilesToCleanUp: List[String] = config.getStringList("studentify.studentify-files-to-clean-up").asScala.toList
+  val studentifyFilesToCleanUp: List[String] =
+    config.getStringList("studentify.studentify-files-to-clean-up").asScala.toList
 
   val relativeSourceFolder: String = config.getString("studentify.relative-source-folder")
 
@@ -76,10 +79,13 @@ class MainSettings(mainRepo: File, optConfigurationFile: Option[String]) {
   val studentifiedProjectName: String = config.getString("studentify.studentified-project-name")
 
   object Colors {
-
     val promptManColor: String = validateColor("studentify.console-colors.prompt-man-color")
-    val promptCourseNameColor: String = validateColor("studentify.console-colors.prompt-course-name")
-    val promptExerciseColor: String = validateColor("studentify.console-colors.prompt-exercise-name-color")
+    val promptCourseNameColor: String = validateColor(
+      "studentify.console-colors.prompt-course-name"
+    )
+    val promptExerciseColor: String = validateColor(
+      "studentify.console-colors.prompt-exercise-name-color"
+    )
   }
 
 }

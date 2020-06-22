@@ -2,7 +2,6 @@ package com.lightbend.coursegentools
 
 import java.io.File
 
-
 /**
   * Copyright © 2016 Lightbend, Inc
   *
@@ -33,18 +32,22 @@ object DeLinearizeCmdLineOptParse {
 
       arg[File]("mainRepo")
         .text("base folder holding main course repository")
-        .action { case (mainRepo, c) =>
-          if (!folderExists(mainRepo))
-            printError(s"Base main repo folder (${mainRepo.getPath}) doesn't exist")
-          c.copy(mainRepo = mainRepo)
+        .action {
+          case (mainRepo, c) =>
+            if (!folderExists(mainRepo))
+              printError(s"Base main repo folder (${mainRepo.getPath}) doesn't exist")
+            c.copy(mainRepo = mainRepo)
         }
 
       arg[File]("linearRepo")
         .text("linearized version repo")
-        .action { case (linearRepo, config) =>
-          if (!folderExists(linearRepo))
-            printError(s"Base folder for linearized version repo (${linearRepo.getPath}) doesn't exist")
-          config.copy(linearRepo = linearRepo)
+        .action {
+          case (linearRepo, config) =>
+            if (!folderExists(linearRepo))
+              printError(
+                s"Base folder for linearized version repo (${linearRepo.getPath}) doesn't exist"
+              )
+            config.copy(linearRepo = linearRepo)
         }
 
       opt[String]("config-file")

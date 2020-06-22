@@ -27,13 +27,24 @@ object Studentify {
   def main(args: Array[String]): Unit = {
 
     import Helpers._
-    import sbt.io.{IO => sbtio}
+    import sbt.io.{ IO => sbtio }
 
     implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val StudentifyCmdOptions(mainRepo, targetFolder, multiJVM, firstOpt, lastOpt, selectedFirstOpt, configurationFile, useConfigureForProjects, initAsGitRepo, isADottyProject, autoReloadOnBuildDefChange) = cmdOptions.get
+    val StudentifyCmdOptions(mainRepo,
+                             targetFolder,
+                             multiJVM,
+                             firstOpt,
+                             lastOpt,
+                             selectedFirstOpt,
+                             configurationFile,
+                             useConfigureForProjects,
+                             initAsGitRepo,
+                             isADottyProject,
+                             autoReloadOnBuildDefChange
+    ) = cmdOptions.get
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)
     val projectName = mainRepo.getName
@@ -47,18 +58,24 @@ object Studentify {
     val exercises: Seq[String] = getExerciseNames(cleanMainRepo, Some(mainRepo))
 
     val selectedExercises: Seq[String] = getSelectedExercises(exercises, firstOpt, lastOpt)
-    println(
-      s"""Processing exercises:
-         |${selectedExercises.mkString("    ", "\n    ", "")}
+    println(s"""Processing exercises:
+               |${selectedExercises.mkString("    ", "\n    ", "")}
        """.stripMargin)
     val initialExercise = getInitialExercise(selectedFirstOpt, selectedExercises)
     val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
-    stageFirstExercise(initialExercise, new File(cleanMainRepo, config.relativeSourceFolder), targetCourseFolder)
+    stageFirstExercise(initialExercise,
+                       new File(cleanMainRepo, config.relativeSourceFolder),
+                       targetCourseFolder
+    )
     copyMain(cleanMainRepo, targetCourseFolder)
     hideExerciseSolutions(targetCourseFolder, selectedExercises)
     createBookmarkFile(initialExercise, targetCourseFolder)
     createSbtRcFile(targetCourseFolder)
-    createStudentifiedBuildFile(targetCourseFolder, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
+    createStudentifiedBuildFile(targetCourseFolder,
+                                multiJVM,
+                                isADottyProject,
+                                autoReloadOnBuildDefChange
+    )
     addSbtCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
     loadStudentSettings(mainRepo, targetCourseFolder)
     cleanUp(config.studentifyFilesToCleanUp, targetCourseFolder)
@@ -66,7 +83,7 @@ object Studentify {
     if (initAsGitRepo) initialiseAsGit(targetCourseFolder)
   }
 
-  def defaultGitIgnoreContent: String = {
+  def defaultGitIgnoreContent: String =
     s"""*.class
        |*.log
        |.bookmark
@@ -113,7 +130,6 @@ object Studentify {
        |# OS specific
        |.DS_Store
        """.stripMargin
-  }
 
   def initialiseAsGit(studentifiedRepo: File): Unit = {
     import ProcessDSL._
@@ -124,10 +140,14 @@ object Studentify {
       .runAndExitIfFailed(toConsoleRed(s"'git init' failed on ${studentifiedRepo.getAbsolutePath}"))
     s"git add -A"
       .toProcessCmd(workingDir = studentifiedRepo)
-      .runAndExitIfFailed(toConsoleRed(s"'Failed to add initial file-set on ${studentifiedRepo.getAbsolutePath}"))
+      .runAndExitIfFailed(
+        toConsoleRed(s"'Failed to add initial file-set on ${studentifiedRepo.getAbsolutePath}")
+      )
     s"""git commit -m "Initial commit""""
       .toProcessCmd(workingDir = studentifiedRepo)
-      .runAndExitIfFailed(toConsoleRed(s"'Initial commit failed on ${studentifiedRepo.getAbsolutePath}"))
+      .runAndExitIfFailed(
+        toConsoleRed(s"'Initial commit failed on ${studentifiedRepo.getAbsolutePath}")
+      )
     Helpers.renameMainBranch(studentifiedRepo)
   }
 }

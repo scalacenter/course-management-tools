@@ -58,8 +58,8 @@ object Helpers {
     println(fl.mkString("\n"))
   }
 
-  def addMasterCommands(masterRepo: File)(implicit config: MasterSettings, exitOnFirstError: ExitOnFirstError): Unit = {
-    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+  def addMainCommands(mainRepo: File)(implicit config: MainSettings, exitOnFirstError: ExitOnFirstError): Unit = {
+    val relativeSourceFolder = new File(mainRepo, config.relativeSourceFolder)
     val sbtProjectFolder = new File(relativeSourceFolder, "project")
 
     if (! sbtProjectFolder.exists()) {
@@ -70,16 +70,16 @@ object Helpers {
       }
     }
 
-    val sbtMasterCommandsTemplateFolder = new File("sbtMasterCommands")
+    val sbtMainCommandsTemplateFolder = new File("sbtMainCommands")
 
     val moves = for {
-      template <- sbtio.listFiles(sbtMasterCommandsTemplateFolder)
+      template <- sbtio.listFiles(sbtMainCommandsTemplateFolder)
       target = new File(sbtProjectFolder, template.getName.replaceAll(".template", ""))
     } yield (template, target)
     sbtio.copy(moves, overwrite = true, preserveLastModified = true, preserveExecutable = false)
   }
 
-  def checkMasterRepo(masterRepo: File, exercises: Vector[String], exitOnFirstError: Boolean)(implicit config: MasterSettings): Unit = {
+  def checkMainRepo(mainRepo: File, exercises: Vector[String], exitOnFirstError: Boolean)(implicit config: MainSettings): Unit = {
     val requiredSbtProjectFiles =
     List(
     "CommonSettings.scala",
@@ -98,7 +98,7 @@ object Helpers {
 
     var numberOfErrors = 0
 
-    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val relativeSourceFolder = new File(mainRepo, config.relativeSourceFolder)
     val sbtProjectFolder = new File(relativeSourceFolder, "project")
 
     if (! new File(relativeSourceFolder, ".courseName").exists()) {
@@ -154,26 +154,26 @@ object Helpers {
     }
 
     if (numberOfErrors == 0)
-      printNotification(s"No issues found in master project")
+      printNotification(s"No issues found in main project")
     else
-      printError(s"${numberOfErrors} issues found in master project")
+      printError(s"${numberOfErrors} issues found in main project")
 
   }
 
-  def putBackToMaster(masterRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExerciseNameAndSHA])(implicit config: MasterSettings): Unit = {
+  def putBackToMain(mainRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExerciseNameAndSHA])(implicit config: MainSettings): Unit = {
 
-    val masterRepoRelative = new File(masterRepo, config.relativeSourceFolder)
+    val mainRepoRelative = new File(mainRepo, config.relativeSourceFolder)
 
     for (ExerciseNameAndSHA(exercise, sha) <- exercisesAndSHAs) {
       s"git checkout $sha"
         .toProcessCmd(linearizedRepo)
         .runAndExitIfFailed(toConsoleRed(s"Unable to checkout commit($sha) corresponding to exercise: $exercise"))
 
-      sbtio.delete(new File(masterRepoRelative, exercise))
-      sbtio.copyDirectory(new File(linearizedRepo, config.studentifyModeClassic.studentifiedBaseFolder), new File(masterRepoRelative, exercise), preserveLastModified = true)
+      sbtio.delete(new File(mainRepoRelative, exercise))
+      sbtio.copyDirectory(new File(linearizedRepo, config.studentifyModeClassic.studentifiedBaseFolder), new File(mainRepoRelative, exercise), preserveLastModified = true)
     }
 
-    s"git checkout master".toProcessCmd(linearizedRepo).runAndExitIfFailed(toConsoleRed(s"Unable to checkout master in linearized repo"))
+    s"git checkout main".toProcessCmd(linearizedRepo).runAndExitIfFailed(toConsoleRed(s"Unable to checkout main in linearized repo"))
   }
 
   def getExercisesAndSHAs(linearizedOutputFolder: File): Vector[ExerciseNameAndSHA] = {
@@ -193,16 +193,16 @@ object Helpers {
       .reverse
   }
 
-  def checkReposMatch(exercisesInMaster: Vector[String], exercisesAndSHAs: Vector[ExerciseNameAndSHA])(implicit eofe: ExitOnFirstError): Unit = {
-    if (exercisesInMaster != exercisesAndSHAs.map(_.exName))
+  def checkReposMatch(exercisesInMain: Vector[String], exercisesAndSHAs: Vector[ExerciseNameAndSHA])(implicit eofe: ExitOnFirstError): Unit = {
+    if (exercisesInMain != exercisesAndSHAs.map(_.exName))
       printError(s"Repos are incompatible")
   }
 
-  def commitRemainingExercises(exercises: Seq[String], masterRepo: File, linearizedProject: File)(implicit config: MasterSettings): Unit = {
+  def commitRemainingExercises(exercises: Seq[String], mainRepo: File, linearizedProject: File)(implicit config: MainSettings): Unit = {
     val exercisesDstFolder = new File(linearizedProject, config.studentifyModeClassic.studentifiedBaseFolder)
-    val masterRepoRelative = new File(masterRepo, config.relativeSourceFolder)
+    val mainRepoRelative = new File(mainRepo, config.relativeSourceFolder)
     for { exercise <- exercises } {
-      val from = new File(masterRepoRelative, exercise)
+      val from = new File(mainRepoRelative, exercise)
       sbtio.delete(exercisesDstFolder)
       sbtio.copyDirectory(from, exercisesDstFolder, preserveLastModified = true)
 
@@ -214,6 +214,12 @@ object Helpers {
         .toProcessCmd(workingDir = linearizedProject)
         .runAndExitIfFailed(toConsoleRed(s"Failed to add exercise files for exercise $exercise"))
      }
+  }
+
+  def renameMainBranch(gitProject: File): Unit = {
+    s"git branch -m master main"
+      .toProcessCmd(workingDir = gitProject)
+      .runAndExitIfFailed(toConsoleRed(s"'git rename branch' failed on ${gitProject.getAbsolutePath}"))
   }
 
   def commitFirstExercise(exercise: String, linearizedProject: File): Unit = {
@@ -232,50 +238,50 @@ object Helpers {
       .runAndExitIfFailed(toConsoleRed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"))
   }
 
-  def removeExercisesFromCleanMaster(cleanMasterRepo: File, exercises: Seq[String])(implicit eofe: ExitOnFirstError): Unit = {
+  def removeExercisesFromCleanMain(cleanMainRepo: File, exercises: Seq[String])(implicit eofe: ExitOnFirstError): Unit = {
     for {
       exercise <- exercises
     } {
-      val exerciseFolder = new File(cleanMasterRepo, exercise)
+      val exerciseFolder = new File(cleanMainRepo, exercise)
       if (exerciseFolder.exists()) {
         sbtio.delete(exerciseFolder)
       } else
-        printError(s"Error in removeExercisesFromCleanMaster, bailing out")
+        printError(s"Error in removeExercisesFromCleanMain, bailing out")
     }
   }
 
-  def cleanMasterViaGit(srcFolder: File, projectName: String): File = {
+  def cleanMainViaGit(srcFolder: File, projectName: String): File = {
     val tmpDir = sbtio.createTemporaryDirectory
     val curDir = new File(System.getProperty("user.dir"))
     Process(Seq("./cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), curDir).!
     tmpDir
   }
 
-  def isExerciseFolder(folder: File)(implicit config: MasterSettings): Boolean = {
+  def isExerciseFolder(folder: File)(implicit config: MainSettings): Boolean = {
 
     val ExerciseNameSpec = s""".*[/\\\\]${config.exerciseProjectPrefix}_\\d{3}_\\w+$$""".r
 
     ExerciseNameSpec.findFirstIn(folder.getPath).isDefined
   }
 
-  def copyMaster(masterRepo: File, targetFolder: File)(implicit config: MasterSettings): Unit = {
-    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+  def copyMain(mainRepo: File, targetFolder: File)(implicit config: MainSettings): Unit = {
+    val relativeSourceFolder = new File(mainRepo, config.relativeSourceFolder)
     sbtio.copyDirectory(relativeSourceFolder, targetFolder, overwrite = false, preserveLastModified = true)
   }
 
-  def getExerciseNames(cleanMasterRepo: File, masterRepo: Option[File] = None)(implicit config: MasterSettings): Vector[String] = {
-    val relativeSourceFolder = new File(cleanMasterRepo, config.relativeSourceFolder)
+  def getExerciseNames(cleanMainRepo: File, mainRepo: Option[File] = None)(implicit config: MainSettings): Vector[String] = {
+    val relativeSourceFolder = new File(cleanMainRepo, config.relativeSourceFolder)
     val exerciseFolders = sbtio.listFiles(relativeSourceFolder, FoldersOnly()).filter(isExerciseFolder)
     val exercisesNames = exerciseFolders.map(folder => folder.getName).toVector.sorted
     if (exercisesNames.isEmpty) {
-      val repo = masterRepo.getOrElse(cleanMasterRepo)
+      val repo = mainRepo.getOrElse(cleanMainRepo)
       println(s"${Console.RED}ERROR: No exercises found in ${new File(repo, config.relativeSourceFolder)}${Console.RESET}")
       System.exit(-1)
     }
     exercisesNames
   }
 
-  def hideExerciseSolutions(targetFolder: File, selectedExercises: Seq[String])(implicit config: MasterSettings): Unit = {
+  def hideExerciseSolutions(targetFolder: File, selectedExercises: Seq[String])(implicit config: MainSettings): Unit = {
     val hiddenFolder = new File(targetFolder, config.solutionsFolder)
     sbtio.createDirectory(hiddenFolder)
     val exercises = sbtio.listFiles(targetFolder, FoldersOnly()).filter(isExerciseFolder)
@@ -299,9 +305,8 @@ object Helpers {
       selectedExercise
     }
   }
-  def stageFirstExercise(firstEx: String, masterRepo: File, targetFolder: File)(implicit config: MasterSettings): Unit = {
-    //val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
-    val firstExercise = new File(masterRepo, firstEx)
+  def stageFirstExercise(firstEx: String, mainRepo: File, targetFolder: File)(implicit config: MainSettings): Unit = {
+    val firstExercise = new File(mainRepo, firstEx)
     sbtio.copyDirectory(firstExercise, new File(targetFolder, config.studentifyModeClassic.studentifiedBaseFolder), preserveLastModified = true)
   }
 
@@ -310,7 +315,7 @@ object Helpers {
     dumpStringToFile(firstExercise, new File(targetFolder, ".bookmark").getPath)
   }
 
-  def createSbtRcFile(targetFolder: File)(implicit config: MasterSettings): Unit = {
+  def createSbtRcFile(targetFolder: File)(implicit config: MainSettings): Unit = {
     dumpStringToFile(s"alias boot = ;reload ;project ${config.studentifyModeClassic.studentifiedBaseFolder} ;iflast shell", new File(targetFolder, ".sbtrc").getPath)
   }
 
@@ -337,21 +342,21 @@ object Helpers {
     selExcs
   }
 
-  def duplicateExercise(masterRepo: File,
+  def duplicateExercise(mainRepo: File,
                         exercise: String,
-                        exerciseNr: Int)(implicit config: MasterSettings): Unit = {
+                        exerciseNr: Int)(implicit config: MainSettings): Unit = {
 
-    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val relativeSourceFolder = new File(mainRepo, config.relativeSourceFolder)
     val newExercise =   renumberExercise(exercise, exerciseNr) + "_copy"
     sbtio.copyDirectory(new File(relativeSourceFolder, exercise), new File(relativeSourceFolder, newExercise), preserveLastModified = true)
   }
 
-  def shiftExercisesUp(masterRepo: File,
+  def shiftExercisesUp(mainRepo: File,
                        exercises: Vector[String],
                        startFromExerciseNumber: Int,
-                       exerciseNumbers: Vector[Int])(implicit config: MasterSettings): Unit = {
+                       exerciseNumbers: Vector[Int])(implicit config: MainSettings): Unit = {
 
-    val relativeSourceFolder = new File(masterRepo, config.relativeSourceFolder)
+    val relativeSourceFolder = new File(mainRepo, config.relativeSourceFolder)
     val exercisesToShift = exercises.dropWhile(exercise => extractExerciseNr(exercise) != startFromExerciseNumber)
     val moves = for {
       exercise <- exercisesToShift
@@ -361,14 +366,14 @@ object Helpers {
     sbtio.move(moves)
   }
 
-  def createMasterBuildFile(exercises: Seq[String],
-                            masterRepo: File,
-                            multiJVM: Boolean,
-                            isADottyProject: Boolean,
-                            autoReloadOnBuildDefChange: Boolean
-                           )(implicit config: MasterSettings): Unit = {
+  def createMainBuildFile(exercises: Seq[String],
+                          mainRepo: File,
+                          multiJVM: Boolean,
+                          isADottyProject: Boolean,
+                          autoReloadOnBuildDefChange: Boolean
+                           )(implicit config: MainSettings): Unit = {
 
-    val targetFolder = new File(masterRepo, config.relativeSourceFolder)
+    val targetFolder = new File(mainRepo, config.relativeSourceFolder)
 
     val exercisesBackTicked = exercises.map(exrc => s"`$exrc`")
 
@@ -396,9 +401,21 @@ object Helpers {
     val exerciseList = exercisesBackTicked.mkString(",\n    ")
 
     val buildDefinition = if (multiJVM) {
-      s"""import sbt._
+      s"""/***************************************************************
+         |  *      THIS IS A GENERATED FILE - EDIT AT YOUR OWN RISK      *
+         |  **************************************************************
+         |  *
+         |  * Use the mainadm command to generate a new version of
+         |  * this build file.
+         |  *
+         |  * See https://github.com/lightbend/course-management-tools
+         |  * for more details
+         |  *
+         |  */
+         |
+         |import sbt._
          |${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
-         |lazy val `${config.masterBaseProjectName}` = (project in file("."))
+         |lazy val `${config.mainBaseProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
          |    $exerciseList
@@ -415,9 +432,21 @@ object Helpers {
          |${exercisesBackTicked.map{ exrc => exerciseMJvmDep(exrc)}.mkString("\n\n")}
        """.stripMargin
     } else {
-      s"""import sbt._
+      s"""/***************************************************************
+         |  *      THIS IS A GENERATED FILE - EDIT AT YOUR OWN RISK      *
+         |  **************************************************************
+         |  *
+         |  * Use the mainadm command to generate a new version of
+         |  * this build file.
+         |  *
+         |  * See https://github.com/lightbend/course-management-tools
+         |  * for more details
+         |  *
+         |  */
+         |
+         |import sbt._
          |${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
-         |lazy val `${config.masterBaseProjectName}` = (project in file("."))
+         |lazy val `${config.mainBaseProjectName}` = (project in file("."))
          |  .aggregate(
          |    common,
          |    $exerciseList
@@ -453,7 +482,7 @@ object Helpers {
   def createStudentifiedBuildFile(targetFolder: File, multiJVM: Boolean,
                                   isADottyProject: Boolean,
                                   autoReloadOnBuildDefChange: Boolean)
-                                 (implicit config: MasterSettings): Unit = {
+                                 (implicit config: MainSettings): Unit = {
     val setScalaVersion = scalaDottyVersion(isADottyProject)
     val buildDef =
       s"""import sbt._
@@ -511,26 +540,26 @@ object Helpers {
     }
   }
 
-  def exitIfGitIndexOrWorkspaceIsntClean(masterRepo: File): Unit = {
+  def exitIfGitIndexOrWorkspaceIsntClean(mainRepo: File): Unit = {
     """git diff-index --quiet HEAD --"""
-      .toProcessCmd(workingDir = masterRepo)
+      .toProcessCmd(workingDir = mainRepo)
       .runAndExitIfFailed(toConsoleRed(s"YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN STUDENTIFY"))
 
-    s"""./checkIfWorkspaceClean.sh ${masterRepo.getPath}"""
+    s"""./checkIfWorkspaceClean.sh ${mainRepo.getPath}"""
       .toProcessCmd(workingDir = new File("."))
       .runAndExitIfFailed(toConsoleRed(s"YOU HAVE CHANGES IN YOUR GIT WORKSPACE. COMMIT CHANGES AND RE-RUN STUDENTIFY"))
   }
 
-  def printErrorMsgAndExit(masterConfigurationFile: File, lineNr: Option[Int], setting: String): Unit = {
+  def printErrorMsgAndExit(mainConfigurationFile: File, lineNr: Option[Int], setting: String): Unit = {
     val LineNrInfo = if (lineNr.isDefined) s"on line ${lineNr.get+1}" else ""
     println(
-      s"""Invalid setting syntax $LineNrInfo in ${masterConfigurationFile.getName}:
+      s"""Invalid setting syntax $LineNrInfo in ${mainConfigurationFile.getName}:
          |  $setting
                """.stripMargin)
     System.exit(-1)
   }
 
-  def loadStudentSettings(masterRepo: File, targetFolder: File)(implicit masterSettings: MasterSettings): Unit = {
+  def loadStudentSettings(mainRepo: File, targetFolder: File)(implicit mainSettings: MainSettings): Unit = {
 
     dumpStringToFile(
       s"""package sbtstudent
@@ -540,15 +569,15 @@ object Helpers {
          |  val consoleColorMap: Map[String, String] =
          |    Map("RESET" -> RESET, "GREEN" -> GREEN, "RED" -> RED, "BLUE" -> BLUE, "CYAN" -> CYAN, "YELLOW" -> YELLOW, "WHITE" -> WHITE, "BLACK" -> BLACK, "MAGENTA" -> MAGENTA)
          |
-         |  val testFolders = List(${masterSettings.testCodeFolders.map(s => s""""$s"""").mkString(", ")})
+         |  val testFolders = List(${mainSettings.testCodeFolders.map(s => s""""$s"""").mkString(", ")})
          |
-         |  val studentifiedBaseFolder = "${masterSettings.studentifyModeClassic.studentifiedBaseFolder}"
+         |  val studentifiedBaseFolder = "${mainSettings.studentifyModeClassic.studentifiedBaseFolder}"
          |
-         |  val readmeInTestResources: Boolean = ${masterSettings.readmeInTestResources}
+         |  val readmeInTestResources: Boolean = ${mainSettings.readmeInTestResources}
          |
-         |  val promptManColor         = "${masterSettings.Colors.promptManColor}"
-         |  val promptExerciseColor    = "${masterSettings.Colors.promptExerciseColor}"
-         |  val promptCourseNameColor = "${masterSettings.Colors.promptCourseNameColor}"
+         |  val promptManColor         = "${mainSettings.Colors.promptManColor}"
+         |  val promptExerciseColor    = "${mainSettings.Colors.promptExerciseColor}"
+         |  val promptCourseNameColor = "${mainSettings.Colors.promptCourseNameColor}"
          |}
        """.stripMargin, new File(targetFolder, "project/SSettings.scala").getPath)
   }

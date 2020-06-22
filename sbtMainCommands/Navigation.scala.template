@@ -12,7 +12,7 @@ object Navigation {
   val setupNavAttrs: (State) => State = (state: State) => state
 
   val loadBookmark: (State) => State = (state: State) => {
-    // loadBookmark doesn't really load a bookmark for a master repo.
+    // loadBookmark doesn't really load a bookmark for a main repo.
     // It just selects the first exercise (project) from the repo
     val refs =
     Project.extract(state)

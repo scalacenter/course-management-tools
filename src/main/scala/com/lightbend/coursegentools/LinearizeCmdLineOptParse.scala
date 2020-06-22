@@ -30,33 +30,38 @@ object LinearizeCmdLineOptParse {
     val parser = new scopt.OptionParser[LinearizeCmdOptions]("linearize") {
       head("linearize", "3.0")
 
-      arg[File]("masterRepo")
-        .text("base folder holding master course repository")
-        .action { case (masterRepo, c) =>
-          if (! folderExists(masterRepo))
-            printError(s"Base master repo folder (${masterRepo.getPath}) doesn't exist")
-          c.copy(masterRepo = masterRepo)
+      arg[File]("mainRepo")
+        .text("base folder holding main course repository")
+        .action {
+          case (mainRepo, c) =>
+            if (!folderExists(mainRepo))
+              printError(s"Base main repo folder (${mainRepo.getPath}) doesn't exist")
+            c.copy(mainRepo = mainRepo)
         }
 
       arg[File]("linearRepo")
         .text("base folder for linearized version repo")
-        .action { case (linearRepo, config) =>
-          if (! folderExists(linearRepo))
-            printError(s"Base folder for linearized version repo (${linearRepo.getPath}) doesn't exist")
-          config.copy(linearRepo = linearRepo)}
+        .action {
+          case (linearRepo, config) =>
+            if (!folderExists(linearRepo))
+              printError(s"Base folder for linearized version repo (${linearRepo.getPath}) doesn't exist")
+            config.copy(linearRepo = linearRepo)
+        }
 
       opt[Unit]("multi-jvm")
         .text("generate multi-jvm build file")
         .abbr("mjvm")
-        .action { case (_, c) =>
-          c.copy(multiJVM = true)
+        .action {
+          case (_, c) =>
+            c.copy(multiJVM = true)
         }
 
       opt[Unit]("force-delete")
         .text("Force-delete a pre-existing destination folder")
         .abbr("f")
-        .action { case (_, c) =>
-          c.copy(forceDeleteExistingDestinationFolder = true)
+        .action {
+          case (_, c) =>
+            c.copy(forceDeleteExistingDestinationFolder = true)
         }
 
       opt[String]("config-file")
@@ -70,14 +75,16 @@ object LinearizeCmdLineOptParse {
       opt[Unit]("dotty")
         .text("studentified repository is a Dotty project")
         .abbr("dot")
-        .action { case (_, c) =>
-          c.copy(isADottyProject = true)
+        .action {
+          case (_, c) =>
+            c.copy(isADottyProject = true)
         }
       opt[Unit]("no-auto-reload-sbt")
         .text("no automatic reload on build definition change")
         .abbr("nar")
-        .action { case (_, c) =>
-          c.copy(autoReloadOnBuildDefChange = false)
+        .action {
+          case (_, c) =>
+            c.copy(autoReloadOnBuildDefChange = false)
         }
     }
 

@@ -4,6 +4,16 @@ boot/
 lib_managed/
 target/
 
+# VSCode specific
+.vscode
+*.code-workspace
+
+# Metals/Bloop specific
+.bloop/
+.metals/
+.swp
+project/metals.sbt
+
 # Eclipse
 .cache
 .classpath

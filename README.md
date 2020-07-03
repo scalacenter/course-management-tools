@@ -1,5 +1,7 @@
 # Course Management - Workflow and tools
 
+![CI](https://github.com/eloots/course-management-tools/workflows/CI/badge.svg)
+
 ## Introduction
 
 Over the last couple of years, a specific set of tools and workflow were used to maintain the exercise source code for Lightbend training courses. Based on the experience gained over time, a new approach has been devised that meets the following objectives:

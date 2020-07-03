@@ -1,0 +1,56 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    
+    steps:    
+    
+      - name: Checkout Course Management Tools Repo
+        uses: actions/checkout@v2
+        with:
+          path: CMT
+          fetch-depth: 0
+    
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+    
+      - name: Cache Ivy
+        uses: actions/cache@v2
+        with:
+          path: ~/.ivy2/cache
+          key: ${{ runner.os }}-ivy--${{ hashFiles('**/build.sbt') }}
+          restore-keys: |
+            ${{ runner.os }}-ivy-
+            ${{ runner.os }}-
+            
+      - name: Cache SBT
+        uses: actions/cache@v2
+        with:
+          path: ~/.sbt            
+          key: ${{ runner.os }}-sbt-${{ hashFiles('project/**') }}
+          restore-keys: |
+            ${{ runner.os }}-sbt-
+            ${{ runner.os }}-
+    
+      - name: Generate test scripts using CMT
+        run: |
+          mkdir testScripts
+          cd  CMT
+          for template in $(ls -d course-templates/*/);do
+          sbt "mainadm -cfg course-templates/$(basename $template)/course-management.conf -t ../testScripts/$(basename $template).sh -dot $(pwd)"
+          done
+        
+      - name: Run Tests
+        run: |
+          cd $GITHUB_WORKSPACE
+          chmod +x testScripts/*
+          for ts in $(ls testScripts/*.sh);do
+          bash $ts || break
+          done

@@ -366,6 +366,41 @@ object Helpers {
     sbtio.move(moves)
   }
 
+
+  def commonProjectName(implicit config: MainSettings): String =
+    if (config.commonProjectEnabled)
+      """
+        |    common,""".stripMargin
+    else
+      ""
+
+  def commonProjectDef(implicit config: MainSettings): String =
+    if (config.commonProjectEnabled)
+      """
+        |lazy val common = project
+        |  .settings(CommonSettings.commonSettings: _*)
+        |""".stripMargin
+    else
+      ""
+
+  def commonProjectDefMJvm(implicit config: MainSettings): String =
+    if (config.commonProjectEnabled)
+      """
+        |lazy val common = project
+        |  .settings(SbtMultiJvm.multiJvmSettings: _*)
+        |  .settings(CommonSettings.commonSettings: _*)
+        |  .configs(MultiJvm)
+        |""".stripMargin
+    else
+      ""
+
+  def dependsOnCommon(implicit config: MainSettings): String =
+    if (config.commonProjectEnabled)
+      """
+        |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
+    else
+      ""
+
   def createMainBuildFile(exercises: Seq[String],
                           mainRepo: File,
                           multiJVM: Boolean,
@@ -379,23 +414,31 @@ object Helpers {
 
     val setScalaVersion = scalaDottyVersion(isADottyProject)
 
+    val commonProjectDefMJvm =
+      if (config.commonProjectEnabled)
+        """
+          |lazy val common = project
+          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
+          |  .settings(CommonSettings.commonSettings: _*)
+          |  .configs(MultiJvm)
+          |""".stripMargin
+      else
+        ""
+
     def exerciseDep(exercise: String): String = {
       if (config.useConfigureForProjects) {
         s"""lazy val $exercise = project
-           |  .configure(CommonSettings.configure)
-           |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
+           |  .configure(CommonSettings.configure)${dependsOnCommon}""".stripMargin
       } else {
         s"""lazy val $exercise = project
-           |  .settings(CommonSettings.commonSettings: _*)
-           |  .dependsOn(common % "test->test;compile->compile")""".stripMargin
+           |  .settings(CommonSettings.commonSettings: _*)${dependsOnCommon}""".stripMargin
       }
     }
 
     def exerciseMJvmDep(exercise: String): String = {
-      s"""lazy val $exercise = project
+      s"""lazy val $exercise = projectG
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
-         |  .settings(CommonSettings.commonSettings: _*)
-         |  .dependsOn(common % "test->test;compile->compile")
+         |  .settings(CommonSettings.commonSettings: _*)${dependsOnCommon}
          |  .configs(MultiJvm)""".stripMargin
     }
     val exerciseList = exercisesBackTicked.mkString(",\n    ")
@@ -416,19 +459,13 @@ object Helpers {
          |import sbt._
          |${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
          |lazy val `${config.mainBaseProjectName}` = (project in file("."))
-         |  .aggregate(
-         |    common,
+         |  .aggregate(${commonProjectName}
          |    $exerciseList
          |  )${setScalaVersion}
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .configs(MultiJvm)
-         |
-         |lazy val common = project
-         |  .settings(SbtMultiJvm.multiJvmSettings: _*)
-         |  .settings(CommonSettings.commonSettings: _*)
-         |  .configs(MultiJvm)
-         |
+         |${commonProjectDefMJvm}
          |${exercisesBackTicked.map{ exrc => exerciseMJvmDep(exrc)}.mkString("\n\n")}
        """.stripMargin
     } else {
@@ -447,15 +484,11 @@ object Helpers {
          |import sbt._
          |${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
          |lazy val `${config.mainBaseProjectName}` = (project in file("."))
-         |  .aggregate(
-         |    common,
+         |  .aggregate(${commonProjectName}
          |    $exerciseList
          |  )${setScalaVersion}
          |  .settings(CommonSettings.commonSettings: _*)
-         |
-         |lazy val common = project
-         |  .settings(CommonSettings.commonSettings: _*)
-         |
+         |${commonProjectDef}
          |${exercisesBackTicked.map{ exrc => exerciseDep(exrc)}.mkString("\n\n")}
        """.stripMargin
     }
@@ -488,43 +521,31 @@ object Helpers {
       s"""import sbt._
          |${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
          |lazy val `${config.studentifiedProjectName}` = (project in file("."))
-         |  .aggregate(
-         |    common,
+         |  .aggregate(${commonProjectName}
          |    `${config.studentifyModeClassic.studentifiedBaseFolder}`
          |  )${setScalaVersion}
          |  .settings(CommonSettings.commonSettings: _*)
-         |
-         |lazy val common = project
-         |  .settings(CommonSettings.commonSettings: _*)
-         |
+         |${commonProjectDef}
          |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
-         |  ${if (config.useConfigureForProjects) ".configure(CommonSettings.configure)" else ".settings(CommonSettings.commonSettings: _*)"}
-         |  .dependsOn(common % "test->test;compile->compile")
-       """.stripMargin
+         |  ${if (config.useConfigureForProjects) s".configure(CommonSettings.configure)${dependsOnCommon}" else s".settings(CommonSettings.commonSettings: _*)${dependsOnCommon}"}
+         """.stripMargin
 
     val mJvmBuildDef =
       s"""${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
          |import sbt._
          |
          |lazy val `${config.studentifiedProjectName}` = (project in file("."))
-         |  .aggregate(
-         |    common,
+         |  .aggregate(${commonProjectName}
          |    `${config.studentifyModeClassic.studentifiedBaseFolder}`
          |  )${setScalaVersion}
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  .settings(CommonSettings.commonSettings: _*)
          |  .configs(MultiJvm)
-         |
-         |lazy val common = project
-         |  .settings(SbtMultiJvm.multiJvmSettings: _*)
-         |  .settings(CommonSettings.commonSettings: _*)
-         |  .configs(MultiJvm)
-         |
+         |${commonProjectDefMJvm}
          |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
          |  .settings(SbtMultiJvm.multiJvmSettings: _*)
          |  ${if (config.useConfigureForProjects) ".settings(CommonSettings.commonSettings: _*)" else ".configure(CommonSettings.configure)"}
-         |  .configs(MultiJvm)
-         |  .dependsOn(common % "test->test;compile->compile")
+         |  .configs(MultiJvm)${dependsOnCommon}
        """.stripMargin
 
       if (multiJVM) {

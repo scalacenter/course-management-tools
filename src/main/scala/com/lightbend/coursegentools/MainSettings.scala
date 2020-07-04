@@ -55,6 +55,8 @@ class MainSettings(mainRepo: File, optConfigurationFile: Option[String]) {
   val testCodeFolders: List[String] =
     config.getStringList("studentify.test-code-folders").asScala.toList
 
+  val commonProjectEnabled: Boolean = config.getBoolean("studentify.common-project-enabled")
+
   val exerciseProjectPrefix: String = config.getString("studentify.exercise-project-prefix")
 
   val studentifyModeSelect: String = config.getString("studentify.studentify-mode-select")

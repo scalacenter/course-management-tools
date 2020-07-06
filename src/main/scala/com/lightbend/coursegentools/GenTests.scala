@@ -11,7 +11,8 @@ object GenTests {
                          testScript: File,
                          exercises: Vector[String],
                          exerciseNumbers: Vector[Int],
-                         isADottyProject: Boolean
+                         isADottyProject: Boolean,
+                         initStudentifiedRepoAsGit: Boolean
   ): Unit = {
     val mainRepoPath = mainRepo.getAbsolutePath
     val exerciseFolderPath: String =
@@ -20,6 +21,7 @@ object GenTests {
     val cmtFolder = System.getProperty("user.dir")
     val configurationFileArgument = if (configurationFile.isDefined) s"-cfg ${configurationFile.get}" else ""
     val isADottyProjectOption = if (isADottyProject) "-dot" else ""
+    val initStudentifiedRepoAsGitOption = if (initStudentifiedRepoAsGit) "-g" else ""
 
     val script: String =
       s"""#!/bin/bash
@@ -38,7 +40,7 @@ object GenTests {
          |cd $$CMT_FOLDER
          |
          |${separator("Studentify the project")}
-         |sbt "studentify $configurationFileArgument $isADottyProjectOption $mainRepoPath $$TMP_DIR"
+         |sbt "studentify $configurationFileArgument $isADottyProjectOption $initStudentifiedRepoAsGitOption $mainRepoPath $$TMP_DIR"
          |
          |${separator("Test studentified project:\n  Exercise 'nextExercise', 'pullSolution', 'listExercises', 'man e' commands")}
          |cd $$TMP_DIR/${mainRepo.getName}

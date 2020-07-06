@@ -15,6 +15,7 @@ case class MainAdmCmdOptions(mainRepo: File = new File("."),
                              addMainCommands: Boolean = false,
                              useConfigureForProjects: Boolean = false,
                              testFile: Option[File] = None,
+                             initStudentifiedRepoAsGit: Boolean = false,
                              isADottyProject: Boolean = false,
                              autoReloadOnBuildDefChange: Boolean = true
 )

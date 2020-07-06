@@ -238,7 +238,7 @@ object Helpers {
       .runAndExitIfFailed(toConsoleRed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"))
   }
 
-  def addGitignoreFromMaster(mainRepo: File, linearizedProject: File): Unit = {
+  def addGitignoreFromMain(mainRepo: File, linearizedProject: File): Unit = {
     val gitignoreFile = new File(mainRepo, ".gitignore")
     if (gitignoreFile.exists())
       sbtio.copyFile(gitignoreFile, new File(linearizedProject, ".gitignore"))

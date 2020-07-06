@@ -86,6 +86,7 @@ object Studentify {
   def initialiseAsGit(mainRepo: File, studentifiedRepo: File): Unit = {
     import ProcessDSL._
 
+    printNotification("Initialising studentified project as a git repository")
     Helpers.addGitignoreFromMain(mainRepo, studentifiedRepo)
     s"git init"
       .toProcessCmd(workingDir = studentifiedRepo)

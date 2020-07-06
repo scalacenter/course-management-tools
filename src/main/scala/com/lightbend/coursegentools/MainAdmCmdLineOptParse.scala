@@ -129,6 +129,14 @@ object MainAdmCmdLineOptParse {
             c.copy(testFile = Some(testFile))
         }
 
+      opt[Unit]("init-studentified-test-repo-as-git")
+        .text("Generate studentified repo as a git repo in tests")
+        .abbr("g")
+        .action {
+          case (_, c) =>
+            c.copy(initStudentifiedRepoAsGit = true)
+        }
+
       opt[Unit]("dotty")
         .text("studentified repository is a Dotty project")
         .abbr("dot")

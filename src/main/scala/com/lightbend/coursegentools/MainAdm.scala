@@ -24,6 +24,7 @@ object MainAdm {
                           updateMainCommands,
                           useConfigureForProjects,
                           genTests,
+                          initStudentifiedRepoAsGit,
                           isADottyProject,
                           autoReloadOnBuildDefChange
     ) = cmdOptions.get
@@ -33,6 +34,10 @@ object MainAdm {
 
     val exercises: Vector[String] = getExerciseNames(mainRepo)
     val exerciseNumbers = exercises.map(extractExerciseNr)
+
+    // Option `-g` implies `-t`
+    if (initStudentifiedRepoAsGit && genTests.isEmpty)
+      printError(s"Setting option -g is only valid in combination with option -t")
 
     (regenBuildFile,
      duplicateInsertBefore,
@@ -220,7 +225,8 @@ object MainAdm {
                            testFile,
                            exercises,
                            exerciseNumbers,
-                           isADottyProject
+                           isADottyProject,
+                           initStudentifiedRepoAsGit
         )
 
       case (false, None, None, false, _, _, false, false, None, _) =>

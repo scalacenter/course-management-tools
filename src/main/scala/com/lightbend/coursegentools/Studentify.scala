@@ -86,7 +86,7 @@ object Studentify {
   def initialiseAsGit(mainRepo: File, studentifiedRepo: File): Unit = {
     import ProcessDSL._
 
-    Helpers.addGitignoreFromMaster(mainRepo, studentifiedRepo)
+    Helpers.addGitignoreFromMain(mainRepo, studentifiedRepo)
     s"git init"
       .toProcessCmd(workingDir = studentifiedRepo)
       .runAndExitIfFailed(toConsoleRed(s"'git init' failed on ${studentifiedRepo.getAbsolutePath}"))

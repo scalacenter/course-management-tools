@@ -69,7 +69,7 @@ object Linearize {
     cleanUp(List(".git", "navigation.sbt"), linearizedProject)
 
     removeExercisesFromCleanMain(linearizedProject, exercises)
-    addGitignoreFromMaster(mainRepo, linearizedProject)
+    addGitignoreFromMain(mainRepo, linearizedProject)
     stageFirstExercise(exercises.head, relativeCleanMainRepo, linearizedProject)
     initializeGitRepo(linearizedProject)
     commitFirstExercise(exercises.head, linearizedProject)

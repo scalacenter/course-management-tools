@@ -41,6 +41,8 @@ jobs:
     
       - name: Generate test scripts using CMT
         run: |
+          git config --global user.email "no-reply@lunatech.com"
+          git config --global user.name "Lunatech Labs"
           mkdir testScripts
           cd  CMT
           for template in $(ls -d course-templates/*/);do

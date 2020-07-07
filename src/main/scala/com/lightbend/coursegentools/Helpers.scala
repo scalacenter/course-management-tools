@@ -138,17 +138,26 @@ object Helpers {
       }
     }
 
+    val readmeLocationPrefix = "src" + sep + "test" + sep + "resources"
+
+    def getReadmeFile(projectFolder: File)(implicit config: MainSettings): File = {
+      if (config.readmeInTestResources)
+        new File(projectFolder, readmeLocationPrefix + sep + "README.md")
+      else
+        new File(projectFolder, "README.md")
+    }
+
     // Check all required README files are present
     for { project <- "common" +: exercises} {
       val projectFolder = new File(relativeSourceFolder, project)
-      val readmeFile = new File(projectFolder, "src" + sep + "test" + sep + "resources" + sep + "README.md")
+      val readmeFile = getReadmeFile(projectFolder)
       if (! readmeFile.exists()) {
-        printError(s"ERROR: missing README.md file in folder '${project + sep + "src" + sep + "test" + sep + "resources"}'")
+        printError(s"ERROR: missing README.md file in folder '${project}$sep$readmeLocationPrefix'")
         numberOfErrors += 1
       }
       else
         if (sbtio.readLines(readmeFile).isEmpty) {
-          printError(s"ERROR: README.md file in folder '${project + sep + "src" + sep + "test"}' should have at least one line")
+          printError(s"ERROR: README.md file in folder '${project}$sep$readmeLocationPrefix' should have at least one line")
           numberOfErrors += 1
         }
     }

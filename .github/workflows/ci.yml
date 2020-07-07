@@ -44,7 +44,7 @@ jobs:
           mkdir testScripts
           cd  CMT
           for template in $(ls -d course-templates/*/);do
-          sbt "mainadm -cfg course-templates/$(basename $template)/course-management.conf -t ../testScripts/$(basename $template).sh -dot $(pwd)"
+          sbt "mainadm -cfg course-templates/$(basename $template)/course-management.conf -g -t ../testScripts/$(basename $template).sh -dot $(pwd)"
           done
         
       - name: Run Tests

@@ -1,13 +1,14 @@
 package com.lightbend.coursegentools
 
 import java.io.File
-import GenTests.generateTestScript
+
+import com.lightbend.coursegentools.GenTests.generateTestScript
 
 object MainAdm {
 
   def main(args: Array[String]): Unit = {
-    import ProcessDSL._
     import Helpers._
+    import ProcessDSL._
 
     val cmdOptions = MainAdmCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
@@ -117,7 +118,7 @@ object MainAdm {
             None,
             _
           ) if exerciseNumbers.contains(dibExNr) =>
-        import sbt.io.{ IO => sbtio }
+        import sbt.io.{IO => sbtio}
         val relativeSourceFolder = new File(mainRepo, config.relativeSourceFolder)
         val exercise = getExerciseName(exercises, dibExNr).get
         sbtio.delete(new File(relativeSourceFolder, exercise))
@@ -152,7 +153,7 @@ object MainAdm {
             None,
             _
           ) =>
-        import sbt.io.{ IO => sbtio }
+        import sbt.io.{IO => sbtio}
         val relativeSourceFolder = new File(mainRepo, config.relativeSourceFolder)
         val moves = for {
           (exercise, index) <- exercises.zipWithIndex

@@ -43,3 +43,6 @@ out/
 
 # CourseGen
 .tag
+
+# Play
+logs/

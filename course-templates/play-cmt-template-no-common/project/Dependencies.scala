@@ -16,7 +16,6 @@ object Dependencies {
   )
 
   val dependencies: Seq[ModuleID] =
-    //guice ++
     logbackDeps ++
     testDeps
 }

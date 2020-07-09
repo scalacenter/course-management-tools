@@ -443,10 +443,10 @@ object Helpers {
     def exerciseDep(exercise: String): String = {
       if (config.useConfigureForProjects) {
         s"""lazy val $exercise = project
-           |  .configure(CommonSettings.configure)${dependsOnCommon}""".stripMargin
+           |  .configure(CommonSettings.configure)${dependsOnCommon}${config.exercisePreamble}""".stripMargin
       } else {
         s"""lazy val $exercise = project
-           |  .settings(CommonSettings.commonSettings: _*)${dependsOnCommon}""".stripMargin
+           |  .settings(CommonSettings.commonSettings: _*)${dependsOnCommon}${config.exercisePreamble}""".stripMargin
       }
     }
 
@@ -542,7 +542,10 @@ object Helpers {
          |  .settings(CommonSettings.commonSettings: _*)
          |${commonProjectDef}
          |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
-         |  ${if (config.useConfigureForProjects) s".configure(CommonSettings.configure)${dependsOnCommon}" else s".settings(CommonSettings.commonSettings: _*)${dependsOnCommon}"}
+         |  ${if (config.useConfigureForProjects)
+              s".configure(CommonSettings.configure)${config.exercisePreamble}${dependsOnCommon}"
+              else s".settings(CommonSettings.commonSettings: _*)${config.exercisePreamble}${dependsOnCommon}"
+            }
          """.stripMargin
 
     val mJvmBuildDef =

@@ -90,4 +90,5 @@ class MainSettings(mainRepo: File, optConfigurationFile: Option[String]) {
     )
   }
 
+  val exercisePreamble: String = config.getString("studentify.exercise-preamble")
 }

@@ -24,9 +24,10 @@ object Linearize {
 
   def main(args: Array[String]): Unit = {
 
-    import Helpers._
     import java.io.File
-    import sbt.io.{ IO => sbtio }
+
+    import Helpers._
+    import sbt.io.{IO => sbtio}
 
     implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
 

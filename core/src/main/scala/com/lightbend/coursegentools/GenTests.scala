@@ -35,22 +35,31 @@ object GenTests {
          |cd $exerciseFolderPath
          |sbt "${genMainExerciseTestCmds(exercises)}"
          |
-         |${separator("Create a temporary folder to hold studentified version")}
-         |TMP_DIR=$$(mktemp -d /tmp/CMT.XXXXXX)
+         |${separator("Create temporary folders to hold linearized and studentified versions")}
+         |TMP_DIR_LIN=$$(mktemp -d /tmp/CMT.XXXXXX)
+         |TMP_DIR_STU=$$(mktemp -d /tmp/CMT.XXXXXX)
          |cd $$CMT_FOLDER
          |
+         |${separator("Linearize the project")}
+         |sbt "linearize $configurationFileArgument $isADottyProjectOption $mainRepoPath $$TMP_DIR_LIN"
+         |
+         |${separator("Test linearized project")}
+         |cd $$TMP_DIR_LIN/${mainRepo.getName}
+         |sbt test
+         |
          |${separator("Studentify the project")}
-         |sbt "studentify $configurationFileArgument $isADottyProjectOption $initStudentifiedRepoAsGitOption $mainRepoPath $$TMP_DIR"
+         |cd $$CMT_FOLDER
+         |sbt "studentify $configurationFileArgument $isADottyProjectOption $initStudentifiedRepoAsGitOption $mainRepoPath $$TMP_DIR_STU"
          |
          |${separator("Test studentified project:\n  Exercise 'nextExercise', 'pullSolution', 'listExercises', 'man e' commands")}
-         |cd $$TMP_DIR/${mainRepo.getName}
+         |cd $$TMP_DIR_STU/${mainRepo.getName}
          |sbt "${genStudentifiedTestCmds(exercises)}"
          |
          |${separator("Test studentified project:\n  Exercise 'gotoExercise', 'gotoExerciseNr', 'pullSolution', 'test', 'listExercises, 'saveState', savedStates', 'restoreState''")}
          |sbt "${genGotoExerciseTestCmds(exercises, exerciseNumbers)}"
          |
          |# Clean up after ourselves
-         |trap "rm -rf $$TMP_DIR" 0
+         |trap "rm -rf $$TMP_DIR_LIN $$TMP_DIR_STU" 0
       """.stripMargin
 
     dumpStringToFile(script, testScript.getAbsolutePath)

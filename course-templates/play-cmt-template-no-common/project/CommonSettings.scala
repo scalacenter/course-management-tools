@@ -1,6 +1,7 @@
 import sbt.Keys._
 import sbt._
 import sbtstudent.AdditionalSettings
+import sbtstudent.StudentCommandsPlugin._
 
 object CommonSettings {
   lazy val commonSettings = Seq(
@@ -9,7 +10,8 @@ object CommonSettings {
     Test / unmanagedSourceDirectories := List((scalaSource in Test).value, (javaSource in Test).value),
     Test / logBuffered := false,
     Test / parallelExecution := false,
-    libraryDependencies ++= Dependencies.dependencies
+    libraryDependencies ++= Dependencies.dependencies,
+    shellPrompt := (state => renderCmtPrompt(state))
   ) ++
     AdditionalSettings.initialCmdsConsole ++
     AdditionalSettings.initialCmdsTestConsole ++

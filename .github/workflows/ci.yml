@@ -53,6 +53,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           chmod +x testScripts/*
+          export PATH=${PATH}:$GITHUB_WORKSPACE/CMT/bin
           for ts in $(ls testScripts/*.sh);do
           bash $ts || break
           done

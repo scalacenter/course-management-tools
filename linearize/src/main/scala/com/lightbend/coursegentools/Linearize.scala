@@ -60,12 +60,18 @@ object Linearize {
     printNotification(s"Cleaned main repo: $cleanMainRepo")
     val relativeCleanMainRepo = new File(cleanMainRepo, config.relativeSourceFolder)
     val linearizedProject = new File(linearizedOutputFolder, projectName)
-    val sbtLinearizeCommandsTemplateFolder = new File("sbtLinearizeCommands")
 
     copyMain(cleanMainRepo, linearizedProject)
     createStudentifiedBuildFile(linearizedProject, multiJVM, isADottyProject, autoReloadOnBuildDefChange)
     createBookmarkFile(config.studentifyModeClassic.studentifiedBaseFolder, linearizedProject)
-    addSbtCommands(sbtLinearizeCommandsTemplateFolder, linearizedProject)
+    val templateFileList: List[String] =
+      List(
+        "Man.scala",
+        "Navigation.scala",
+        "StudentCommandsPlugin.scala",
+        "StudentKeys.scala"
+      )
+    addSbtCommands(templateFileList, linearizedProject)
     loadStudentSettings(mainRepo, linearizedProject)
     cleanUp(List(".git", "navigation.sbt"), linearizedProject)
 

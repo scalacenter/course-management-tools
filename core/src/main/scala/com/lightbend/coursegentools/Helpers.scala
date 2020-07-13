@@ -2,7 +2,9 @@ package com.lightbend.coursegentools
 
 import sbt.io.{IO => sbtio}
 import java.io.File
-import java.io.File.{ separatorChar => sep }
+import java.io.File.{separatorChar => sep}
+
+import scala.io.Source
 import scala.sys.process.Process
 
 /**
@@ -60,23 +62,23 @@ object Helpers {
 
   def addMainCommands(mainRepo: File)(implicit config: MainSettings, exitOnFirstError: ExitOnFirstError): Unit = {
     val relativeSourceFolder = new File(mainRepo, config.relativeSourceFolder)
-    val sbtProjectFolder = new File(relativeSourceFolder, "project")
-
-    if (! sbtProjectFolder.exists()) {
-      sbtio.createDirectory(sbtProjectFolder)
+    if (! relativeSourceFolder.exists()) {
+      sbtio.createDirectory(relativeSourceFolder)
     } else {
-      if (! sbtProjectFolder.isDirectory) {
-        printError(s"ERROR: $sbtProjectFolder should be a folder")
+      if (! relativeSourceFolder.isDirectory) {
+        printError(s"ERROR: $relativeSourceFolder should be a folder")
       }
     }
 
-    val sbtMainCommandsTemplateFolder = new File("sbtMainCommands")
-
-    val moves = for {
-      template <- sbtio.listFiles(sbtMainCommandsTemplateFolder)
-      target = new File(sbtProjectFolder, template.getName.replaceAll(".template", ""))
-    } yield (template, target)
-    sbtio.copy(moves, overwrite = true, preserveLastModified = true, preserveExecutable = false)
+    val templateFileList: List[String] =
+      List(
+        "MPSelection.scala",
+        "Man.scala",
+        "Navigation.scala",
+        "StudentCommandsPlugin.scala",
+        "StudentKeys.scala"
+      )
+    addSbtCommands(templateFileList, relativeSourceFolder)
   }
 
   def checkMainRepo(mainRepo: File, exercises: Vector[String], exitOnFirstError: Boolean)(implicit config: MainSettings): Unit = {
@@ -268,7 +270,7 @@ object Helpers {
   def cleanMainViaGit(srcFolder: File, projectName: String): File = {
     val tmpDir = sbtio.createTemporaryDirectory
     val curDir = new File(System.getProperty("user.dir"))
-    Process(Seq("./cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), curDir).!
+    Process(Seq("cmt-cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), curDir).!
     tmpDir
   }
 
@@ -334,13 +336,13 @@ object Helpers {
     dumpStringToFile(s"alias boot = ;reload ;project ${config.studentifyModeClassic.studentifiedBaseFolder} ;iflast shell", new File(targetFolder, ".sbtrc").getPath)
   }
 
-  def addSbtCommands(sbtStudentCommandsTemplateFolder: File, targetCourseFolder: File): Unit = {
+  def addSbtCommands(templateFileList: List[String], targetCourseFolder: File): Unit = {
     val projectFolder = new File(targetCourseFolder, "project")
-    val moves = for {
-      template <- sbtio.listFiles(sbtStudentCommandsTemplateFolder)
-      target = new File(projectFolder, template.getName.replaceAll(".scala.template", ".scala"))
-    } yield (template, target)
-    sbtio.copy(moves, overwrite = true, preserveLastModified = true, preserveExecutable = false)
+    for {
+      templateFile <- templateFileList
+      template = Source.fromInputStream(this.getClass().getClassLoader().getResourceAsStream(templateFile + ".template"))
+      templateContent = try template.mkString finally template.close()
+    } dumpStringToFile(templateContent, new File(projectFolder, templateFile).getPath)
 
   }
 
@@ -584,7 +586,7 @@ object Helpers {
       .toProcessCmd(workingDir = mainRepo)
       .runAndExitIfFailed(toConsoleRed(s"YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN STUDENTIFY"))
 
-    s"""./checkIfWorkspaceClean.sh ${mainRepo.getPath}"""
+    s"""cmt-checkIfWorkspaceClean.sh ${mainRepo.getPath}"""
       .toProcessCmd(workingDir = new File("."))
       .runAndExitIfFailed(toConsoleRed(s"YOU HAVE CHANGES IN YOUR GIT WORKSPACE. COMMIT CHANGES AND RE-RUN STUDENTIFY"))
   }

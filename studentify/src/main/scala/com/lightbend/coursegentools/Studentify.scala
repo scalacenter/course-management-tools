@@ -42,7 +42,6 @@ object Studentify {
                |${selectedExercises.mkString("    ", "\n    ", "")}
        """.stripMargin)
     val initialExercise = getInitialExercise(selectedFirstOpt, selectedExercises)
-    val sbtStudentCommandsTemplateFolder = new File("sbtStudentCommands")
     stageFirstExercise(initialExercise,
                        new File(cleanMainRepo, config.relativeSourceFolder),
                        targetCourseFolder
@@ -56,7 +55,16 @@ object Studentify {
                                 isADottyProject,
                                 autoReloadOnBuildDefChange
     )
-    addSbtCommands(sbtStudentCommandsTemplateFolder, targetCourseFolder)
+    val templateFileList: List[String] =
+      List(
+        "Man.scala",
+        "Navigation.scala",
+        "Pssr.scala",
+        "StudentCommandsPlugin.scala",
+        "StudentKeys.scala",
+        "Zip.scala"
+      )
+    addSbtCommands(templateFileList, targetCourseFolder)
     loadStudentSettings(mainRepo, targetCourseFolder)
     cleanUp(config.studentifyFilesToCleanUp, targetCourseFolder)
     sbtio.delete(tmpDir)

@@ -11,7 +11,7 @@ object CommonSettings {
     Test / logBuffered := false,
     Test / parallelExecution := false,
     libraryDependencies ++= Dependencies.dependencies,
-    shellPrompt := (state => renderCmtPrompt(state))
+    shellPrompt := (state => renderCMTPrompt(state))
   ) ++
     AdditionalSettings.initialCmdsConsole ++
     AdditionalSettings.initialCmdsTestConsole ++

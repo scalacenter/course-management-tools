@@ -55,7 +55,7 @@ object StudentCommandsPlugin extends AutoPlugin {
     IO.readLines(new sbt.File(new sbt.File(Project.extract(state).structure.root), ".courseName")).head
   }
 
-  def renderCmtPrompt(state: State) = {
+  def renderCMTPrompt(state: State) = {
     val exercise = Console.GREEN + extractCurrentExerciseDesc(state) + Console.RESET
     val manRmnd = Console.GREEN + "man [e]" + Console.RESET
     val prjNbrNme = extractProjectName(state)
@@ -64,6 +64,6 @@ object StudentCommandsPlugin extends AutoPlugin {
 
   override def projectSettings: Seq[Def.Setting[State => String]] =
     Seq(
-      shellPrompt := { state => renderCmtPrompt(state)}
+      shellPrompt := { state => renderCMTPrompt(state)}
     )
 }

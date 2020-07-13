@@ -19,10 +19,10 @@ object Man {
   def man: Command = Command("man")(_ => optArg) { (state, arg) =>
     arg match {
       case Some(a) if a == "e" =>
-        val base: File = Project.extract(state).get(sourceDirectory)
+        val base: File = Project.extract(state).get(baseDirectory)
         val readmeFile: File = {
           val bPath = new File(base, "/test/resources/README.md")
-          if (bPath.isFile) bPath else new File(base, "../README.md")
+          if (bPath.isFile) bPath else new File(base, "README.md")
         }
         printOut(readmeFile)
         Console.print("\n")

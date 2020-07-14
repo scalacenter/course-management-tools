@@ -340,10 +340,7 @@ object Helpers {
     for {
       templateFile <- templateFileList
       file = new File(targetCourseFolder, templateFile)
-    } {
-      println(s"Removing ${file.getPath}")
-      sbtio.delete(file)
-    }
+    } sbtio.delete(file)
   }
 
   def addSbtCommands(templateFileList: List[String], targetCourseFolder: File): Unit = {

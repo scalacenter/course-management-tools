@@ -86,6 +86,13 @@ object LinearizeCmdLineOptParse {
           case (_, c) =>
             c.copy(autoReloadOnBuildDefChange = false)
         }
+      opt[Unit]("bare-lin-repo")
+        .text("create a linearized repo without any of the CMT plugin functionality")
+        .abbr("m")
+        .action {
+          case (_, c) =>
+            c.copy(bareLinRepo = true)
+        }
     }
 
     parser.parse(args, LinearizeCmdOptions())

@@ -1,7 +1,7 @@
 import sbt._
 
 object Version {
-  val scalaVer        = "2.13.2"
+  val scalaVersion    = "2.13.3"
   val scalaTest       = "3.1.1"
   val scopt           = "3.7.1"
   val sbtio           = "1.3.4"
@@ -19,7 +19,7 @@ object Dependencies {
 
   import Library._
 
-  val studentify = List(
+  val cmtDependencies = List(
     scopt,
     sbtio,
     typesafeConfig,

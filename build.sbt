@@ -1,7 +1,3 @@
-// The Typesafe repository
-resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
-resolvers += Resolver.url("Typesafe Ivy Releases", url("https://repo.typesafe.com/typesafe/ivy-releases/"))(Resolver.ivyStylePatterns)
-
 lazy val `course-management-tools` =
   (project in file("."))
     .aggregate(
@@ -11,23 +7,29 @@ lazy val `course-management-tools` =
       delinearize,
       mainadm
     )
+    .settings(ThisBuild / scalaVersion := Version.scalaVersion)
 
-lazy val core = project.in(file("core"))
+lazy val core = project
+  .in(file("core"))
   .settings(CommonSettings.commonSettings: _*)
 
-lazy val studentify = project.in(file("studentify"))
+lazy val studentify = project
+  .in(file("studentify"))
   .dependsOn(core)
   .settings(CommonSettings.commonSettings: _*)
 
-lazy val linearize = project.in(file("linearize"))
+lazy val linearize = project
+  .in(file("linearize"))
   .dependsOn(core)
   .settings(CommonSettings.commonSettings: _*)
 
-lazy val delinearize = project.in(file("delinearize"))
+lazy val delinearize = project
+  .in(file("delinearize"))
   .dependsOn(core)
   .settings(CommonSettings.commonSettings: _*)
 
-lazy val mainadm = project.in(file("mainadm"))
+lazy val mainadm = project
+  .in(file("mainadm"))
   .dependsOn(core)
   .settings(CommonSettings.commonSettings: _*)
 

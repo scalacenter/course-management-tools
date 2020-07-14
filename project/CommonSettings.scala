@@ -1,4 +1,4 @@
-import com.typesafe.sbteclipse.core.EclipsePlugin.{EclipseCreateSrc, EclipseKeys}
+import com.typesafe.sbteclipse.core.EclipsePlugin.{ EclipseCreateSrc, EclipseKeys }
 import sbt.Keys._
 import sbt._
 
@@ -6,16 +6,15 @@ object CompileOptions {
   val compileOptions = Seq(
     "-unchecked",
     "-deprecation",
-    "-Xlint:_",
+    "-Xlint",
     "-encoding", "UTF-8"
   )
 }
 
 object CommonSettings {
   lazy val commonSettings = Seq(
-    organization := "com.typesafe.training",
+    organization := "com.github.eloots",
     version := "1.0.0",
-    scalaVersion := Version.scalaVer,
     scalacOptions ++= CompileOptions.compileOptions,
     unmanagedSourceDirectories in Compile := List((scalaSource in Compile).value),
     unmanagedSourceDirectories in Test := List((scalaSource in Test).value),
@@ -27,6 +26,6 @@ object CommonSettings {
     parallelExecution in Test := false,
     logBuffered in Test := false,
     parallelExecution in ThisBuild := false,
-    libraryDependencies ++= Dependencies.studentify
+    libraryDependencies ++= Dependencies.cmtDependencies
   )
 }

@@ -336,6 +336,13 @@ object Helpers {
     dumpStringToFile(s"alias boot = ;reload ;project ${config.studentifyModeClassic.studentifiedBaseFolder} ;iflast shell", new File(targetFolder, ".sbtrc").getPath)
   }
 
+  def deleteCMTConfig(templateFileList: List[String], targetCourseFolder: File): Unit = {
+    for {
+      templateFile <- templateFileList
+      file = new File(targetCourseFolder, templateFile)
+    } sbtio.delete(file)
+  }
+
   def addSbtCommands(templateFileList: List[String], targetCourseFolder: File): Unit = {
     val projectFolder = new File(targetCourseFolder, "project")
     for {
@@ -343,7 +350,6 @@ object Helpers {
       template = Source.fromInputStream(this.getClass().getClassLoader().getResourceAsStream(templateFile + ".template"))
       templateContent = try template.mkString finally template.close()
     } dumpStringToFile(templateContent, new File(projectFolder, templateFile).getPath)
-
   }
 
   def getSelectedExercises(exercises: Seq[String], firstOpt: Option[String], lastOpt: Option[String])(implicit eofe: ExitOnFirstError): Seq[String] = {
@@ -529,44 +535,93 @@ object Helpers {
       ""
   }
 
+  def setPromptInBareLinearizedRepo(implicit config: MainSettings): String = {
+    s"""
+       |Global / onLoad := {
+       |  (Global / onLoad).value andThen (state => "project ${config.studentifyModeClassic.studentifiedBaseFolder}" :: state)
+       |}
+       |""".stripMargin
+  }
+
   def createStudentifiedBuildFile(targetFolder: File, multiJVM: Boolean,
                                   isADottyProject: Boolean,
                                   autoReloadOnBuildDefChange: Boolean)
                                  (implicit config: MainSettings): Unit = {
     val setScalaVersion = scalaDottyVersion(isADottyProject)
     val buildDef =
-      s"""import sbt._
-         |${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
-         |lazy val `${config.studentifiedProjectName}` = (project in file("."))
-         |  .aggregate(${commonProjectName}
-         |    `${config.studentifyModeClassic.studentifiedBaseFolder}`
-         |  )${setScalaVersion}
-         |  .settings(CommonSettings.commonSettings: _*)
-         |${commonProjectDef}
-         |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
-         |  ${if (config.useConfigureForProjects)
-              s".configure(CommonSettings.configure)${config.exercisePreamble}${dependsOnCommon}"
-              else s".settings(CommonSettings.commonSettings: _*)${config.exercisePreamble}${dependsOnCommon}"
-            }
-         """.stripMargin
+      if (config.commonProjectEnabled)
+        s"""
+           |${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
+           |${setPromptInBareLinearizedRepo}
+           |lazy val `${config.studentifiedProjectName}` = (project in file("."))
+           |  .aggregate(${commonProjectName}
+           |    `${config.studentifyModeClassic.studentifiedBaseFolder}`
+           |  )${setScalaVersion}
+           |  .settings(CommonSettings.commonSettings: _*)
+           |${commonProjectDef}
+           |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
+           |  ${if (config.useConfigureForProjects)
+                s".configure(CommonSettings.configure)${config.exercisePreamble}${dependsOnCommon}"
+                else s".settings(CommonSettings.commonSettings: _*)${config.exercisePreamble}${dependsOnCommon}"
+              }
+           """.stripMargin
+      else {
+        val sbf = config.studentifyModeClassic.studentifiedBaseFolder
+        s"""
+           |Global / onChangedBuildSource := ReloadOnSourceChanges
+           |
+           |Global / onLoad := {
+           |  (Global / onLoad).value andThen (state => "project $sbf" :: state)
+           |}
+           |
+           |lazy val `$sbf` = (project in file("$sbf"))${setScalaVersion}
+           |  ${if (config.useConfigureForProjects)
+                s".configure(CommonSettings.configure)${config.exercisePreamble}${dependsOnCommon}"
+                else s".settings(CommonSettings.commonSettings: _*)${config.exercisePreamble}${dependsOnCommon}"
+              }
+           |
+           |""".stripMargin
+      }
 
     val mJvmBuildDef =
-      s"""${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
-         |import sbt._
-         |
-         |lazy val `${config.studentifiedProjectName}` = (project in file("."))
-         |  .aggregate(${commonProjectName}
-         |    `${config.studentifyModeClassic.studentifiedBaseFolder}`
-         |  )${setScalaVersion}
-         |  .settings(SbtMultiJvm.multiJvmSettings: _*)
-         |  .settings(CommonSettings.commonSettings: _*)
-         |  .configs(MultiJvm)
-         |${commonProjectDefMJvm}
-         |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
-         |  .settings(SbtMultiJvm.multiJvmSettings: _*)
-         |  ${if (config.useConfigureForProjects) ".settings(CommonSettings.commonSettings: _*)" else ".configure(CommonSettings.configure)"}
-         |  .configs(MultiJvm)${dependsOnCommon}
-       """.stripMargin
+      if (config.commonProjectEnabled)
+        s"""${reloadBuildDefOnChange(autoReloadOnBuildDefChange)}
+           |${setPromptInBareLinearizedRepo}
+           |import sbt._
+           |
+           |lazy val `${config.studentifiedProjectName}` = (project in file("."))
+           |  .aggregate(${commonProjectName}
+           |    `${config.studentifyModeClassic.studentifiedBaseFolder}`
+           |  )${setScalaVersion}
+           |  .settings(SbtMultiJvm.multiJvmSettings: _*)
+           |  .settings(CommonSettings.commonSettings: _*)
+           |  .configs(MultiJvm)
+           |${commonProjectDefMJvm}
+           |lazy val `${config.studentifyModeClassic.studentifiedBaseFolder}` = project
+           |  .settings(SbtMultiJvm.multiJvmSettings: _*)
+           |  ${if (config.useConfigureForProjects) ".settings(CommonSettings.commonSettings: _*)" else ".configure(CommonSettings.configure)"}
+           |  .configs(MultiJvm)${dependsOnCommon}
+           |
+         """.stripMargin
+      else {
+        val sbf = config.studentifyModeClassic.studentifiedBaseFolder
+        s"""
+           |Global / onChangedBuildSource := ReloadOnSourceChanges
+           |
+           |Global / onLoad := {
+           |  (Global / onLoad).value andThen (state => "project $sbf" :: state)
+           |}
+           |
+           |lazy val `$sbf` = (project in file("$sbf"))${setScalaVersion}
+           |  .settings(SbtMultiJvm.multiJvmSettings: _*)
+           |  ${if (config.useConfigureForProjects)
+                s".configure(CommonSettings.configure)${config.exercisePreamble}${dependsOnCommon}"
+                else s".settings(CommonSettings.commonSettings: _*)${config.exercisePreamble}${dependsOnCommon}"
+              }
+           |  .configs(MultiJvm)
+           |
+           |""".stripMargin
+      }
 
       if (multiJVM) {
         dumpStringToFile(mJvmBuildDef, new File(targetFolder, "build.sbt").getPath)

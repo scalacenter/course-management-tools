@@ -33,7 +33,7 @@ object Linearize {
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val LinearizeCmdOptions(mainRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile, isADottyProject, autoReloadOnBuildDefChange) = cmdOptions.get
+    val LinearizeCmdOptions(mainRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile, isADottyProject, autoReloadOnBuildDefChange, bareLinRepo) = cmdOptions.get
 
     implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
 
@@ -71,13 +71,27 @@ object Linearize {
         "StudentCommandsPlugin.scala",
         "StudentKeys.scala"
       )
-    addSbtCommands(templateFileList, linearizedProject)
-    loadStudentSettings(mainRepo, linearizedProject)
+    if (!bareLinRepo) {
+      addSbtCommands(templateFileList, linearizedProject)
+      loadStudentSettings(mainRepo, linearizedProject)
+    }
     cleanUp(List(".git", "navigation.sbt"), linearizedProject)
 
     removeExercisesFromCleanMain(linearizedProject, exercises)
     addGitignoreFromMain(mainRepo, linearizedProject)
     stageFirstExercise(exercises.head, relativeCleanMainRepo, linearizedProject)
+    val cmtFileList: List[String] =
+      List(
+        "project/MPSelection.scala",
+        "project/Man.scala",
+        "project/Navigation.scala",
+        "project/SSettings.scala",
+        "project/StudentCommandsPlugin.scala",
+        "project/StudentKeys.scala",
+        ".courseName",
+        ".bookmark"
+      )
+    if (bareLinRepo) deleteCMTConfig(cmtFileList, linearizedProject)
     initializeGitRepo(linearizedProject)
     commitFirstExercise(exercises.head, linearizedProject)
     commitRemainingExercises(exercises.tail, cleanMainRepo, linearizedProject)

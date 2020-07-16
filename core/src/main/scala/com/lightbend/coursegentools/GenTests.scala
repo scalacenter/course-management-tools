@@ -20,8 +20,7 @@ object GenTests {
 
     val runMode = System.getProperty("run.mode")
     val cmtFolder = System.getProperty("user.dir")
-    val configurationFileArgument =
-      if (configurationFile.isDefined) s"-cfg ${configurationFile.get}" else ""
+    val configurationFileArgument = if (configurationFile.isDefined) s"-cfg ${configurationFile.get}" else ""
     val isADottyProjectOption = if (isADottyProject) "-dot" else ""
     val initStudentifiedRepoAsGitOption = if (initStudentifiedRepoAsGit) "-g" else ""
 
@@ -29,8 +28,8 @@ object GenTests {
       if (runMode == "DEV")
         s"""|${separator("Linearize the project")}
             |cd $$CMT_FOLDER
-            |sbt "linearize $configurationFileArgument $isADottyProjectOption $mainRepoPath $$TMP_DIR_LIN
-        """".stripMargin
+            |sbt "linearize $configurationFileArgument $isADottyProjectOption $mainRepoPath $$TMP_DIR_LIN"
+        """.stripMargin
       else
         s"""|${separator("Linearize the project")}
             |cmt-linearize $configurationFileArgument $isADottyProjectOption $mainRepoPath $$TMP_DIR_LIN
@@ -40,7 +39,7 @@ object GenTests {
       if (runMode == "DEV")
         s"""|${separator("Studentify the project")}
             |cd $$CMT_FOLDER
-            |sbt "studentify $configurationFileArgument $isADottyProjectOption $initStudentifiedRepoAsGitOption $mainRepoPath $$TMP_DIR_STU
+            |sbt "studentify $configurationFileArgument $isADottyProjectOption $initStudentifiedRepoAsGitOption $mainRepoPath $$TMP_DIR_STU"
         """.stripMargin
       else
         s"""|${separator("Studentify the project")}

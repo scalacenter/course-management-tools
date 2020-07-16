@@ -107,10 +107,10 @@ jobs:
         run: |
           mkdir -p course-management-tools/bin
           cp CMT/bin/* course-management-tools/bin/
-          ./coursier bootstrap com.github.eloots:studentify_2.13:latest.release -o course-management-tools/bin/cmt-studentify --standalone
-          ./coursier bootstrap com.github.eloots:linearize_2.13:latest.release -o course-management-tools/bin/cmt-linearize --standalone
-          ./coursier bootstrap com.github.eloots:delinearize_2.13:latest.release -o course-management-tools/bin/cmt-delinearize --standalone
-          ./coursier bootstrap com.github.eloots:mainadm_2.13:latest.release -o course-management-tools/bin/cmt-mainadm --standalone
+          ./coursier bootstrap com.github.eloots:studentify_2.13:latest.release -o course-management-tools/bin/cmt-studentify --standalone --java-opt -Drun.mode=RELEASE
+          ./coursier bootstrap com.github.eloots:linearize_2.13:latest.release -o course-management-tools/bin/cmt-linearize --standalone --java-opt -Drun.mode=RELEASE
+          ./coursier bootstrap com.github.eloots:delinearize_2.13:latest.release -o course-management-tools/bin/cmt-delinearize --standalone --java-opt -Drun.mode=RELEASE
+          ./coursier bootstrap com.github.eloots:mainadm_2.13:latest.release -o course-management-tools/bin/cmt-mainadm --standalone --java-opt -Drun.mode=RELEASE
           zip -r course-management-tools.zip course-management-tools
           
       - name: Create Github Release

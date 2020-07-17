@@ -29,7 +29,7 @@ object StudentifyCmdLineOptParse {
     implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
 
     val parser = new scopt.OptionParser[StudentifyCmdOptions]("studentify") {
-      head("studentify", "3.0")
+      head("Course Management Tools:", "studentify", com.github.eloots.cmt.BuildInfo.version)
 
       arg[File]("mainRepo")
         .text("base folder holding main course repository")
@@ -103,6 +103,10 @@ object StudentifyCmdLineOptParse {
         .action { case (_, c) =>
           c.copy(autoReloadOnBuildDefChange = false)
         }
+      
+      help("help").text("Prints the usage text")
+
+      version("version").abbr("v").text("Prints the version info")
     }
 
     parser.parse(args, StudentifyCmdOptions())

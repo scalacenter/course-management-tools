@@ -18,10 +18,33 @@ object GenTests {
     val exerciseFolderPath: String =
       if (relativeSourceFolder != "") new File(mainRepo, relativeSourceFolder).getAbsolutePath else mainRepoPath
 
+    val runMode = System.getProperty("run.mode")
     val cmtFolder = System.getProperty("user.dir")
     val configurationFileArgument = if (configurationFile.isDefined) s"-cfg ${configurationFile.get}" else ""
     val isADottyProjectOption = if (isADottyProject) "-dot" else ""
     val initStudentifiedRepoAsGitOption = if (initStudentifiedRepoAsGit) "-g" else ""
+
+    def genLinearizeCmds: String =
+      if (runMode == "DEV")
+        s"""|${separator("Linearize the project")}
+            |cd $$CMT_FOLDER
+            |sbt "linearize $configurationFileArgument $isADottyProjectOption $mainRepoPath $$TMP_DIR_LIN"
+        """.stripMargin
+      else
+        s"""|${separator("Linearize the project")}
+            |cmt-linearize $configurationFileArgument $isADottyProjectOption $mainRepoPath $$TMP_DIR_LIN
+        """.stripMargin
+
+    def genStudentifyCmds: String =
+      if (runMode == "DEV")
+        s"""|${separator("Studentify the project")}
+            |cd $$CMT_FOLDER
+            |sbt "studentify $configurationFileArgument $isADottyProjectOption $initStudentifiedRepoAsGitOption $mainRepoPath $$TMP_DIR_STU"
+        """.stripMargin
+      else
+        s"""|${separator("Studentify the project")}
+            |cmt-studentify $configurationFileArgument $isADottyProjectOption $initStudentifiedRepoAsGitOption $mainRepoPath $$TMP_DIR_STU
+        """.stripMargin
 
     val script: String =
       s"""#!/bin/bash
@@ -29,7 +52,7 @@ object GenTests {
          |set -e
          |set -o pipefail
          |
-         |CMT_FOLDER=$cmtFolder # This should become a script argument at some stage
+         |${if(runMode == "DEV") s"CMT_FOLDER=$cmtFolder" else ""}
          |
          |${separator("Test main repo 'man e', 'test'")}
          |cd $exerciseFolderPath
@@ -38,18 +61,14 @@ object GenTests {
          |${separator("Create temporary folders to hold linearized and studentified versions")}
          |TMP_DIR_LIN=$$(mktemp -d /tmp/CMT.XXXXXX)
          |TMP_DIR_STU=$$(mktemp -d /tmp/CMT.XXXXXX)
-         |cd $$CMT_FOLDER
          |
-         |${separator("Linearize the project")}
-         |sbt "linearize $configurationFileArgument $isADottyProjectOption $mainRepoPath $$TMP_DIR_LIN"
+         |${genLinearizeCmds}
          |
          |${separator("Test linearized project")}
          |cd $$TMP_DIR_LIN/${mainRepo.getName}
          |sbt test
          |
-         |${separator("Studentify the project")}
-         |cd $$CMT_FOLDER
-         |sbt "studentify $configurationFileArgument $isADottyProjectOption $initStudentifiedRepoAsGitOption $mainRepoPath $$TMP_DIR_STU"
+         |${genStudentifyCmds}
          |
          |${separator("Test studentified project:\n  Exercise 'nextExercise', 'pullSolution', 'listExercises', 'man e' commands")}
          |cd $$TMP_DIR_STU/${mainRepo.getName}

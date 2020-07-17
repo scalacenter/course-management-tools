@@ -28,7 +28,7 @@ object DeLinearizeCmdLineOptParse {
     implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
 
     val parser = new scopt.OptionParser[DeLinearizeCmdOptions]("delinearize") {
-      head("delinearize", "3.0")
+      head("Course Management Tools:", "delinearize", com.github.eloots.cmt.BuildInfo.version)
 
       arg[File]("mainRepo")
         .text("base folder holding main course repository")
@@ -57,6 +57,10 @@ object DeLinearizeCmdLineOptParse {
           case (cfgFile, c) =>
             c.copy(configurationFile = Some(cfgFile))
         }
+
+      help("help").text("Prints the usage text")
+
+      version("version").abbr("v").text("Prints the version info")  
     }
 
     parser.parse(args, DeLinearizeCmdOptions())

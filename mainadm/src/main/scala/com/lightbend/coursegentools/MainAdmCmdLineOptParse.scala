@@ -28,7 +28,7 @@ object MainAdmCmdLineOptParse {
     implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
 
     val parser = new scopt.OptionParser[MainAdmCmdOptions]("mainadm") {
-      head("mainadm", "3.0")
+      head("Course Management Tools:", "mainadm", com.github.eloots.cmt.BuildInfo.version)
 
       arg[File]("mainRepo")
         .text("base folder holding main course repository")
@@ -152,6 +152,10 @@ object MainAdmCmdLineOptParse {
           case (_, c) =>
             c.copy(autoReloadOnBuildDefChange = false)
         }
+
+      help("help").text("Prints the usage text")
+
+      version("version").abbr("v").text("Prints the version info")
     }
 
     parser.parse(args, MainAdmCmdOptions())

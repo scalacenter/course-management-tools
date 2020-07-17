@@ -33,7 +33,14 @@ object Linearize {
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val LinearizeCmdOptions(mainRepo, linearizedOutputFolder, multiJVM, forceDeleteExistingDestinationFolder, configurationFile, isADottyProject, autoReloadOnBuildDefChange, bareLinRepo) = cmdOptions.get
+    val LinearizeCmdOptions(mainRepo,
+                           linearizedOutputFolder,
+                           multiJVM,
+                           forceDeleteExistingDestinationFolder,
+                           configurationFile,
+                           isADottyProject,
+                           autoReloadOnBuildDefChange,
+                           bareLinRepo) = cmdOptions.get
 
     implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
 

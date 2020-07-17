@@ -28,7 +28,7 @@ object LinearizeCmdLineOptParse {
     implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
 
     val parser = new scopt.OptionParser[LinearizeCmdOptions]("linearize") {
-      head("linearize", "3.0")
+      head("Course Management Tools:", "linearize", com.github.eloots.cmt.BuildInfo.version)
 
       arg[File]("mainRepo")
         .text("base folder holding main course repository")
@@ -93,6 +93,10 @@ object LinearizeCmdLineOptParse {
           case (_, c) =>
             c.copy(bareLinRepo = true)
         }
+
+      help("help").text("Prints the usage text")
+
+      version("version").abbr("v").text("Prints the version info")  
     }
 
     parser.parse(args, LinearizeCmdOptions())

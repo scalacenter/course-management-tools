@@ -1,0 +1,12 @@
+{
+  "docs": {
+    "Getting Started": ["getting_started", "install"],
+    "Mainadm": ["mainadm"],
+    "Linearize": ["linearize"],
+    "Delinearize": ["delinearize"],
+    "Studentify": ["studentify"]
+  },
+  "docs-other": {
+    "First Category": ["doc4", "doc5"]
+  }
+}

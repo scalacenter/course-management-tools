@@ -65,8 +65,8 @@ class HomeSplash extends React.Component {
           <ProjectTitle tagline={siteConfig.tagline} title={siteConfig.title} />
           <PromoSection>
             <Button href="#try">Try It Out</Button>
-            <Button href={docUrl('doc1.html')}>Example Link</Button>
-            <Button href={docUrl('doc2.html')}>Example Link 2</Button>
+            <Button href={docUrl('doc1.html')}>Course Example</Button>
+            <Button href={docUrl('doc2.html')}>Documentation Example</Button>
           </PromoSection>
         </div>
       </SplashContainer>
@@ -101,45 +101,45 @@ class Index extends React.Component {
       </div>
     );
 
-    const TryOut = () => (
+    const LiveCoding = () => (
       <Block id="try">
         {[
           {
             content:
-              'To make your landing page more attractive, use illustrations! Check out ' +
-              '[**unDraw**](https://undraw.co/) which provides you with customizable illustrations which are free to use. ' +
-              'The illustrations you see on this page are from unDraw.',
-            image: `${baseUrl}img/undraw_code_review.svg`,
+              'Perform Live Coding without stress. Jump to known states' +
+              'and save live changes for later reference',
+            image: `${baseUrl}img/undraw_dev_focus_b9xo.svg`,
             imageAlign: 'left',
-            title: 'Wonderful SVG Illustrations',
+            title: 'Live Coding with a Safety Net',
           },
         ]}
       </Block>
     );
 
-    const Description = () => (
-      <Block background="dark">
-        {[
-          {
-            content:
-              'This is another description of how this project is useful',
-            image: `${baseUrl}img/undraw_note_list.svg`,
-            imageAlign: 'right',
-            title: 'Description',
-          },
-        ]}
-      </Block>
-    );
-
-    const LearnHow = () => (
+    const DemosAndPOCs = () => (
       <Block background="light">
         {[
           {
             content:
-              'Each new Docusaurus project has **randomly-generated** theme colors.',
-            image: `${baseUrl}img/undraw_youtube_tutorial.svg`,
+              'Build and Maintain non-trivial Demos or Proofs of Concept<br>and<br>decompose them in small steps',
+            image: `${baseUrl}img/undraw_product_teardown_elol.svg`,
             imageAlign: 'right',
-            title: 'Randomly Generated Theme Colors',
+            title: 'Build and Maintain Demos and Proofs Of Concept',
+          },
+        ]}
+      </Block>
+    );
+
+    const TrainingCourses = () => (
+      <Block background="light">
+        {[
+          {
+            content:
+                'Build and maintain training course exercises in a repo and make them' +
+                'available in a classroom setting in a student-friendly format',
+            image: `${baseUrl}img/build.svg`,
+            imageAlign: 'right',
+            title: 'Build and Maintain Training Courses',
           },
         ]}
       </Block>
@@ -182,13 +182,13 @@ class Index extends React.Component {
       return (
         <div className="productShowcaseSection paddingBottom">
           <h2>Who is Using This?</h2>
-          <p>This project is used by all these people</p>
+          <p>This project is used by all these projects</p>
           <div className="logos">{showcase}</div>
-          <div className="more-users">
-            <a className="button" href={pageUrl('users.html')}>
-              More {siteConfig.title} Users
-            </a>
-          </div>
+          {/*<div className="more-users">*/}
+          {/*  <a className="button" href={pageUrl('users.html')}>*/}
+          {/*    More {siteConfig.title} Users*/}
+          {/*  </a>*/}
+          {/*</div>*/}
         </div>
       );
     };
@@ -197,11 +197,11 @@ class Index extends React.Component {
       <div>
         <HomeSplash siteConfig={siteConfig} language={language} />
         <div className="mainContainer">
-          <Features />
-          <FeatureCallout />
-          <LearnHow />
-          <TryOut />
-          <Description />
+          {/*<Features />*/}
+          {/*<FeatureCallout />*/}
+          <TrainingCourses />
+          <LiveCoding />
+          <DemosAndPOCs />
           <Showcase />
         </div>
       </div>

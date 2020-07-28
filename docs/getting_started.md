@@ -67,3 +67,10 @@ In general, the _linearized repo_ can be considered to be a scratch pad that is
 discarded after the editing process is finished. However, it can used to inspect
 the differences between consecutive exercises (this is because the linearized repo
 is a **git** repository where each exercise is a commit).
+
+The following picture shows the different respositories and flows in the management of a course.
+
+![CMT overview](https://i.imgur.com/UsPLKz1.png)
+
+It is the _Master Repository_ that contains the history of a course (or demo/POC) repository.
+The _Master Repository_ is multi-project sbt build with one project per exercise. 

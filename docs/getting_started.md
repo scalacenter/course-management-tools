@@ -4,7 +4,44 @@ title: Getting Started
 sidebar_label: Introduction
 ---
 
-# Introduction
+## A brief history of CMT (Course Management Tools)
+
+When I joined Lightbend in 2016, I started working on the Lightbend Training Courses. At that
+time the code for the exercises in each course were maintained in a **git** repository so that
+courses could be versioned. The problem however was that each exercise in a course was mapped
+to a commit in git. So, in a course with say, 15 exercises, the **git** repository would
+have 15 commits. That was very nice in principle, but it made it very difficult from a
+maintenance point of view: as soon as one updated an exercise, the only way to do this was
+to use **git** interactive rebasing. Doing so rewrites the history of the exercise repository
+which is pretty bad because:
+
+- if one wants to keep track of previous versions of a course, the best one can do is to save
+  that version in a separate branch
+- if people did a Pull Request (PR) on a particular version of the course, the interactive rebasing
+  editing approach renders the PR useless
+
+Duncan Devore, one of my Lightbend colleagues at that time had already made a few attempts at
+coming up with a more flexible approach. I picked up the thread and implemented a system that
+became the Course Management Tools. The main goals I set out to achieve were:
+
+- put all course exercises in a **git** repository, the so-called _Main Repository_ (_MR_), that
+  allows versioning of the exercises _without being forced_ to use interactive rebasing
+  when editing exercises
+- create a tool to derive an artifact from the _MR_ that is optimised for student usage:
+  - self-contained (i.e. not a git repository)
+  - embedded exercise instructions
+  - navigation of the exercises and automatically pull in tests
+  - allow the student to
+    - "pull" the reference solution for an exercise
+    - save the current state of an exercise
+    - restore a previously saved state of an exercise
+- create a tool that allows a course creator or maintainer to change exercises using **git**
+  interactive rebasing when this makes sense
+
+Over time, practical experience showed that there are other very useful use cases for the tooling.
+That's what is described in the following section
+
+## Why CMT?
 
 What do the following have in common?
 
@@ -33,6 +70,8 @@ What do the following have in common?
 
 The answer to the question in the beginning of this section is that all 
 of the above features are offered by the Course Management Tools (**CMT**).
+
+## Overview
 
 The Course Management Tools use a command line interface with the
 following commands:
@@ -70,7 +109,7 @@ is a **git** repository where each exercise is a commit).
 
 The following picture shows the different respositories and flows in the management of a course.
 
-![CMT overview](https://i.imgur.com/UsPLKz1.png)
+![CMT overview](https://i.imgur.com/5FzwpLa.png)
 
-It is the _Master Repository_ that contains the history of a course (or demo/POC) repository.
-The _Master Repository_ is multi-project sbt build with one project per exercise. 
+It is the _Main Repository_ that contains the history of a course (or demo/POC) repository.
+The _Main Repository_ is multi-project sbt build with one project per exercise.

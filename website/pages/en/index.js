@@ -60,7 +60,7 @@ class HomeSplash extends React.Component {
 
     return (
       <SplashContainer>
-        <Logo img_src={`${baseUrl}img/undraw_monitor.svg`} />
+        {/*<Logo img_src={`${baseUrl}img/undraw_online.svg`} />*/}
         <div className="inner">
           <ProjectTitle tagline={siteConfig.tagline} title={siteConfig.title} />
           <PromoSection>
@@ -135,7 +135,7 @@ class Index extends React.Component {
         {[
           {
             content:
-                'Build and maintain training course exercises in a repo and make them' +
+                'Build and maintain training course exercises in a repo and make them ' +
                 'available in a classroom setting in a student-friendly format',
             image: `${baseUrl}img/build.svg`,
             imageAlign: 'right',

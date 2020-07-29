@@ -5,7 +5,8 @@ lazy val `course-management-tools` =
       studentify,
       linearize,
       delinearize,
-      mainadm
+      mainadm,
+      docs,
     )
     .settings(CommonSettings.commonSettings: _*)
     .settings(skip in publish := true)

@@ -118,9 +118,14 @@ compiles without errors and all tests pass for _**each and every**_ exercise.
 Verifying this manually is tedious and error prone.
 
 The alternative is to automate the process and this can be done with the
-help of `cmt-mainadm`.
+help of `cmt-mainadm -t ...`
 
-Running `cmt-mainadm -t <some_test_file> [-cfg config_file] [-dot] [-nar] <main_repo>`
+Running:
+
+```
+cmt-mainadm -t <some_test_file> [-cfg config_file] [-dot] [-nar] <main_repo>
+```
+
 will generate a script (with the file name passed as an argument to the `-t` option)
 that, when executed, will run the following steps:
 

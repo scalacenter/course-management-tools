@@ -150,6 +150,57 @@ PR merge. For inspiration, you may want to have a look at
 via Github Actions in the Lunatech Labs [Moving from Scala 2 to Scala 3 Github
 course](https://github.com/lunatech-labs/lunatech-scala-2-to-scala3-course).
 
+## Checking the soundness of a CMT main repository
+
+A CMT main repository has to be built according to a number of conventions.
+When building a new course, it may be difficult to check if all these 
+conventions are followed. `cmt-mainadm`'s _check main repository soundness_
+feature allows one to run a check of most of these conventions and report
+any discrepancies.
+
+The following checks are made:
+
+- Presence of a global course instruction file (`README.md`)
+- Presence of exercise instruction files (`README.md`) for all exercises
+- Presence of a course name file (`.courseName`)
+- Presence of a number of files in the sbt build definition:
+  - `CommonSettings.scala`
+  - `AdditionalSettings.scala`
+  - `CompileOptions.scala`
+  - `Dependencies.scala`
+  - `build.properties`
+- Presence of the following files in the sbt build definition (note that in
+  some use cases however, these files may not be present):
+  - `Man.scala`
+  - `Navigation.scala`
+  - `MPSelection.scala`
+  - `StudentCommandsPlugin.scala`
+  - `StudentKeys.scala`
+- Presence of a `common` project source folder in your build (unless your
+  project has a configuration that disables a `common` project).
+
+Here's an example of a run of `cmt-mainadm -c` that reports no problems:
+
+```
+$ cmt-mainadm -c /Users/ericloots/Trainingen/LBT/lunatech-scala-2-to-scala3-course
+git version 2.28.0
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+CHECKING WORKSPACE in /Users/ericloots/Trainingen/LBT/lunatech-scala-2-to-scala3-course
+Initialized empty Git repository in /private/var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_1166dfa5/lunatech-scala-2-to-scala3-course.git/
+To /var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_1166dfa5/lunatech-scala-2-to-scala3-course.git
+ * [new branch]      HEAD -> 87A371C8-3255-45CA-8A9F-AE2C00564636
+Cloning into 'lunatech-scala-2-to-scala3-course'...
+done.
+No issues found in main project
+``` 
+
+> NOTE: `cmt-mainadm` requires your working directory to have no unstaged
+> files and your staging area to be clean. If that condition is not met,
+> resolve it before trying again
+
 ## Rebuild the root `build.sbt` of a CMT main repository
 
 Whenever manual changes are made to the exercise names in the main repository,
@@ -161,5 +212,51 @@ command:
 $ cmt-mainadm -b [-cfg config_file] [-dot] [-nar] <main_repo>
 ```
 
+It is recommended to utilise this option only when other feaures of
+`cmt-mainadm` cannot solve the task at hand. For example, this is the
+case when the name of an exercise is changed (e.g. from, say
+`exercise_007_given` to `exercise_007_given_keyword`)
 
+## Wrapping up
 
+It is worthwhile to give an example of specifying a non-default CMT
+configuration file to round up this section. You may have to do this
+in your CMT project is you put the `course-management.conf` file in a
+non-default location.
+
+For the example, we use the CMT Github repository itself and we will
+run `cmt-mainadm -c` on the templates. Here are a few sample runs:
+
+```
+$ cmt-mainadm -c -cfg course-templates/scala-cmt-template-common/course-management.conf /Users/ericloots/Trainingen/LBT/course-management-tools
+git version 2.28.0
+On branch documentation
+Your branch is ahead of 'origin/documentation' by 1 commit.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+CHECKING WORKSPACE in /Users/ericloots/Trainingen/LBT/course-management-tools
+Initialized empty Git repository in /private/var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_eb5fc633/course-management-tools.git/
+To /var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_eb5fc633/course-management-tools.git
+ * [new branch]        HEAD -> 657B1907-032F-4F8F-A2C0-D9FB64D5F1C4
+Cloning into 'course-management-tools'...
+done.
+No issues found in main project
+```
+
+```
+$ cmt-mainadm -c -cfg course-templates/dotty-cmt-template-common/course-management.conf /Users/ericloots/Trainingen/LBT/course-management-tools
+git version 2.28.0
+On branch documentation
+Your branch is ahead of 'origin/documentation' by 1 commit.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+CHECKING WORKSPACE in /Users/ericloots/Trainingen/LBT/course-management-tools
+Initialized empty Git repository in /private/var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_a6f71ad9/course-management-tools.git/
+To /var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_a6f71ad9/course-management-tools.git
+ * [new branch]        HEAD -> 420D7B5A-7747-49AA-814A-EFACED193B9C
+Cloning into 'course-management-tools'...
+done.
+No issues found in main project
+``` 

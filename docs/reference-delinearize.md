@@ -23,7 +23,7 @@ After having gone through one or more rounds of **git** interactive rebasing
 on a linearized repository, we can apply these changes on the main
 repository via a process of de-linearization as depicted here: 
 
-![Delinearize process](https://i.imgur.com/GpE8jbS.png)
+![Delinearize process](https://i.imgur.com/BYlAaPh.png)
 
 > IMPORTANT NOTE: `cmt-delinearize` will only write modifications applied
 > in the `exercises` project. Any other changes will be discarded. If you

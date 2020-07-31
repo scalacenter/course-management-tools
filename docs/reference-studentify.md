@@ -30,4 +30,4 @@ Usage: studentify [options] mainRepo out
 
 # Utilisation
 
-![studentify process](https://i.imgur.com/RFTpBYR.png)
+![studentify process](https://i.imgur.com/8gH7Y7a.png)

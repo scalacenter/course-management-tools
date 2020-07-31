@@ -25,6 +25,6 @@ Usage: linearize [options] mainRepo linearRepo
 
 # Utilisation
 
-![Linearize process](https://i.imgur.com/k5HRSDw.png)
+![Linearize process](https://i.imgur.com/hsJy9ZT.png)
 
-![Interactive rebasing process](https://i.imgur.com/ng0s9VU.png)
+![Interactive rebasing process](https://i.imgur.com/z7N2Z4J.png)

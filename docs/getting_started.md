@@ -76,7 +76,7 @@ of the above features are offered by the Course Management Tools (**CMT**).
 The Course Management Tools use a command line interface with the
 following commands:
 
-- **cmt-admin**: as the name suggest, this command is used for administration
+- **cmt-mainadm**: as the name suggest, this command is used for administration
   purposes, such as renumbering exercises, generating the root `build.sbt`
   build definition file
 - **cmt-studentify**: this command is used to generate an artifact that is suited

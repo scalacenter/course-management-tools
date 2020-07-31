@@ -25,7 +25,7 @@ Each CMT command has a number of:
 ### Note
 
 All Course Management Tools commands take as first argument
-the _absolute_ path to the **_root_** folder of the **git** main
+the _absolute_ path to the **_root_** folder of the **_git_** main
 course repository. In examples in this section, we will use
 _<main_repo>_ as a placeholder.
 

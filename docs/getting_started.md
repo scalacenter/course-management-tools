@@ -7,12 +7,12 @@ sidebar_label: Introduction
 ## A brief history of CMT (Course Management Tools)
 
 When I joined Lightbend in 2016, I started working on the Lightbend Training Courses. At that
-time the code for the exercises in each course were maintained in a **git** repository so that
+time the code for the exercises in each course were maintained in a **_git_** repository so that
 courses could be versioned. The problem however was that each exercise in a course was mapped
-to a commit in git. So, in a course with say, 15 exercises, the **git** repository would
+to a commit in git. So, in a course with say, 15 exercises, the **_git_** repository would
 have 15 commits. That was very nice in principle, but it made it very difficult from a
 maintenance point of view: as soon as one updated an exercise, the only way to do this was
-to use **git** interactive rebasing. Doing so rewrites the history of the exercise repository
+to use **_git_** interactive rebasing. Doing so rewrites the history of the exercise repository
 which is pretty bad because:
 
 - if one wants to keep track of previous versions of a course, the best one can do is to save
@@ -24,7 +24,7 @@ Duncan Devore, one of my Lightbend colleagues at that time had already made a fe
 coming up with a more flexible approach. I picked up the thread and implemented a system that
 became the Course Management Tools. The main goals I set out to achieve were:
 
-- put all course exercises in a **git** repository, the so-called _Main Repository_ (_MR_), that
+- put all course exercises in a **_git_** repository, the so-called _Main Repository_ (_MR_), that
   allows versioning of the exercises _without being forced_ to use interactive rebasing
   when editing exercises
 - create a tool to derive an artifact from the _MR_ that is optimised for student usage:
@@ -35,7 +35,7 @@ became the Course Management Tools. The main goals I set out to achieve were:
     - "pull" the reference solution for an exercise
     - save the current state of an exercise
     - restore a previously saved state of an exercise
-- create a tool that allows a course creator or maintainer to change exercises using **git**
+- create a tool that allows a course creator or maintainer to change exercises using **_git_**
   interactive rebasing when this makes sense
 
 Over time, practical experience showed that there are other very useful use cases for the tooling.
@@ -47,7 +47,7 @@ What do the following have in common?
 
 - *Build and maintain a series of exercises for a training course*:
   - where each exercise builds on the previous one
-  - the exercise history is tracked using **git**
+  - the exercise history is tracked using **_git_**
   - the exercises can be converted in a artifact that gives students the
     possibility to navigate the exercises, save the current state of
     their work for each exercise, and, if needed, *pull* the solution
@@ -56,7 +56,7 @@ What do the following have in common?
   - decompose it in bite-sized steps that can be grasped by users who
     are not yet comfortable with the used software libraries and/or
     frameworks
-  - the application history is tracked using **git**
+  - the application history is tracked using **_git_**
   - the application can be converted in an artifact that can be used
     to run the application at any of the intermediate steps in an
     easy manner
@@ -64,7 +64,7 @@ What do the following have in common?
     to inspect the code changes between consecutive steps
 - *Build and maintain code that will be used during a live-coding session*:
   - maintain a series of "checkpoints"
-  - track the checkpoint history in **git**
+  - track the checkpoint history in **_git_**
   - provide for a safetynet by allowing to revert to a checkpoint
   - save any changes made during the session for later retrieval
 
@@ -98,14 +98,14 @@ following commands:
 - **cmt-linearize** & **cmt-delinearize**
 
 **cmt-linearize** is used to generate an artifact, named the *linearized repo*
-that is used to edit the code in exercises using **git** interactive rebasing.
+that is used to edit the code in exercises using **_git_** interactive rebasing.
 Once the edit process is finished, **cmt-delinearize** is used to reflect the
 changes in the *linearized repo* in the main exercise repository.
 
 In general, the _linearized repo_ can be considered to be a scratch pad that is
 discarded after the editing process is finished. However, it can used to inspect
 the differences between consecutive exercises (this is because the linearized repo
-is a **git** repository where each exercise is a commit).
+is a **_git_** repository where each exercise is a commit).
 
 The following picture shows the different respositories and flows in the management of a course.
 

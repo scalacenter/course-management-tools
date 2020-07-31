@@ -150,6 +150,11 @@ PR merge. For inspiration, you may want to have a look at
 via Github Actions in the Lunatech Labs [Moving from Scala 2 to Scala 3 Github
 course](https://github.com/lunatech-labs/lunatech-scala-2-to-scala3-course).
 
+> NOTE: when `cmt-mainadm` is used to generate a test script, the `-g` option can be added.
+> If done so, this option will be added when the studentified version of the main repo is
+> generated during the tests. The reason why one might want to do this is to verify that
+> `cmt-studentify` can generate an artifact initialized as a **git** repository.
+
 ## Checking the soundness of a CMT main repository
 
 A CMT main repository has to be built according to a number of conventions.
@@ -242,9 +247,7 @@ To /var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_eb5fc633/course-manageme
 Cloning into 'course-management-tools'...
 done.
 No issues found in main project
-```
 
-```
 $ cmt-mainadm -c -cfg course-templates/dotty-cmt-template-common/course-management.conf /Users/ericloots/Trainingen/LBT/course-management-tools
 git version 2.28.0
 On branch documentation

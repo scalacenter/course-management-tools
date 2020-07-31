@@ -102,7 +102,8 @@ object Linearize {
     initializeGitRepo(linearizedProject)
     commitFirstExercise(exercises.head, linearizedProject)
     commitRemainingExercises(exercises.tail, cleanMainRepo, linearizedProject)
-    renameMainBranch(linearizedProject)
+    if( Helpers.getStudentifiedBranchName(linearizedProject) != "main")
+      renameMainBranch(linearizedProject)
 
     sbtio.delete(tmpDir)
   }

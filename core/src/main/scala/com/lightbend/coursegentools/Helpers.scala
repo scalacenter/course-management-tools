@@ -233,6 +233,11 @@ object Helpers {
       .runAndExitIfFailed(toConsoleRed(s"'git rename branch' failed on ${gitProject.getAbsolutePath}"))
   }
 
+  def getStudentifiedBranchName(studentifiedRepo: File): String = {
+    val cmd = s"""git rev-parse --abbrev-ref HEAD""".toProcessCmd(workingDir = studentifiedRepo)
+    Process(cmd.cmd, cmd.workingDir).!!.trim()
+  }
+
   def commitFirstExercise(exercise: String, linearizedProject: File): Unit = {
     s"git add -A"
       .toProcessCmd(workingDir = linearizedProject)

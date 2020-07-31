@@ -89,6 +89,7 @@ object Studentify {
       .runAndExitIfFailed(
         toConsoleRed(s"'Initial commit failed on ${studentifiedRepo.getAbsolutePath}")
       )
-    Helpers.renameMainBranch(studentifiedRepo)
+    if( Helpers.getStudentifiedBranchName(studentifiedRepo) != "main")
+      Helpers.renameMainBranch(studentifiedRepo)
   }
 }

@@ -37,14 +37,11 @@ class Footer extends React.Component {
           </a>
           <div>
             <h5>Docs</h5>
-            <a href={this.docUrl('doc1.html', this.props.language)}>
-              Getting Started (or other categories)
+            <a href={this.docUrl('getting_started', this.props.language)}>
+              Getting Started
             </a>
-            <a href={this.docUrl('doc2.html', this.props.language)}>
-              Guides (or other categories)
-            </a>
-            <a href={this.docUrl('doc3.html', this.props.language)}>
-              API Reference (or other categories)
+            <a href={this.docUrl('reference-intro', this.props.language)}>
+              Reference
             </a>
           </div>
           <div>
@@ -66,6 +63,22 @@ class Footer extends React.Component {
               Star
             </a>
           </div>
+          {this.props.config.jetbrains.enabled && (
+              <div>
+                <img style={{float: 'left', margin: '5px'}}
+                    src={this.props.config.baseUrl + this.props.config.jetbrains.icon}
+                    alt={this.props.config.title}
+                    width="66"
+                    height="58"
+                />
+                <div>
+                  <a href={this.props.config.jetbrains.targetUrl} target="_blank">
+                    JetBrains supports this project by providing core project contributors with a set of best-in-class
+                    developer tools free of charge.
+                  </a>
+                </div>
+              </div>
+          )}
         </section>
 
         <section className="copyright">{this.props.config.copyright}</section>

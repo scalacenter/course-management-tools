@@ -15,7 +15,7 @@ The Course Management Tools have been tested on the following Operating Systems:
 
 ### Prerequisites
 
-Make sure to have a [recent version of **git**](https://git-scm.com/downloads) installed on your system.
+Make sure to have a [recent version of **_git_**](https://git-scm.com/downloads) installed on your system.
 
 ## Installation
 
@@ -33,4 +33,3 @@ The installation procedure is rather straightforward:
   - `cmt-studentify`
   - `cmt-linearize`
   - `cmt-delinearize`
-  

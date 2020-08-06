@@ -134,7 +134,7 @@ that, when executed, will run the following steps:
   - run the exercise tests
   - run the `man e` command
 - it _linearizes_ the main repository and it executes the test on the _last_
-exercise (at the HEAD of the **git** repo)
+exercise (at the HEAD of the **_git_** repo)
 - it _studentifies_ the main repository and in this repo it runs through
 _all_ the exercises in a random manner and for each of these exercise it:
   - jumps to that exercise
@@ -150,10 +150,11 @@ PR merge. For inspiration, you may want to have a look at
 via Github Actions in the Lunatech Labs [Moving from Scala 2 to Scala 3 Github
 course](https://github.com/lunatech-labs/lunatech-scala-2-to-scala3-course).
 
-> NOTE: when `cmt-mainadm` is used to generate a test script, the `-g` option can be added.
-> If done so, this option will be added when the studentified version of the main repo is
-> generated during the tests. The reason why one might want to do this is to verify that
-> `cmt-studentify` can generate an artifact initialized as a **git** repository.
+> **NOTE**<br>
+> When the `-g` option is added when invoking `cmt-mainadm -t`, the generated
+> test script will pass `-g` on invocations of `cmt-studentify` in the script.
+> The reason why one might want to do this is to test studentified 
+> artifacts initialized as a **_git_** repository.
 
 ## Checking the soundness of a CMT main repository
 
@@ -230,10 +231,11 @@ in your CMT project is you put the `course-management.conf` file in a
 non-default location.
 
 For the example, we use the CMT Github repository itself and we will
-run `cmt-mainadm -c` on the templates. Here are a few sample runs:
+run `cmt-mainadm -c` on the templates. Here is a sample run:
 
 ```
-$ cmt-mainadm -c -cfg course-templates/scala-cmt-template-common/course-management.conf /Users/ericloots/Trainingen/LBT/course-management-tools
+$ cmt-mainadm -c -cfg course-templates/scala-cmt-template-common/course-management.conf \
+          /Users/ericloots/Trainingen/LBT/course-management-tools
 git version 2.28.0
 On branch documentation
 Your branch is ahead of 'origin/documentation' by 1 commit.
@@ -248,18 +250,5 @@ Cloning into 'course-management-tools'...
 done.
 No issues found in main project
 
-$ cmt-mainadm -c -cfg course-templates/dotty-cmt-template-common/course-management.conf /Users/ericloots/Trainingen/LBT/course-management-tools
-git version 2.28.0
-On branch documentation
-Your branch is ahead of 'origin/documentation' by 1 commit.
-  (use "git push" to publish your local commits)
-
-nothing to commit, working tree clean
-CHECKING WORKSPACE in /Users/ericloots/Trainingen/LBT/course-management-tools
-Initialized empty Git repository in /private/var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_a6f71ad9/course-management-tools.git/
-To /var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_a6f71ad9/course-management-tools.git
- * [new branch]        HEAD -> 420D7B5A-7747-49AA-814A-EFACED193B9C
-Cloning into 'course-management-tools'...
-done.
-No issues found in main project
 ``` 
+

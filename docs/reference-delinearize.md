@@ -19,7 +19,7 @@ Usage: cmt-delinearize [options] mainRepo linearRepo
 
 # Utilisation
 
-After having gone through one or more rounds of **git** interactive rebasing
+After having gone through one or more rounds of **_git_** interactive rebasing
 on a linearized repository, we can apply these changes on the main
 repository via a process of de-linearization as depicted here: 
 

@@ -26,14 +26,14 @@ object Studentify {
                              autoReloadOnBuildDefChange
     ) = cmdOptions.get
 
+    implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
+
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)
     val projectName = mainRepo.getName
     val targetCourseFolder = new File(targetFolder, projectName)
 
     val tmpDir = cleanMainViaGit(mainRepo, projectName)
     val cleanMainRepo = new File(tmpDir, projectName)
-
-    implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
 
     val exercises: Seq[String] = getExerciseNames(cleanMainRepo, Some(mainRepo))
 

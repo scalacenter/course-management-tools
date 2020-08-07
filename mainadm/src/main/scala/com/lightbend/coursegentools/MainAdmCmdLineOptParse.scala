@@ -37,7 +37,7 @@ object MainAdmCmdLineOptParse {
             if (!folderExists(mainRepo))
               printError(s"Base main repo folder (${mainRepo.getPath}) doesn't exist")
             c.copy(mainRepo = mainRepo)
-        }
+        }.optional()
 
       opt[Unit]("multi-jvm")
         .text("generate multi-jvm build file")
@@ -156,6 +156,42 @@ object MainAdmCmdLineOptParse {
       help("help").text("Prints the usage text")
 
       version("version").abbr("v").text("Prints the version info")
+
+      cmd("init")
+        .action((_, c) => c.copy(init = Some(InitCmdOptions())))
+        .text("Creates a new project from a specified template")
+        .children {
+
+          opt[String]("template")
+            .text("Name of a course template")
+            .action {
+              case (template, c) =>
+                c.copy(init = c.init.map(_.copy(templateName = Some(template))))
+            }
+
+          opt[String]("name")
+            .text("The course name")
+            .action {
+              case (cName, c) =>
+                c.copy(init = c.init.map(_.copy(courseName = Some(cName))))
+            }
+
+          opt[File]("target")
+            .text("Target directory")
+            .action {
+              case (out, c) =>
+                if (!folderExists(out))
+                  printError(s"Target directory ${out.getPath} doesn't exist!")
+                c.copy(init = c.init.map(_.copy(target = out)))
+            }
+
+          opt[Unit]("list-templates")
+            .abbr("l")
+            .text("List all available course templates")
+            .action {
+              case (_, c) => c.copy(init = c.init.map(_.copy(listTemplates = true)))
+            }
+        }
     }
 
     parser.parse(args, MainAdmCmdOptions())

@@ -43,6 +43,7 @@ lazy val delinearize = project
 lazy val mainadm = project
   .in(file("mainadm"))
   .dependsOn(core)
+  .settings(libraryDependencies ++= Dependencies.mainAdmDependencies)
   .settings(CommonSettings.commonSettings: _*)
 
 addCommandAlias("studentify", "studentify/run")

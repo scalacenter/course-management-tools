@@ -272,10 +272,10 @@ object Helpers {
     }
   }
 
-  def cleanMainViaGit(srcFolder: File, projectName: String): File = {
+  def cleanMainViaGit(srcFolder: File, projectName: String)(implicit config: MainSettings): File = {
     val tmpDir = sbtio.createTemporaryDirectory
     val curDir = new File(System.getProperty("user.dir"))
-    Process(Seq("cmt-cpCleanViaGit.sh", srcFolder.getPath, tmpDir.getPath, projectName), curDir).!
+    Process(Seq(config.helperScript, "cpCleanViaGit", srcFolder.getPath, tmpDir.getPath, projectName), curDir).!
     tmpDir
   }
 
@@ -641,12 +641,12 @@ object Helpers {
     }
   }
 
-  def exitIfGitIndexOrWorkspaceIsntClean(mainRepo: File): Unit = {
+  def exitIfGitIndexOrWorkspaceIsntClean(mainRepo: File)(implicit config: MainSettings): Unit = {
     """git diff-index --quiet HEAD --"""
       .toProcessCmd(workingDir = mainRepo)
       .runAndExitIfFailed(toConsoleRed(s"YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN THE COMMAND"))
 
-    s"""cmt-checkIfWorkspaceClean.sh ${mainRepo.getPath}"""
+    s"""${config.helperScript} checkWorkspace ${mainRepo.getPath}"""
       .toProcessCmd(workingDir = new File("."))
       .runAndExitIfFailed(toConsoleRed(s"YOU HAVE CHANGES IN YOUR GIT WORKSPACE. COMMIT CHANGES AND RE-RUN STUDENTIFY"))
   }

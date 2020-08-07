@@ -6,6 +6,8 @@ object Version {
   val scopt           = "3.7.1"
   val sbtio           = "1.3.4"
   val typesafeConfig  = "1.4.0"
+  val requestsVersion = "0.6.5"
+  val uJson           = "0.9.5"
 }
 
 object Library {
@@ -13,6 +15,8 @@ object Library {
   val scopt           = "com.github.scopt"       %% "scopt"                    % Version.scopt
   val sbtio           = "org.scala-sbt"          %% "io"                       % Version.sbtio
   val typesafeConfig  = "com.typesafe"            % "config"                   % Version.typesafeConfig
+  val requestsLib     = "com.lihaoyi"            %% "requests"                 % Version.requestsVersion
+  val uJson           = "com.lihaoyi"            %% "ujson"                    % Version.uJson
 }
 
 object Dependencies {
@@ -24,5 +28,10 @@ object Dependencies {
     sbtio,
     typesafeConfig,
     scalaTest % "test"
+  )
+
+  val mainAdmDependencies = List(
+    requestsLib,
+    uJson
   )
 }

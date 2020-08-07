@@ -17,7 +17,8 @@ case class MainAdmCmdOptions(mainRepo: File = new File("."),
                              testFile: Option[File] = None,
                              initStudentifiedRepoAsGit: Boolean = false,
                              isADottyProject: Boolean = false,
-                             autoReloadOnBuildDefChange: Boolean = true
+                             autoReloadOnBuildDefChange: Boolean = true,
+                             init: Option[InitCmdOptions] = None
 )
 
 case class StudentifyCmdOptions(mainRepo: File = new File("."),
@@ -43,4 +44,11 @@ case class LinearizeCmdOptions(mainRepo: File = new File("."),
                                bareLinRepo: Boolean = false
 )
 
-case class DeLinearizeCmdOptions(mainRepo: File = new File("."), linearRepo: File = new File("."), configurationFile: Option[String] = None)
+case class DeLinearizeCmdOptions(mainRepo: File = new File("."),
+                                 linearRepo: File = new File("."),
+                                 configurationFile: Option[String] = None)
+
+case class InitCmdOptions(templateName: Option[String] = None,
+                          courseName: Option[String] = None,
+                          target: File = new File("."),
+                          listTemplates: Boolean = false)

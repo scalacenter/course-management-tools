@@ -5,6 +5,7 @@ on:
     paths:
       - "docs/**"
       - "website/**"
+      - "images/**"
 
 jobs:
   publish-docs:

@@ -97,12 +97,12 @@ following commands:
 
 - **cmt-linearize** & **cmt-delinearize**
 
-**cmt-linearize** is used to generate an artifact, named the *linearized repo*
+`cmt-linearize` is used to generate an artifact, named the _linearized_ repository
 that is used to edit the code in exercises using **_git_** interactive rebasing.
-Once the edit process is finished, **cmt-delinearize** is used to reflect the
-changes in the *linearized repo* in the main exercise repository.
+Once the edit process is finished, `cmt-delinearize` is used to reflect the
+changes in the _linearized_ repository in the main exercise repository.
 
-In general, the _linearized repo_ can be considered to be a scratch pad that is
+In general, the _linearized_ repository can be considered to be a scratch pad that is
 discarded after the editing process is finished. However, it can used to inspect
 the differences between consecutive exercises (this is because the linearized repo
 is a **_git_** repository where each exercise is a commit).

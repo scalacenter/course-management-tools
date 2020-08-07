@@ -51,8 +51,8 @@ Applies to _all_ CMT commands.
 studentify.exercise-project-prefix = exercise
 ```
 
-By default, the exercise folder names in a CMT main repo have to follow a naming
-convention and consists of three parts
+By default, the exercise folder names in a CMT main repository have to follow
+a naming convention and consists of three parts
 
 - an exercise prefix
 - an exercise number consisting of a 3-digit number with leading zeros,
@@ -109,9 +109,10 @@ repository in a **_git_** repository. This is useful in the following cases:
 - there's a single CMT main repository in the **_git_** repository, but it's
   located in a subfolder for "organizational" reasons. For example, there
   may be other top level folders holding a slide-deck, demo code, etc.
-  In that case, you could put the CMT main repo in an `exercises` subfolder
-- a single **_git_** repository contains multiple CMT main repos. A good
-  example of this is when you have a course that has multiple versions
+  In that case, you could put the CMT main repository in an `exercises`
+  subfolder
+- a single **_git_** repository contains multiple CMT main repositories. A
+  good example of this is when you have a course that has multiple versions
   for different languages (e.g. Java and Scala).
 
 Applies to _all_ CMT commands.

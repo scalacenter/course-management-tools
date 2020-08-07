@@ -6,10 +6,12 @@ on:
     paths-ignore:
       - "docs/**"
       - "website/**"
+      - "images/**"
   pull_request:
     paths-ignore:
       - "docs/**"
       - "website/**"
+      - "images/**"
 
 jobs:
   run-tests:

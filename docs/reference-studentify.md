@@ -28,9 +28,9 @@ Usage: studentify [options] mainRepo out
   -v, --version            Prints the version info
 ```
 
-# _Studentifying_ a CMT master repository
+## _Studentifying_ a CMT main repository
 
-The process of creating a _studentified_ version of a CMT master repository
+The process of creating a _studentified_ version of a CMT main repository
 looks as follows:
 
 ![studentify process](https://i.imgur.com/8gH7Y7a.png)
@@ -46,7 +46,7 @@ cmt-studentify /Users/ericloots/Trainingen/LBT/lunatech-scala-2-to-scala3-course
 After a successful completion of this command, the _studentified_ repo will be
 in a subfolder of `/Users/ericloots/tmp/stu` named `lunatech-scala-2-to-scala3-course`.
 
-The process of _studentifying_ a master repository can be customised in a
+The process of _studentifying_ a main repository can be customised in a
 number of ways either by passing some options when invoking _studentify_
 or via configuration.
 
@@ -72,13 +72,13 @@ is detected by sbt.
 ### Selecting a range of exercises to _studentify_
 
 In some cases, it can be handy to select a subset of the available exercises
-in a CMT master repository to _studentify_. For example, one might have
+in a CMT main repository to _studentify_. For example, one might have
 multiple implementations of a series of exercises (e.g. using different
-libraries) in the master repo and depending on the scenario, one may wish to
+libraries) in the main repo and depending on the scenario, one may wish to
 only export one of these.
 
 The `-fe` and `-le` options allow to do just that. Here's example that will
-export all exercises between exercises number 5 and 10 from a master repo:
+export all exercises between exercises number 5 and 10 from a main repo:
 
 ```
 cmt-studentify -fe exercise_005_extension_methods   \
@@ -162,6 +162,13 @@ $ git log --oneline
 8d09228 (HEAD -> main) Initial commit
 ```
 
+### The sbt build definition of a _studentified_ CMT main repository
+
+The build definition of a studentified CMT repository is constructed as
+illustrated in the following diagram:
+
+![](https://i.imgur.com/kozerak.png)
+
 ### `cmt-studentify` configuration settings
 
 A number of configuration settings can be used to influence the behaviour of `cmt-studentify`:
@@ -177,3 +184,4 @@ A number of configuration settings can be used to influence the behaviour of `cm
 - [console-colors](reference-config.md#console-colors)
 - [common-project-enabled](reference-config.md#common-project-enabled)
 - [use-configure-for-projects](reference-config.md#use-configure-for-projects)
+

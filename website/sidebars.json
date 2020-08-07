@@ -1,6 +1,8 @@
 {
   "docs": {
-    "Getting Started": ["getting_started", "install"],
+    "Getting Started": ["getting_started",
+                        "workflows",
+                        "install"],
     "Reference": ["reference-intro",
                   "reference-mainadm",
                   "reference-cmtstudentify",

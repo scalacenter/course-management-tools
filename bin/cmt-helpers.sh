@@ -19,8 +19,6 @@ function clean_main_via_git() {
 
   local REMOTE_REPO=${REPO_NAME}.git
 
-  local CUR_DIR=$( pwd )
-
   cd "$MAIN" || exit
   MAIN=$( pwd )
   INIT_BRANCH=$( uuidgen )  # Name of branch that we'll be in on the cloned repo
@@ -31,7 +29,7 @@ function clean_main_via_git() {
   cd "$TMP_DIR"                                         &&
   # We create a bare git repo
   mkdir "${REMOTE_REPO}"                                &&
-  git init --bare $REMOTE_REPO                          &&
+  git init --bare "$REMOTE_REPO"                        &&
   # Get its path...
   cd "$REMOTE_REPO"                                     &&
   REPO=$( pwd )                                         &&
@@ -77,12 +75,12 @@ function extract_template() {
 
 function check_workspace_clean() {
   local MAIN_REPO=$1
-  cd $MAIN_REPO
+  cd "$MAIN_REPO" || exit 1
 
   echo "CHECKING WORKSPACE in $MAIN_REPO"
-  dirtyLines=`git status --porcelain|wc -l`
+  dirtyLines=$(git status --porcelain|wc -l)
 
-  if [ $dirtyLines -eq 0 ];then
+  if [ "$dirtyLines" -eq 0 ];then
     exit 0
   else
     exit 1

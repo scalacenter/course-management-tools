@@ -12,6 +12,7 @@ The Course Management Tools have been tested on the following Operating Systems:
 
 - MacOS 10.14 or higher
 - Ubuntu 18.04.4 LTS (tested via CI/CD)
+- Windows 10 with WSL2 (not tested but likely to work)
 
 ### Prerequisites
 

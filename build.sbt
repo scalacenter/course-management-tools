@@ -13,7 +13,10 @@ lazy val `course-management-tools` =
 
 lazy val docs = project
   .in(file("course-management-tools-docs"))
-  .settings(moduleName := "course-management-tools-docs")
+  .settings(
+    moduleName := "course-management-tools-docs",
+    skip.in(publish) := true
+  )
   .enablePlugins(MdocPlugin, DocusaurusPlugin)
 
 lazy val core = project

@@ -103,6 +103,7 @@ object MainAdmInit {
       .setOriginComments(false)
       .setComments(true)
       .setFormatted(true)
+      .setJson(false)
 
     config.withoutPath("studentify.relative-source-folder").root().render(renderOptions)
   }

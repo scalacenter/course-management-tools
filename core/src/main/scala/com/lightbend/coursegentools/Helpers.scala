@@ -644,7 +644,7 @@ object Helpers {
   def exitIfGitIndexOrWorkspaceIsntClean(mainRepo: File): Unit = {
     """git diff-index --quiet HEAD --"""
       .toProcessCmd(workingDir = mainRepo)
-      .runAndExitIfFailed(toConsoleRed(s"YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN STUDENTIFY"))
+      .runAndExitIfFailed(toConsoleRed(s"YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN THE COMMAND"))
 
     s"""cmt-checkIfWorkspaceClean.sh ${mainRepo.getPath}"""
       .toProcessCmd(workingDir = new File("."))

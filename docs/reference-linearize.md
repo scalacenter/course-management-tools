@@ -25,23 +25,32 @@ Usage: linearize [options] mainRepo linearRepo
 
 ## Linearizing a CMT main repository
 
-A _linearized_ repo is a git repository in which each exercise in the CMT main
-repo repository is "mapped" to a commit. The following diagrams depicts
+A _linearized_ repository is a git repository in which each exercise in the CMT
+main repository is "mapped" to a commit. The following diagrams depicts
 the process:
 
 ![Linearize process](https://i.imgur.com/hsJy9ZT.png)
 
-In its simplest form, a linearized repo is created by invoking the
+In its simplest form, a linearized repository is created by invoking the
 `cmt-linearize` command as follows:
 
 ```
 cmt-linearize -dot /Users/ericloots/Trainingen/LBT/lunatech-scala-2-to-scala3-course \
                    /Users/ericloots/tmp/lin
 ```
+<br>
+> NOTE: `cmt-linearize` requires your working directory to have
+> no unstaged files and your staging area to be clean. If this is not the case, you
+> will see the following error message:
+> 
+>`YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN THE COMMAND`
+>
+> As the error message suggest commit all changes and re-run the command.
 
+<br>
 Apart from the creation of a git repository, the sbt build definition
-of the _linearized_ repo is slightly different from the CMT main repository's
-build definition. This is shown in the following diagram:
+of the _linearized_ repository is slightly different from the CMT main
+repository's build definition. This is shown in the following diagram:
 
 ![](https://i.imgur.com/jqihk1w.png)
 
@@ -64,11 +73,11 @@ the case, you will set the sbt build's `scalaVersion` settings elsewhere.
 
 ### `-nar`: Do not automatically reload the build on build changes
 
-This option allows one to overrule the default behavior which is to
+This option is used to overrule the default behavior which is to
 automatically reload the build when a change in the build definition
 is detected by sbt.
 
-### `-b`: Create a linearized repo without any of the CMT plugin functionality
+### `-b`: Create a linearized repository without any of the CMT plugin functionality
 
 This option is useful when the _linearized_ repository's main use is to inspect
 the differences between consecutive exercises: it allows users to focus on just
@@ -108,8 +117,9 @@ A number of configuration settings can be used to influence the behaviour of `cm
 > code refactoring process, make sure to keep the CMT main repository and
 > the _linearized_ repository consistent. This means that, if a _linearized_
 > repository exists and one applies changes directly on the CMT main repo,
-> the _linearized_ is no longer consistent with the content of the main repo.
-> In that case, regenerate the _linearized_ repo.
+> the _linearized_ is no longer consistent with the content of the CMT main
+> repository.
+> In that case, regenerate the _linearized_ repository.
 
 > **NOTE**<br>
 > `cmt-linearize` requires your working directory to have no unstaged files
@@ -117,8 +127,8 @@ A number of configuration settings can be used to influence the behaviour of `cm
 >  it before trying again.
 
 > **NOTE**<br>
-> Even though a _linearized_ repo contains code and files that are shared
-> by different exercises, these should not be edited in this repo as any
-> such changes will **NOT** be reflected back to the CMT main repository
+> Even though a _linearized_ repository contains code and files that are shared
+> by different exercises, these should not be edited in this repository as
+> any such changes will **NOT** be reflected back to the CMT main repository
 > during the _linearize_/_delinearize_ refactoring process. Instead, apply
 > such changes directly on the CMT main repository. 

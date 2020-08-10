@@ -25,7 +25,7 @@ the binaries from [the latest release](https://github.com/eloots/course-manageme
 
 The installation procedure is rather straightforward:
 
-- download the `course-management-tools.zip` file from the release page
+- download the `course-management-tools.zip` file from the [release page](https://github.com/eloots/course-management-tools/releases)
 - unzip the content in a folder
 - update your PATH to include the `course-management-tools/bin` folder in
   the folder in which you unzipped the downloaded zip file
@@ -34,3 +34,4 @@ The installation procedure is rather straightforward:
   - `cmt-studentify`
   - `cmt-linearize`
   - `cmt-delinearize`
+

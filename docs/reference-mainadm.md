@@ -50,7 +50,7 @@ the case, you will set the sbt build's `scalaVersion` settings elsewhere.
 
 ### `-nar`: Do not automatically reload the build on build changes
 
-This option allows one to overrule the default behavior which is to
+This option is used to overrule the default behavior which is to
 automatically reload the build when a change in the build definition
 is detected by sbt.
 
@@ -73,9 +73,9 @@ while the latter and subsequent exercises to be shifted "down".
 $ cmt-mainadm -dib <n> [-cfg config_file] [-dot] [-nar] <main_repo>
 ``` 
 
-For example, imagine a main repo with a list of exercises with exercise
-numbers increasing by 1. The following table shows the before and after
-when running the `cmt-mainadm -dib 3 ...` command:
+For example, imagine a CMT main repository with a list of exercises with
+exercise numbers increasing by 1. The following table shows the before
+and after when running the `cmt-mainadm -dib 3 ...` command:
 
 ![DIB exercise # 3 - no gap](https://i.imgur.com/oSp1KXY.png)
 
@@ -86,7 +86,7 @@ the before and after shows when running the `cmt-mainadm -dib 6 ...` command:
 
 ## Renumber exercises with a given offset and step size
 
-In some situations, it can be useful to renumber the exercises in a main
+In some situations, it can be useful to renumber the exercises in a CMT main
 repository. Perhaps you want to create a "gap" in which some new exercises
 will be put, or you want to shift all exercises to some offset.
 
@@ -98,7 +98,7 @@ Running `cmt-mainadm -r -rs 5 -ro 10 ...`
 
 ![Renumber with non-default offset and stepsize](https://i.imgur.com/pm7m6f9.png)
 
-Running `cmt-mainadm -r -rs 7 ...`
+Running `cmt-mainadm -r -rs 11 ...`
 
 ![Renumber with non-default stepsize](https://i.imgur.com/URbqTV3.png)
 
@@ -135,8 +135,9 @@ that, when executed, will run the following steps:
   - run the `man e` command
 - it _linearizes_ the main repository and it executes the test on the _last_
 exercise (at the HEAD of the **_git_** repo)
-- it _studentifies_ the main repository and in this repo it runs through
-_all_ the exercises in a random manner and for each of these exercise it:
+- it _studentifies_ the main repository and in this repository, it runs
+  through _all_ the exercises in a random manner and for each of these
+  exercise it:
   - jumps to that exercise
   - pulls the solution
   - runs the tests
@@ -202,10 +203,14 @@ Cloning into 'lunatech-scala-2-to-scala3-course'...
 done.
 No issues found in main project
 ``` 
-
-> NOTE: `cmt-mainadm` requires your working directory to have no unstaged
-> files and your staging area to be clean. If that condition is not met,
-> resolve it before trying again
+<br>
+> NOTE: For some operations, `cmt-mainadm` requires your working directory to have
+> no unstaged files and your staging area to be clean. If this is not the case, you
+> will see the following error message:
+> 
+>`YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN THE COMMAND`
+>
+> As the error message suggest commit all changes and re-run the command.
 
 ## Rebuild the root `build.sbt` of a CMT main repository
 
@@ -227,15 +232,16 @@ case when the name of an exercise is changed (e.g. from, say
 
 It is worthwhile to give an example of specifying a non-default CMT
 configuration file to round up this section. You may have to do this
-in your CMT project is you put the `course-management.conf` file in a
-non-default location.
+in your CMT project if you put the `course-management.conf` file in a
+non-default location or when you give it a different name.
 
 For the example, we use the CMT Github repository itself and we will
 run `cmt-mainadm -c` on the templates. Here is a sample run:
 
 ```
-$ cmt-mainadm -c -cfg course-templates/scala-cmt-template-common/course-management.conf \
-          /Users/ericloots/Trainingen/LBT/course-management-tools
+$ cmt-mainadm -c \
+              -cfg course-templates/scala-cmt-template-common/course-management.conf \
+              /Users/ericloots/Trainingen/LBT/course-management-tools
 git version 2.28.0
 On branch documentation
 Your branch is ahead of 'origin/documentation' by 1 commit.
@@ -249,6 +255,5 @@ To /var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_eb5fc633/course-manageme
 Cloning into 'course-management-tools'...
 done.
 No issues found in main project
-
 ``` 
 

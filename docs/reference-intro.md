@@ -14,7 +14,7 @@ Each CMT command has a number of:
 - settings that are controlled via a 
   configuration file. A complete overview of all the available
   settings can be found in the
-  [CMT configuration section](reference-config.md). If there's
+  [CMT configuration](reference-config.md) section. If there's
   a configuration file named `course-management.conf` in the
   main course repository's root folder, CMT command will apply
   the settings provided in that file. One can also pass an

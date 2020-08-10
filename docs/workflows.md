@@ -4,16 +4,15 @@ title: Workflows
 sidebar_label: Workflows
 ---
 
-## Workflows
 
-### Studentifying a CMT main repository
+## Studentifying a CMT main repository
 
 A _studentified_ artifact can be generated from a CMT main repository
 by running the `cmt-studentify` command. The process looks as follows:
 
 ![studentify process](https://i.imgur.com/8gH7Y7a.png)
 
-The _studentified_ artifact is self-contained (and optionally be generated
+The _studentified_ artifact is self-contained (and can optionally be generated
 as a **_git_** repository) sbt build and is typically used in a training
 context.
 
@@ -22,21 +21,22 @@ the following commands can be run from the sbt prompt:
 
 ![Studentified repo - commands](https://i.imgur.com/TgJ6rCD.png)
 
-### Evolving the content of a CMT main repository
+## Evolving the content of a CMT main repository
 
 During the lifetime of a CMT main repository, the need will arise to change
-the content of course. For example, one may need to:
+its content. For example, one may need to:
 
-- Add an exercise at the end of the existing series of exercises
-- Insert a new exercise between two consecutive exercises
-- Rename the title of an exercise
-- Change the code in an exercise and make the required changes
+- add an exercise at the end of the existing series of exercises
+- insert a new exercise between two consecutive exercises
+- change the title of an exercise
+- change the course name
+- change the code in an exercise and make the required changes
   to subsequent exercises
 
 In general, for each of the above changes, there's an optimal way to
 implement them. There are two approaches to applying changes:
 
-- direct changes on the CMT repository. For example, when the exercise
+- direct changes on the CMT main repository. For example, when the exercise
   instructions for a particular exercise need to be changed, this
   approach is optimal
 - indirect changes via the so-called _linearize_/_delinearize_ process.
@@ -174,13 +174,14 @@ This illustrates another use case of a _linearized_ repository: figuring out
 what changes between exercises.
 
 Let's return to the topic of this section: editing the content of a CMT
-main repository. Typically, when a change is made to the code in a particular
+main repository. Typically, when making a change to the code in a particular
 exercise, one wants to let the effect of such a change ripple through all
 subsequent exercises. In some cases, it may be relatively straightforward to
-apply such changes directly on the CMT main repository. Doing so is prone
-to errors: necessary changes may be overlooked and annoying minor differences
-in formatting may slip in. Therefore, it is recommended to use **_git_**
-interactive rebasing instead as depicted in the following diagram.
+apply such changes directly on the CMT main repository. However, in general,
+doing so is prone to errors: necessary changes may be overlooked and annoying
+minor differences in formatting may slip in. Therefore, it is recommended to
+use **_git_** interactive rebasing instead as depicted in the following
+diagram.
 
 ![Interactive rebasing process](https://i.imgur.com/z7N2Z4J.png)
 
@@ -194,8 +195,7 @@ to verify that the refactored code still works correctly.
 
 Once the refactoring of the code in the _linearized_ repository is complete,
 the applied changes need to be reflected in the CMT main repository. This is
-done via the so-called _delinearization_ of the _linearized_ repo and is
-depicted in the following diagram:
+done via the _delinearization_ process as depicted in the following diagram:
 
 ![Delinearize process](https://i.imgur.com/BYlAaPh.png)
 
@@ -207,12 +207,12 @@ cmt-linearize /Users/ericloots/Trainingen/LBT/lunatech-scala-2-to-scala3-course 
               /Users/ericloots/tmp/lin/lunatech-scala-2-to-scala3-course
 ```
 
-Running the `git status` command will show _all_ the files that were changed
-in the editing process.
+Running the `git status` command on the CMT master repository will show _all_
+the files that were changed in the editing process.
 
 With a refactoring cycle completed, we can repeat the process. As long as we
 don't make any direct edits on any of the exercises in the CMT master repo,
-We can repeat the **_git_** interactive rebasing process/_delinearization_
+we can repeat the **_git_** interactive rebasing process/_delinearization_
 as many times as needed. Between iterations, we can also do the following:
 
 - "checkpoint" what we already have on the CMT master repository by committing
@@ -226,7 +226,7 @@ as many times as needed. Between iterations, we can also do the following:
     tests, but also verify the proper functioning of both the _studentified_ and
     _linearized_ artifacts.
 
-### Inserting, deleting and renumbering exercises
+## Inserting, deleting and renumbering exercises
 
 `cmt-mainadm` is your friend for these kind of tasks. See the following
 sections in the reference chapter:
@@ -235,14 +235,14 @@ sections in the reference chapter:
 - [deleting an exercise](reference-mainadm.md#deleting-an-exercise)
 - [renumbering exercises](reference-mainadm.md#renumber-exercises-with-a-given-offset-and-step-size)
 
-### Changing the title of a course
+## Changing the title of a course
 
 The title of a course, which is displayed in the sbt prompt in both the CMT main
 repository and the _studentified_ repo, is retrieved from a file name `.courseName`
 in the CMT main repository's root folder. Simply edit the first line of this file
 to reflect the desired course name.
 
-### Verify a CMT main repository
+## Verify a CMT main repository
 
 Checking the full functionality of a CMT main repository manually is a
 tedious and time-consuming process. For this reason, `cmt-mainadm` has an option
@@ -250,7 +250,7 @@ to create a test script that will run the following tests:
 
 - execute all tests on every exercise in the CMT main repository
 - _studentify_ the repo and run a series of commands (just like a student
-  would do) on the _studentified_ repo
+  would do) on the _studentified_ repository
 - _linearize_ the CMT main repository and run the tests on the "HEAD" exercise
 
 Have a look at section [_"generation of a test script"_](reference-mainadm.md#generation-of-a-repository-test-script)

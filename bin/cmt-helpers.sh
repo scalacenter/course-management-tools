@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 if [ $# -eq 0 ]; then
   echo "No arguments supplied"
@@ -53,7 +52,6 @@ function extract_template() {
   local REMOTE_REPO=$2
   local TEMPLATE_NAME=$3
   local TARGET_DIR=$4
-  local COURSE_NAME=$5
 
   echo "Checkout template into $TMP_DIR"
 
@@ -67,8 +65,8 @@ function extract_template() {
   TEMPLATE_PATH="$TMP_DIR/course-templates/$TEMPLATE_NAME/"
   echo "Template created in $TEMPLATE_PATH"
   echo "Copying template to $TARGET_DIR"
-  mkdir -p "$TARGET_DIR/$COURSE_NAME"    &&
-  cp -r "$TEMPLATE_PATH" "$TARGET_DIR/$COURSE_NAME"
+  mkdir -p "$TARGET_DIR"    &&
+  cp -r "$TEMPLATE_PATH" "$TARGET_DIR"
 
   trap "rm -rf $TMP_DIR" 0
 }
@@ -92,7 +90,7 @@ case $1 in
     clean_main_via_git "$2" "$3" "$4"
     ;;
   "extractTemplate")
-   extract_template "$2" "$3" "$4" "$5" "$6"
+   extract_template "$2" "$3" "$4" "$5"
    ;;
  "checkWorkspace")
   check_workspace_clean "$2"

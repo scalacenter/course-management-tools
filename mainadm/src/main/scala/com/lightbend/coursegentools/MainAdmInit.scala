@@ -46,10 +46,22 @@ object MainAdmInit {
     if (courseName.isEmpty)
       return Left("Course name can't be empty")
 
+    lazy val targetPathFromPrompt: String = {
+      val currentDir = System.getProperty("user.dir")
+      val path = readLine(
+        toConsoleCyan(s"Target directory [$currentDir]:")
+      ).trim
+      if (path.isEmpty) currentDir else path
+    }
+
+    val targetDir = initCmdOptions.target.getOrElse(new File(targetPathFromPrompt))
+    if (!folderExists(targetDir))
+      return Left(s"Target directory ${targetDir.getPath} doesn't exist!")
+
     if (!isValidTemplate(templateName, config.apiRoot))
       return Left("Invalid template name. Use 'mainadm init -l' to get available template names.")
 
-    Right(TemplateMetaData(templateName, courseName, initCmdOptions.target))
+    Right(TemplateMetaData(templateName, courseName, targetDir))
   }
 
   private def isValidTemplate(templateName: String, apiRoot: String): Boolean = {

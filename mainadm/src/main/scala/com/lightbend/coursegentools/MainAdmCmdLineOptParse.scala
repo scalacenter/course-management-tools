@@ -182,7 +182,7 @@ object MainAdmCmdLineOptParse {
               case (out, c) =>
                 if (!folderExists(out))
                   printError(s"Target directory ${out.getPath} doesn't exist!")
-                c.copy(init = c.init.map(_.copy(target = out)))
+                c.copy(init = c.init.map(_.copy(target = Some(out))))
             }
 
           opt[Unit]("list-templates")

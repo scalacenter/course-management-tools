@@ -50,5 +50,5 @@ case class DeLinearizeCmdOptions(mainRepo: File = new File("."),
 
 case class InitCmdOptions(templateName: Option[String] = None,
                           courseName: Option[String] = None,
-                          target: File = new File(System.getProperty("user.dir")),
+                          target: Option[File] = None,
                           listTemplates: Boolean = false)

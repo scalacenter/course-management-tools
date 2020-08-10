@@ -60,7 +60,7 @@ What do the following have in common?
     are not yet comfortable with the used software libraries and/or
     frameworks
   - the application history is tracked using **_git_**
-  - the application can be converted in an artifact that can be used
+  - the application can be converted to artifact that can be used
     to run the application at any of the intermediate steps in an
     easy manner
   - the application can be converted in an artifact that can be used
@@ -68,7 +68,7 @@ What do the following have in common?
 - *Build and maintain code that will be used during a live-coding session*:
   - maintain a series of "checkpoints"
   - track the checkpoint history in **_git_**
-  - provide for a safetynet by given a user the option to revert to a
+  - provide for a safetynet by giving a user the option to revert to a
     checkpoint that is known to _"work"_
   - save any changes made during the session for later retrieval
 

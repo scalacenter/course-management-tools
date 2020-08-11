@@ -167,7 +167,7 @@ A few things to note from the above output:
   in:
   - the name of the cloned CMT template: _starting-with-scala_
   - the sbt prompt: (man [e] > **Starting with Scala** > initial state >_
-- Running the sbt `projects` command shows us that there are to exercises. We
+- Running the sbt `projects` command shows us that there are two exercises. We
   see that the name of the exercises has been "tuned" with a _step_ prefix
 - The tests are run on the first exercise (named _step_000_initial_state_) by
   running the sbt `test` command

@@ -118,7 +118,7 @@ object Helpers {
       numberOfErrors += 1
     }
 
-    if (! new File(relativeSourceFolder, "common").exists()) {
+    if (! new File(relativeSourceFolder, "common").exists() && config.commonProjectEnabled) {
       printError(s"ERROR: missing project 'common'")
       numberOfErrors += 1
     }
@@ -149,8 +149,10 @@ object Helpers {
         new File(projectFolder, "README.md")
     }
 
+    val commonProject = if (config.commonProjectEnabled) "common" else ""
+
     // Check all required README files are present
-    for { project <- "common" +: exercises} {
+    for { project <- commonProject +: exercises} {
       val projectFolder = new File(relativeSourceFolder, project)
       val readmeFile = getReadmeFile(projectFolder)
       if (! readmeFile.exists()) {

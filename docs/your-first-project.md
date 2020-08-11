@@ -213,7 +213,7 @@ The _studentified_ repository is an sbt build with a number of extra custom comm
 - `pulSolution` will "pull" the solution for the current exercise. Note that this will
   overwrite any code present in the current exercise.
 - `saveState` will "checkpoint" the current state (code) for the current exercise. An
-  exercise's state can be save as many time as desired, but only the last saved state
+  exercise's state can be saved as many time as desired, but only the last saved state
   is retained
 - `savedStates` will list any previously saved states
 - `restoreState <saved state>`. Will restore the state of a previously saved state

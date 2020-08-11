@@ -118,7 +118,7 @@ object Helpers {
       numberOfErrors += 1
     }
 
-    if (! new File(relativeSourceFolder, "common").exists()) {
+    if (! new File(relativeSourceFolder, "common").exists() && config.commonProjectEnabled) {
       printError(s"ERROR: missing project 'common'")
       numberOfErrors += 1
     }
@@ -140,7 +140,7 @@ object Helpers {
       }
     }
 
-    val readmeLocationPrefix = "src" + sep + "test" + sep + "resources"
+    val readmeLocationPrefix = if (config.readmeInTestResources) "src" + sep + "test" + sep + "resources" else ""
 
     def getReadmeFile(projectFolder: File)(implicit config: MainSettings): File = {
       if (config.readmeInTestResources)
@@ -149,8 +149,10 @@ object Helpers {
         new File(projectFolder, "README.md")
     }
 
+    val exerciseList = if (config.commonProjectEnabled) "common" +: exercises else exercises
+
     // Check all required README files are present
-    for { project <- "common" +: exercises} {
+    for { project <-  exerciseList} {
       val projectFolder = new File(relativeSourceFolder, project)
       val readmeFile = getReadmeFile(projectFolder)
       if (! readmeFile.exists()) {

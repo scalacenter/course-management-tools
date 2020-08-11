@@ -6,7 +6,7 @@ import com.typesafe.config.ConfigFactory
 
 import scala.jdk.CollectionConverters._
 
-class MainSettings(mainRepo: File, optConfigurationFile: Option[String]) {
+class MainSettings(mainRepo: File = new File("."), optConfigurationFile: Option[String]) {
 
   import Console._
   private val consoleColors: Set[String] =
@@ -90,5 +90,13 @@ class MainSettings(mainRepo: File, optConfigurationFile: Option[String]) {
     )
   }
 
+  val helperScript = if (System.getProperty("run.mode") == "DEV") {
+    "./bin/cmt-helpers.sh"
+  } else {
+    "cmt-helpers.sh"
+  }
+
   val exercisePreamble: String = config.getString("studentify.exercise-preamble")
+  val remoteRepo: String = config.getString("mainadm.remote-repo")
+  val apiRoot: String = config.getString("mainadm.api-root")
 }

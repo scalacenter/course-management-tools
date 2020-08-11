@@ -13,7 +13,10 @@ lazy val `course-management-tools` =
 
 lazy val docs = project
   .in(file("course-management-tools-docs"))
-  .settings(moduleName := "course-management-tools-docs")
+  .settings(
+    moduleName := "course-management-tools-docs",
+    skip.in(publish) := true
+  )
   .enablePlugins(MdocPlugin, DocusaurusPlugin)
 
 lazy val core = project
@@ -43,6 +46,7 @@ lazy val delinearize = project
 lazy val mainadm = project
   .in(file("mainadm"))
   .dependsOn(core)
+  .settings(libraryDependencies ++= Dependencies.mainAdmDependencies)
   .settings(CommonSettings.commonSettings: _*)
 
 addCommandAlias("studentify", "studentify/run")

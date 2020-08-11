@@ -35,3 +35,7 @@ The installation procedure is rather straightforward:
   - `cmt-linearize`
   - `cmt-delinearize`
 
+If you're starting with the Course Management Tools, you're now ready to create a first
+project. The easiest way to do this is to start from one of the available CMT master
+repository templates. How this works is explained in the
+[next chapter](your-first-project.md). 

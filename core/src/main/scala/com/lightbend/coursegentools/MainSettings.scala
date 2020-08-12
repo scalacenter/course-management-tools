@@ -26,16 +26,14 @@ class MainSettings(mainRepo: File = new File("."), optConfigurationFile: Option[
   private val referenceConfig = ConfigFactory.load()
 
   private val cmdLineConfigFile: Option[File] =
-    if (optConfigurationFile.isDefined) {
-      val configurationFile = new File(mainRepo, optConfigurationFile.get)
+    optConfigurationFile.map { f =>
+      val configurationFile = new File(mainRepo, f)
       if (!configurationFile.exists()) {
         implicit val eofe: ExitOnFirstError = ExitOnFirstError(true)
-        printError(s"No such file: ${optConfigurationFile.get}")
+        printError(s"No such file: ${configurationFile.getAbsolutePath}")
       }
-      Some(configurationFile)
+      configurationFile
     }
-    else
-      None
 
   private val defaultConfigFile: Option[File] = {
     val configFile = new File(mainRepo, optConfigurationFile.getOrElse("course-management.conf"))

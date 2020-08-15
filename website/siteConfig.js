@@ -35,9 +35,17 @@ const siteConfig = {
   projectName: 'course-management-tools',
   organizationName: 'eloots',
 
+  // Algolia DocSearch
+  algolia: {
+    apiKey: 'ad215f5ba694d2e808dde2e2c3c465f4',
+    indexName: 'eloots_course-management-tools',
+    //appId: 'app-id', // Optional, if you run the DocSearch crawler on your own
+    // algoliaOptions: {} // Optional, if provided by Algolia
+  },
+
   headerLinks: [
     {doc: 'getting_started', label: 'Docs'},
-    { href: repoUrl, label: "GitHub", external: true },
+    {href: repoUrl, label: "GitHub", external: true },
     {blog: true, label: 'Blog'},
   ],
 

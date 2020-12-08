@@ -33,7 +33,7 @@ object Linearize {
 
     val cmdOptions = LinearizeCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val LinearizeCmdOptions(mainRepo,
+    val LinearizeCmdOptions(mainRepoPath,
                             linearizedOutputFolder,
                             multiJVM,
                             forceDeleteExistingDestinationFolder,
@@ -42,6 +42,7 @@ object Linearize {
                             autoReloadOnBuildDefChange,
                             bareLinRepo) = cmdOptions.get
 
+    val mainRepo = resolveMainRepoPath(mainRepoPath)
     implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)

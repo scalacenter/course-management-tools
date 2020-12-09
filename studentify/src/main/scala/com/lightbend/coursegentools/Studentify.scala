@@ -13,7 +13,7 @@ object Studentify {
 
     val cmdOptions = StudentifyCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val StudentifyCmdOptions(mainRepo,
+    val StudentifyCmdOptions(mainRepoPath,
                              targetFolder,
                              multiJVM,
                              firstOpt,
@@ -26,6 +26,7 @@ object Studentify {
                              autoReloadOnBuildDefChange
     ) = cmdOptions.get
 
+    val mainRepo = resolveMainRepoPath(mainRepoPath)
     implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)

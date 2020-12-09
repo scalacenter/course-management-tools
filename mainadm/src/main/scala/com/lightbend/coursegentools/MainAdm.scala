@@ -12,7 +12,7 @@ object MainAdm {
 
     val cmdOptions = MainAdmCmdLineOptParse.parse(args)
     if (cmdOptions.isEmpty) System.exit(-1)
-    val MainAdmCmdOptions(mainRepo,
+    val MainAdmCmdOptions(mainRepoPath,
                           multiJVM,
                           regenBuildFile,
                           duplicateInsertBefore,
@@ -31,6 +31,7 @@ object MainAdm {
                           initCmdOptions
     ) = cmdOptions.get
 
+    val mainRepo = resolveMainRepoPath(mainRepoPath)
     implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)
     implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
 

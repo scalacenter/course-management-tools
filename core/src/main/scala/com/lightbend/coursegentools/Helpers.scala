@@ -684,4 +684,18 @@ object Helpers {
          |}
        """.stripMargin, new File(targetFolder, "project/SSettings.scala").getPath)
   }
+
+  def resolveMainRepoPath(mainRepo: File): File = {
+    if (mainRepo.getPath == ".") {
+      val repoPath = getRepoPathFromGit()
+      new File(repoPath)
+    } else {
+      mainRepo
+    }
+  }
+
+  def getRepoPathFromGit(): String = {
+    "git rev-parse --show-toplevel"
+      .toProcessCmd(workingDir = new File(".")).runAndReadOutput()
+  }
 }

@@ -21,9 +21,8 @@ package com.lightbend.coursegentools
   */
 
 import java.io.File
-
 import scala.sys.process.Process
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 object ProcessDSL {
   case class ProcessCmd(cmd: Seq[String], workingDir: File)
@@ -44,6 +43,20 @@ object ProcessDSL {
     def run: Int = {
       val status = Try(Process(cmd.cmd, cmd.workingDir).!)
       status.getOrElse(-1)
+    }
+
+    def runAndReadOutput(): String = {
+      val consoleRes = Try(Process(cmd.cmd, cmd.workingDir).!!)
+      consoleRes match {
+        case Success(result) => result.trim
+        case Failure(_) =>
+          println(s"""
+                   |  Executed command: ${cmd.cmd.mkString(" ")}
+                   |  Working directory: ${cmd.workingDir}
+          """.stripMargin)
+          System.exit(-1)
+          ""
+      }
     }
   }
 

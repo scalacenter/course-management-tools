@@ -12,6 +12,7 @@ target/
 .bloop/
 .metals/
 .swp
+.bsp
 project/metals.sbt
 
 # Eclipse

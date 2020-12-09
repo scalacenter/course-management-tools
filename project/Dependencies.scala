@@ -1,11 +1,11 @@
 import sbt._
 
 object Version {
-  val scalaVersion    = "2.13.3"
+  val scalaVersion    = "2.13.4"
   val scalaTest       = "3.1.1"
   val scopt           = "3.7.1"
-  val sbtio           = "1.3.4"
-  val typesafeConfig  = "1.4.0"
+  val sbtio           = "1.4.0"
+  val typesafeConfig  = "1.4.1"
   val requestsVersion = "0.6.5"
   val uJson           = "0.9.5"
 }

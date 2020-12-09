@@ -51,7 +51,7 @@ object Helpers {
   def zipSolution(exFolder: File, removeOriginal: Boolean = false): Unit = {
     val fl = fileList(exFolder).map(f => (f, sbtio.relativize(exFolder.getParentFile, f).get))
     val zipFile = new File(exFolder.getParentFile, s"${exFolder.getName}.zip")
-    sbtio.zip(fl, zipFile)
+    sbtio.zip(sources = fl, outputZip = zipFile, time = None)
     if (removeOriginal) sbtio.delete(exFolder)
   }
 

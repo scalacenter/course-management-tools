@@ -7,14 +7,15 @@ object CompileOptions {
     "-unchecked",
     "-deprecation",
     "-Xlint",
-    "-encoding", "UTF-8"
+    "-encoding",
+    "UTF-8"
   )
 }
 
 object CommonSettings {
   lazy val commonSettings = Seq(
     organization := "com.github.eloots",
-    version := "1.0.1",
+    version := "1.0.2",
     scalaVersion := Version.scalaVersion,
     scalacOptions ++= CompileOptions.compileOptions,
     unmanagedSourceDirectories in Compile := List((scalaSource in Compile).value),

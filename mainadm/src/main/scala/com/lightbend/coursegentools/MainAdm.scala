@@ -31,13 +31,16 @@ object MainAdm {
                           initCmdOptions
     ) = cmdOptions.get
 
-    val mainRepo = resolveMainRepoPath(mainRepoPath)
     implicit val exitOnFirstError: ExitOnFirstError = ExitOnFirstError(true)
-    implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
+
 
     if (initCmdOptions.isDefined) {
+      val config: MainSettings = new MainSettings(optConfigurationFile = None)
       MainAdmInit.initCourseRepo(initCmdOptions, config)
     } else {
+
+      val mainRepo = resolveMainRepoPath(mainRepoPath)
+      implicit val config: MainSettings = new MainSettings(mainRepo, configurationFile)
 
       val exercises: Vector[String] = getExerciseNames(mainRepo)
       val exerciseNumbers = exercises.map(extractExerciseNr)

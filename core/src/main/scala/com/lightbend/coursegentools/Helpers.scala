@@ -352,6 +352,7 @@ object Helpers {
 
   def addSbtCommands(templateFileList: List[String], targetCourseFolder: File): Unit = {
     val projectFolder = new File(targetCourseFolder, "project")
+    sbtio.createDirectory(projectFolder)
     for {
       templateFile <- templateFileList
       template = Source.fromInputStream(this.getClass().getClassLoader().getResourceAsStream(templateFile + ".template"))

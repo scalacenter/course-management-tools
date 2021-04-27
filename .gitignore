@@ -1,3 +1,6 @@
+# Project specific
+bin/cmt-*
+
 # sbt
 .history
 boot/
@@ -14,6 +17,7 @@ target/
 .swp
 .bsp
 project/metals.sbt
+**/project/metals.sbt
 
 # Eclipse
 .cache

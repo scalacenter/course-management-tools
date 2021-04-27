@@ -30,14 +30,16 @@ object AdditionalSettings {
 
   val initialCmdsConsole: Seq[Def.Setting[String]] =
     if (loadInitialCmds) {
-      Seq(initialCommands in console := "import ._")
+      Seq(console / initialCommands := "import ._")
     } else {
       Seq()
     }
 
   val initialCmdsTestConsole: Seq[Def.Setting[String]]  =
     if (loadInitialCmds) {
-      Seq(initialCommands in(Test, console) := (initialCommands in console).value + ", TestData._")
+      Seq(console / initialCommands := (console / initialCommands).value + ", TestData._",
+        Test  / initialCommands := (console / initialCommands).value
+      )
     } else {
       Seq()
     }

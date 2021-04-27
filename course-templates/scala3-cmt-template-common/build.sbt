@@ -14,7 +14,7 @@ import sbt._
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-lazy val `dotty-master` = (project in file("."))
+lazy val `scala3-master` = (project in file("."))
   .aggregate(
     common,
     `step_000_initial_state`,

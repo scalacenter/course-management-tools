@@ -6,12 +6,12 @@ object CommonSettings {
   lazy val commonSettings = Seq(
     Compile / scalacOptions ++= CompileOptions.compileOptions,
     Compile / javacOptions ++= Seq("--release", "8"),
-    Compile / unmanagedSourceDirectories := List((scalaSource in Compile).value, (javaSource in Compile).value),
-    Test / unmanagedSourceDirectories := List((scalaSource in Test).value, (javaSource in Test).value),
+    Compile / unmanagedSourceDirectories := List((Compile / scalaSource).value, (Compile / javaSource).value),
+    Test / unmanagedSourceDirectories := List((Test / scalaSource).value, (Test / javaSource).value),
     Test / logBuffered := false,
     Test / parallelExecution := false,
     libraryDependencies ++= Dependencies.dependencies,
-    testFrameworks += new TestFramework("munit.Framework")
+    libraryDependencies ++= Dependencies.crossDependencies.map(_.cross(CrossVersion.for3Use2_13)),
   ) ++
     AdditionalSettings.initialCmdsConsole ++
     AdditionalSettings.initialCmdsTestConsole ++

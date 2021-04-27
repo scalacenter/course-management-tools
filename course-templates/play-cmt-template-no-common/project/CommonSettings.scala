@@ -6,8 +6,8 @@ import sbtstudent.StudentCommandsPlugin._
 object CommonSettings {
   lazy val commonSettings = Seq(
     Compile / scalacOptions ++= CompileOptions.compileOptions,
-    Compile / unmanagedSourceDirectories := List((scalaSource in Compile).value, (javaSource in Compile).value),
-    Test / unmanagedSourceDirectories := List((scalaSource in Test).value, (javaSource in Test).value),
+    Compile / unmanagedSourceDirectories := List((Compile / scalaSource).value, (Compile / javaSource).value),
+    Test / unmanagedSourceDirectories := List((Test / scalaSource).value, (Test / javaSource).value),
     Test / logBuffered := false,
     Test / parallelExecution := false,
     libraryDependencies ++= Dependencies.dependencies,

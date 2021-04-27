@@ -1,8 +1,6 @@
 package sbtstudent
 
 /**
-  * Copyright © 2016-2020 Lightbend, Inc.
-  *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
   * You may obtain a copy of the License at
@@ -33,12 +31,12 @@ object StudentCommandsPlugin extends AutoPlugin {
   }
   override lazy val globalSettings =
     Seq(
-      commands in Global ++=
+      Global / commands ++=
         Seq(
           Man.man, MPSelection.activateAllExercises, MPSelection.setActiveExerciseNr
         ),
-      onLoad in Global := {
-        val state = (onLoad in Global).value
+      Global / onLoad := {
+        val state = (Global / onLoad ).value
         Navigation.loadBookmark compose(Navigation.setupNavAttrs compose state)
       }
     )

@@ -33,12 +33,12 @@ object StudentCommandsPlugin extends AutoPlugin {
   }
   override lazy val globalSettings =
     Seq(
-      commands in Global ++=
+      Global / commands ++=
         Seq(
           Man.man, MPSelection.activateAllExercises, MPSelection.setActiveExerciseNr
         ),
-      onLoad in Global := {
-        val state = (onLoad in Global).value
+      Global / onLoad := {
+        val state = (Global / onLoad).value
         Navigation.loadBookmark compose(Navigation.setupNavAttrs compose state)
       }
     )

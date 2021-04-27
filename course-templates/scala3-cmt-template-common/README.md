@@ -1,4 +1,4 @@
-# Basic Dotty CMT master master project
+# Basic Scala 3 master project
 
 ## Description
 

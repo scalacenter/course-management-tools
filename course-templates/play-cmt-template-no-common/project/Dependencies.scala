@@ -2,7 +2,7 @@ import sbt._
 
 object Version {
   val logbackVer        = "1.2.3"
-  val scalaVersion      = "2.13.4"
+  val scalaVersion      = "2.13.5"
 }
 
 object Dependencies {

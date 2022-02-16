@@ -1,7 +1,8 @@
 lazy val `course-management-tools` =
   (project in file("."))
     .aggregate(
-      cmt,
+      cmta,
+      cmtc,
       core,
     )
     .settings(CommonSettings.commonSettings: _*)
@@ -11,8 +12,13 @@ lazy val core = project
   .in(file("core"))
   .settings(CommonSettings.commonSettings: _*)
 
-lazy val cmt = project
-  .in(file("cmt"))
+lazy val cmta = project
+  .in(file("cmta"))
+  .dependsOn(core)
+  .settings(CommonSettings.commonSettings: _*)
+
+lazy val cmtc = project
+  .in(file("cmtc"))
   .dependsOn(core)
   .settings(CommonSettings.commonSettings: _*)
 

@@ -7,7 +7,7 @@ import Helpers.*
 
 object CMTStudentify:
   def studentify(mainRepo: File, stuBase: File)
-                (using config: CMTConfig, eofe: ExitOnFirstError): Unit =
+                (using config: CMTaConfig, eofe: ExitOnFirstError): Unit =
     
     println(s"Studentifying ${toConsoleGreen(mainRepo.getPath)} to ${toConsoleGreen(stuBase.getPath)}")
     

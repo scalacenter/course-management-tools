@@ -5,37 +5,30 @@ import scopt.OParserBuilder
 
 import sbt.io.syntax.*
 
-sealed trait CMTCommands
-case object Missing extends CMTCommands
-case object RenumberExercises extends CMTCommands
-case object Studentify extends CMTCommands
-case object PullSolution extends cmt.CMTCommands
+sealed trait CmtaCommands
+case object Missing extends CmtaCommands
+case object RenumberExercises extends CmtaCommands
+case object Studentify extends CmtaCommands
 
-final case class CmdOptions(
+final case class CmtaOptions(
   mainRepo: File = new File("."),
-  command: CMTCommands = Missing,
-  cmdRenumOptions: CmdRenumOptions = CmdRenumOptions(),
-  cmdStudentifyOptions: CmdStudentifyOptions = CmdStudentifyOptions(),
-  cmdPullSolutionOptions: CmdPullSolutionOptions = CmdPullSolutionOptions(),
+  command: CmtaCommands = Missing,
+  cmdRenumOptions: CmtaRenumOptions = CmtaRenumOptions(),
+  cmdStudentifyOptions: CmtaStudentifyOptions = CmtaStudentifyOptions(),
   configFile: Option[File] = None
 )
 
-final case class CmdRenumOptions(
+final case class CmtaRenumOptions(
   renumOffset: Int = 1,
   renumStep: Int = 1
 )
 
-final case class CmdPullSolutionOptions(
-  exerciseID: Option[String] = None,
-  studentifiedRepo: Option[File] = None
-)
-
-final case class CmdStudentifyOptions(
+final case class CmtaStudentifyOptions(
   studentifyBaseFolder: Option[File] = None
 )
 
-val parser = {
-  given builder: OParserBuilder[CmdOptions] = OParser.builder[CmdOptions]
+val cmtaParser = {
+  given builder: OParserBuilder[CmtaOptions] = OParser.builder[CmtaOptions]
   import builder.*
 
   OParser.sequence(
@@ -43,12 +36,11 @@ val parser = {
     renumCmdParser,
     studentifyCmdParser,
     configFileParser,
-    pullSolutionParser,
     validateConfig 
   )
 }
 
-private def mainRepoArgument(using builder: OParserBuilder[CmdOptions]): OParser[File, CmdOptions] =
+private def mainRepoArgument(using builder: OParserBuilder[CmtaOptions]): OParser[File, CmtaOptions] =
   import builder.*
     arg[File]("<Main repo>")
     .validate{ f => 
@@ -65,7 +57,7 @@ private def mainRepoArgument(using builder: OParserBuilder[CmdOptions]): OParser
       }
     }
 
-private def configFileParser(using builder: OParserBuilder[CmdOptions]): OParser[File, CmdOptions] =
+private def configFileParser(using builder: OParserBuilder[CmtaOptions]): OParser[File, CmtaOptions] =
   import builder.*
   opt[File]("configuration")
     .abbr("cfg")
@@ -75,7 +67,7 @@ private def configFileParser(using builder: OParserBuilder[CmdOptions]): OParser
     }
 
 
-private def studentifyCmdParser(using builder: OParserBuilder[CmdOptions]): OParser[Unit, CmdOptions] =
+private def studentifyCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
   import builder.*
   cmd("studentify")
     .text("Generate a studentified repository from a given main repository")
@@ -96,31 +88,7 @@ private def studentifyCmdParser(using builder: OParserBuilder[CmdOptions]): OPar
         )
     )
 
-private def pullSolutionParser(using builder: OParserBuilder[CmdOptions]): OParser[Unit, CmdOptions] =
-  import builder.*
-  cmd("pull-solution")
-    .text("Pull solution for a given exercise")
-    .action{(_, c) =>
-      c.copy(command = PullSolution)
-    }
-    .children(
-      arg[String]("<exercise ID>")
-        .action((exercise, c) =>
-          c.copy(cmdPullSolutionOptions = c.cmdPullSolutionOptions.copy(exerciseID = Some(exercise)))
-      ),
-      arg[File]("<studentified repo  folder>")
-        .validate{ studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action{(repo, c) =>
-          c.copy(cmdPullSolutionOptions = c.cmdPullSolutionOptions.copy(studentifiedRepo = Some(repo)))
-        }
-      
-    )
-
-private def renumCmdParser(using builder: OParserBuilder[CmdOptions]): OParser[Unit, CmdOptions] =
+private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
   import builder.*
   cmd("renum")
       .text("Renumber exercises starting at a given offset and increment by a given step size")
@@ -145,10 +113,9 @@ private def renumCmdParser(using builder: OParserBuilder[CmdOptions]): OParser[U
           }
       )
 
-private def validateConfig(using builder: OParserBuilder[CmdOptions]): OParser[Unit, CmdOptions] =
+private def validateConfig(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
   import builder.*
   checkConfig(config => config.command match
     case Missing => failure("missing command")
-    case PullSolution => success
     case _ => success
   )

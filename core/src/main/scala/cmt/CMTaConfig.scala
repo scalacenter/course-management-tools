@@ -6,7 +6,7 @@ import com.typesafe.config.ConfigFactory
 
 import scala.jdk.CollectionConverters.*
 
-class CMTConfig(mainRepo: File, configFileOpt: Option[File])(using eofe: ExitOnFirstError):
+class CMTaConfig(mainRepo: File, configFileOpt: Option[File])(using eofe: ExitOnFirstError):
   
   private val referenceConfig = ConfigFactory.load()
 
@@ -41,6 +41,8 @@ class CMTConfig(mainRepo: File, configFileOpt: Option[File])(using eofe: ExitOnF
   
   val mainRepoExerciseFolder = config.getString("cmt.main-repo-exercise-folder")
   val mainRepoExercisePrefix = config.getString("cmt.main-repo-exercise-prefix")
+  val testCodeFolders = config.getStringList("cmt.test-code-folders").asScala
+  val readMeFiles = config.getStringList("cmt.read-me-files").asScala.toSet
   val studentifiedRepoSolutionsFolder = config.getString("cmt.studentified-repo-solutions-folder")
   val studentifiedRepoActiveExerciseFolder = config.getString("cmt.studentified-repo-active-exercise-folder")
   val cmtStudentifiedConfigFile = config.getString("cmt.cmt-studentified-config-file")
@@ -50,4 +52,4 @@ class CMTConfig(mainRepo: File, configFileOpt: Option[File])(using eofe: ExitOnF
     def isFile: Boolean = oFile.map(file => file.isFile).getOrElse(false)
     def isAbsolute: Boolean = oFile.map(file => file.isAbsolute).getOrElse(false)
 
-end CMTConfig
+end CMTaConfig

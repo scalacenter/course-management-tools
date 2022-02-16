@@ -4,8 +4,8 @@ import scopt.OParser
 
 object CmdLineParse:
 
-  def parse(args: Array[String]): Option[CmdOptions] =
-    OParser.parse(parser, args, CmdOptions())
+  def cmtaParse(args: Array[String]): Option[CmtaOptions] =
+    OParser.parse(cmtaParser, args, CmtaOptions())
 
 
 

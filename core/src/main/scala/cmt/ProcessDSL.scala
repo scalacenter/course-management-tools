@@ -53,7 +53,7 @@ object ProcessDSL:
 
     import java.util.UUID
     val initBranch = UUID.randomUUID.toString
-    val tmpRemote = s"CMT-${UUID.randomUUID.toString}"
+    val tmpRemoteBranch = s"CMT-${UUID.randomUUID.toString}"
     val script = List(
       (s"${tmpDir.getPath}",
         List(
@@ -63,8 +63,8 @@ object ProcessDSL:
       ),
       (s"${mainRepo.getPath}",
         List(
-          s"git remote add ${tmpRemote} ${tmpDir.getPath}/${repoName}.git",
-          s"git push ${tmpRemote} HEAD:refs/heads/${initBranch}"
+          s"git remote add ${tmpRemoteBranch} ${tmpDir.getPath}/${repoName}.git",
+          s"git push ${tmpRemoteBranch} HEAD:refs/heads/${initBranch}"
         )
       ),
       (s"${tmpDir.getPath}",
@@ -75,7 +75,7 @@ object ProcessDSL:
       ),
       (s"${mainRepo.getPath}",
         List(
-          s"git remote remove ${tmpRemote}"
+          s"git remote remove ${tmpRemoteBranch}"
         )
       )
     )

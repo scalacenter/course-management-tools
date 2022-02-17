@@ -117,7 +117,7 @@ object Helpers:
   def writeStudentifiedCMTBookmark(bookmarkFile: File, firstExercise: String): Unit =
     dumpStringToFile(firstExercise, bookmarkFile)
   
-  def withZipFile(activeExerciseFolder: File, solutionsFolder: File, exerciseID: String)(code: File => Any): Unit =
+  def withZipFile(solutionsFolder: File, exerciseID: String)(code: File => Any): Unit =
     val archive = solutionsFolder / s"$exerciseID.zip"
     sbtio.unzip(archive, solutionsFolder)
     code(solutionsFolder / exerciseID)

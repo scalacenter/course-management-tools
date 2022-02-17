@@ -13,99 +13,94 @@ import Helpers.*
 
 final case class StudentOptions(exercises: List[String])
 
-object CMTStudent {
-  def moveToNextExercise(studentifiedRepo: File)(using config: CMTcConfig): Unit =
-    import config.*
+object CMTStudent:
+  def moveToNextExercise(studentifiedRepo: File)(config: CMTcConfig): Unit =
 
-    val currentExercise = sbtio.readLines(bookmarkFile, StandardCharsets.UTF_8).head
+    val currentExercise = sbtio.readLines(config.bookmarkFile, StandardCharsets.UTF_8).head
 
-    if (currentExercise == exercises.last) then
+    if (currentExercise == config.exercises.last) then
       println(toConsoleGreen(s"You're already at the last exercise: $currentExercise"))
     else
-      withZipFile(activeExerciseFolder, solutionsFolder, nextExercise(currentExercise)) { solution =>
+      withZipFile(config.solutionsFolder, config.nextExercise(currentExercise)) { solution =>
           copyTestCodeAndReadMeFiles(
           solution, 
-          nextExercise(currentExercise), 
-          s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${nextExercise(currentExercise)}")}"
-        )
+          config.nextExercise(currentExercise), 
+          s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${config.nextExercise(currentExercise)}")}"
+        )(config)
       }
   end moveToNextExercise
 
-  def moveToPreviousExercise(studentifiedRepo: File)(using config: CMTcConfig): Unit =
-    import config.*
+  def moveToPreviousExercise(studentifiedRepo: File)(config: CMTcConfig): Unit =
 
-    val currentExercise = sbtio.readLines(bookmarkFile, StandardCharsets.UTF_8).head
+    val currentExercise = sbtio.readLines(config.bookmarkFile, StandardCharsets.UTF_8).head
 
-    if (currentExercise == exercises.head) then
+    if (currentExercise == config.exercises.head) then
       println(toConsoleGreen(s"You're already at the first exercise: $currentExercise"))
     else
-      withZipFile(activeExerciseFolder, solutionsFolder, previousExercise(currentExercise)) { solution =>
+      withZipFile(config.solutionsFolder, config.previousExercise(currentExercise)) { solution =>
         copyTestCodeAndReadMeFiles(
           solution, 
-          previousExercise(currentExercise), 
-          s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${previousExercise(currentExercise)}")}"
+          config.previousExercise(currentExercise), 
+          s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${config.previousExercise(currentExercise)}")}"
         )
       }
   end moveToPreviousExercise
 
-  def copyTestCodeAndReadMeFiles(solution: File, prevOrNextExercise: String, message: String)(using config: CMTcConfig): Unit =
-    import config.*
+  def copyTestCodeAndReadMeFiles(solution: File, prevOrNextExercise: String, message: String)(config: CMTcConfig): Unit =
+
     for {
-          testCodeFolder <- testCodeFolders
+          testCodeFolder <- config.testCodeFolders
           fromFolder =  solution / testCodeFolder
-          toFolder = activeExerciseFolder / testCodeFolder
+          toFolder = config.activeExerciseFolder / testCodeFolder
         } {
           sbtio.delete(toFolder)
           sbtio.copyDirectory(fromFolder, toFolder)
         }
     for {
-          readmeFile <- readMeFiles
-        } sbtio.copyFile(solution / readmeFile, activeExerciseFolder / readmeFile)
+          readmeFile <- config.readMeFiles
+        } sbtio.copyFile(solution / readmeFile, config.activeExerciseFolder / readmeFile)
     
-    writeStudentifiedCMTBookmark(bookmarkFile, prevOrNextExercise)
+    writeStudentifiedCMTBookmark(config.bookmarkFile, prevOrNextExercise)
     println(message)
   end copyTestCodeAndReadMeFiles
 
-  def listExercises(studentifiedRepo: File)(using config: CMTcConfig): Unit =
-    import config.*
-    val currentExercise = sbtio.readLines(bookmarkFile, StandardCharsets.UTF_8).head
-    exercises
+  def listExercises(studentifiedRepo: File)(config: CMTcConfig): Unit =
+
+    val currentExercise = sbtio.readLines(config.bookmarkFile, StandardCharsets.UTF_8).head
+    config.exercises
       .zipWithIndex
       .foreach { case (exName, index) =>
         println(toConsoleGreen(f"${index + 1}%3d. ${starCurrentExercise(currentExercise, exName)}  $exName"))
       }
   end listExercises
 
-  def pullSolution(studentifiedRepo: File, exerciseID: String)(using config: CMTcConfig): Unit =
+  def pullSolution(studentifiedRepo: File, exerciseID: String)(config: CMTcConfig): Unit =
 
-    import config.*
-
-    val currentExercise = sbtio.readLines(bookmarkFile, StandardCharsets.UTF_8).head
-
-    if exerciseID == currentExercise then
-      println(toConsoleGreen(s"You're already at exercise $exerciseID"))
-      System.exit(0)
+    val currentExercise = sbtio.readLines(config.bookmarkFile, StandardCharsets.UTF_8).head
       
     val cmtConfigFile = studentifiedRepo / ".cmt-config"
     if !cmtConfigFile.exists then
       printErrorAndExit(studentifiedRepo, "missing CMT configuration file")
 
+    final case class PathARO(absolutePath: File, maybeRelativePath: Option[File])
+    final case class PathAR(absolutePath: File, relativePath: File)
+
     val filesToBeDeleted =
-      Helpers.fileList(activeExerciseFolder)
-        .map(fileAbsolute => (fileAbsolute, fileAbsolute.relativeTo(activeExerciseFolder)))
-        .collect{ case (fileAbsolute, Some(fileRelative)) => (fileAbsolute, fileRelative)}
-        .filterNot{ (_, fileRelative) =>
-          dontTouch.exists(lead => fileRelative.getPath.startsWith(lead))
+      Helpers.fileList(config.activeExerciseFolder)
+        .map(fileAbsolute => PathARO(fileAbsolute, fileAbsolute.relativeTo(config.activeExerciseFolder)))
+        .collect{ case PathARO(fileAbsolute, Some(fileRelative)) => PathAR(fileAbsolute, fileRelative)}
+        .filterNot{ case PathAR(_, fileRelative) =>
+          config.dontTouch.exists(lead => fileRelative.getPath.startsWith(lead))
         }
-        .map{ case (fileAbsolute, _) => fileAbsolute}
+        .map{ _.absolutePath}
     sbtio.delete(filesToBeDeleted)
 
-    Helpers.withZipFile(activeExerciseFolder, solutionsFolder, exerciseID) { solution =>
+    Helpers.withZipFile(config.solutionsFolder, exerciseID) { solution =>
       val files = Helpers.fileList(solution / s"$exerciseID")
-      sbtio.copyDirectory(solutionsFolder / s"$exerciseID", activeExerciseFolder)
+      sbtio.copyDirectory(config.solutionsFolder / s"$exerciseID", config.activeExerciseFolder)
     }
 
-    Helpers.writeStudentifiedCMTBookmark(bookmarkFile, exerciseID)
+    Helpers.writeStudentifiedCMTBookmark(config.bookmarkFile, exerciseID)
 
     println(toConsoleGreen( s"Pulled solution for $exerciseID"))
   end pullSolution
@@ -118,4 +113,4 @@ object CMTStudent {
     if (currentExercise == exercise) " * " else "   "
   }
 
-}
+end CMTStudent

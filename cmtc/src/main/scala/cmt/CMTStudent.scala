@@ -11,8 +11,6 @@ import sbt.io.{IO as sbtio}
 
 import Helpers.*
 
-final case class StudentOptions(exercises: List[String])
-
 object CMTStudent:
   def moveToNextExercise(studentifiedRepo: File)(config: CMTcConfig): Unit =
 

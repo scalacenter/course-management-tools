@@ -36,16 +36,16 @@ object CMTStudent:
       println(toConsoleGreen(s"You're already at the first exercise: $currentExercise"))
     else
       withZipFile(config.solutionsFolder, config.previousExercise(currentExercise)) { solution =>
+        println(s"Current: $currentExercise - Previous: ${config.previousExercise(currentExercise)}")
         copyTestCodeAndReadMeFiles(
           solution, 
           config.previousExercise(currentExercise), 
           s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${config.previousExercise(currentExercise)}")}"
-        )
+        )(config)
       }
   end moveToPreviousExercise
 
   def copyTestCodeAndReadMeFiles(solution: File, prevOrNextExercise: String, message: String)(config: CMTcConfig): Unit =
-
     for {
           testCodeFolder <- config.testCodeFolders
           fromFolder =  solution / testCodeFolder
@@ -95,7 +95,7 @@ object CMTStudent:
 
     Helpers.withZipFile(config.solutionsFolder, exerciseID) { solution =>
       val files = Helpers.fileList(solution / s"$exerciseID")
-      sbtio.copyDirectory(config.solutionsFolder / s"$exerciseID", config.activeExerciseFolder)
+      sbtio.copyDirectory(config.solutionsFolder / s"$exerciseID", config.activeExerciseFolder, preserveLastModified = true)
     }
 
     Helpers.writeStudentifiedCMTBookmark(config.bookmarkFile, exerciseID)

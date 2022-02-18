@@ -7,19 +7,14 @@ import sbt.io.syntax.*
 
 sealed trait CmtcCommands
 case object Missing extends CmtcCommands
-case object PullSolution extends CmtcCommands
+final case class PullSolution(exerciseID: Option[String] = None) extends CmtcCommands
 case object ListExercises extends CmtcCommands
 case object NextExercise extends CmtcCommands
 case object PreviousExercise extends CmtcCommands
 
 final case class CmtcOptions(
   command: CmtcCommands = Missing,
-  cmdPullSolutionOptions: CmdPullSolutionOptions = CmdPullSolutionOptions(),
   studentifiedRepo: Option[File] = None
-)
-
-final case class CmdPullSolutionOptions(
-  exerciseID: Option[String] = None,
 )
 
 val parser = {
@@ -93,14 +88,12 @@ private def pullSolutionParser(using builder: OParserBuilder[CmtcOptions]): OPar
   import builder.*
   cmd("pull-solution")
     .text("Pull solution for a given exercise")
-    .action{(_, c) =>
-      c.copy(command = PullSolution)
-    }
     .children(
       arg[String]("<exercise ID>")
-        .action((exercise, c) =>
-          c.copy(cmdPullSolutionOptions = c.cmdPullSolutionOptions.copy(exerciseID = Some(exercise)))
-      ),
+        .action{
+          case (exercise, c) =>
+            c.copy(command = PullSolution(Some(exercise)))
+      },
       arg[File]("<studentified repo  folder>")
         .validate{ studentifiedFolder =>
           if studentifiedFolder.exists
@@ -116,7 +109,7 @@ private def validateConfig(using builder: OParserBuilder[CmtcOptions]): OParser[
   import builder.*
   checkConfig(config => config.command match
     case Missing => failure("missing command")
-    case PullSolution => success
+    case _: PullSolution => success
     case ListExercises => success
     case NextExercise => success
     case PreviousExercise => success

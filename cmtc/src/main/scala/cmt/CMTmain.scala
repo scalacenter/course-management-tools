@@ -15,16 +15,16 @@ object Main:
 
     cmdLineArgs match {
       
-      case CmtcOptions(PullSolution, CmdPullSolutionOptions(Some(exerciseID)), Some(studentifiedRepo)) =>
+      case CmtcOptions(PullSolution(Some(exerciseID)), Some(studentifiedRepo)) =>
         CMTStudent.pullSolution(studentifiedRepo, exerciseID)(config)
 
-      case CmtcOptions(ListExercises, _, Some(studentifiedRepo)) =>
+      case CmtcOptions(ListExercises, Some(studentifiedRepo)) =>
         CMTStudent.listExercises(studentifiedRepo)(config)
       
-      case CmtcOptions(NextExercise, _, Some(studentifiedRepo)) =>
+      case CmtcOptions(NextExercise, Some(studentifiedRepo)) =>
         CMTStudent.moveToNextExercise(studentifiedRepo)(config)
       
-      case CmtcOptions(PreviousExercise, _, Some(studentifiedRepo)) =>
+      case CmtcOptions(PreviousExercise, Some(studentifiedRepo)) =>
         CMTStudent.moveToPreviousExercise(studentifiedRepo)(config)
 
       case _ =>

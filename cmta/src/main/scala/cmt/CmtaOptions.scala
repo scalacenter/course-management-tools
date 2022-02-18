@@ -7,24 +7,13 @@ import sbt.io.syntax.*
 
 sealed trait CmtaCommands
 case object Missing extends CmtaCommands
-case object RenumberExercises extends CmtaCommands
-case object Studentify extends CmtaCommands
+final case class RenumberExercises(renumOffset: Int = 1, renumStep: Int = 1) extends CmtaCommands
+final case class Studentify(studentifyBaseFolder: Option[File] = None) extends CmtaCommands
 
 final case class CmtaOptions(
   mainRepo: File = new File("."),
   command: CmtaCommands = Missing,
-  cmdRenumOptions: CmtaRenumOptions = CmtaRenumOptions(),
-  cmdStudentifyOptions: CmtaStudentifyOptions = CmtaStudentifyOptions(),
   configFile: Option[File] = None
-)
-
-final case class CmtaRenumOptions(
-  renumOffset: Int = 1,
-  renumStep: Int = 1
-)
-
-final case class CmtaStudentifyOptions(
-  studentifyBaseFolder: Option[File] = None
 )
 
 val cmtaParser = {
@@ -72,7 +61,7 @@ private def studentifyCmdParser(using builder: OParserBuilder[CmtaOptions]): OPa
   cmd("studentify")
     .text("Generate a studentified repository from a given main repository")
     .action{(_, c) =>
-      c.copy(command = Studentify)
+      c.copy(command = Studentify())
     }
     .children(
       mainRepoArgument,
@@ -83,9 +72,12 @@ private def studentifyCmdParser(using builder: OParserBuilder[CmtaOptions]): OPa
             case (false, _) => failure(s"${baseFolder.getPath} doesn't exist")
             case (_, false) => failure(s"${baseFolder.getPath} is not a directory")
         }
-        .action((studRepo, c) =>
-          c.copy(cmdStudentifyOptions = c.cmdStudentifyOptions.copy(studentifyBaseFolder = Some(studRepo)))
-        )
+        .action{
+          case (studRepo, c @ CmtaOptions(_, x: Studentify, _)) =>
+            c.copy(command = x.copy(studentifyBaseFolder = Some(studRepo)))
+          case (studRepo, c) =>
+            c.copy(command = Studentify(Some(studRepo)))
+      }
     )
 
 private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
@@ -93,7 +85,7 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
   cmd("renum")
       .text("Renumber exercises starting at a given offset and increment by a given step size")
       .action{(_, c) =>
-        c.copy(command = RenumberExercises)
+        c.copy(command = RenumberExercises())
       }
       .children(
         mainRepoArgument,
@@ -101,15 +93,21 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
           .text("renumber start offset (default=1)")
           .abbr("o")
           .validate(offset => if offset >= 0 then success else failure(s"renumber offset should be >= 0"))
-          .action{(offset, c) =>
-            c.copy(cmdRenumOptions = c.cmdRenumOptions.copy(renumOffset = offset))
+          .action{
+            case (offset, c @ CmtaOptions(_, RenumberExercises(_, step),  _)) =>
+              c.copy(command = RenumberExercises(offset, step))
+            case (offset, c) =>
+              c.copy(command = RenumberExercises(renumOffset = offset))
           },
         opt[Int]("step")
           .text("renumber step size (default=1)")
           .abbr("s")
           .validate(step => if step >= 1 then success else failure(s"renumber step size should be >= 1"))
-          .action{(step, c) =>
-            c.copy(cmdRenumOptions = c.cmdRenumOptions.copy(renumStep = step))
+          .action{
+            case (step, c @ CmtaOptions(_, RenumberExercises(offset, _), _)) =>
+              c.copy(command = RenumberExercises(offset, step))
+            case (step, c) =>
+              c.copy(command = RenumberExercises(renumStep = step))
           }
       )
 

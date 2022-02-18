@@ -14,10 +14,10 @@ object Main:
     given CMTaConfig = CMTaConfig(cmdLineArgs.mainRepo, cmdLineArgs.configFile)
 
     cmdLineArgs match {
-      case CmtaOptions(mainRepo, Studentify, _, CmtaStudentifyOptions(Some(stuBase)), _) => 
+      case CmtaOptions(mainRepo, Studentify(Some(stuBase)), _) =>
         CMTStudentify.studentify(mainRepo, stuBase)
 
-      case CmtaOptions(mainRepo, RenumberExercises, CmtaRenumOptions(renumOffset, renumStep), _, configFile) =>
+      case CmtaOptions(mainRepo, RenumberExercises(renumOffset, renumStep), configFile) =>
         CMTAdmin.renumberExercises(mainRepo, renumOffset, renumStep)
 
       case _ =>

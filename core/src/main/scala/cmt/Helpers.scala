@@ -95,7 +95,8 @@ object Helpers:
           .map(f => (f, sbtio.relativize(cleanedMainRepo / config.mainRepoExerciseFolder, f)))
           .collect { case (f, Some(s)) => (f, s)}
       val zipFile = solutionsFolder / s"${exercise}.zip"
-      sbtio.zip(filesToZip, zipFile, None)  
+      val now: Option[Long] = Some(java.time.Instant.now().toEpochMilli())
+      sbtio.zip(filesToZip, zipFile, now)
   
   def dumpStringToFile(string: String, file: File): Unit =
     import java.nio.charset.StandardCharsets

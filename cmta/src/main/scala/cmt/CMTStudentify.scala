@@ -3,16 +3,22 @@ package cmt
 import sbt.io.{IO as sbtio}
 import sbt.io.syntax.*
 
-import Helpers.*
+import Helpers.{getExercises,
+                exitIfGitIndexOrWorkspaceIsntClean,
+                createStudentifiedFolderSkeleton,
+                addFirstExercise,
+                hideExercises,
+                writeStudentifiedCMTBookmark,
+                writeStudentifiedCMTConfig}
 
 object CMTStudentify:
   def studentify(mainRepo: File, stuBase: File)
                 (using config: CMTaConfig, eofe: ExitOnFirstError): Unit =
-    
+
+    exitIfGitIndexOrWorkspaceIsntClean(mainRepo)    
+
     println(s"Studentifying ${toConsoleGreen(mainRepo.getPath)} to ${toConsoleGreen(stuBase.getPath)}")
-    
-    exitIfGitIndexOrWorkspaceIsntClean(mainRepo)
-    
+
     val mainRepoName = mainRepo.getName
     
     val tmpFolder = sbtio.createTemporaryDirectory

@@ -45,6 +45,7 @@ class CMTaConfig(mainRepo: File, configFileOpt: Option[File])(using eofe: ExitOn
   val readMeFiles = config.getStringList("cmt.read-me-files").asScala.toSet
   val studentifiedRepoSolutionsFolder = config.getString("cmt.studentified-repo-solutions-folder")
   val studentifiedRepoActiveExerciseFolder = config.getString("cmt.studentified-repo-active-exercise-folder")
+  val linearizedRepoActiveExerciseFolder = config.getString("cmt.linearized-repo-active-exercise-folder")
   val cmtStudentifiedConfigFile = config.getString("cmt.cmt-studentified-config-file")
   val cmtStudentifiedDontTouch = config.getStringList("cmt.cmt-studentified-dont-touch").asScala
 

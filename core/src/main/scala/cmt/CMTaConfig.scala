@@ -8,7 +8,7 @@ import scala.jdk.CollectionConverters.*
 
 class CMTaConfig(mainRepo: File, configFileOpt: Option[File])(using eofe: ExitOnFirstError):
   
-  private val referenceConfig = ConfigFactory.load()
+  private val referenceConfig = ConfigFactory.load().resolve()
 
   private val configFileDefaultName = referenceConfig.getString("cmt.config-file-default-name")
 

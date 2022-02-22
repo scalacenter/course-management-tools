@@ -73,9 +73,15 @@ object CMTStudent:
       currentExercise
     ) { solution =>
       val fullTemplatePath = solution / templatePath
-      if fullTemplatePath.exists then
-        sbtio.copyFile(fullTemplatePath, config.activeExerciseFolder / templatePath, CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
-      else printError(s"No such template: $templatePath")
+      (fullTemplatePath.exists, fullTemplatePath.isDirectory) match
+        case (false, _) =>
+          printError(s"No such template: $templatePath")
+        case (true, false) =>
+          sbtio.copyFile(fullTemplatePath, config.activeExerciseFolder / templatePath, CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
+          println(toConsoleGreen(s"Pulled template file: ") + toConsoleYellow(templatePath))
+        case (true, true) =>
+          sbtio.copyDirectory(fullTemplatePath, config.activeExerciseFolder / templatePath, CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
+          println(toConsoleGreen(s"Pulled template folder: ") + toConsoleYellow(templatePath))
     }
 
 
@@ -146,7 +152,7 @@ object CMTStudent:
     val currentExercise =
       sbtio.readLines(config.bookmarkFile, StandardCharsets.UTF_8).head
 
-    deleteCurrentState()(config)
+    deleteCurrentState(studentifiedRepo)(config)
 
     Helpers.withZipFile(config.solutionsFolder, currentExercise) { solution =>
       val files = Helpers.fileList(solution / currentExercise)
@@ -166,7 +172,7 @@ object CMTStudent:
     val savedState = config.studentifiedSavedStatesFolder / s"${exercise}.zip"
     if !savedState.exists then printError(s"No such saved state: $exercise")
 
-    deleteCurrentState()(config)
+    deleteCurrentState(studentifiedRepo)(config)
 
     Helpers.withZipFile(config.studentifiedSavedStatesFolder, exercise) {
       solution =>
@@ -239,14 +245,14 @@ object CMTStudent:
 
   private final case class PathAR(absolutePath: File, relativePath: File)
 
-  private def deleteCurrentState()(config: CMTcConfig): Unit =
+  private def deleteCurrentState(studentifiedRepo: File)(config: CMTcConfig): Unit =
     val filesToBeDeleted =
       Helpers
         .fileList(config.activeExerciseFolder)
         .map(fileAbsolute =>
           PathARO(
             fileAbsolute,
-            fileAbsolute.relativeTo(config.activeExerciseFolder)
+            fileAbsolute.relativeTo(studentifiedRepo)
           )
         )
         .collect { case PathARO(fileAbsolute, Some(fileRelative)) =>
@@ -256,7 +262,8 @@ object CMTStudent:
           config.dontTouch.exists(lead => fileRelative.getPath.startsWith(lead))
         }
         .map { _.absolutePath }
-    sbtio.delete(filesToBeDeleted)
+
+    sbtio.deleteFilesEmptyDirs(filesToBeDeleted)
   end deleteCurrentState
 
 end CMTStudent

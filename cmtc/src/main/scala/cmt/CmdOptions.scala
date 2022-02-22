@@ -7,12 +7,14 @@ import sbt.io.syntax.*
 
 sealed trait CmtcCommands
 case object Missing extends CmtcCommands
-final case class PullSolution(exerciseID: Option[String] = None)
-    extends CmtcCommands
+case object PullSolution extends CmtcCommands
 final case class RestoreState(exerciseID: Option[String] = None)
     extends CmtcCommands
 case object ListExercises extends CmtcCommands
 case object NextExercise extends CmtcCommands
+final case class GotoExercise(exerciseID: Option[String] = None)
+    extends CmtcCommands
+case object GotoFirstExercise extends cmt.CmtcCommands
 case object ListSavedStates extends CmtcCommands
 case object SaveState extends CmtcCommands
 case object PreviousExercise extends CmtcCommands
@@ -30,6 +32,8 @@ val parser = {
     programName("cmtc"),
     pullSolutionParser,
     listExercisesParser,
+    gotoExerciseParser,
+    gotoFirstExerciseParser,
     previousExerciseParser,
     nextExerciseParser,
     saveStateParser,
@@ -98,17 +102,55 @@ private def listExercisesParser(using
         }
     )
 
+private def gotoExerciseParser(using
+    builder: OParserBuilder[CmtcOptions]
+): OParser[Unit, CmtcOptions] =
+  import builder.*
+  cmd("goto-exercise")
+    .text("Go to a given exercise and fetch corresponding tests")
+    .children(
+      arg[String]("<exercise ID>")
+        .action { case (exercise, c) =>
+          c.copy(command = GotoExercise(Some(exercise)))
+        },
+      arg[File]("<studentified repo  folder>")
+        .validate { studentifiedFolder =>
+          if studentifiedFolder.exists
+          then success
+          else failure(s"$studentifiedFolder: doesn't exist")
+        }
+        .action { (repo, c) =>
+          c.copy(studentifiedRepo = Some(repo))
+        }
+    )
+
+private def gotoFirstExerciseParser(using
+    builder: OParserBuilder[CmtcOptions]
+): OParser[Unit, CmtcOptions] =
+  import builder.*
+  cmd("goto-first-exercise")
+    .text("Go to the first exercise and fetch corresponding tests")
+    .action { (_, c) => c.copy(command = GotoFirstExercise) }
+    .children(
+      arg[File]("<studentified repo  folder>")
+        .validate { studentifiedFolder =>
+          if studentifiedFolder.exists
+          then success
+          else failure(s"$studentifiedFolder: doesn't exist")
+        }
+        .action { (repo, c) =>
+          c.copy(studentifiedRepo = Some(repo))
+        }
+    )
+
 private def pullSolutionParser(using
     builder: OParserBuilder[CmtcOptions]
 ): OParser[Unit, CmtcOptions] =
   import builder.*
   cmd("pull-solution")
     .text("Pull solution for a given exercise")
+    .action { (_, c) => c.copy(command = PullSolution) }
     .children(
-      arg[String]("<exercise ID>")
-        .action { case (exercise, c) =>
-          c.copy(command = PullSolution(Some(exercise)))
-        },
       arg[File]("<studentified repo  folder>")
         .validate { studentifiedFolder =>
           if studentifiedFolder.exists
@@ -186,12 +228,14 @@ private def validateConfig(using
   import builder.*
   checkConfig(config =>
     config.command match
-      case Missing          => failure("missing command")
-      case _: PullSolution  => success
-      case ListExercises    => success
-      case NextExercise     => success
-      case PreviousExercise => success
-      case SaveState        => success
-      case ListSavedStates  => success
-      case _: RestoreState  => success
+      case Missing           => failure("missing command")
+      case PullSolution      => success
+      case ListExercises     => success
+      case NextExercise      => success
+      case PreviousExercise  => success
+      case SaveState         => success
+      case ListSavedStates   => success
+      case _: RestoreState   => success
+      case _: GotoExercise   => success
+      case GotoFirstExercise => success
   )

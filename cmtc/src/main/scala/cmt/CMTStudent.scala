@@ -61,6 +61,28 @@ object CMTStudent:
       }
   end moveToPreviousExercise
 
+  def gotoExercise(studentifiedRepo: File, exercise: String)(
+      config: CMTcConfig
+  ): Unit =
+
+    if !config.exercises.contains(exercise) then
+      printError(s"No such exercise: $exercise")
+    
+    withZipFile(
+      config.solutionsFolder,
+      exercise
+    ) { solution =>
+      copyTestCodeAndReadMeFiles(
+        solution,
+        exercise,
+        s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${exercise}")}"
+      )(config)
+    }
+
+    Helpers.writeStudentifiedCMTBookmark(config.bookmarkFile, exercise)
+
+  end gotoExercise
+
   def copyTestCodeAndReadMeFiles(
       solution: File,
       prevOrNextExercise: String,
@@ -99,7 +121,7 @@ object CMTStudent:
       }
   end listExercises
 
-  def pullSolution(studentifiedRepo: File, exercise: String)(
+  def pullSolution(studentifiedRepo: File)(
       config: CMTcConfig
   ): Unit =
 
@@ -108,18 +130,16 @@ object CMTStudent:
 
     deleteCurrentState()(config)
 
-    Helpers.withZipFile(config.solutionsFolder, exercise) { solution =>
-      val files = Helpers.fileList(solution / exercise)
+    Helpers.withZipFile(config.solutionsFolder, currentExercise) { solution =>
+      val files = Helpers.fileList(solution / currentExercise)
       sbtio.copyDirectory(
-        config.solutionsFolder / exercise,
+        config.solutionsFolder / currentExercise,
         config.activeExerciseFolder,
         preserveLastModified = true
       )
     }
 
-    Helpers.writeStudentifiedCMTBookmark(config.bookmarkFile, exercise)
-
-    println(toConsoleGreen(s"Pulled solution for $exercise"))
+    println(toConsoleGreen(s"Pulled solution for $currentExercise"))
   end pullSolution
 
   def restoreState(studentifiedRepo: File, exercise: String)(

@@ -13,8 +13,19 @@ object Main:
     given CMTaConfig = CMTaConfig(cmdLineArgs.mainRepo, cmdLineArgs.configFile)
 
     cmdLineArgs match {
-      case CmtaOptions(mainRepo, Studentify(Some(stuBase)), _) =>
-        CMTStudentify.studentify(mainRepo, stuBase)
+      case CmtaOptions(
+            mainRepo,
+            Studentify(
+              Some(stuBase),
+              forceDeleteExistingDestinationFolder: Boolean
+            ),
+            _
+          ) =>
+        CMTStudentify.studentify(
+          mainRepo,
+          stuBase,
+          forceDeleteExistingDestinationFolder
+        )
 
       case CmtaOptions(
             mainRepo,

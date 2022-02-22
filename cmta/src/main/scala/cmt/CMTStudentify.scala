@@ -16,7 +16,11 @@ import Helpers.{
 }
 
 object CMTStudentify:
-  def studentify(mainRepo: File, stuBase: File)(using
+  def studentify(
+      mainRepo: File,
+      stuBase: File,
+      forceDeleteExistingDestinationFolder: Boolean
+  )(using
       config: CMTaConfig
   ): Unit =
 
@@ -36,6 +40,9 @@ object CMTStudentify:
       getExercisePrefixAndExercises(mainRepo)
     validatePrefixes(prefixes)
     val studentifiedRootFolder = stuBase / mainRepoName
+
+    if studentifiedRootFolder.exists && forceDeleteExistingDestinationFolder
+    then sbtio.delete(studentifiedRootFolder)
 
     val StudentifiedSkelFolders(solutionsFolder) =
       createStudentifiedFolderSkeleton(stuBase, studentifiedRootFolder)

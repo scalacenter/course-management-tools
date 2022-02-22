@@ -9,8 +9,10 @@ sealed trait CmtaCommands
 case object Missing extends CmtaCommands
 final case class RenumberExercises(renumOffset: Int = 1, renumStep: Int = 1)
     extends CmtaCommands
-final case class Studentify(studentifyBaseFolder: Option[File] = None)
-    extends CmtaCommands
+final case class Studentify(
+    studentifyBaseFolder: Option[File] = None,
+    forceDeleteExistingDestinationFolder: Boolean = false
+) extends CmtaCommands
 final case class Linearize(
     linearizeBaseFolder: Option[File] = None,
     forceDeleteExistingDestinationFolder: Boolean = false
@@ -165,6 +167,19 @@ private def studentifyCmdParser(using
             c.copy(command = x.copy(studentifyBaseFolder = Some(studRepo)))
           case (studRepo, c) =>
             c.copy(command = Studentify(studentifyBaseFolder = Some(studRepo)))
+        },
+      opt[Unit]("force-delete")
+        .text("Force-delete a pre-existing destination folder")
+        .abbr("f")
+        .action {
+          case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
+            c.copy(command =
+              x.copy(forceDeleteExistingDestinationFolder = true)
+            )
+          case (_, c) =>
+            c.copy(command =
+              Studentify(forceDeleteExistingDestinationFolder = true)
+            )
         }
     )
 

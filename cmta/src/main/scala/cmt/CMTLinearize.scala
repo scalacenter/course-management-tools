@@ -3,13 +3,13 @@ package cmt
 import sbt.io.{IO as sbtio}
 import sbt.io.syntax.*
 
-import Helpers.{getExercises, exitIfGitIndexOrWorkspaceIsntClean}
+import Helpers.{getExercisePrefixAndExercises, ExercisePrefixesAndExerciseNames, validatePrefixes, exitIfGitIndexOrWorkspaceIsntClean}
 import ProcessDSL.toProcessCmd
 
 object CMTLinearize:
   def linearize(mainRepo: File, linBase: File,
                 forceDeleteExistingDestinationFolder: Boolean)
-                (using config: CMTaConfig, eofe: ExitOnFirstError): Unit =
+                (using config: CMTaConfig): Unit =
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)    
 
@@ -20,7 +20,8 @@ object CMTLinearize:
     val tmpFolder = sbtio.createTemporaryDirectory
     val cleanedMainRepo = ProcessDSL.copyCleanViaGit(mainRepo, tmpFolder, mainRepoName)
     
-    val exercises = getExercises(mainRepo)
+    val ExercisePrefixesAndExerciseNames(prefixes, exercises) = getExercisePrefixAndExercises(mainRepo)
+    validatePrefixes(prefixes)
 
     val linearizedRootFolder = linBase / mainRepoName
 
@@ -43,7 +44,6 @@ object CMTLinearize:
     }
 
     sbtio.delete(tmpFolder)
-
   end linearize
 
   private def initializeGitRepo(linearizedProject: File): Unit =

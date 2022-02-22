@@ -6,7 +6,7 @@ import com.typesafe.config.ConfigFactory
 
 import scala.jdk.CollectionConverters.*
 
-class CMTaConfig(mainRepo: File, configFileOpt: Option[File])(using eofe: ExitOnFirstError):
+class CMTaConfig(mainRepo: File, configFileOpt: Option[File]):
   
   private val referenceConfig = ConfigFactory.load().resolve()
 
@@ -40,7 +40,6 @@ class CMTaConfig(mainRepo: File, configFileOpt: Option[File])(using eofe: ExitOn
       referenceConfig
   
   val mainRepoExerciseFolder = config.getString("cmt.main-repo-exercise-folder")
-  val mainRepoExercisePrefix = config.getString("cmt.main-repo-exercise-prefix")
   val testCodeFolders = config.getStringList("cmt.test-code-folders").asScala
   val readMeFiles = config.getStringList("cmt.read-me-files").asScala.toSet
   val studentifiedRepoSolutionsFolder = config.getString("cmt.studentified-repo-solutions-folder")

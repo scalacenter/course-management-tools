@@ -48,7 +48,7 @@ private def mainRepoArgument(using builder: OParserBuilder[CmtaOptions]): OParse
         case Right(path) =>
           c.copy(mainRepo = path)
         case Left(msg) =>
-          printError(s"$mainRepo is not a git repository")(ExitOnFirstError(true));???
+          printError(s"$mainRepo is not a git repository"); ???
       }
     }
 

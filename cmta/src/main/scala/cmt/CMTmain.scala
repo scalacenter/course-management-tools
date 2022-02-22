@@ -10,7 +10,6 @@ object Main:
           ???
         }
 
-    given ExitOnFirstError = ExitOnFirstError(true)
     given CMTaConfig = CMTaConfig(cmdLineArgs.mainRepo, cmdLineArgs.configFile)
 
     cmdLineArgs match {

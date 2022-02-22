@@ -3,7 +3,9 @@ package cmt
 import sbt.io.{IO as sbtio}
 import sbt.io.syntax.*
 
-import Helpers.{getExercises,
+import Helpers.{getExercisePrefixAndExercises,
+                validatePrefixes,
+                ExercisePrefixesAndExerciseNames,
                 exitIfGitIndexOrWorkspaceIsntClean,
                 createStudentifiedFolderSkeleton,
                 addFirstExercise,
@@ -13,7 +15,7 @@ import Helpers.{getExercises,
 
 object CMTStudentify:
   def studentify(mainRepo: File, stuBase: File)
-                (using config: CMTaConfig, eofe: ExitOnFirstError): Unit =
+                (using config: CMTaConfig): Unit =
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)    
 
@@ -24,7 +26,8 @@ object CMTStudentify:
     val tmpFolder = sbtio.createTemporaryDirectory
     val cleanedMainRepo = ProcessDSL.copyCleanViaGit(mainRepo, tmpFolder, mainRepoName)
     
-    val exercises = getExercises(mainRepo)
+    val ExercisePrefixesAndExerciseNames(prefixes, exercises) = getExercisePrefixAndExercises(mainRepo)
+    validatePrefixes(prefixes)
     val studentifiedRootFolder = stuBase / mainRepoName
 
     val StudentifiedSkelFolders(solutionsFolder) = 

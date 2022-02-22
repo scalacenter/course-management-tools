@@ -10,7 +10,6 @@ object Main:
           ???
         }
 
-    given ExitOnFirstError = ExitOnFirstError(true)
     val config: CMTcConfig = new CMTcConfig(cmdLineArgs.studentifiedRepo.get) // Safe: at this point we know that studentifiedRepo exists
 
     cmdLineArgs match {

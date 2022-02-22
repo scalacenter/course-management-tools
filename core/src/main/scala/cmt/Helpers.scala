@@ -46,19 +46,12 @@ object Helpers:
 
     workspaceIsUnclean match {
       case Right(cnt) if cnt > 0 =>
-        printError(s"main repository isn't clean. Commit changes and try again")(ExitOnFirstError(true))
+        printError(s"main repository isn't clean. Commit changes and try again")
       case Right(_) => ()
       case Left(_) => 
     }
 
-  def isExerciseFolder(folder: File)(using config: CMTaConfig): Boolean = {
-
-    val ExerciseNameSpec = s""".*[/\\\\]${config.mainRepoExercisePrefix}_\\d{3}_\\w+$$""".r
-
-    ExerciseNameSpec.findFirstIn(folder.getPath).isDefined
-  }
-
-  def createStudentifiedFolderSkeleton(stuBase: File, studentifiedRootFolder: File)(using config: CMTaConfig, eofe: ExitOnFirstError) =
+  def createStudentifiedFolderSkeleton(stuBase: File, studentifiedRootFolder: File)(using config: CMTaConfig) =
     if studentifiedRootFolder.exists then
       System.err.println(printError(s"$studentifiedRootFolder exists already"))
       System.exit(1)
@@ -78,15 +71,30 @@ object Helpers:
     sbtio.copyDirectory(cleanedMainRepo / config.mainRepoExerciseFolder / firstExercise,
                studentifiedRootFolder / config.studentifiedRepoActiveExerciseFolder)
 
-  def getExercises(mainRepo: File)(using config: CMTaConfig, eofe: ExitOnFirstError): List[String] =
-    sbtio
-      .listFiles(isExerciseFolder)(mainRepo /  config.mainRepoExerciseFolder)
+  final case class ExercisePrefixesAndExerciseNames(prefixes: Set[String], exercises: List[String])
+
+  def getExercisePrefixAndExercises(mainRepo: File)(using config: CMTaConfig): ExercisePrefixesAndExerciseNames =
+    val PrefixSpec = raw"(.*)_\d{3}_\w+$$".r
+    val matchedNames =
+      sbtio
+        .listFiles(isExerciseFolder())(mainRepo /  config.mainRepoExerciseFolder)
+        .map(_.getName)
+        .to(List)
+    val prefixes = matchedNames.map{ case PrefixSpec(n) => n}.to(Set)
+    val exercises = sbtio
+      .listFiles(isExerciseFolder())(mainRepo /  config.mainRepoExerciseFolder)
       .map(_.getName)
       .to(List)
       .sorted match
         case Nil =>
           System.err.println(printError("No exercises found. Check your configuration")); ???
         case exercises => exercises
+    ExercisePrefixesAndExerciseNames(prefixes, exercises)
+  end getExercisePrefixAndExercises
+
+  def validatePrefixes(prefixes: Set[String]): Unit =
+    if prefixes.size > 1 then
+      printError(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")
 
   def hideExercises(cleanedMainRepo: File, solutionsFolder: File, exercises: List[String])(using config: CMTaConfig): Unit =
     for (exercise <- exercises)
@@ -106,7 +114,6 @@ object Helpers:
   def writeStudentifiedCMTConfig(configFile: File, exercises: Seq[String])(using config: CMTaConfig): Unit =
     val cmtConfig =
       s"""studentified-repo-solutions-folder=${config.studentifiedRepoSolutionsFolder}
-         |exercise-prefix=${config.mainRepoExercisePrefix}
          |active-exercise-folder=${config.studentifiedRepoActiveExerciseFolder}
          |test-code-folders=${config.testCodeFolders.mkString("[\n   ", ",\n   ", "\n]")}
          |read-me-files=${config.readMeFiles.mkString("[\n   ", ",\n   ", "\n]")}

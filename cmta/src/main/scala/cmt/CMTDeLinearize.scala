@@ -3,14 +3,14 @@ package cmt
 import sbt.io.{IO as sbtio}
 import sbt.io.syntax.*
 
-import Helpers.{getExercises, exitIfGitIndexOrWorkspaceIsntClean}
+import Helpers.{exitIfGitIndexOrWorkspaceIsntClean, getExercisePrefixAndExercises, validatePrefixes, ExercisePrefixesAndExerciseNames}
 import ProcessDSL.toProcessCmd
 
 case class ExerciseNameAndSHA(exName: String, exSHA: String)
 
 object CMTDeLinearize:
   def delinearize(mainRepo: File, linBase: File)
-                (using config: CMTaConfig, eofe: ExitOnFirstError): Unit =
+                (using config: CMTaConfig): Unit =
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)    
 
@@ -18,7 +18,8 @@ object CMTDeLinearize:
 
     val mainRepoName = mainRepo.getName
      
-    val exercisesInMain = getExercises(mainRepo)
+    val ExercisePrefixesAndExerciseNames(prefixes, exercisesInMain) = getExercisePrefixAndExercises(mainRepo)
+    validatePrefixes(prefixes)
 
     val linearizedRootFolder = linBase / mainRepoName
 
@@ -60,7 +61,7 @@ object CMTDeLinearize:
   def splitSHAandExName(shaAndExname: String): Vector[String] =
     shaAndExname.split("""\s+""").toVector
 
-  def checkReposMatch(exercisesInMain: Seq[String], exercisesAndSHAs: Vector[ExerciseNameAndSHA])(implicit eofe: ExitOnFirstError): Unit =
+  def checkReposMatch(exercisesInMain: Seq[String], exercisesAndSHAs: Vector[ExerciseNameAndSHA]): Unit =
     // TODO: in case repos are incompatible, print out the exercise list on both ends (if any)
     if exercisesInMain != exercisesAndSHAs.map(_.exName) then
       printError(s"Cannot de-linearize: repositories are incompatible")

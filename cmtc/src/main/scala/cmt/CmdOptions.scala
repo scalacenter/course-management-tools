@@ -9,8 +9,12 @@ sealed trait CmtcCommands
 case object Missing extends CmtcCommands
 final case class PullSolution(exerciseID: Option[String] = None)
     extends CmtcCommands
+final case class RestoreState(exerciseID: Option[String] = None)
+    extends CmtcCommands
 case object ListExercises extends CmtcCommands
 case object NextExercise extends CmtcCommands
+case object ListSavedStates extends CmtcCommands
+case object SaveState extends CmtcCommands
 case object PreviousExercise extends CmtcCommands
 
 final case class CmtcOptions(
@@ -28,6 +32,9 @@ val parser = {
     listExercisesParser,
     previousExerciseParser,
     nextExerciseParser,
+    saveStateParser,
+    restoreStateParser,
+    savedStateParser,
     validateConfig
   )
 }
@@ -113,6 +120,66 @@ private def pullSolutionParser(using
         }
     )
 
+private def saveStateParser(using
+    builder: OParserBuilder[CmtcOptions]
+): OParser[Unit, CmtcOptions] =
+  import builder.*
+  cmd("save-state")
+    .text("Save state of current exercise")
+    .action { (_, c) => c.copy(command = SaveState) }
+    .children(
+      arg[File]("<studentified repo  folder>")
+        .validate { studentifiedFolder =>
+          if studentifiedFolder.exists
+          then success
+          else failure(s"$studentifiedFolder: doesn't exist")
+        }
+        .action { (repo, c) =>
+          c.copy(studentifiedRepo = Some(repo))
+        }
+    )
+
+private def savedStateParser(using
+    builder: OParserBuilder[CmtcOptions]
+): OParser[Unit, CmtcOptions] =
+  import builder.*
+  cmd("list-saved-states")
+    .text("List all saved exercise states")
+    .action { (_, c) => c.copy(command = ListSavedStates) }
+    .children(
+      arg[File]("<studentified repo  folder>")
+        .validate { studentifiedFolder =>
+          if studentifiedFolder.exists
+          then success
+          else failure(s"$studentifiedFolder: doesn't exist")
+        }
+        .action { (repo, c) =>
+          c.copy(studentifiedRepo = Some(repo))
+        }
+    )
+
+private def restoreStateParser(using
+    builder: OParserBuilder[CmtcOptions]
+): OParser[Unit, CmtcOptions] =
+  import builder.*
+  cmd("restore-state")
+    .text("Restore state of a previously save exercise state")
+    .children(
+      arg[String]("<exercise ID>")
+        .action { case (exercise, c) =>
+          c.copy(command = RestoreState(Some(exercise)))
+        },
+      arg[File]("<studentified repo  folder>")
+        .validate { studentifiedFolder =>
+          if studentifiedFolder.exists
+          then success
+          else failure(s"$studentifiedFolder: doesn't exist")
+        }
+        .action { (repo, c) =>
+          c.copy(studentifiedRepo = Some(repo))
+        }
+    )
+
 private def validateConfig(using
     builder: OParserBuilder[CmtcOptions]
 ): OParser[Unit, CmtcOptions] =
@@ -124,4 +191,7 @@ private def validateConfig(using
       case ListExercises    => success
       case NextExercise     => success
       case PreviousExercise => success
+      case SaveState        => success
+      case ListSavedStates  => success
+      case _: RestoreState  => success
   )

@@ -99,23 +99,109 @@ object CMTStudent:
       }
   end listExercises
 
-  def pullSolution(studentifiedRepo: File, exerciseID: String)(
+  def pullSolution(studentifiedRepo: File, exercise: String)(
       config: CMTcConfig
   ): Unit =
 
     val currentExercise =
       sbtio.readLines(config.bookmarkFile, StandardCharsets.UTF_8).head
 
-    val cmtConfigFile = studentifiedRepo / ".cmt-config"
-    if !cmtConfigFile.exists then
-      printErrorAndExit(studentifiedRepo, "missing CMT configuration file")
+    deleteCurrentState()(config)
 
-    final case class PathARO(
-        absolutePath: File,
-        maybeRelativePath: Option[File]
+    Helpers.withZipFile(config.solutionsFolder, exercise) { solution =>
+      val files = Helpers.fileList(solution / exercise)
+      sbtio.copyDirectory(
+        config.solutionsFolder / exercise,
+        config.activeExerciseFolder,
+        preserveLastModified = true
+      )
+    }
+
+    Helpers.writeStudentifiedCMTBookmark(config.bookmarkFile, exercise)
+
+    println(toConsoleGreen(s"Pulled solution for $exercise"))
+  end pullSolution
+
+  def restoreState(studentifiedRepo: File, exercise: String)(
+      config: CMTcConfig
+  ): Unit =
+    val savedState = config.studentifiedSavedStatesFolder / s"${exercise}.zip"
+    if !savedState.exists then printError(s"No such saved state: $exercise")
+
+    deleteCurrentState()(config)
+
+    Helpers.withZipFile(config.studentifiedSavedStatesFolder, exercise) {
+      solution =>
+        val files = Helpers.fileList(solution / exercise)
+        sbtio.copyDirectory(
+          config.studentifiedSavedStatesFolder / exercise,
+          config.activeExerciseFolder,
+          preserveLastModified = true
+        )
+    }
+
+    Helpers.writeStudentifiedCMTBookmark(config.bookmarkFile, exercise)
+
+    println(toConsoleGreen(s"Restored state for $exercise"))
+  end restoreState
+
+  def saveState(studentifiedRepo: File)(
+      config: CMTcConfig
+  ): Unit =
+    val currentExercise =
+      sbtio.readLines(config.bookmarkFile, StandardCharsets.UTF_8).head
+    val savedStatesFolder = config.studentifiedSavedStatesFolder
+    sbtio.delete(savedStatesFolder / currentExercise)
+    sbtio.copyDirectory(
+      config.activeExerciseFolder,
+      savedStatesFolder / currentExercise
     )
-    final case class PathAR(absolutePath: File, relativePath: File)
 
+    zipAndDeleteOriginal(
+      baseFolder = savedStatesFolder,
+      zipToFolder = savedStatesFolder,
+      exercise = currentExercise
+    )
+
+    println(toConsoleGreen(s"Saved state for $currentExercise"))
+  end saveState
+
+  def listSavedStates(studentifiedRepo: File)(config: CMTcConfig): Unit =
+    val MatchDotzip = ".zip".r
+    val savedStates =
+      sbtio
+        .listFiles(config.studentifiedSavedStatesFolder)
+        .to(List)
+        .sorted
+        .map(_.getName)
+        .map(item => MatchDotzip.replaceAllIn(item, ""))
+        .filter(config.exercises.contains(_))
+
+    println(
+      toConsoleGreen(
+        s"Saved states available for exercises:\n"
+      ) + toConsoleYellow(s"${savedStates.mkString("\n   ", "\n   ", "\n")}")
+    )
+  end listSavedStates
+
+  def validateStudentifiedRepo(studentifiedRepo: File)(using
+      config: CMTcConfig
+  ): Unit =
+    // TODO
+    ()
+
+  def starCurrentExercise(currentExercise: String, exercise: String): String = {
+    if (currentExercise == exercise) " * " else "   "
+  }
+
+  private final case class PathARO(
+      absolutePath: File,
+      maybeRelativePath: Option[File]
+  )
+
+  private final case class PathAR(absolutePath: File, relativePath: File)
+
+  private def deleteCurrentState()(config: CMTcConfig): Unit =
     val filesToBeDeleted =
       Helpers
         .fileList(config.activeExerciseFolder)
@@ -133,29 +219,6 @@ object CMTStudent:
         }
         .map { _.absolutePath }
     sbtio.delete(filesToBeDeleted)
-
-    Helpers.withZipFile(config.solutionsFolder, exerciseID) { solution =>
-      val files = Helpers.fileList(solution / s"$exerciseID")
-      sbtio.copyDirectory(
-        config.solutionsFolder / s"$exerciseID",
-        config.activeExerciseFolder,
-        preserveLastModified = true
-      )
-    }
-
-    Helpers.writeStudentifiedCMTBookmark(config.bookmarkFile, exerciseID)
-
-    println(toConsoleGreen(s"Pulled solution for $exerciseID"))
-  end pullSolution
-
-  def validateStudentifiedRepo(studentifiedRepo: File)(using
-      config: CMTcConfig
-  ): Unit =
-    // TODO
-    ()
-
-  def starCurrentExercise(currentExercise: String, exercise: String): String = {
-    if (currentExercise == exercise) " * " else "   "
-  }
+  end deleteCurrentState
 
 end CMTStudent

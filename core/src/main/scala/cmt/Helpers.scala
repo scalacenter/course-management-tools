@@ -119,25 +119,34 @@ object Helpers:
         s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found"
       )
 
+  def zipAndDeleteOriginal(
+      baseFolder: File,
+      zipToFolder: File,
+      exercise: String,
+      time: Option[Long] = None
+  ): Unit =
+    val filesToZip = fileList(baseFolder / exercise)
+      .map(f => (f, sbtio.relativize(baseFolder, f)))
+      .collect { case (f, Some(s)) => (f, s) }
+    val zipFile = zipToFolder / s"${exercise}.zip"
+    sbtio.zip(filesToZip, zipFile, time)
+    sbtio.delete(baseFolder / exercise)
+  end zipAndDeleteOriginal
+
   def hideExercises(
       cleanedMainRepo: File,
       solutionsFolder: File,
       exercises: List[String]
   )(using config: CMTaConfig): Unit =
+    val now: Option[Long] = Some(java.time.Instant.now().toEpochMilli())
     for (exercise <- exercises)
-      val filesToZip =
-        fileList(cleanedMainRepo / config.mainRepoExerciseFolder / exercise)
-          .map(f =>
-            (
-              f,
-              sbtio
-                .relativize(cleanedMainRepo / config.mainRepoExerciseFolder, f)
-            )
-          )
-          .collect { case (f, Some(s)) => (f, s) }
-      val zipFile = solutionsFolder / s"${exercise}.zip"
-      val now: Option[Long] = Some(java.time.Instant.now().toEpochMilli())
-      sbtio.zip(filesToZip, zipFile, now)
+      zipAndDeleteOriginal(
+        cleanedMainRepo / config.mainRepoExerciseFolder,
+        solutionsFolder,
+        exercise,
+        now
+      )
+  end hideExercises
 
   def dumpStringToFile(string: String, file: File): Unit =
     import java.nio.charset.StandardCharsets
@@ -149,6 +158,7 @@ object Helpers:
   ): Unit =
     val cmtConfig =
       s"""studentified-repo-solutions-folder=${config.studentifiedRepoSolutionsFolder}
+         |studentified-saved-states-folder=${config.studentifiedSavedStatesFolder}
          |active-exercise-folder=${config.studentifiedRepoActiveExerciseFolder}
          |test-code-folders=${config.testCodeFolders.mkString(
           "[\n   ",

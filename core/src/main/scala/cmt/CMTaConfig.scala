@@ -53,6 +53,8 @@ class CMTaConfig(mainRepo: File, configFileOpt: Option[File]):
   val readMeFiles = config.getStringList("cmt.read-me-files").asScala.toSet
   val studentifiedRepoSolutionsFolder =
     config.getString("cmt.studentified-repo-solutions-folder")
+  val studentifiedSavedStatesFolder =
+    config.getString("cmt.studentified-saved-states-folder")
   val studentifiedRepoActiveExerciseFolder =
     config.getString("cmt.studentified-repo-active-exercise-folder")
   val linearizedRepoActiveExerciseFolder =

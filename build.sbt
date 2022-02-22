@@ -3,7 +3,7 @@ lazy val `course-management-tools` =
     .aggregate(
       cmta,
       cmtc,
-      core,
+      core
     )
     .settings(CommonSettings.commonSettings: _*)
     .settings(publish / skip := true)
@@ -21,4 +21,3 @@ lazy val cmtc = project
   .in(file("cmtc"))
   .dependsOn(core)
   .settings(CommonSettings.commonSettings: _*)
-

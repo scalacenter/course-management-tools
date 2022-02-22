@@ -10,8 +10,8 @@ object ProcessDSL:
 
   final case class ProcessCmd(cmd: Seq[String], workingDir: File)
 
-  extension (cmd: ProcessCmd) 
-    def runAndExitIfFailed(errorMsg: String): Unit = 
+  extension (cmd: ProcessCmd)
+    def runAndExitIfFailed(errorMsg: String): Unit =
       val status = Try(Process(cmd.cmd, cmd.workingDir).!)
       if status.getOrElse(-1) != 0 then
         System.err.println(s"""
@@ -26,9 +26,9 @@ object ProcessDSL:
       status.getOrElse(-1)
     }
 
-    def runAndReadOutput(): Either[String, String] = 
+    def runAndReadOutput(): Either[String, String] =
       val consoleRes = Try(Process(cmd.cmd, cmd.workingDir).!!)
-      consoleRes match 
+      consoleRes match
         case Success(result) => Right(result.trim)
         case Failure(_) =>
           val msg = s"""
@@ -37,7 +37,6 @@ object ProcessDSL:
           """.stripMargin
           Left(msg)
   end extension
-          
 
   extension (command: String)
     def toProcessCmd(workingDir: File): ProcessCmd =
@@ -55,25 +54,29 @@ object ProcessDSL:
     val initBranch = UUID.randomUUID.toString
     val tmpRemoteBranch = s"CMT-${UUID.randomUUID.toString}"
     val script = List(
-      (s"${tmpDir.getPath}",
+      (
+        s"${tmpDir.getPath}",
         List(
           s"mkdir ${repoName}.git",
           s"git init --bare ${repoName}.git"
         )
       ),
-      (s"${mainRepo.getPath}",
+      (
+        s"${mainRepo.getPath}",
         List(
           s"git remote add ${tmpRemoteBranch} ${tmpDir.getPath}/${repoName}.git",
           s"git push ${tmpRemoteBranch} HEAD:refs/heads/${initBranch}"
         )
       ),
-      (s"${tmpDir.getPath}",
-       List(
-         s"git clone -b ${initBranch} ${tmpDir.getPath}/${repoName}.git",
-         s"rm -rf ${tmpDir.getPath}/${repoName}.git"
-       )
+      (
+        s"${tmpDir.getPath}",
+        List(
+          s"git clone -b ${initBranch} ${tmpDir.getPath}/${repoName}.git",
+          s"rm -rf ${tmpDir.getPath}/${repoName}.git"
+        )
       ),
-      (s"${mainRepo.getPath}",
+      (
+        s"${mainRepo.getPath}",
         List(
           s"git remote remove ${tmpRemoteBranch}"
         )
@@ -85,9 +88,9 @@ object ProcessDSL:
     } yield command.toProcessCmd(new File(workingDir))
 
     for {
-        command @ ProcessCmd(cmds, wd) <- commands
-        cmdAsString = cmds.mkString(" ")
-      } command.runAndExitIfFailed(cmdAsString)
+      command @ ProcessCmd(cmds, wd) <- commands
+      cmdAsString = cmds.mkString(" ")
+    } command.runAndExitIfFailed(cmdAsString)
 
     tmpDir / mainRepo.getName
   end copyCleanViaGit

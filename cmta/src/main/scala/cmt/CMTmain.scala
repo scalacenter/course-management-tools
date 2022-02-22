@@ -2,7 +2,7 @@ package cmt
 
 object Main:
   def main(args: Array[String]): Unit =
-    val cmdLineArgs: CmtaOptions = 
+    val cmdLineArgs: CmtaOptions =
       CmdLineParse
         .cmtaParse(args)
         .getOrElse {
@@ -16,11 +16,26 @@ object Main:
       case CmtaOptions(mainRepo, Studentify(Some(stuBase)), _) =>
         CMTStudentify.studentify(mainRepo, stuBase)
 
-      case CmtaOptions(mainRepo, RenumberExercises(renumOffset, renumStep), configFile) =>
+      case CmtaOptions(
+            mainRepo,
+            RenumberExercises(renumOffset, renumStep),
+            configFile
+          ) =>
         CMTAdmin.renumberExercises(mainRepo, renumOffset, renumStep)
 
-      case CmtaOptions(mainRepo, Linearize(Some(linBase), forceDeleteExistingDestinationFolder: Boolean), _) =>
-        CMTLinearize.linearize(mainRepo, linBase, forceDeleteExistingDestinationFolder)
+      case CmtaOptions(
+            mainRepo,
+            Linearize(
+              Some(linBase),
+              forceDeleteExistingDestinationFolder: Boolean
+            ),
+            _
+          ) =>
+        CMTLinearize.linearize(
+          mainRepo,
+          linBase,
+          forceDeleteExistingDestinationFolder
+        )
 
       case CmtaOptions(mainRepo, DeLinearize(Some(linBase)), _) =>
         CMTDeLinearize.delinearize(mainRepo, linBase)

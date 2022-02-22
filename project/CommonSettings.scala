@@ -3,7 +3,7 @@ import sbt.Keys._
 
 object CompileOptions {
   val compileOptions = Seq(
-    "-source:future",
+    "-source:future"
   )
 }
 
@@ -15,7 +15,7 @@ object CommonSettings {
     scalacOptions ++= CompileOptions.compileOptions,
     Test / parallelExecution := false,
     Test / logBuffered := false,
-    //ThisBuild / parallelExecution := false,
+    // ThisBuild / parallelExecution := false,
     libraryDependencies ++= Dependencies.cmtDependencies
   )
 }

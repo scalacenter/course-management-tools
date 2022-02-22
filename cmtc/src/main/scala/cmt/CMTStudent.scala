@@ -61,6 +61,24 @@ object CMTStudent:
       }
   end moveToPreviousExercise
 
+  def pullTemplate(studentifiedRepo: File, templatePath: String)(
+      config: CMTcConfig
+  ): Unit =
+    import sbt.io.CopyOptions
+    val currentExercise =
+      sbtio.readLines(config.bookmarkFile, StandardCharsets.UTF_8).head
+
+    withZipFile(
+      config.solutionsFolder,
+      currentExercise
+    ) { solution =>
+      val fullTemplatePath = solution / templatePath
+      if fullTemplatePath.exists then
+        sbtio.copyFile(fullTemplatePath, config.activeExerciseFolder / templatePath, CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
+      else printError(s"No such template: $templatePath")
+    }
+
+
   def gotoExercise(studentifiedRepo: File, exercise: String)(
       config: CMTcConfig
   ): Unit =

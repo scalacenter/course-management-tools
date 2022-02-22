@@ -18,6 +18,8 @@ case object GotoFirstExercise extends cmt.CmtcCommands
 case object ListSavedStates extends CmtcCommands
 case object SaveState extends CmtcCommands
 case object PreviousExercise extends CmtcCommands
+final case class PullTemplate(template: Option[String] = None) 
+    extends CmtcCommands
 
 final case class CmtcOptions(
     command: CmtcCommands = Missing,
@@ -36,6 +38,7 @@ val parser = {
     gotoFirstExerciseParser,
     previousExerciseParser,
     nextExerciseParser,
+    pullTemplateParser,
     saveStateParser,
     restoreStateParser,
     savedStateParser,
@@ -91,6 +94,28 @@ private def listExercisesParser(using
     .text("List all exercises")
     .action { (_, c) => c.copy(command = ListExercises) }
     .children(
+      arg[File]("<studentified repo  folder>")
+        .validate { studentifiedFolder =>
+          if studentifiedFolder.exists
+          then success
+          else failure(s"$studentifiedFolder: doesn't exist")
+        }
+        .action { (repo, c) =>
+          c.copy(studentifiedRepo = Some(repo))
+        }
+    )
+
+private def pullTemplateParser(using
+    builder: OParserBuilder[CmtcOptions]
+): OParser[Unit, CmtcOptions] =
+  import builder.*
+  cmd("pull-template")
+    .text("Pull a template into the current exercise state")
+    .children(
+      arg[String]("<template path>")
+        .action { case (templatePath, c) =>
+          c.copy(command = PullTemplate(Some(templatePath)))
+        },
       arg[File]("<studentified repo  folder>")
         .validate { studentifiedFolder =>
           if studentifiedFolder.exists
@@ -238,4 +263,5 @@ private def validateConfig(using
       case _: RestoreState   => success
       case _: GotoExercise   => success
       case GotoFirstExercise => success
+      case _: PullTemplate   => success
   )

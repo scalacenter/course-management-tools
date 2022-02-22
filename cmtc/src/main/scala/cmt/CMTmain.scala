@@ -45,5 +45,11 @@ object Main:
             Some(studentifiedRepo)
           ) =>
         CMTStudent.restoreState(studentifiedRepo, exerciseID)(config)
+
+      case CmtcOptions(
+            PullTemplate(Some(templatePath)),
+            Some(studentifiedRepo)
+          ) =>
+        CMTStudent.pullTemplate(studentifiedRepo, templatePath)(config)
       case _ =>
     }

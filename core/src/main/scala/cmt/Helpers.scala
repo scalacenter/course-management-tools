@@ -87,7 +87,7 @@ object Helpers:
 
   final case class ExercisePrefixesAndExerciseNames(
       prefixes: Set[String],
-      exercises: List[String]
+      exercises: Vector[String]
   )
 
   def getExercisePrefixAndExercises(mainRepo: File)(using
@@ -103,9 +103,9 @@ object Helpers:
     val exercises = sbtio
       .listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder)
       .map(_.getName)
-      .to(List)
+      .to(Vector)
       .sorted match
-      case Nil =>
+      case Vector() =>
         System.err.println(
           printError("No exercises found. Check your configuration")
         ); ???
@@ -136,7 +136,7 @@ object Helpers:
   def hideExercises(
       cleanedMainRepo: File,
       solutionsFolder: File,
-      exercises: List[String]
+      exercises: Vector[String]
   )(using config: CMTaConfig): Unit =
     val now: Option[Long] = Some(java.time.Instant.now().toEpochMilli())
     for (exercise <- exercises)
@@ -213,3 +213,10 @@ object Helpers:
         toConsoleRed(s"Failed to commit files for $commitMessage")
       )
   end commitToGit
+
+  private val ExerciseNumberSpec = raw".*_(\d{3})_.*".r
+
+  def extractExerciseNr(exercise: String): Int = {
+    val ExerciseNumberSpec(d) = exercise: @unchecked
+    d.toInt
+  }

@@ -28,7 +28,10 @@ object Main:
       case CmtcOptions(PreviousExercise, Some(studentifiedRepo)) =>
         CMTStudent.moveToPreviousExercise(studentifiedRepo)(config)
 
-      case CmtcOptions(GotoExercise(Some(exerciseID)), Some(studentifiedRepo)) =>
+      case CmtcOptions(
+            GotoExercise(Some(exerciseID)),
+            Some(studentifiedRepo)
+          ) =>
         CMTStudent.gotoExercise(studentifiedRepo, exerciseID)(config)
 
       case CmtcOptions(GotoFirstExercise, Some(studentifiedRepo)) =>

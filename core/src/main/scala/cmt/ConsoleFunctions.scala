@@ -13,6 +13,6 @@ def printError(msg: String): Unit =
 
 def printMessage(msg: String): Unit =
   println(toConsoleGreen(msg))
-  
+
 def printNotification(msg: String): Unit =
   println(toConsoleGreen(msg))

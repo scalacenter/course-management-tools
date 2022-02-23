@@ -77,13 +77,36 @@ object CMTStudent:
         case (false, _) =>
           printError(s"No such template: $templatePath")
         case (true, false) =>
-          sbtio.copyFile(fullTemplatePath, config.activeExerciseFolder / templatePath, CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
-          println(toConsoleGreen(s"Pulled template file: ") + toConsoleYellow(templatePath))
+          sbtio.copyFile(
+            fullTemplatePath,
+            config.activeExerciseFolder / templatePath,
+            CopyOptions(
+              overwrite = true,
+              preserveLastModified = true,
+              preserveExecutable = true
+            )
+          )
+          println(
+            toConsoleGreen(s"Pulled template file: ") + toConsoleYellow(
+              templatePath
+            )
+          )
         case (true, true) =>
-          sbtio.copyDirectory(fullTemplatePath, config.activeExerciseFolder / templatePath, CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
-          println(toConsoleGreen(s"Pulled template folder: ") + toConsoleYellow(templatePath))
+          sbtio.copyDirectory(
+            fullTemplatePath,
+            config.activeExerciseFolder / templatePath,
+            CopyOptions(
+              overwrite = true,
+              preserveLastModified = true,
+              preserveExecutable = true
+            )
+          )
+          println(
+            toConsoleGreen(s"Pulled template folder: ") + toConsoleYellow(
+              templatePath
+            )
+          )
     }
-
 
   def gotoExercise(studentifiedRepo: File, exercise: String)(
       config: CMTcConfig
@@ -91,7 +114,7 @@ object CMTStudent:
 
     if !config.exercises.contains(exercise) then
       printError(s"No such exercise: $exercise")
-    
+
     withZipFile(
       config.solutionsFolder,
       exercise
@@ -245,7 +268,9 @@ object CMTStudent:
 
   private final case class PathAR(absolutePath: File, relativePath: File)
 
-  private def deleteCurrentState(studentifiedRepo: File)(config: CMTcConfig): Unit =
+  private def deleteCurrentState(studentifiedRepo: File)(
+      config: CMTcConfig
+  ): Unit =
     val filesToBeDeleted =
       Helpers
         .fileList(config.activeExerciseFolder)

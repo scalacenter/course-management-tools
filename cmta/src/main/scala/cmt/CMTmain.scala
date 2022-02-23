@@ -18,7 +18,7 @@ object Main:
             Studentify(
               Some(stuBase),
               forceDeleteExistingDestinationFolder: Boolean,
-              initializeAsGitRepo: Boolean,
+              initializeAsGitRepo: Boolean
             ),
             _
           ) =>
@@ -31,10 +31,17 @@ object Main:
 
       case CmtaOptions(
             mainRepo,
-            RenumberExercises(renumOffset, renumStep),
+            RenumberExercises(renumStartAtOpt, renumOffset, renumStep),
             configFile
           ) =>
-        CMTAdmin.renumberExercises(mainRepo, renumOffset, renumStep)
+        CMTAdmin.renumberExercises(mainRepo, renumStartAtOpt, renumOffset, renumStep)
+
+      case CmtaOptions(
+            mainRepo,
+            DuplicateInsertBefore(exerciseNumber),
+            configFile
+          ) =>
+        CMTAdmin.duplicateInsertBefore(mainRepo, exerciseNumber)
 
       case CmtaOptions(
             mainRepo,

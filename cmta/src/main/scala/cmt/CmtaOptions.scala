@@ -7,7 +7,12 @@ import sbt.io.syntax.*
 
 sealed trait CmtaCommands
 case object Missing extends CmtaCommands
-final case class RenumberExercises(renumOffset: Int = 1, renumStep: Int = 1)
+final case class RenumberExercises(
+    startRenumAt: Option[Int] = None,
+    renumOffset: Int = 1,
+    renumStep: Int = 1
+) extends CmtaCommands
+final case class DuplicateInsertBefore(exerciseNumber: Int = 0)
     extends CmtaCommands
 final case class Studentify(
     studentifyBaseFolder: Option[File] = None,
@@ -34,6 +39,7 @@ val cmtaParser = {
   OParser.sequence(
     programName("cmt"),
     renumCmdParser,
+    duplicateInsertBeforeParser,
     studentifyCmdParser,
     linearizeCmdParser,
     delinearizeCmdParser,
@@ -72,6 +78,29 @@ private def configFileParser(using
       c.copy(configFile = Some(configFile))
     }
 
+private def duplicateInsertBeforeParser(using
+    builder: OParserBuilder[CmtaOptions]
+): OParser[Unit, CmtaOptions] =
+  import builder.*
+  cmd("dib")
+    .text("Duplicate exercise and insert before")
+    .action { (_, c) =>
+      c.copy(command = DuplicateInsertBefore())
+    }
+    .children(
+      mainRepoArgument,
+      opt[Int]("exercise-number")
+        .required()
+        .text("exercise number to duplicate")
+        .abbr("-n")
+        .action {
+          case (n, c @ CmtaOptions(mainRepo, x: DuplicateInsertBefore, _)) =>
+            c.copy(command = x.copy(exerciseNumber = n))
+          case (n, c) =>
+            c.copy(command = DuplicateInsertBefore(exerciseNumber = n))
+        }
+    )
+
 private def linearizeCmdParser(using
     builder: OParserBuilder[CmtaOptions]
 ): OParser[Unit, CmtaOptions] =
@@ -96,7 +125,7 @@ private def linearizeCmdParser(using
           case (linRepo, c @ CmtaOptions(mainRepo, x: Linearize, _)) =>
             c.copy(command = x.copy(linearizeBaseFolder = Some(linRepo)))
           case (linRepo, c) =>
-            c.copy(command = Linearize(Some(linRepo)))
+            c.copy(command = Linearize(linearizeBaseFolder = Some(linRepo)))
         },
       opt[Unit]("force-delete")
         .text("Force-delete a pre-existing destination folder")
@@ -187,13 +216,10 @@ private def studentifyCmdParser(using
         .abbr("g")
         .action {
           case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
-            c.copy(command =
-              x.copy(initializeAsGitRepo = true)
-            )
+            c.copy(command = x.copy(initializeAsGitRepo = true))
           case (_, c) =>
             c.copy(command = Studentify(initializeAsGitRepo = true))
         }
-
     )
 
 private def renumCmdParser(using
@@ -209,6 +235,22 @@ private def renumCmdParser(using
     }
     .children(
       mainRepoArgument,
+      opt[Int]("start-renumber-at")
+        .text("Number of exercise to start renumbering")
+        .abbr("s")
+        .validate(startAt =>
+          if startAt >= 0 then success
+          else failure(s"renumber start exercise number should be >= 0")
+        )
+        .action {
+          case (
+                startAt,
+                c @ CmtaOptions(_, RenumberExercises(_, offset, step), _)
+              ) =>
+            c.copy(command = RenumberExercises(Some(startAt), offset, step))
+          case (startAt, c) =>
+            c.copy(command = RenumberExercises(startRenumAt = Some(startAt)))
+        },
       opt[Int]("offset")
         .text("Renumber start offset (default=1)")
         .abbr("o")
@@ -217,8 +259,11 @@ private def renumCmdParser(using
           else failure(s"renumber offset should be >= 0")
         )
         .action {
-          case (offset, c @ CmtaOptions(_, RenumberExercises(_, step), _)) =>
-            c.copy(command = RenumberExercises(offset, step))
+          case (
+                offset,
+                c @ CmtaOptions(_, RenumberExercises(startAt, _, step), _)
+              ) =>
+            c.copy(command = RenumberExercises(startAt, offset, step))
           case (offset, c) =>
             c.copy(command = RenumberExercises(renumOffset = offset))
         },
@@ -230,8 +275,11 @@ private def renumCmdParser(using
           else failure(s"renumber step size should be >= 1")
         )
         .action {
-          case (step, c @ CmtaOptions(_, RenumberExercises(offset, _), _)) =>
-            c.copy(command = RenumberExercises(offset, step))
+          case (
+                step,
+                c @ CmtaOptions(_, RenumberExercises(startAt, offset, _), _)
+              ) =>
+            c.copy(command = RenumberExercises(startAt, offset, step))
           case (step, c) =>
             c.copy(command = RenumberExercises(renumStep = step))
         }
@@ -244,13 +292,5 @@ private def validateConfig(using
   checkConfig(config =>
     config.command match
       case Missing => failure("missing command")
-      case Linearize(Some(linBase), false) =>
-        val linRepoBase = linBase / config.mainRepo.getName
-        if linRepoBase.isDirectory then
-          failure(
-            s"""Destination folder ${linBase.getName}/${config.mainRepo.getName} already exists:
-                   |Either remove this folder manually or use the '-f' command-line option to delete it automatically""".stripMargin
-          )
-        else success
-      case _ => success
+      case _       => success
   )

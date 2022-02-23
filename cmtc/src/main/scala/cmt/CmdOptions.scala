@@ -18,7 +18,7 @@ case object GotoFirstExercise extends cmt.CmtcCommands
 case object ListSavedStates extends CmtcCommands
 case object SaveState extends CmtcCommands
 case object PreviousExercise extends CmtcCommands
-final case class PullTemplate(template: Option[String] = None) 
+final case class PullTemplate(template: Option[String] = None)
     extends CmtcCommands
 
 final case class CmtcOptions(

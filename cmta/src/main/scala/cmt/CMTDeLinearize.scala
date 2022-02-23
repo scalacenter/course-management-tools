@@ -1,6 +1,6 @@
 package cmt
 
-import sbt.io.{IO as sbtio}
+import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
 import Helpers.{

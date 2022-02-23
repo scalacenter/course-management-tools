@@ -37,7 +37,7 @@ val cmtaParser = {
   import builder.*
 
   OParser.sequence(
-    programName("cmt"),
+    programName("cmta"),
     renumCmdParser,
     duplicateInsertBeforeParser,
     studentifyCmdParser,

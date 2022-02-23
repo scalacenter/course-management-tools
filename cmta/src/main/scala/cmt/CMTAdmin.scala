@@ -3,19 +3,10 @@ package cmt
 import sbt.io.syntax.*
 import sbt.io.IO as sbtio
 
-import Helpers.{
-  ExercisePrefixesAndExerciseNames,
-  getExercisePrefixAndExercises,
-  validatePrefixes,
-  extractExerciseNr
-}
+import Helpers.{ExercisePrefixesAndExerciseNames, getExercisePrefixAndExercises, validatePrefixes, extractExerciseNr}
 object CMTAdmin:
-  def renumberExercises(
-      mainRepo: File,
-      renumStartAtOpt: Option[Int],
-      renumOffset: Int,
-      renumStep: Int
-  )(using config: CMTaConfig): Unit =
+  def renumberExercises(mainRepo: File, renumStartAtOpt: Option[Int], renumOffset: Int, renumStep: Int)(using
+      config: CMTaConfig): Unit =
 
     val ExercisePrefixesAndExerciseNames(prefixes, exercises) =
       getExercisePrefixAndExercises(mainRepo)
@@ -38,9 +29,7 @@ object CMTAdmin:
       printError(s"Renumber offset ($renumOffset) cannot be smaller than Renumber start number ($renumStartAt)")
 
     if renumOffset + (exercises.size - exerciseNumbers.indexOf(renumStartAt) - 1) * renumStep > 999 then
-      printError(
-        s"Cannot renumber exercises as it would exceed the available exercise number space"
-      )
+      printError(s"Cannot renumber exercises as it would exceed the available exercise number space")
 
     val moves =
       for {
@@ -48,11 +37,7 @@ object CMTAdmin:
         newNumber = renumOffset + index * renumStep
         oldExerciseFolder = mainRepo / config.mainRepoExerciseFolder / exercise
         newExerciseFolder =
-          mainRepo / config.mainRepoExerciseFolder / renumberExercise(
-            exercise,
-            exercisePrefix,
-            newNumber
-          )
+          mainRepo / config.mainRepoExerciseFolder / renumberExercise(exercise, exercisePrefix, newNumber)
         if oldExerciseFolder != newExerciseFolder
       } yield (oldExerciseFolder, newExerciseFolder)
     sbtio.move(moves)
@@ -61,17 +46,14 @@ object CMTAdmin:
       printMessage("Renumber: nothing to do...")
       System.exit(0)
 
-    println(toConsoleGreen(s"Renumbered exercises in ${mainRepo.getPath} starting at ${renumStartAt} to offset ${renumOffset.toString} with step size ${renumStep.toString}"))
+    println(toConsoleGreen(
+      s"Renumbered exercises in ${mainRepo.getPath} starting at ${renumStartAt} to offset ${renumOffset.toString} with step size ${renumStep.toString}"))
   end renumberExercises
 
   def duplicateInsertBefore(mainRepo: File, exerciseNumber: Int): Unit =
     ???
 
-  private def renumberExercise(
-      exercise: String,
-      exercisePrefix: String,
-      newNumber: Int
-  ): String =
+  private def renumberExercise(exercise: String, exercisePrefix: String, newNumber: Int): String =
     val newNumberPrefix = f"${exercisePrefix}_$newNumber%03d_"
     val oldNumberPrefix =
       f"${exercisePrefix}_${extractExerciseNr(exercise)}%03d_"

@@ -13,17 +13,12 @@ import Helpers.{
 import Helpers.{initializeGitRepo, commitToGit}
 
 object CMTLinearize:
-  def linearize(
-      mainRepo: File,
-      linBase: File,
-      forceDeleteExistingDestinationFolder: Boolean
-  )(using config: CMTaConfig): Unit =
+  def linearize(mainRepo: File, linBase: File, forceDeleteExistingDestinationFolder: Boolean)(using
+      config: CMTaConfig): Unit =
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)
 
-    println(
-      s"Linearizing ${toConsoleGreen(mainRepo.getPath)} to ${toConsoleGreen(linBase.getPath)}"
-    )
+    println(s"Linearizing ${toConsoleGreen(mainRepo.getPath)} to ${toConsoleGreen(linBase.getPath)}")
 
     val mainRepoName = mainRepo.getName
 
@@ -37,8 +32,7 @@ object CMTLinearize:
 
     val linearizedRootFolder = linBase / mainRepoName
 
-    if linearizedRootFolder.exists && forceDeleteExistingDestinationFolder then
-      sbtio.delete(linearizedRootFolder)
+    if linearizedRootFolder.exists && forceDeleteExistingDestinationFolder then sbtio.delete(linearizedRootFolder)
     sbtio.createDirectory(linearizedRootFolder)
 
     initializeGitRepo(linearizedRootFolder)
@@ -52,11 +46,7 @@ object CMTLinearize:
       println(s"Copying from $from to $linearizedCodeFolder")
       sbtio.delete(linearizedCodeFolder)
       sbtio.createDirectory(linearizedCodeFolder)
-      sbtio.copyDirectory(
-        from,
-        linearizedCodeFolder,
-        preserveLastModified = true
-      )
+      sbtio.copyDirectory(from, linearizedCodeFolder, preserveLastModified = true)
       commitToGit(exercise, linearizedRootFolder)
     }
 

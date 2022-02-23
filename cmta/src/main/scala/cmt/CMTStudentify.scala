@@ -22,16 +22,11 @@ object CMTStudentify:
       mainRepo: File,
       stuBase: File,
       forceDeleteExistingDestinationFolder: Boolean,
-      initializeAsGitRepo: Boolean
-  )(using
-      config: CMTaConfig
-  ): Unit =
+      initializeAsGitRepo: Boolean)(using config: CMTaConfig): Unit =
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)
 
-    println(
-      s"Studentifying ${toConsoleGreen(mainRepo.getPath)} to ${toConsoleGreen(stuBase.getPath)}"
-    )
+    println(s"Studentifying ${toConsoleGreen(mainRepo.getPath)} to ${toConsoleGreen(stuBase.getPath)}")
 
     val mainRepoName = mainRepo.getName
 
@@ -54,27 +49,16 @@ object CMTStudentify:
 
     hideExercises(cleanedMainRepo, solutionsFolder, exercises)
 
-    writeStudentifiedCMTConfig(
-      studentifiedRootFolder / config.cmtStudentifiedConfigFile,
-      exercises
-    )
-    writeStudentifiedCMTBookmark(
-      studentifiedRootFolder / ".bookmark",
-      exercises.head
-    )
+    writeStudentifiedCMTConfig(studentifiedRootFolder / config.cmtStudentifiedConfigFile, exercises)
+    writeStudentifiedCMTBookmark(studentifiedRootFolder / ".bookmark", exercises.head)
 
     if initializeAsGitRepo then
       val dotIgnoreFile = cleanedMainRepo / ".gitignore"
-      if dotIgnoreFile.exists then
-        sbtio.copyFile(dotIgnoreFile, studentifiedRootFolder / ".gitignore")
+      if dotIgnoreFile.exists then sbtio.copyFile(dotIgnoreFile, studentifiedRootFolder / ".gitignore")
       initializeGitRepo(studentifiedRootFolder)
       commitToGit("Initial commit", studentifiedRootFolder)
 
     sbtio.delete(tmpFolder)
 
-    println(
-      toConsoleGreen(
-        exercises.mkString("Processed exercises:\n  ", "\n  ", "\n")
-      )
-    )
+    println(toConsoleGreen(exercises.mkString("Processed exercises:\n  ", "\n  ", "\n")))
   end studentify

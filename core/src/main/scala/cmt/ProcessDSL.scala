@@ -42,10 +42,7 @@ object ProcessDSL:
     def toProcessCmd(workingDir: File): ProcessCmd =
       val SplitRegex = "([^\"]\\S*|\".+?\")\\s*".r
       val cmdArgs =
-        SplitRegex
-          .findAllMatchIn(command)
-          .map(_.toString.replaceAll(" $", "").replaceAll(""""""", ""))
-          .toVector
+        SplitRegex.findAllMatchIn(command).map(_.toString.replaceAll(" $", "").replaceAll(""""""", "")).toVector
       ProcessCmd(cmdArgs, workingDir)
 
   def copyCleanViaGit(mainRepo: File, tmpDir: File, repoName: String): File =
@@ -54,34 +51,18 @@ object ProcessDSL:
     val initBranch = UUID.randomUUID.toString
     val tmpRemoteBranch = s"CMT-${UUID.randomUUID.toString}"
     val script = List(
-      (
-        s"${tmpDir.getPath}",
-        List(
-          s"mkdir ${repoName}.git",
-          s"git init --bare ${repoName}.git"
-        )
-      ),
+      (s"${tmpDir.getPath}", List(s"mkdir ${repoName}.git", s"git init --bare ${repoName}.git")),
       (
         s"${mainRepo.getPath}",
         List(
           s"git remote add ${tmpRemoteBranch} ${tmpDir.getPath}/${repoName}.git",
-          s"git push ${tmpRemoteBranch} HEAD:refs/heads/${initBranch}"
-        )
-      ),
+          s"git push ${tmpRemoteBranch} HEAD:refs/heads/${initBranch}")),
       (
         s"${tmpDir.getPath}",
         List(
           s"git clone -b ${initBranch} ${tmpDir.getPath}/${repoName}.git",
-          s"rm -rf ${tmpDir.getPath}/${repoName}.git"
-        )
-      ),
-      (
-        s"${mainRepo.getPath}",
-        List(
-          s"git remote remove ${tmpRemoteBranch}"
-        )
-      )
-    )
+          s"rm -rf ${tmpDir.getPath}/${repoName}.git")),
+      (s"${mainRepo.getPath}", List(s"git remote remove ${tmpRemoteBranch}")))
     val commands = for {
       (workingDir, commands) <- script
       command <- commands

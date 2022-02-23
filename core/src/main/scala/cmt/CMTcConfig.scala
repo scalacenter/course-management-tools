@@ -12,8 +12,7 @@ class CMTcConfig(studentifiedRepo: File):
   val bookmarkFile: File = studentifiedRepo / ".bookmark"
 
   private val cmtConfigFile = studentifiedRepo / ".cmt-config"
-  if !cmtConfigFile.exists then
-    printErrorAndExit(studentifiedRepo, "missing CMT configuration file")
+  if !cmtConfigFile.exists then printErrorAndExit(studentifiedRepo, "missing CMT configuration file")
 
   val cmtSettings: Config = ConfigFactory.parseFile(cmtConfigFile)
 
@@ -30,9 +29,7 @@ class CMTcConfig(studentifiedRepo: File):
   val activeExerciseFolder: File =
     studentifiedRepo / cmtSettings.getString("active-exercise-folder")
 
-  val solutionsFolder: File = studentifiedRepo / cmtSettings.getString(
-    "studentified-repo-solutions-folder"
-  )
+  val solutionsFolder: File = studentifiedRepo / cmtSettings.getString("studentified-repo-solutions-folder")
   val studentifiedSavedStatesFolder: File =
     solutionsFolder / cmtSettings.getString("studentified-saved-states-folder")
 

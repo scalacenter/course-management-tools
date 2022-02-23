@@ -21,30 +21,20 @@ class CMTaConfig(mainRepo: File, configFileOpt: Option[File]):
     else configFileOpt.map(cfg => new File(mainRepo, cfg.getPath))
 
   private val configFile: Option[File] =
-    (
-      configFileOpt.isFile,
-      configFileRelativeToMainRepo.isFile,
-      defaultLocalConfigFileName.isFile
-    ) match
+    (configFileOpt.isFile, configFileRelativeToMainRepo.isFile, defaultLocalConfigFileName.isFile) match
       case (true, _, _) => configFileOpt
       case (_, true, _) => configFileRelativeToMainRepo
       case (_, _, true) => Some(defaultLocalConfigFileName)
       case (false, false, false) =>
         if configFileOpt.isDefined then
-          System.err.println(
-            printError(
-              s"Configuration: no such file: ${configFileOpt.getOrElse("")}"
-            )
-          )
+          System.err.println(printError(s"Configuration: no such file: ${configFileOpt.getOrElse("")}"))
           System.exit(1)
           ???
         else None
 
   private val config =
     if (configFile.isDefined)
-      ConfigFactory
-        .parseFile(configFile.get)
-        .withFallback(referenceConfig)
+      ConfigFactory.parseFile(configFile.get).withFallback(referenceConfig)
     else
       referenceConfig
 

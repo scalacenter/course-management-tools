@@ -8,11 +8,8 @@ object Helpers:
 
   def fileList(base: File): Vector[File] =
     @scala.annotation.tailrec
-    def fileList(
-        filesSoFar: Vector[File],
-        folders: Vector[File]
-    ): Vector[File] =
-      val subs = (folders foldLeft Vector.empty[File]) { case (tally, folder) =>
+    def fileList(filesSoFar: Vector[File], folders: Vector[File]): Vector[File] =
+      val subs = (folders.foldLeft(Vector.empty[File])) { case (tally, folder) =>
         tally ++ sbtio.listFiles(folder)
       }
       subs.partition(_.isDirectory) match
@@ -36,9 +33,7 @@ object Helpers:
 
   private def getRepoPathFromGit(repo: File): Either[String, String] = {
     import ProcessDSL.*
-    "git rev-parse --show-toplevel"
-      .toProcessCmd(workingDir = repo)
-      .runAndReadOutput()
+    "git rev-parse --show-toplevel".toProcessCmd(workingDir = repo).runAndReadOutput()
   }
 
   def exitIfGitIndexOrWorkspaceIsntClean(mainRepo: File): Unit =
@@ -56,10 +51,7 @@ object Helpers:
       case Left(_)  =>
     }
 
-  def createStudentifiedFolderSkeleton(
-      stuBase: File,
-      studentifiedRootFolder: File
-  )(using config: CMTaConfig) =
+  def createStudentifiedFolderSkeleton(stuBase: File, studentifiedRootFolder: File)(using config: CMTaConfig) =
     if studentifiedRootFolder.exists then
       System.err.println(printError(s"$studentifiedRootFolder exists already"))
       System.exit(1)
@@ -70,35 +62,21 @@ object Helpers:
     val solutionsFolder =
       studentifiedRootFolder / config.studentifiedRepoSolutionsFolder
 
-    sbtio.createDirectories(
-      Seq(studentifiedRootFolder, solutionsFolder)
-    )
+    sbtio.createDirectories(Seq(studentifiedRootFolder, solutionsFolder))
     StudentifiedSkelFolders(solutionsFolder)
 
-  def addFirstExercise(
-      cleanedMainRepo: File,
-      firstExercise: String,
-      studentifiedRootFolder: File
-  )(using config: CMTaConfig) =
+  def addFirstExercise(cleanedMainRepo: File, firstExercise: String, studentifiedRootFolder: File)(using
+      config: CMTaConfig) =
     sbtio.copyDirectory(
       cleanedMainRepo / config.mainRepoExerciseFolder / firstExercise,
-      studentifiedRootFolder / config.studentifiedRepoActiveExerciseFolder
-    )
+      studentifiedRootFolder / config.studentifiedRepoActiveExerciseFolder)
 
-  final case class ExercisePrefixesAndExerciseNames(
-      prefixes: Set[String],
-      exercises: Vector[String]
-  )
+  final case class ExercisePrefixesAndExerciseNames(prefixes: Set[String], exercises: Vector[String])
 
-  def getExercisePrefixAndExercises(mainRepo: File)(using
-      config: CMTaConfig
-  ): ExercisePrefixesAndExerciseNames =
+  def getExercisePrefixAndExercises(mainRepo: File)(using config: CMTaConfig): ExercisePrefixesAndExerciseNames =
     val PrefixSpec = raw"(.*)_\d{3}_\w+$$".r
     val matchedNames =
-      sbtio
-        .listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder)
-        .map(_.getName)
-        .to(List)
+      sbtio.listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder).map(_.getName).to(List)
     val prefixes = matchedNames.map { case PrefixSpec(n) => n }.to(Set)
     val exercises = sbtio
       .listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder)
@@ -106,46 +84,28 @@ object Helpers:
       .to(Vector)
       .sorted match
       case Vector() =>
-        System.err.println(
-          printError("No exercises found. Check your configuration")
-        ); ???
+        System.err.println(printError("No exercises found. Check your configuration")); ???
       case exercises => exercises
     ExercisePrefixesAndExerciseNames(prefixes, exercises)
   end getExercisePrefixAndExercises
 
   def validatePrefixes(prefixes: Set[String]): Unit =
-    if prefixes.size > 1 then
-      printError(
-        s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found"
-      )
+    if prefixes.size > 1 then printError(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")
 
-  def zipAndDeleteOriginal(
-      baseFolder: File,
-      zipToFolder: File,
-      exercise: String,
-      time: Option[Long] = None
-  ): Unit =
-    val filesToZip = fileList(baseFolder / exercise)
-      .map(f => (f, sbtio.relativize(baseFolder, f)))
-      .collect { case (f, Some(s)) => (f, s) }
+  def zipAndDeleteOriginal(baseFolder: File, zipToFolder: File, exercise: String, time: Option[Long] = None): Unit =
+    val filesToZip = fileList(baseFolder / exercise).map(f => (f, sbtio.relativize(baseFolder, f))).collect {
+      case (f, Some(s)) => (f, s)
+    }
     val zipFile = zipToFolder / s"${exercise}.zip"
     sbtio.zip(filesToZip, zipFile, time)
     sbtio.delete(baseFolder / exercise)
   end zipAndDeleteOriginal
 
-  def hideExercises(
-      cleanedMainRepo: File,
-      solutionsFolder: File,
-      exercises: Vector[String]
-  )(using config: CMTaConfig): Unit =
+  def hideExercises(cleanedMainRepo: File, solutionsFolder: File, exercises: Vector[String])(using
+      config: CMTaConfig): Unit =
     val now: Option[Long] = Some(java.time.Instant.now().toEpochMilli())
     for (exercise <- exercises)
-      zipAndDeleteOriginal(
-        cleanedMainRepo / config.mainRepoExerciseFolder,
-        solutionsFolder,
-        exercise,
-        now
-      )
+      zipAndDeleteOriginal(cleanedMainRepo / config.mainRepoExerciseFolder, solutionsFolder, exercise, now)
   end hideExercises
 
   def dumpStringToFile(string: String, file: File): Unit =
@@ -153,38 +113,22 @@ object Helpers:
     import java.nio.file.Files
     Files.write(file.toPath, string.getBytes(StandardCharsets.UTF_8))
 
-  def writeStudentifiedCMTConfig(configFile: File, exercises: Seq[String])(using
-      config: CMTaConfig
-  ): Unit =
+  def writeStudentifiedCMTConfig(configFile: File, exercises: Seq[String])(using config: CMTaConfig): Unit =
     val cmtConfig =
       s"""studentified-repo-solutions-folder=${config.studentifiedRepoSolutionsFolder}
          |studentified-saved-states-folder=${config.studentifiedSavedStatesFolder}
          |active-exercise-folder=${config.studentifiedRepoActiveExerciseFolder}
-         |test-code-folders=${config.testCodeFolders.mkString(
-          "[\n   ",
-          ",\n   ",
-          "\n]"
-        )}
-         |read-me-files=${config.readMeFiles.mkString(
-          "[\n   ",
-          ",\n   ",
-          "\n]"
-        )}
+         |test-code-folders=${config.testCodeFolders.mkString("[\n   ", ",\n   ", "\n]")}
+         |read-me-files=${config.readMeFiles.mkString("[\n   ", ",\n   ", "\n]")}
          |exercises=${exercises.mkString("[\n   ", ",\n   ", "\n]")}
-         |cmt-studentified-dont-touch=${config.cmtStudentifiedDontTouch
-          .mkString("[\n   ", ",\n   ", "\n]")}
+         |cmt-studentified-dont-touch=${config.cmtStudentifiedDontTouch.mkString("[\n   ", ",\n   ", "\n]")}
        """.stripMargin
     dumpStringToFile(cmtConfig, configFile)
 
-  def writeStudentifiedCMTBookmark(
-      bookmarkFile: File,
-      firstExercise: String
-  ): Unit =
+  def writeStudentifiedCMTBookmark(bookmarkFile: File, firstExercise: String): Unit =
     dumpStringToFile(firstExercise, bookmarkFile)
 
-  def withZipFile(solutionsFolder: File, exerciseID: String)(
-      code: File => Any
-  ): Unit =
+  def withZipFile(solutionsFolder: File, exerciseID: String)(code: File => Any): Unit =
     val archive = solutionsFolder / s"$exerciseID.zip"
     sbtio.unzip(archive, solutionsFolder)
     code(solutionsFolder / exerciseID)
@@ -196,10 +140,7 @@ object Helpers:
     s"git init"
       .toProcessCmd(workingDir = linearizedProject)
       .runAndExitIfFailed(
-        toConsoleRed(
-          s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"
-        )
-      )
+        toConsoleRed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"))
   end initializeGitRepo
 
   def commitToGit(commitMessage: String, projectFolder: File): Unit =
@@ -209,9 +150,7 @@ object Helpers:
       .runAndExitIfFailed(toConsoleRed(s"Failed to add first exercise files"))
     s"""git commit -m "$commitMessage""""
       .toProcessCmd(workingDir = projectFolder)
-      .runAndExitIfFailed(
-        toConsoleRed(s"Failed to commit files for $commitMessage")
-      )
+      .runAndExitIfFailed(toConsoleRed(s"Failed to commit files for $commitMessage"))
   end commitToGit
 
   private val ExerciseNumberSpec = raw".*_(\d{3})_.*".r

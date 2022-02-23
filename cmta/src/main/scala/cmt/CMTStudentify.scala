@@ -15,11 +15,14 @@ import Helpers.{
   writeStudentifiedCMTConfig
 }
 
+import Helpers.{initializeGitRepo, commitToGit}
+
 object CMTStudentify:
   def studentify(
       mainRepo: File,
       stuBase: File,
-      forceDeleteExistingDestinationFolder: Boolean
+      forceDeleteExistingDestinationFolder: Boolean,
+      initializeAsGitRepo: Boolean
   )(using
       config: CMTaConfig
   ): Unit =
@@ -51,8 +54,6 @@ object CMTStudentify:
 
     hideExercises(cleanedMainRepo, solutionsFolder, exercises)
 
-    sbtio.delete(tmpFolder)
-
     writeStudentifiedCMTConfig(
       studentifiedRootFolder / config.cmtStudentifiedConfigFile,
       exercises
@@ -61,6 +62,15 @@ object CMTStudentify:
       studentifiedRootFolder / ".bookmark",
       exercises.head
     )
+
+    if initializeAsGitRepo then
+      val dotIgnoreFile = cleanedMainRepo / ".gitignore"
+      if dotIgnoreFile.exists then
+        sbtio.copyFile(dotIgnoreFile, studentifiedRootFolder / ".gitignore")
+      initializeGitRepo(studentifiedRootFolder)
+      commitToGit("Initial commit", studentifiedRootFolder)
+
+    sbtio.delete(tmpFolder)
 
     println(
       toConsoleGreen(

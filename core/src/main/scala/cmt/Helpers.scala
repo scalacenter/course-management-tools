@@ -42,7 +42,7 @@ object Helpers:
   }
 
   def exitIfGitIndexOrWorkspaceIsntClean(mainRepo: File): Unit =
-    import ProcessDSL.*
+    import ProcessDSL.toProcessCmd
     val workspaceIsUnclean = "git status --porcelain"
       .toProcessCmd(workingDir = mainRepo)
       .runAndReadOutput()
@@ -190,3 +190,26 @@ object Helpers:
     code(solutionsFolder / exerciseID)
     sbtio.delete(solutionsFolder / exerciseID)
   end withZipFile
+
+  def initializeGitRepo(linearizedProject: File): Unit =
+    import ProcessDSL.toProcessCmd
+    s"git init"
+      .toProcessCmd(workingDir = linearizedProject)
+      .runAndExitIfFailed(
+        toConsoleRed(
+          s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"
+        )
+      )
+  end initializeGitRepo
+
+  def commitToGit(commitMessage: String, projectFolder: File): Unit =
+    import ProcessDSL.toProcessCmd
+    s"git add -A"
+      .toProcessCmd(workingDir = projectFolder)
+      .runAndExitIfFailed(toConsoleRed(s"Failed to add first exercise files"))
+    s"""git commit -m "$commitMessage""""
+      .toProcessCmd(workingDir = projectFolder)
+      .runAndExitIfFailed(
+        toConsoleRed(s"Failed to commit files for $commitMessage")
+      )
+  end commitToGit

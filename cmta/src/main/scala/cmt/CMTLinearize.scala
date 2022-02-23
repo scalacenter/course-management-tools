@@ -9,7 +9,8 @@ import Helpers.{
   validatePrefixes,
   exitIfGitIndexOrWorkspaceIsntClean
 }
-import ProcessDSL.toProcessCmd
+
+import Helpers.{initializeGitRepo, commitToGit}
 
 object CMTLinearize:
   def linearize(
@@ -56,29 +57,8 @@ object CMTLinearize:
         linearizedCodeFolder,
         preserveLastModified = true
       )
-      commitExercise(exercise, linearizedRootFolder)
+      commitToGit(exercise, linearizedRootFolder)
     }
 
     sbtio.delete(tmpFolder)
   end linearize
-
-  private def initializeGitRepo(linearizedProject: File): Unit =
-    s"git init"
-      .toProcessCmd(workingDir = linearizedProject)
-      .runAndExitIfFailed(
-        toConsoleRed(
-          s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"
-        )
-      )
-  end initializeGitRepo
-
-  private def commitExercise(exercise: String, linearizedProject: File): Unit =
-    s"git add -A"
-      .toProcessCmd(workingDir = linearizedProject)
-      .runAndExitIfFailed(toConsoleRed(s"Failed to add first exercise files"))
-    s"git commit -m $exercise"
-      .toProcessCmd(workingDir = linearizedProject)
-      .runAndExitIfFailed(
-        toConsoleRed(s"Failed to add exercise files for exercise $exercise")
-      )
-  end commitExercise

@@ -11,7 +11,8 @@ final case class RenumberExercises(renumOffset: Int = 1, renumStep: Int = 1)
     extends CmtaCommands
 final case class Studentify(
     studentifyBaseFolder: Option[File] = None,
-    forceDeleteExistingDestinationFolder: Boolean = false
+    forceDeleteExistingDestinationFolder: Boolean = false,
+    initializeAsGitRepo: Boolean = false
 ) extends CmtaCommands
 final case class Linearize(
     linearizeBaseFolder: Option[File] = None,
@@ -180,7 +181,19 @@ private def studentifyCmdParser(using
             c.copy(command =
               Studentify(forceDeleteExistingDestinationFolder = true)
             )
+        },
+      opt[Unit]("init-git")
+        .text("Initialize studentified repo as a git repo")
+        .abbr("g")
+        .action {
+          case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
+            c.copy(command =
+              x.copy(initializeAsGitRepo = true)
+            )
+          case (_, c) =>
+            c.copy(command = Studentify(initializeAsGitRepo = true))
         }
+
     )
 
 private def renumCmdParser(using

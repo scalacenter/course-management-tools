@@ -17,14 +17,16 @@ object Main:
             mainRepo,
             Studentify(
               Some(stuBase),
-              forceDeleteExistingDestinationFolder: Boolean
+              forceDeleteExistingDestinationFolder: Boolean,
+              initializeAsGitRepo: Boolean,
             ),
             _
           ) =>
         CMTStudentify.studentify(
           mainRepo,
           stuBase,
-          forceDeleteExistingDestinationFolder
+          forceDeleteExistingDestinationFolder,
+          initializeAsGitRepo
         )
 
       case CmtaOptions(

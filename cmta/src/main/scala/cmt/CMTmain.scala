@@ -1,16 +1,17 @@
 package cmt
 
 object Main:
+
   def main(args: Array[String]): Unit =
-    val cmdLineArgs: CmtaOptions =
-      CmdLineParse.cmtaParse(args).getOrElse {
-        System.exit(1)
-        ???
-      }
+    CmdLineParse.parse(args) match {
+      case Right(options) => selectAndExecuteCommand(options)
+      case Left(_)        => System.exit(1)
+    }
 
-    given CMTaConfig = CMTaConfig(cmdLineArgs.mainRepo, cmdLineArgs.configFile)
+  private def selectAndExecuteCommand(options: CmtaOptions): Unit = {
+    given CMTaConfig = CMTaConfig(options.mainRepo, options.configFile)
 
-    cmdLineArgs match {
+    options match {
       case CmtaOptions(
             mainRepo,
             Studentify(Some(stuBase), forceDeleteExistingDestinationFolder: Boolean, initializeAsGitRepo: Boolean),
@@ -31,3 +32,4 @@ object Main:
 
       case _ =>
     }
+  }

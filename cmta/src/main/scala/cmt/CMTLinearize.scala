@@ -13,7 +13,7 @@ import Helpers.{
 import Helpers.{initializeGitRepo, commitToGit}
 
 object CMTLinearize:
-  def linearize(mainRepo: File, linBase: File, forceDeleteExistingDestinationFolder: Boolean)(using
+  def linearize(mainRepo: File, linBase: File, forceDeleteExistingDestinationFolder: Boolean)(
       config: CMTaConfig): Unit =
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)
@@ -27,7 +27,7 @@ object CMTLinearize:
       ProcessDSL.copyCleanViaGit(mainRepo, tmpFolder, mainRepoName)
 
     val ExercisePrefixesAndExerciseNames(prefixes, exercises) =
-      getExercisePrefixAndExercises(mainRepo)
+      getExercisePrefixAndExercises(mainRepo)(config)
     validatePrefixes(prefixes)
 
     val linearizedRootFolder = linBase / mainRepoName

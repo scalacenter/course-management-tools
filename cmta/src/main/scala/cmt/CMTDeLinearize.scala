@@ -14,7 +14,7 @@ import ProcessDSL.toProcessCmd
 case class ExerciseNameAndSHA(exName: String, exSHA: String)
 
 object CMTDeLinearize:
-  def delinearize(mainRepo: File, linBase: File)(using config: CMTaConfig): Unit =
+  def delinearize(mainRepo: File, linBase: File)(config: CMTaConfig): Unit =
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)
 
@@ -23,7 +23,7 @@ object CMTDeLinearize:
     val mainRepoName = mainRepo.getName
 
     val ExercisePrefixesAndExerciseNames(prefixes, exercisesInMain) =
-      getExercisePrefixAndExercises(mainRepo)
+      getExercisePrefixAndExercises(mainRepo)(config)
     validatePrefixes(prefixes)
 
     val linearizedRootFolder = linBase / mainRepoName

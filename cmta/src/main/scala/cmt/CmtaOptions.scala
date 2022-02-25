@@ -75,7 +75,7 @@ private def duplicateInsertBeforeParser(using builder: OParserBuilder[CmtaOption
     }
     .children(
       mainRepoArgument,
-      opt[Int]("exercise-number").required().text("exercise number to duplicate").abbr("-n").action {
+      opt[Int]("exercise-number").required().text("exercise number to duplicate").abbr("n").action {
         case (n, c @ CmtaOptions(mainRepo, x: DuplicateInsertBefore, _)) =>
           c.copy(command = x.copy(exerciseNumber = n))
         case (n, c) =>
@@ -185,8 +185,8 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
     .children(
       mainRepoArgument,
       opt[Int]("start-renumber-at")
-        .text("Number of exercise to start renumbering")
-        .abbr("s")
+        .text("Start renumbering from exercise number #")
+        .abbr("from")
         .validate(startAt =>
           if startAt >= 0 then success
           else failure(s"renumber start exercise number should be >= 0"))
@@ -196,9 +196,9 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
           case (startAt, c) =>
             c.copy(command = RenumberExercises(startRenumAt = Some(startAt)))
         },
-      opt[Int]("offset")
+      opt[Int]("to")
         .text("Renumber start offset (default=1)")
-        .abbr("o")
+        .abbr("to")
         .validate(offset =>
           if offset >= 0 then success
           else failure(s"renumber offset should be >= 0"))
@@ -210,7 +210,7 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
         },
       opt[Int]("step")
         .text("Renumber step size (default=1)")
-        .abbr("s")
+        .abbr("step")
         .validate(step =>
           if step >= 1 then success
           else failure(s"renumber step size should be >= 1"))

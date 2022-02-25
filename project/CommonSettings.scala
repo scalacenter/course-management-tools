@@ -2,9 +2,7 @@ import sbt._
 import sbt.Keys._
 
 object CompileOptions {
-  val compileOptions = Seq(
-    "-source:future"
-  )
+  val compileOptions = Seq("-source:future")
 }
 
 object CommonSettings {
@@ -16,6 +14,5 @@ object CommonSettings {
     Test / parallelExecution := false,
     Test / logBuffered := false,
     // ThisBuild / parallelExecution := false,
-    libraryDependencies ++= Dependencies.cmtDependencies
-  )
+    libraryDependencies ++= Dependencies.cmtDependencies)
 }

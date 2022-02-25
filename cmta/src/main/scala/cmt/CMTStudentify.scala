@@ -22,7 +22,7 @@ object CMTStudentify:
       mainRepo: File,
       stuBase: File,
       forceDeleteExistingDestinationFolder: Boolean,
-      initializeAsGitRepo: Boolean)(using config: CMTaConfig): Unit =
+      initializeAsGitRepo: Boolean)(config: CMTaConfig): Unit =
 
     exitIfGitIndexOrWorkspaceIsntClean(mainRepo)
 
@@ -35,7 +35,7 @@ object CMTStudentify:
       ProcessDSL.copyCleanViaGit(mainRepo, tmpFolder, mainRepoName)
 
     val ExercisePrefixesAndExerciseNames(prefixes, exercises) =
-      getExercisePrefixAndExercises(mainRepo)
+      getExercisePrefixAndExercises(mainRepo)(config)
     validatePrefixes(prefixes)
     val studentifiedRootFolder = stuBase / mainRepoName
 
@@ -43,13 +43,13 @@ object CMTStudentify:
     then sbtio.delete(studentifiedRootFolder)
 
     val StudentifiedSkelFolders(solutionsFolder) =
-      createStudentifiedFolderSkeleton(stuBase, studentifiedRootFolder)
+      createStudentifiedFolderSkeleton(stuBase, studentifiedRootFolder)(config)
 
-    addFirstExercise(cleanedMainRepo, exercises.head, studentifiedRootFolder)
+    addFirstExercise(cleanedMainRepo, exercises.head, studentifiedRootFolder)(config)
 
-    hideExercises(cleanedMainRepo, solutionsFolder, exercises)
+    hideExercises(cleanedMainRepo, solutionsFolder, exercises)(config)
 
-    writeStudentifiedCMTConfig(studentifiedRootFolder / config.cmtStudentifiedConfigFile, exercises)
+    writeStudentifiedCMTConfig(studentifiedRootFolder / config.cmtStudentifiedConfigFile, exercises)(config)
     writeStudentifiedCMTBookmark(studentifiedRootFolder / ".bookmark", exercises.head)
 
     if initializeAsGitRepo then

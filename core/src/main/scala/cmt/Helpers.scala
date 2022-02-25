@@ -51,7 +51,7 @@ object Helpers:
       case Left(_)  =>
     }
 
-  def createStudentifiedFolderSkeleton(stuBase: File, studentifiedRootFolder: File)(using config: CMTaConfig) =
+  def createStudentifiedFolderSkeleton(stuBase: File, studentifiedRootFolder: File)(config: CMTaConfig) =
     if studentifiedRootFolder.exists then
       System.err.println(printError(s"$studentifiedRootFolder exists already"))
       System.exit(1)
@@ -65,15 +65,14 @@ object Helpers:
     sbtio.createDirectories(Seq(studentifiedRootFolder, solutionsFolder))
     StudentifiedSkelFolders(solutionsFolder)
 
-  def addFirstExercise(cleanedMainRepo: File, firstExercise: String, studentifiedRootFolder: File)(using
-      config: CMTaConfig) =
+  def addFirstExercise(cleanedMainRepo: File, firstExercise: String, studentifiedRootFolder: File)(config: CMTaConfig) =
     sbtio.copyDirectory(
       cleanedMainRepo / config.mainRepoExerciseFolder / firstExercise,
       studentifiedRootFolder / config.studentifiedRepoActiveExerciseFolder)
 
   final case class ExercisePrefixesAndExerciseNames(prefixes: Set[String], exercises: Vector[String])
 
-  def getExercisePrefixAndExercises(mainRepo: File)(using config: CMTaConfig): ExercisePrefixesAndExerciseNames =
+  def getExercisePrefixAndExercises(mainRepo: File)(config: CMTaConfig): ExercisePrefixesAndExerciseNames =
     val PrefixSpec = raw"(.*)_\d{3}_\w+$$".r
     val matchedNames =
       sbtio.listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder).map(_.getName).to(List)
@@ -101,8 +100,7 @@ object Helpers:
     sbtio.delete(baseFolder / exercise)
   end zipAndDeleteOriginal
 
-  def hideExercises(cleanedMainRepo: File, solutionsFolder: File, exercises: Vector[String])(using
-      config: CMTaConfig): Unit =
+  def hideExercises(cleanedMainRepo: File, solutionsFolder: File, exercises: Vector[String])(config: CMTaConfig): Unit =
     val now: Option[Long] = Some(java.time.Instant.now().toEpochMilli())
     for (exercise <- exercises)
       zipAndDeleteOriginal(cleanedMainRepo / config.mainRepoExerciseFolder, solutionsFolder, exercise, now)
@@ -113,7 +111,7 @@ object Helpers:
     import java.nio.file.Files
     Files.write(file.toPath, string.getBytes(StandardCharsets.UTF_8))
 
-  def writeStudentifiedCMTConfig(configFile: File, exercises: Seq[String])(using config: CMTaConfig): Unit =
+  def writeStudentifiedCMTConfig(configFile: File, exercises: Seq[String])(config: CMTaConfig): Unit =
     val cmtConfig =
       s"""studentified-repo-solutions-folder=${config.studentifiedRepoSolutionsFolder}
          |studentified-saved-states-folder=${config.studentifiedSavedStatesFolder}

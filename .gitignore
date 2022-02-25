@@ -13,7 +13,7 @@ target/
 .metals/
 .swp
 .bsp
-project/metals.sbt
+**/metals.sbt
 
 # Eclipse
 .cache

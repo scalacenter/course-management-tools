@@ -19,11 +19,6 @@ object Dependencies {
 
   import Library._
 
-  val cmtDependencies = List(
-    scopt,
-    sbtio,
-    typesafeConfig,
-    scalaTest % "test"
-  )
+  val cmtDependencies = List(scopt, sbtio, typesafeConfig, scalaTest % "test")
 
 }

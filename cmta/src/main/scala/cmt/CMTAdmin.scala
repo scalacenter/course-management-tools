@@ -30,7 +30,7 @@ object CMTAdmin:
       val (_, exercisesAfterSplit) = exercises.splitAt(splitIndex)
 
       (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) match
-        case (Vector(), Vector(renumOffset, _)) =>
+        case (Vector(), Vector(`renumOffset`, _)) =>
           Left("Renumber: nothing to renumber")
         case (before, _) if rangeOverlapsWithOtherExercises(before, renumOffset) =>
             Left("Moved exercise range overlaps with other exercises")

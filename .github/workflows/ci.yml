@@ -2,6 +2,7 @@ name: CI
 on:
   push:
     branches: [ main ]
+    tags: ['*']
 
   pull_request:
 
@@ -95,18 +96,12 @@ jobs:
 
       - name: Publish Local
         run: (cd CMT && exec sbt publishLocal)
-
-      - name: Setup Coursier
-        run: |
-          curl -fLo coursier https://git.io/coursier-cli &&
-          chmod +x coursier &&
-          ./coursier
           
       - name: Package Binaries
         run: |
           mkdir -p course-management-tools/bin
-          ./coursier bootstrap com.github.eloots:cmta_3:latest.release -o course-management-tools/bin/cmta --standalone
-          ./coursier bootstrap com.github.eloots:cmtc_3:latest.release -o course-management-tools/bin/cmtc --standalone
+          ./coursier bootstrap com.github.eloots:cmta_3:2.0.0-SNAPSHOT -o course-management-tools/bin/cmta --standalone
+          ./coursier bootstrap com.github.eloots:cmtc_3:2.0.0-SNAPSHOT -o course-management-tools/bin/cmtc --standalone
           zip -r course-management-tools.zip course-management-tools
 
       - name: Create Github Release

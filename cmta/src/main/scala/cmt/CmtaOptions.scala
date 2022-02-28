@@ -2,8 +2,9 @@ package cmt
 
 import scopt.OParser
 import scopt.OParserBuilder
-
 import sbt.io.syntax.*
+
+import scala.reflect.{ClassTag, classTag}
 
 sealed trait CmtaCommands
 case object Missing extends CmtaCommands
@@ -156,24 +157,27 @@ private def studentifyCmdParser(using builder: OParserBuilder[CmtaOptions]): OPa
             case (_, false) =>
               failure(s"${baseFolder.getPath} is not a directory")
         }
-        .action {
-          case (studRepo, c @ CmtaOptions(_, x: Studentify, _)) =>
-            c.copy(command = x.copy(studentifyBaseFolder = Some(studRepo)))
-          case (studRepo, c) =>
-            c.copy(command = Studentify(studentifyBaseFolder = Some(studRepo)))
+        .throwOrAction { case (studRepo, c @ CmtaOptions(_, x: Studentify, _)) =>
+          c.copy(command = x.copy(studentifyBaseFolder = Some(studRepo)))
         },
-      opt[Unit]("force-delete").text("Force-delete a pre-existing destination folder").abbr("f").action {
-        case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
-          c.copy(command = x.copy(forceDeleteExistingDestinationFolder = true))
-        case (_, c) =>
-          c.copy(command = Studentify(forceDeleteExistingDestinationFolder = true))
-      },
-      opt[Unit]("init-git").text("Initialize studentified repo as a git repo").abbr("g").action {
-        case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
-          c.copy(command = x.copy(initializeAsGitRepo = true))
-        case (_, c) =>
-          c.copy(command = Studentify(initializeAsGitRepo = true))
-      })
+      opt[Unit]("force-delete").text("Force-delete a pre-existing destination folder").abbr("f")
+        .throwOrAction {
+          case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
+            c.copy(command = x.copy(forceDeleteExistingDestinationFolder = true))
+        },
+      opt[Unit]("init-git").text("Initialize studentified repo as a git repo").abbr("g")
+        .throwOrAction {
+          case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
+            c.copy(command = x.copy(initializeAsGitRepo = true))
+        })
+
+extension [T](parser: OParser[T, CmtaOptions])
+  def throwOrAction(pf: PartialFunction[(T, CmtaOptions), CmtaOptions]): OParser[T, CmtaOptions] = {
+    parser.action((argOpt, options) =>
+      pf.lift((argOpt, options))
+        .getOrElse(throw new IllegalStateException(
+          s"Received an unexpected command type '${options.command.getClass.getName}'")))
+  }
 
 private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
   import builder.*

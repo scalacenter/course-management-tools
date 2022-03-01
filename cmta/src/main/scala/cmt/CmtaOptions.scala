@@ -52,13 +52,15 @@ private def mainRepoArgument(using builder: OParserBuilder[CmtaOptions]): OParse
       else success
     }
     .validate { f =>
-      Helpers.resolveMainRepoPath(f) match {
+      Helpers.resolveMainRepoPath(f) match
         case Right(path) => success
         case Left(msg)   => failure(s"$f is not a git repository")
-      }
     }
     .action { (mainRepo, c) =>
-      c.copy(mainRepo = mainRepo)
+      val resolvedGitRoot: Option[CmtaOptions] = Helpers.resolveMainRepoPath(mainRepo).toOption.map { mainRepoRoot =>
+        c.copy(mainRepo = mainRepoRoot)
+      }
+      resolvedGitRoot.getOrElse(c.copy(mainRepo = mainRepo))
     }
 
 private def configFileParser(using builder: OParserBuilder[CmtaOptions]): OParser[File, CmtaOptions] =

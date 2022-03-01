@@ -70,7 +70,7 @@ class CommandLineParseTest extends AnyWordSpecLike with Matchers with BeforeAndA
 
         val result = assertRight(resultOr)
         val expectedResult = CmtaOptions(
-          file(mainRepositoryPath),
+          Helpers.resolveMainRepoPath(file(mainRepositoryPath)).toOption.get,
           Studentify(
             Some(file(studentifiedDirectoryPath)),
             forceDeleteExistingDestinationFolder = false,

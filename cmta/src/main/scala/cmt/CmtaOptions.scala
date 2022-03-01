@@ -4,8 +4,6 @@ import scopt.OParser
 import scopt.OParserBuilder
 import sbt.io.syntax.*
 
-import scala.reflect.{ClassTag, classTag}
-
 sealed trait CmtaCommands
 case object Missing extends CmtaCommands
 final case class RenumberExercises(startRenumAt: Option[Int] = None, renumOffset: Int = 1, renumStep: Int = 1)
@@ -78,11 +76,9 @@ private def duplicateInsertBeforeParser(using builder: OParserBuilder[CmtaOption
     }
     .children(
       mainRepoArgument,
-      opt[Int]("exercise-number").required().text("exercise number to duplicate").abbr("n").action {
+      opt[Int]("exercise-number").required().text("exercise number to duplicate").abbr("n").throwOrAction {
         case (n, c @ CmtaOptions(mainRepo, x: DuplicateInsertBefore, _)) =>
           c.copy(command = x.copy(exerciseNumber = n))
-        case (n, c) =>
-          c.copy(command = DuplicateInsertBefore(exerciseNumber = n))
       })
 
 private def linearizeCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
@@ -103,17 +99,13 @@ private def linearizeCmdParser(using builder: OParserBuilder[CmtaOptions]): OPar
             case (_, false) =>
               failure(s"${baseFolder.getPath} is not a directory")
         }
-        .action {
+        .throwOrAction {
           case (linRepo, c @ CmtaOptions(mainRepo, x: Linearize, _)) =>
             c.copy(command = x.copy(linearizeBaseFolder = Some(linRepo)))
-          case (linRepo, c) =>
-            c.copy(command = Linearize(linearizeBaseFolder = Some(linRepo)))
         },
-      opt[Unit]("force-delete").text("Force-delete a pre-existing destination folder").abbr("f").action {
+      opt[Unit]("force-delete").text("Force-delete a pre-existing destination folder").abbr("f").throwOrAction {
         case (_, c @ CmtaOptions(mainRepo, x: Linearize, _)) =>
           c.copy(command = x.copy(forceDeleteExistingDestinationFolder = true))
-        case (_, c) =>
-          c.copy(command = Linearize(forceDeleteExistingDestinationFolder = true))
       })
 
 private def delinearizeCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
@@ -134,11 +126,9 @@ private def delinearizeCmdParser(using builder: OParserBuilder[CmtaOptions]): OP
             case (_, false) =>
               failure(s"${baseFolder.getPath} is not a directory")
         }
-        .action {
+        .throwOrAction {
           case (linRepo, c @ CmtaOptions(mainRepo, x: DeLinearize, _)) =>
             c.copy(command = x.copy(linearizeBaseFolder = Some(linRepo)))
-          case (linRepo, c) =>
-            c.copy(command = Linearize(Some(linRepo)))
         })
 
 private def studentifyCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
@@ -173,14 +163,6 @@ private def studentifyCmdParser(using builder: OParserBuilder[CmtaOptions]): OPa
             c.copy(command = x.copy(initializeAsGitRepo = true))
         })
 
-extension [T](parser: OParser[T, CmtaOptions])
-  def throwOrAction(pf: PartialFunction[(T, CmtaOptions), CmtaOptions]): OParser[T, CmtaOptions] = {
-    parser.action((argOpt, options) =>
-      pf.lift((argOpt, options))
-        .getOrElse(throw new IllegalStateException(
-          s"Received an unexpected command type '${options.command.getClass.getName}'")))
-  }
-
 private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
   import builder.*
   cmd("renum")
@@ -196,11 +178,9 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
         .validate(startAt =>
           if startAt >= 0 then success
           else failure(s"renumber start exercise number should be >= 0"))
-        .action {
+        .throwOrAction {
           case (startAt, c @ CmtaOptions(_, RenumberExercises(_, offset, step), _)) =>
             c.copy(command = RenumberExercises(Some(startAt), offset, step))
-          case (startAt, c) =>
-            c.copy(command = RenumberExercises(startRenumAt = Some(startAt)))
         },
       opt[Int]("to")
         .text("Renumber start offset (default=1)")
@@ -208,11 +188,9 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
         .validate(offset =>
           if offset >= 0 then success
           else failure(s"renumber offset should be >= 0"))
-        .action {
+        .throwOrAction {
           case (offset, c @ CmtaOptions(_, RenumberExercises(startAt, _, step), _)) =>
             c.copy(command = RenumberExercises(startAt, offset, step))
-          case (offset, c) =>
-            c.copy(command = RenumberExercises(renumOffset = offset))
         },
       opt[Int]("step")
         .text("Renumber step size (default=1)")
@@ -220,12 +198,17 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
         .validate(step =>
           if step >= 1 then success
           else failure(s"renumber step size should be >= 1"))
-        .action {
+        .throwOrAction {
           case (step, c @ CmtaOptions(_, RenumberExercises(startAt, offset, _), _)) =>
             c.copy(command = RenumberExercises(startAt, offset, step))
-          case (step, c) =>
-            c.copy(command = RenumberExercises(renumStep = step))
         })
+
+extension [T](parser: OParser[T, CmtaOptions])
+  def throwOrAction(pf: PartialFunction[(T, CmtaOptions), CmtaOptions]): OParser[T, CmtaOptions] =
+    parser.action((argOpt, options) =>
+      pf.lift((argOpt, options))
+        .getOrElse(throw new IllegalStateException(
+          s"Received an unexpected command type '${options.command.getClass.getName}'")))
 
 private def validateConfig(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
   import builder.*

@@ -6,6 +6,7 @@ import sbt.io.syntax.*
 
 sealed trait CmtaCommands
 case object Missing extends CmtaCommands
+case object Version extends CmtaCommands
 final case class RenumberExercises(startRenumAt: Option[Int] = None, renumOffset: Int = 1, renumStep: Int = 1)
     extends CmtaCommands
 final case class DuplicateInsertBefore(exerciseNumber: Int = 0) extends CmtaCommands
@@ -37,6 +38,7 @@ val cmtaParser = {
     linearizeCmdParser,
     delinearizeCmdParser,
     configFileParser,
+    versionParser,
     validateConfig)
 }
 
@@ -192,6 +194,12 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
         .throwOrAction { case (step, c @ CmtaOptions(_, RenumberExercises(startAt, offset, _), _)) =>
           c.copy(command = RenumberExercises(startAt, offset, step))
         })
+
+private def versionParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
+  import builder.*
+  cmd("version").text("Print version information").action { (_, c) =>
+    c.copy(command = Version)
+  }
 
 extension [T](parser: OParser[T, CmtaOptions])
   def throwOrAction(pf: PartialFunction[(T, CmtaOptions), CmtaOptions]): OParser[T, CmtaOptions] =

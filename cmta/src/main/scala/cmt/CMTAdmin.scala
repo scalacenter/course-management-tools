@@ -2,8 +2,8 @@ package cmt
 
 import sbt.io.syntax.*
 import sbt.io.IO as sbtio
+import Helpers.{ExercisePrefixesAndExerciseNames, extractExerciseNr, getExercisePrefixAndExercises, validatePrefixes}
 
-import Helpers.{ExercisePrefixesAndExerciseNames, getExercisePrefixAndExercises, validatePrefixes, extractExerciseNr}
 object CMTAdmin:
   def renumberExercises(mainRepo: File, renumStartAtOpt: Option[Int], renumOffset: Int, renumStep: Int)(
       config: CMTaConfig): Either[String, Unit] =

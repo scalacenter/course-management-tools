@@ -1,5 +1,6 @@
 package cmt
 
+import cmt.version.BuildInfo
 import scopt.OEffect.ReportError
 
 object Main:
@@ -43,6 +44,10 @@ object Main:
 
       case CmtcOptions(PullTemplate(Some(templatePath)), Some(studentifiedRepo)) =>
         CMTStudent.pullTemplate(studentifiedRepo, templatePath)(config)
+
+      case CmtcOptions(Version, _) =>
+        printMessage(BuildInfo.toString)
+
       case _ =>
     }
   }

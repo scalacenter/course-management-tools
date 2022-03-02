@@ -1,5 +1,6 @@
 package cmt
 
+import cmt.version.BuildInfo
 import scopt.OEffect.{ReportError, DisplayToErr}
 
 object Main:
@@ -46,6 +47,9 @@ object Main:
 
       case CmtaOptions(mainRepo, DeLinearize(Some(linBase)), _) =>
         CMTDeLinearize.delinearize(mainRepo, linBase)(config)
+
+      case CmtaOptions(_, Version, _) =>
+        printMessage(BuildInfo.toString)
 
       case _ =>
     }

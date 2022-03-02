@@ -9,4 +9,5 @@ class CommandLineParseTest
       DuplicateInsertBeforeArguments,
       LinearizeArguments,
       DelinearizeArguments,
-      RenumberArguments)
+      RenumberArguments,
+      VersionArguments)

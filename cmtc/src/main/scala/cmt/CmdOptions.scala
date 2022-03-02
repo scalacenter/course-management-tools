@@ -7,6 +7,7 @@ import sbt.io.syntax.*
 
 sealed trait CmtcCommands
 case object Missing extends CmtcCommands
+case object Version extends CmtcCommands
 case object PullSolution extends CmtcCommands
 final case class RestoreState(exerciseID: Option[String] = None) extends CmtcCommands
 case object ListExercises extends CmtcCommands
@@ -36,6 +37,7 @@ val parser = {
     saveStateParser,
     restoreStateParser,
     savedStateParser,
+    versionParser,
     validateConfig)
 }
 
@@ -207,6 +209,12 @@ private def restoreStateParser(using builder: OParserBuilder[CmtcOptions]): OPar
           c.copy(studentifiedRepo = Some(repo))
         })
 
+private def versionParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
+  import builder.*
+  cmd("version").text("Print version information").action { (_, c) =>
+    c.copy(command = Version)
+  }
+
 private def validateConfig(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
   import builder.*
   checkConfig(config =>
@@ -222,4 +230,5 @@ private def validateConfig(using builder: OParserBuilder[CmtcOptions]): OParser[
       case _: GotoExercise   => success
       case GotoFirstExercise => success
       case _: PullTemplate   => success
+      case Version           => success
   )

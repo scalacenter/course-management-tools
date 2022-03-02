@@ -2,4 +2,4 @@ package cmt
 
 import cmt.support.CommandLineParseTestBase
 
-class CommandLineParseTest extends CommandLineParseTestBase[CmtcOptions](CmdLineParse.parse)
+class CommandLineParseTest extends CommandLineParseTestBase[CmtcOptions](CmdLineParse.parse, VersionArguments)

@@ -47,6 +47,11 @@ jobs:
             ${{ runner.os }}-sbt-
             ${{ runner.os }}-
 
+      - name: Check code formatting
+        run: |
+          cd CMT &&
+          sbt scalafmtCheckAll
+
       - name: Run tests
         run: |
           cd CMT &&

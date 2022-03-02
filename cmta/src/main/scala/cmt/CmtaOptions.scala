@@ -99,9 +99,8 @@ private def linearizeCmdParser(using builder: OParserBuilder[CmtaOptions]): OPar
             case (_, false) =>
               failure(s"${baseFolder.getPath} is not a directory")
         }
-        .throwOrAction {
-          case (linRepo, c @ CmtaOptions(mainRepo, x: Linearize, _)) =>
-            c.copy(command = x.copy(linearizeBaseFolder = Some(linRepo)))
+        .throwOrAction { case (linRepo, c @ CmtaOptions(mainRepo, x: Linearize, _)) =>
+          c.copy(command = x.copy(linearizeBaseFolder = Some(linRepo)))
         },
       opt[Unit]("force-delete").text("Force-delete a pre-existing destination folder").abbr("f").throwOrAction {
         case (_, c @ CmtaOptions(mainRepo, x: Linearize, _)) =>
@@ -126,9 +125,8 @@ private def delinearizeCmdParser(using builder: OParserBuilder[CmtaOptions]): OP
             case (_, false) =>
               failure(s"${baseFolder.getPath} is not a directory")
         }
-        .throwOrAction {
-          case (linRepo, c @ CmtaOptions(mainRepo, x: DeLinearize, _)) =>
-            c.copy(command = x.copy(linearizeBaseFolder = Some(linRepo)))
+        .throwOrAction { case (linRepo, c @ CmtaOptions(mainRepo, x: DeLinearize, _)) =>
+          c.copy(command = x.copy(linearizeBaseFolder = Some(linRepo)))
         })
 
 private def studentifyCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
@@ -152,16 +150,14 @@ private def studentifyCmdParser(using builder: OParserBuilder[CmtaOptions]): OPa
         .throwOrAction { case (studRepo, c @ CmtaOptions(_, x: Studentify, _)) =>
           c.copy(command = x.copy(studentifyBaseFolder = Some(studRepo)))
         },
-      opt[Unit]("force-delete").text("Force-delete a pre-existing destination folder").abbr("f")
-        .throwOrAction {
-          case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
-            c.copy(command = x.copy(forceDeleteExistingDestinationFolder = true))
-        },
-      opt[Unit]("init-git").text("Initialize studentified repo as a git repo").abbr("g")
-        .throwOrAction {
-          case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
-            c.copy(command = x.copy(initializeAsGitRepo = true))
-        })
+      opt[Unit]("force-delete").text("Force-delete a pre-existing destination folder").abbr("f").throwOrAction {
+        case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
+          c.copy(command = x.copy(forceDeleteExistingDestinationFolder = true))
+      },
+      opt[Unit]("init-git").text("Initialize studentified repo as a git repo").abbr("g").throwOrAction {
+        case (_, c @ CmtaOptions(mainRepo, x: Studentify, _)) =>
+          c.copy(command = x.copy(initializeAsGitRepo = true))
+      })
 
 private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
   import builder.*
@@ -178,9 +174,8 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
         .validate(startAt =>
           if startAt >= 0 then success
           else failure(s"renumber start exercise number should be >= 0"))
-        .throwOrAction {
-          case (startAt, c @ CmtaOptions(_, RenumberExercises(_, offset, step), _)) =>
-            c.copy(command = RenumberExercises(Some(startAt), offset, step))
+        .throwOrAction { case (startAt, c @ CmtaOptions(_, RenumberExercises(_, offset, step), _)) =>
+          c.copy(command = RenumberExercises(Some(startAt), offset, step))
         },
       opt[Int]("to")
         .text("Renumber start offset (default=1)")
@@ -188,9 +183,8 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
         .validate(offset =>
           if offset >= 0 then success
           else failure(s"renumber offset should be >= 0"))
-        .throwOrAction {
-          case (offset, c @ CmtaOptions(_, RenumberExercises(startAt, _, step), _)) =>
-            c.copy(command = RenumberExercises(startAt, offset, step))
+        .throwOrAction { case (offset, c @ CmtaOptions(_, RenumberExercises(startAt, _, step), _)) =>
+          c.copy(command = RenumberExercises(startAt, offset, step))
         },
       opt[Int]("step")
         .text("Renumber step size (default=1)")
@@ -198,9 +192,8 @@ private def renumCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[
         .validate(step =>
           if step >= 1 then success
           else failure(s"renumber step size should be >= 1"))
-        .throwOrAction {
-          case (step, c @ CmtaOptions(_, RenumberExercises(startAt, offset, _), _)) =>
-            c.copy(command = RenumberExercises(startAt, offset, step))
+        .throwOrAction { case (step, c @ CmtaOptions(_, RenumberExercises(startAt, offset, _), _)) =>
+          c.copy(command = RenumberExercises(startAt, offset, step))
         })
 
 extension [T](parser: OParser[T, CmtaOptions])

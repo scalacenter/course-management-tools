@@ -1,8 +1,8 @@
 package cmt
 
-import scopt.OParser
+import scopt.{OParser, OEffect}
 
-object CmdLineParse:
+object CmdLineParse extends CliParser:
 
-  def parse(args: Array[String]): Option[CmtcOptions] =
-    OParser.parse(parser, args, CmtcOptions())
+  def parse(args: Array[String]): Either[CmdLineParseError, CmtcOptions] =
+    _parse(parser, CmtcOptions())(args)

@@ -1,6 +1,7 @@
 package cmt
 
 import cmt.TestDirectories.*
+import cmt.support.CommandLineArguments
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.Tables
@@ -9,7 +10,7 @@ import sbt.io.IO
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 
-object StudentifyArguments extends CommandLineArguments with Tables {
+object StudentifyArguments extends CommandLineArguments[CmtaOptions] with Tables {
 
   val identifier = "studentify"
 

@@ -1,17 +1,20 @@
 package cmt
 
-import org.scalatest.prop.Tables
-import scopt.OEffect.ReportError
-import sbt.io.syntax.{File, file}
 import cmt.TestDirectories.*
+import cmt.support.CommandLineArguments
+import org.scalatest.prop.Tables
+import sbt.io.syntax.{File, file}
+import scopt.OEffect.ReportError
 
-object DuplicateInsertBeforeArguments extends CommandLineArguments with Tables {
+object DuplicateInsertBeforeArguments extends CommandLineArguments[CmtaOptions] with Tables {
 
   val identifier = "dib"
 
   def invalidArguments(tempDirectory: File) = Table(
     ("args", "errors"),
-    (Seq(identifier), Seq(ReportError("Missing argument <Main repo>"), ReportError("Missing option --exercise-number"))),
+    (
+      Seq(identifier),
+      Seq(ReportError("Missing argument <Main repo>"), ReportError("Missing option --exercise-number"))),
     (
       Seq(identifier, nonExistentDirectory(tempDirectory)),
       Seq(

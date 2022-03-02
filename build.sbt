@@ -6,6 +6,6 @@ lazy val `course-management-tools` =
 
 lazy val core = project.in(file("core")).settings(CommonSettings.commonSettings: _*)
 
-lazy val cmta = project.in(file("cmta")).dependsOn(core).settings(CommonSettings.commonSettings: _*)
+lazy val cmta = project.in(file("cmta")).dependsOn(core, core % "test->test").settings(CommonSettings.commonSettings: _*)
 
-lazy val cmtc = project.in(file("cmtc")).dependsOn(core).settings(CommonSettings.commonSettings: _*)
+lazy val cmtc = project.in(file("cmtc")).dependsOn(core, core % "test->test").settings(CommonSettings.commonSettings: _*)

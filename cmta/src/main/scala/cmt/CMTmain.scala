@@ -9,7 +9,7 @@ object Main:
       case Right(options) =>
         selectAndExecuteCommand(options)
 
-      case Left(CmdLineParse.CmdLineParseError(x)) =>
+      case Left(CmdLineParseError(x)) =>
         printError(x.collect { case ReportError(msg) => msg }.mkString("\n"))
     }
 

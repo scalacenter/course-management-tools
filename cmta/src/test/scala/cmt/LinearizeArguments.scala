@@ -1,6 +1,7 @@
 package cmt
 
 import cmt.TestDirectories.{firstRealDirectory, nonExistentDirectory, realFile, secondRealDirectory}
+import cmt.support.CommandLineArguments
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.Tables
@@ -9,7 +10,7 @@ import sbt.io.IO
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 
-object LinearizeArguments extends CommandLineArguments with Tables {
+object LinearizeArguments extends CommandLineArguments[CmtaOptions] with Tables {
 
   val identifier = "linearize"
 
@@ -47,14 +48,10 @@ object LinearizeArguments extends CommandLineArguments with Tables {
       Seq(identifier, firstRealDirectory, secondRealDirectory, "--force-delete"),
       CmtaOptions(
         file(".").getAbsoluteFile.getParentFile,
-        Linearize(
-          linearizeBaseFolder = Some(file(secondRealDirectory)),
-          forceDeleteExistingDestinationFolder = true))),
+        Linearize(linearizeBaseFolder = Some(file(secondRealDirectory)), forceDeleteExistingDestinationFolder = true))),
     (
       Seq(identifier, firstRealDirectory, secondRealDirectory, "-f"),
       CmtaOptions(
         file(".").getAbsoluteFile.getParentFile,
-        Linearize(
-          linearizeBaseFolder = Some(file(secondRealDirectory)),
-          forceDeleteExistingDestinationFolder = true))))
+        Linearize(linearizeBaseFolder = Some(file(secondRealDirectory)), forceDeleteExistingDestinationFolder = true))))
 }

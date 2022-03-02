@@ -1,6 +1,7 @@
 package cmt
 
 import cmt.TestDirectories.{firstRealDirectory, nonExistentDirectory, realFile, secondRealDirectory}
+import cmt.support.CommandLineArguments
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.Tables
@@ -9,7 +10,7 @@ import sbt.io.IO
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 
-object DelinearizeArguments extends CommandLineArguments with Tables {
+object DelinearizeArguments extends CommandLineArguments[CmtaOptions] with Tables {
 
   val identifier = "delinearize"
 

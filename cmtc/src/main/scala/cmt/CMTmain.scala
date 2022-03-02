@@ -1,12 +1,14 @@
 package cmt
 
+import scopt.OEffect.ReportError
+
 object Main:
   def main(args: Array[String]): Unit =
-    val cmdLineArgs: CmtcOptions =
-      CmdLineParse.parse(args).getOrElse {
-        System.exit(1)
-        ???
-      }
+    CmdLineParse.parse(args) match
+      case Right(options)             => selectAndExecuteCommand(options)
+      case Left(CmdLineParseError(x)) => printError(x.collect { case ReportError(msg) => msg }.mkString("\n"))
+
+  private def selectAndExecuteCommand(cmdLineArgs: CmtcOptions): Unit = {
 
     val config: CMTcConfig =
       new CMTcConfig(cmdLineArgs.studentifiedRepo.get) // Safe: at this point we know that studentifiedRepo exists
@@ -43,3 +45,4 @@ object Main:
         CMTStudent.pullTemplate(studentifiedRepo, templatePath)(config)
       case _ =>
     }
+  }

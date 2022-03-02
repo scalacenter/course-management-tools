@@ -1,11 +1,12 @@
 package cmt
 
 import cmt.TestDirectories.{firstRealDirectory, nonExistentDirectory, realFile, secondRealDirectory}
+import cmt.support.CommandLineArguments
 import org.scalatest.prop.Tables
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 
-object RenumberArguments extends CommandLineArguments with Tables {
+object RenumberArguments extends CommandLineArguments[CmtaOptions] with Tables {
 
   val identifier = "renum"
 

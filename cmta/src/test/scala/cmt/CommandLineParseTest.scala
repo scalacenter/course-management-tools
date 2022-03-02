@@ -2,83 +2,67 @@ package cmt
 
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableFor2
 import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import sbt.io.IO
 import sbt.io.syntax.*
 import scopt.OEffect.ReportError
 
-class CommandLineParseTest extends AnyWordSpecLike with Matchers with BeforeAndAfterAll {
+import scala.language.postfixOps
+
+trait CommandLineArguments {
+  val identifier: String
+  def invalidArguments(tempDirectory: File): TableFor2[Seq[String], Seq[ReportError]]
+  def validArguments(tempDirectory: File): TableFor2[Seq[String], CmtaOptions]
+}
+
+class CommandLineParseTest extends AnyWordSpecLike with Matchers with BeforeAndAfterAll with ScalaCheckPropertyChecks {
 
   private val tempDirectory = IO.createTemporaryDirectory
 
   override def afterAll(): Unit =
     tempDirectory.delete()
 
-  "commmand line parser" when {
+  private val commandArguments = List(StudentifyArguments, DuplicateInsertBeforeArguments, LinearizeArguments, DelinearizeArguments, RenumberArguments)
 
-    "given the 'studentify' command" should {
+  "CLI Parser" when {
 
-      "fail if main repository argument and studentified directories are missing" in {
-        val args = Array("studentify")
-        val resultOr = CmdLineParse.parse(args)
+    commandArguments.foreach { command =>
 
-        val error = assertLeft(resultOr)
-        (error.errors should contain).allOf(
-          ReportError("Missing argument <Main repo>"),
-          ReportError("Missing argument <studentified repo parent folder>"))
-      }
+      s"given invalid ${command.identifier} arguments" should {
 
-      "fail if main repository and studentified directories don't exist" in {
-        val mainRepositoryPath = s"${tempDirectory.getAbsolutePath}/i/do/not/exist"
-        val studentifiedDirectoryPath = s"${tempDirectory.getAbsolutePath}/neither/do/i"
-        val args = Array("studentify", mainRepositoryPath, studentifiedDirectoryPath)
-        val resultOr = CmdLineParse.parse(args)
-
-        val error = assertLeft(resultOr)
-        (error.errors should contain).allOf(
-          ReportError(s"$mainRepositoryPath does not exist"),
-          ReportError(s"$studentifiedDirectoryPath does not exist"))
-      }
-
-      "fail if main repository and studentified directories are files" in {
-        val mainRepositoryPath = "./cmta/src/test/resources/i-am-a-file.txt"
-        val studentifiedDirectoryPath = "./cmta/src/test/resources/i-am-a-directory/i-am-a-file-in-a-directory.txt"
-        val args = Array("studentify", mainRepositoryPath, studentifiedDirectoryPath)
-        val resultOr = CmdLineParse.parse(args)
-
-        val error = assertLeft(resultOr)
-        (error.errors should contain).allOf(
-          ReportError(s"$mainRepositoryPath is not a directory"),
-          ReportError(s"$studentifiedDirectoryPath is not a directory"))
-      }
-
-      "fail if main repository is not a git repository" in {
-        val mainRepositoryPath = tempDirectory.getAbsolutePath
-        val studentifiedDirectoryPath = "./cmta/src/test/resources/i-am-another-directory"
-        val args = Array("studentify", mainRepositoryPath, studentifiedDirectoryPath)
-        val resultOr = CmdLineParse.parse(args)
-
-        val error = assertLeft(resultOr)
-        error.errors should contain(ReportError(s"$mainRepositoryPath is not a git repository"))
-      }
-
-      "succeed if main repository and studentified directories exist and are directories" in {
-        val mainRepositoryPath = "./cmta/src/test/resources/i-am-a-directory"
-        val studentifiedDirectoryPath = "./cmta/src/test/resources/i-am-another-directory"
-        val args = Array("studentify", mainRepositoryPath, studentifiedDirectoryPath)
-        val resultOr = CmdLineParse.parse(args)
-
-        val result = assertRight(resultOr)
-        val expectedResult = CmtaOptions(
-          Helpers.resolveMainRepoPath(file(mainRepositoryPath)).toOption.get,
-          Studentify(
-            Some(file(studentifiedDirectoryPath)),
-            forceDeleteExistingDestinationFolder = false,
-            initializeAsGitRepo = false))
-
-        result shouldBe expectedResult
+        "report appropriate errors" in {
+          forAll(command.invalidArguments(tempDirectory)) { (args: Seq[String], errors: Seq[ReportError]) =>
+            assertFailureWithErrors(args.toArray, errors *)
+          }
+        }
       }
     }
+
+    commandArguments.foreach { command =>
+
+      s"given valid ${command.identifier} arguments" should {
+
+        "return expected results" in {
+          forAll(command.validArguments(tempDirectory)) { (args: Seq[String], expectedResult: CmtaOptions) =>
+            assertSuccessWithResponse(args.toArray, expectedResult)
+          }
+        }
+      }
+    }
+  }
+
+  private def assertFailureWithErrors(args: Array[String], errors: ReportError*) = {
+    val resultOr = CmdLineParse.parse(args)
+    val error = assertLeft(resultOr)
+    (error.errors should contain).allElementsOf(errors)
+  }
+
+  private def assertSuccessWithResponse(args: Array[String], expectedResult: CmtaOptions) = {
+    val resultOr = CmdLineParse.parse(args)
+    val result = assertRight(resultOr)
+    result shouldBe expectedResult
   }
 
   private def assertRight[E, T](either: Either[E, T]): T =

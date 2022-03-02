@@ -12,7 +12,7 @@ class CMTcConfig(studentifiedRepo: File):
   val bookmarkFile: File = studentifiedRepo / ".bookmark"
 
   private val cmtConfigFile = studentifiedRepo / ".cmt-config"
-  if !cmtConfigFile.exists then printErrorAndExit(studentifiedRepo, "missing CMT configuration file")
+  if !cmtConfigFile.exists then printErrorAndExit("missing CMT configuration file")
 
   val cmtSettings: Config = ConfigFactory.parseFile(cmtConfigFile)
 

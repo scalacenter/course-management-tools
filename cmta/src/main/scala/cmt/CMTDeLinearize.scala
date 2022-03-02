@@ -43,11 +43,8 @@ object CMTDeLinearize:
   end getExercisesAndSHAs
 
   def handleError(gitLogOutput: String): Vector[ExerciseNameAndSHA] =
-    val errorMessage =
-      toConsoleRed(
-        """Couldn't obtain exercise info from linearized repository. Check your path to the latter""".stripMargin)
-    System.err.println(s"$errorMessage\n$gitLogOutput")
-    System.exit(1)
+    printErrorAndExit(
+      s"Couldn't obtain exercise info from linearized repository. Check your path to the latter\n$gitLogOutput")
     ???
   end handleError
 
@@ -66,7 +63,7 @@ object CMTDeLinearize:
   def checkReposMatch(exercisesInMain: Seq[String], exercisesAndSHAs: Vector[ExerciseNameAndSHA]): Unit =
     // TODO: in case repos are incompatible, print out the exercise list on both ends (if any)
     if exercisesInMain != exercisesAndSHAs.map(_.exName) then
-      printError(s"Cannot de-linearize: repositories are incompatible")
+      printErrorAndExit(s"Cannot de-linearize: repositories are incompatible")
   end checkReposMatch
 
   def putBackToMain(mainRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExerciseNameAndSHA])(

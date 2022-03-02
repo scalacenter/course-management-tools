@@ -27,8 +27,7 @@ class CMTaConfig(mainRepo: File, configFileOpt: Option[File]):
       case (_, _, true) => Some(defaultLocalConfigFileName)
       case (false, false, false) =>
         if configFileOpt.isDefined then
-          System.err.println(printError(s"Configuration: no such file: ${configFileOpt.getOrElse("")}"))
-          System.exit(1)
+          printErrorAndExit(s"Configuration: no such file: ${configFileOpt.getOrElse("")}")
           ???
         else None
 

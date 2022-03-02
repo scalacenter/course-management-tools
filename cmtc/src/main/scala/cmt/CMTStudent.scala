@@ -56,7 +56,7 @@ object CMTStudent:
       val fullTemplatePath = solution / templatePath
       (fullTemplatePath.exists, fullTemplatePath.isDirectory) match
         case (false, _) =>
-          printError(s"No such template: $templatePath")
+          printErrorAndExit(s"No such template: $templatePath")
         case (true, false) =>
           sbtio.copyFile(
             fullTemplatePath,
@@ -73,7 +73,7 @@ object CMTStudent:
 
   def gotoExercise(studentifiedRepo: File, exercise: String)(config: CMTcConfig): Unit =
 
-    if !config.exercises.contains(exercise) then printError(s"No such exercise: $exercise")
+    if !config.exercises.contains(exercise) then printErrorAndExit(s"No such exercise: $exercise")
 
     withZipFile(config.solutionsFolder, exercise) { solution =>
       copyTestCodeAndReadMeFiles(
@@ -133,7 +133,7 @@ object CMTStudent:
 
   def restoreState(studentifiedRepo: File, exercise: String)(config: CMTcConfig): Unit =
     val savedState = config.studentifiedSavedStatesFolder / s"${exercise}.zip"
-    if !savedState.exists then printError(s"No such saved state: $exercise")
+    if !savedState.exists then printErrorAndExit(s"No such saved state: $exercise")
 
     deleteCurrentState(studentifiedRepo)(config)
 

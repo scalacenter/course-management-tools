@@ -24,10 +24,6 @@ object Helpers:
     fileList(seedFiles.toVector, seedFolders.toVector)
   end fileList
 
-  def printErrorAndExit(studentifiedRepo: File, message: String): Unit =
-    System.err.println(s"${toConsoleRed(message)}")
-    System.exit(1)
-
   def resolveMainRepoPath(mainRepo: File): Either[String, File] = {
     for {
       rp <- getRepoPathFromGit(mainRepo)
@@ -49,18 +45,14 @@ object Helpers:
 
     workspaceIsUnclean match {
       case Right(cnt) if cnt > 0 =>
-        printError(s"main repository isn't clean. Commit changes and try again")
+        printErrorAndExit(s"main repository isn't clean. Commit changes and try again")
       case Right(_) => ()
       case Left(_)  =>
     }
 
   def createStudentifiedFolderSkeleton(stuBase: File, studentifiedRootFolder: File)(config: CMTaConfig) =
-    if studentifiedRootFolder.exists then
-      System.err.println(printError(s"$studentifiedRootFolder exists already"))
-      System.exit(1)
-    if !stuBase.canWrite then
-      System.err.println(printError(s"$stuBase isn't writeable"))
-      System.exit(1)
+    if studentifiedRootFolder.exists then printErrorAndExit(s"$studentifiedRootFolder exists already")
+    if !stuBase.canWrite then printErrorAndExit(s"$stuBase isn't writeable")
 
     val solutionsFolder =
       studentifiedRootFolder / config.studentifiedRepoSolutionsFolder
@@ -86,13 +78,13 @@ object Helpers:
       .to(Vector)
       .sorted match
       case Vector() =>
-        System.err.println(printError("No exercises found. Check your configuration")); ???
+        printErrorAndExit("No exercises found. Check your configuration"); ???
       case exercises => exercises
     ExercisePrefixesAndExerciseNames(prefixes, exercises)
   end getExercisePrefixAndExercises
 
   def validatePrefixes(prefixes: Set[String]): Unit =
-    if prefixes.size > 1 then printError(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")
+    if prefixes.size > 1 then printErrorAndExit(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")
 
   def zipAndDeleteOriginal(baseFolder: File, zipToFolder: File, exercise: String, time: Option[Long] = None): Unit =
     val filesToZip = fileList(baseFolder / exercise).map(f => (f, sbtio.relativize(baseFolder, f))).collect {

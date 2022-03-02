@@ -6,7 +6,7 @@ object Main:
   def main(args: Array[String]): Unit =
     CmdLineParse.parse(args) match
       case Right(options)             => selectAndExecuteCommand(options)
-      case Left(CmdLineParseError(x)) => printError(x.collect { case ReportError(msg) => msg }.mkString("\n"))
+      case Left(CmdLineParseError(x)) => printErrorAndExit(x.collect { case ReportError(msg) => msg }.mkString("\n"))
 
   private def selectAndExecuteCommand(cmdLineArgs: CmtcOptions): Unit = {
 

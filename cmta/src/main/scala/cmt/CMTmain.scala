@@ -1,6 +1,6 @@
 package cmt
 
-import scopt.OEffect.ReportError
+import scopt.OEffect.{ReportError, DisplayToErr}
 
 object Main:
 
@@ -10,7 +10,10 @@ object Main:
         selectAndExecuteCommand(options)
 
       case Left(CmdLineParseError(x)) =>
-        printError(x.collect { case ReportError(msg) => msg }.mkString("\n"))
+        val errorMsg = x.collect { case ReportError(msg) => msg }.mkString("", "\n          ", "")
+        val displayMsg = x.collect { case DisplayToErr(msg) => msg }.mkString("\n")
+        System.err.println(displayMsg)
+        printErrorAndExit(s"""|Error(s): ${errorMsg}""".stripMargin)
     }
 
   private def selectAndExecuteCommand(options: CmtaOptions): Unit = {

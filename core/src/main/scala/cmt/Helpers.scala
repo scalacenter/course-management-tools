@@ -2,6 +2,9 @@ package cmt
 
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
+
+import scala.jdk.CollectionConverters.*
 
 final case class StudentifiedSkelFolders(solutionsFolder: File)
 object Helpers:
@@ -112,15 +115,18 @@ object Helpers:
     Files.write(file.toPath, string.getBytes(StandardCharsets.UTF_8))
 
   def writeStudentifiedCMTConfig(configFile: File, exercises: Seq[String])(config: CMTaConfig): Unit =
+    val configMap = Map(
+      "studentified-repo-solutions-folder" -> config.studentifiedRepoSolutionsFolder,
+      "studentified-saved-states-folder" -> config.studentifiedSavedStatesFolder,
+      "active-exercise-folder" -> config.studentifiedRepoActiveExerciseFolder,
+      "test-code-folders" -> config.testCodeFolders.asJava,
+      "read-me-files" -> config.readMeFiles.asJava,
+      "exercises" -> exercises.asJava,
+      "cmt-studentified-dont-touch" -> config.cmtStudentifiedDontTouch
+        .map(path => s"${config.studentifiedRepoActiveExerciseFolder}/${path}")
+        .asJava)
     val cmtConfig =
-      s"""studentified-repo-solutions-folder=${config.studentifiedRepoSolutionsFolder}
-         |studentified-saved-states-folder=${config.studentifiedSavedStatesFolder}
-         |active-exercise-folder=${config.studentifiedRepoActiveExerciseFolder}
-         |test-code-folders=${config.testCodeFolders.mkString("[\n   ", ",\n   ", "\n]")}
-         |read-me-files=${config.readMeFiles.mkString("[\n   ", ",\n   ", "\n]")}
-         |exercises=${exercises.mkString("[\n   ", ",\n   ", "\n]")}
-         |cmt-studentified-dont-touch=${config.cmtStudentifiedDontTouch.mkString("[\n   ", ",\n   ", "\n]")}
-       """.stripMargin
+      ConfigFactory.parseMap(configMap.asJava).root().render(ConfigRenderOptions.concise().setFormatted(true))
     dumpStringToFile(cmtConfig, configFile)
 
   def writeStudentifiedCMTBookmark(bookmarkFile: File, firstExercise: String): Unit =

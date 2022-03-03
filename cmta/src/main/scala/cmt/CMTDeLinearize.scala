@@ -5,9 +5,9 @@ import sbt.io.syntax.*
 
 import Helpers.{
   exitIfGitIndexOrWorkspaceIsntClean,
-  getExercisePrefixAndExercises,
+  getExercisePrefixAndExercises_TBR,
   validatePrefixes,
-  ExercisePrefixesAndExerciseNames
+  ExercisePrefixesAndExerciseNames_TBR
 }
 import ProcessDSL.toProcessCmd
 
@@ -22,8 +22,8 @@ object CMTDeLinearize:
 
     val mainRepoName = mainRepo.getName
 
-    val ExercisePrefixesAndExerciseNames(prefixes, exercisesInMain) =
-      getExercisePrefixAndExercises(mainRepo)(config)
+    val ExercisePrefixesAndExerciseNames_TBR(prefixes, exercisesInMain) =
+      getExercisePrefixAndExercises_TBR(mainRepo)(config)
     validatePrefixes(prefixes)
 
     val linearizedRootFolder = linBase / mainRepoName

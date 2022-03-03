@@ -2,42 +2,33 @@ package cmt
 
 import sbt.io.syntax.*
 import sbt.io.IO as sbtio
-import Helpers.{ExercisePrefixesAndExerciseNames, extractExerciseNr, getExercisePrefixAndExercises, validatePrefixes}
+import Helpers.{ExercisePrefixAndExerciseNames, extractExerciseNr, getExercisePrefixAndExercises, validatePrefixes}
+import Helpers.{ExercisePrefixesAndExerciseNames_TBR, getExercisePrefixAndExercises_TBR}
+import cmt.CMTAdmin.{exceedsAvailableSpace, rangeOverlapsWithOtherExercises}
 
 object CMTAdmin:
   def renumberExercises(mainRepo: File, renumStartAtOpt: Option[Int], renumOffset: Int, renumStep: Int)(
       config: CMTaConfig): Either[String, Unit] =
+    for {
+      ExercisePrefixAndExerciseNames(exercisePrefix, exercises) <- getExercisePrefixAndExercises(mainRepo)(config)
 
-    val ExercisePrefixesAndExerciseNames(prefixes, exercises) =
-      getExercisePrefixAndExercises(mainRepo)(config)
-    validatePrefixes(prefixes)
-    val exercisePrefix = prefixes.head
+      exerciseNumbers = exercises.map(extractExerciseNr)
+      mainRepoExerciseFolder = mainRepo / config.mainRepoExerciseFolder
 
-    val exerciseNumbers = exercises.map(extractExerciseNr)
-    val mainRepoExerciseFolder = mainRepo / config.mainRepoExerciseFolder
+      renumStartAt <- resolveStartAt(renumStartAtOpt, exerciseNumbers)
 
-    val renumStartAt: Either[String, Int] =
-      renumStartAtOpt match
-        case None => Right(exerciseNumbers.head)
-        case Some(num) =>
-          if exerciseNumbers.contains(num)
-          then Right(num)
-          else Left(s"No exercise with number $num")
+      splitIndex = exerciseNumbers.indexOf(renumStartAt)
+      (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) = exerciseNumbers.splitAt(splitIndex)
+      (_, exercisesAfterSplit) = exercises.splitAt(splitIndex)
 
-    renumStartAt.flatMap { renumStartAt =>
-      val splitIndex = exerciseNumbers.indexOf(renumStartAt)
-      val (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) = exerciseNumbers.splitAt(splitIndex)
-      val (_, exercisesAfterSplit) = exercises.splitAt(splitIndex)
-
-      (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) match
+      tryMove = (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) match
         case (Vector(), Vector(`renumOffset`, _)) =>
           Left("Renumber: nothing to renumber")
         case (before, _) if rangeOverlapsWithOtherExercises(before, renumOffset) =>
           Left("Moved exercise range overlaps with other exercises")
-        case (before, _)
-            if exceedsAvailableSpace(exercisesAfterSplit, renumOffset = renumOffset, renumStep = renumStep) =>
+        case (_, _) if exceedsAvailableSpace(exercisesAfterSplit, renumOffset = renumOffset, renumStep = renumStep) =>
           Left(s"Cannot renumber exercises as it would exceed the available exercise number space")
-        case (before, _) =>
+        case (_, _) =>
           val moves =
             for {
               (exercise, index) <- exercisesAfterSplit.zipWithIndex
@@ -51,11 +42,24 @@ object CMTAdmin:
           if moves.isEmpty
           then Left("Renumber: nothing to renumber")
           else
-            if renumOffset > renumStartAt then sbtio.move(moves.reverse) else sbtio.move(moves)
+            if renumOffset > renumStartAt
+            then sbtio.move(moves.reverse)
+            else sbtio.move(moves)
             Right(())
-    }
+
+      moveResult <- tryMove
+    } yield moveResult
 
   end renumberExercises
+
+  private def resolveStartAt(renumStartAtOpt: Option[Int], exerciseNumbers: Vector[Int]) =
+    renumStartAtOpt match
+      case None => Right(exerciseNumbers.head)
+      case Some(num) =>
+        if exerciseNumbers.contains(num)
+        then Right(num)
+        else Left(s"No exercise with number $num")
+  end resolveStartAt
 
   private def exceedsAvailableSpace(exercisesAfterSplit: Vector[String], renumOffset: Int, renumStep: Int): Boolean =
     renumOffset + (exercisesAfterSplit.size - 1) * renumStep > 999
@@ -66,8 +70,8 @@ object CMTAdmin:
   end rangeOverlapsWithOtherExercises
 
   def duplicateInsertBefore(mainRepo: File, exerciseNumber: Int)(config: CMTaConfig): Either[String, Unit] =
-    val ExercisePrefixesAndExerciseNames(prefixes, exercises) =
-      getExercisePrefixAndExercises(mainRepo)(config)
+    val ExercisePrefixesAndExerciseNames_TBR(prefixes, exercises) =
+      getExercisePrefixAndExercises_TBR(mainRepo)(config)
     validatePrefixes(prefixes)
     val exercisePrefix = prefixes.head
 

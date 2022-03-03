@@ -4,8 +4,8 @@ import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
 import Helpers.{
-  getExercisePrefixAndExercises,
-  ExercisePrefixesAndExerciseNames,
+  getExercisePrefixAndExercises_TBR,
+  ExercisePrefixesAndExerciseNames_TBR,
   validatePrefixes,
   exitIfGitIndexOrWorkspaceIsntClean
 }
@@ -26,8 +26,8 @@ object CMTLinearize:
     val cleanedMainRepo =
       ProcessDSL.copyCleanViaGit(mainRepo, tmpFolder, mainRepoName)
 
-    val ExercisePrefixesAndExerciseNames(prefixes, exercises) =
-      getExercisePrefixAndExercises(mainRepo)(config)
+    val ExercisePrefixesAndExerciseNames_TBR(prefixes, exercises) =
+      getExercisePrefixAndExercises_TBR(mainRepo)(config)
     validatePrefixes(prefixes)
 
     val linearizedRootFolder = linBase / mainRepoName

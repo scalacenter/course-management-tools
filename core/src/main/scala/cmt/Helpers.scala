@@ -65,9 +65,27 @@ object Helpers:
       cleanedMainRepo / config.mainRepoExerciseFolder / firstExercise,
       studentifiedRootFolder / config.studentifiedRepoActiveExerciseFolder)
 
-  final case class ExercisePrefixesAndExerciseNames(prefixes: Set[String], exercises: Vector[String])
+  final case class ExercisePrefixesAndExerciseNames_TBR(prefixes: Set[String], exercises: Vector[String])
+  final case class ExercisePrefixAndExerciseNames(exercisePrefix: String, exercises: Vector[String])
 
-  def getExercisePrefixAndExercises(mainRepo: File)(config: CMTaConfig): ExercisePrefixesAndExerciseNames =
+  def getExercisePrefixAndExercises(mainRepo: File)(
+      config: CMTaConfig): Either[String, ExercisePrefixAndExerciseNames] =
+    val PrefixSpec = raw"(.*)_\d{3}_\w+$$".r
+    val matchedNames =
+      sbtio.listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder).map(_.getName).to(List)
+    val prefixes = matchedNames.map { case PrefixSpec(n) => n }.to(Set)
+    sbtio.listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder).map(_.getName).to(Vector).sorted match
+      case Vector() =>
+        Left("No exercises found. Check your configuration")
+      case exercises =>
+        prefixes.size match
+          case 0 => Left("No exercises found")
+          case 1 => Right(ExercisePrefixAndExerciseNames(prefixes.head, exercises))
+          case _ => Left(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")
+  end getExercisePrefixAndExercises
+
+  // TODO: This method needs to be removed once the refactoring of all cmta command is completed
+  def getExercisePrefixAndExercises_TBR(mainRepo: File)(config: CMTaConfig): ExercisePrefixesAndExerciseNames_TBR =
     val PrefixSpec = raw"(.*)_\d{3}_\w+$$".r
     val matchedNames =
       sbtio.listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder).map(_.getName).to(List)
@@ -80,8 +98,8 @@ object Helpers:
       case Vector() =>
         printErrorAndExit("No exercises found. Check your configuration"); ???
       case exercises => exercises
-    ExercisePrefixesAndExerciseNames(prefixes, exercises)
-  end getExercisePrefixAndExercises
+    ExercisePrefixesAndExerciseNames_TBR(prefixes, exercises)
+  end getExercisePrefixAndExercises_TBR
 
   def validatePrefixes(prefixes: Set[String]): Unit =
     if prefixes.size > 1 then printErrorAndExit(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")

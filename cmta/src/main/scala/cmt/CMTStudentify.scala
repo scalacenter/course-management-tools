@@ -4,9 +4,9 @@ import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
 import Helpers.{
-  getExercisePrefixAndExercises,
+  getExercisePrefixAndExercises_TBR,
   validatePrefixes,
-  ExercisePrefixesAndExerciseNames,
+  ExercisePrefixesAndExerciseNames_TBR,
   exitIfGitIndexOrWorkspaceIsntClean,
   createStudentifiedFolderSkeleton,
   addFirstExercise,
@@ -34,8 +34,8 @@ object CMTStudentify:
     val cleanedMainRepo =
       ProcessDSL.copyCleanViaGit(mainRepo, tmpFolder, mainRepoName)
 
-    val ExercisePrefixesAndExerciseNames(prefixes, exercises) =
-      getExercisePrefixAndExercises(mainRepo)(config)
+    val ExercisePrefixesAndExerciseNames_TBR(prefixes, exercises) =
+      getExercisePrefixAndExercises_TBR(mainRepo)(config)
     validatePrefixes(prefixes)
     val studentifiedRootFolder = stuBase / mainRepoName
 

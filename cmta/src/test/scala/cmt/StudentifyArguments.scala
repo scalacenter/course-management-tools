@@ -25,17 +25,15 @@ object StudentifyArguments extends CommandLineArguments[CmtaOptions] with Tables
       Seq(identifier, nonExistentDirectory(tempDirectory), nonExistentDirectory(tempDirectory)),
       Seq(
         ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"),
-        ReportError(s"${nonExistentDirectory(tempDirectory)} is not a git repository"),
         ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"))),
     (
       Seq(identifier, realFile, nonExistentDirectory(tempDirectory)),
       Seq(
         ReportError(s"$realFile is not a directory"),
-        ReportError(s"$realFile is not a git repository"),
         ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"))),
     (
       Seq(identifier, tempDirectory.getAbsolutePath, secondRealDirectory),
-      Seq(ReportError(s"${tempDirectory.getAbsolutePath} is not a git repository"))))
+      Seq(ReportError(s"${tempDirectory.getAbsolutePath} is not in a git repository"))))
 
   def validArguments(tempDirectory: File) = Table(
     ("args", "expectedResult"),

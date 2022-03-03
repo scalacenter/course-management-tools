@@ -1,8 +1,8 @@
 package cmt
 
-import scopt.OParser
-import scopt.OParserBuilder
+import cmt.ValidationExtensions.*
 import sbt.io.syntax.*
+import scopt.{OParser, OParserBuilder}
 
 sealed trait CmtaCommands
 case object Missing extends CmtaCommands
@@ -46,16 +46,7 @@ private def mainRepoArgument(using builder: OParserBuilder[CmtaOptions]): OParse
   import builder.*
   arg[File]("<Main repo>")
     .text("Root folder (or a subfolder thereof) the main repository")
-    .validate { f =>
-      if !f.exists then failure(s"$f does not exist")
-      else if !f.isDirectory then failure(s"$f is not a directory")
-      else success
-    }
-    .validate { f =>
-      Helpers.resolveMainRepoPath(f) match
-        case Right(path) => success
-        case Left(msg)   => failure(s"$f is not a git repository")
-    }
+    .validate(_.existsAndIsADirectoryInAGitRepository)
     .action { (mainRepo, c) =>
       val resolvedGitRoot: Option[CmtaOptions] = Helpers.resolveMainRepoPath(mainRepo).toOption.map { mainRepoRoot =>
         c.copy(mainRepo = mainRepoRoot)
@@ -78,10 +69,14 @@ private def duplicateInsertBeforeParser(using builder: OParserBuilder[CmtaOption
     }
     .children(
       mainRepoArgument,
-      opt[Int]("exercise-number").required().text("exercise number to duplicate").abbr("n").throwOrAction {
-        case (n, c @ CmtaOptions(mainRepo, x: DuplicateInsertBefore, _)) =>
+      opt[Int]("exercise-number")
+        .required()
+        .text("exercise number to duplicate")
+        .abbr("n")
+        .validate(_.isANonNegativeInteger)
+        .throwOrAction { case (n, c @ CmtaOptions(mainRepo, x: DuplicateInsertBefore, _)) =>
           c.copy(command = x.copy(exerciseNumber = n))
-      })
+        })
 
 private def linearizeCmdParser(using builder: OParserBuilder[CmtaOptions]): OParser[Unit, CmtaOptions] =
   import builder.*
@@ -94,13 +89,7 @@ private def linearizeCmdParser(using builder: OParserBuilder[CmtaOptions]): OPar
       mainRepoArgument,
       arg[File]("linearized repo parent folder")
         .text("Folder in which the linearized repository will be created")
-        .validate { baseFolder =>
-          (baseFolder.exists, baseFolder.isDirectory) match
-            case (true, true) => success
-            case (false, _)   => failure(s"${baseFolder.getPath} does not exist")
-            case (_, false) =>
-              failure(s"${baseFolder.getPath} is not a directory")
-        }
+        .validate(_.existsAndIsADirectory)
         .throwOrAction { case (linRepo, c @ CmtaOptions(mainRepo, x: Linearize, _)) =>
           c.copy(command = x.copy(linearizeBaseFolder = Some(linRepo)))
         },

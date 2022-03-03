@@ -23,17 +23,13 @@ object LinearizeArguments extends CommandLineArguments[CmtaOptions] with Tables 
       Seq(identifier, nonExistentDirectory(tempDirectory)),
       Seq(
         ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"),
-        ReportError(s"${nonExistentDirectory(tempDirectory)} is not a git repository"),
         ReportError("Missing argument linearized repo parent folder"))),
     (
       Seq(identifier, realFile),
-      Seq(
-        ReportError(s"$realFile is not a directory"),
-        ReportError(s"$realFile is not a git repository"),
-        ReportError("Missing argument linearized repo parent folder"))),
+      Seq(ReportError(s"$realFile is not a directory"), ReportError("Missing argument linearized repo parent folder"))),
     (
       Seq(identifier, tempDirectory.getAbsolutePath),
-      Seq(ReportError(s"${tempDirectory.getAbsolutePath} is not a git repository"))))
+      Seq(ReportError(s"${tempDirectory.getAbsolutePath} is not in a git repository"))))
 
   def validArguments(tempDirectory: File) = Table(
     ("args", "expectedResult"),

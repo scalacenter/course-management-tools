@@ -1,9 +1,8 @@
 package cmt
 
-import scopt.OParser
-import scopt.OParserBuilder
-
+import cmt.ValidationExtensions.*
 import sbt.io.syntax.*
+import scopt.{OParser, OParserBuilder}
 
 sealed trait CmtcCommands
 case object Missing extends CmtcCommands
@@ -46,16 +45,9 @@ private def previousExerciseParser(using builder: OParserBuilder[CmtcOptions]): 
   cmd("previous-exercise")
     .text("Move to previous exercise and pull in tests for that exercise")
     .action { (_, c) => c.copy(command = PreviousExercise) }
-    .children(
-      arg[File]("<studentified repo  folder>")
-        .validate { studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action { (repo, c) =>
-          c.copy(studentifiedRepo = Some(repo))
-        })
+    .children(arg[File]("<studentified repo  folder>").validate(_.existsAndIsADirectory).action { (repo, c) =>
+      c.copy(studentifiedRepo = Some(repo))
+    })
 end previousExerciseParser
 
 private def nextExerciseParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
@@ -63,16 +55,9 @@ private def nextExerciseParser(using builder: OParserBuilder[CmtcOptions]): OPar
   cmd("next-exercise")
     .text("Move to next exercise and pull in tests for that exercise")
     .action { (_, c) => c.copy(command = NextExercise) }
-    .children(
-      arg[File]("<studentified repo  folder>")
-        .validate { studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action { (repo, c) =>
-          c.copy(studentifiedRepo = Some(repo))
-        })
+    .children(arg[File]("<studentified repo  folder>").validate(_.existsAndIsADirectory).action { (repo, c) =>
+      c.copy(studentifiedRepo = Some(repo))
+    })
 end nextExerciseParser
 
 private def listExercisesParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
@@ -80,16 +65,9 @@ private def listExercisesParser(using builder: OParserBuilder[CmtcOptions]): OPa
   cmd("list-exercises")
     .text("List all exercises")
     .action { (_, c) => c.copy(command = ListExercises) }
-    .children(
-      arg[File]("<studentified repo  folder>")
-        .validate { studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action { (repo, c) =>
-          c.copy(studentifiedRepo = Some(repo))
-        })
+    .children(arg[File]("<studentified repo  folder>").validate(_.existsAndIsADirectory).action { (repo, c) =>
+      c.copy(studentifiedRepo = Some(repo))
+    })
 
 private def pullTemplateParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
   import builder.*
@@ -99,15 +77,9 @@ private def pullTemplateParser(using builder: OParserBuilder[CmtcOptions]): OPar
       arg[String]("<template path>").action { case (templatePath, c) =>
         c.copy(command = PullTemplate(Some(templatePath)))
       },
-      arg[File]("<studentified repo  folder>")
-        .validate { studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action { (repo, c) =>
-          c.copy(studentifiedRepo = Some(repo))
-        })
+      arg[File]("<studentified repo  folder>").validate(_.existsAndIsADirectory).action { (repo, c) =>
+        c.copy(studentifiedRepo = Some(repo))
+      })
 
 private def gotoExerciseParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
   import builder.*
@@ -117,79 +89,45 @@ private def gotoExerciseParser(using builder: OParserBuilder[CmtcOptions]): OPar
       arg[String]("<exercise ID>").action { case (exercise, c) =>
         c.copy(command = GotoExercise(Some(exercise)))
       },
-      arg[File]("<studentified repo  folder>")
-        .validate { studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action { (repo, c) =>
-          c.copy(studentifiedRepo = Some(repo))
-        })
+      arg[File]("<studentified repo  folder>").validate(_.existsAndIsADirectory).action { (repo, c) =>
+        c.copy(studentifiedRepo = Some(repo))
+      })
 
 private def gotoFirstExerciseParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
   import builder.*
   cmd("goto-first-exercise")
     .text("Go to the first exercise and fetch corresponding tests")
     .action { (_, c) => c.copy(command = GotoFirstExercise) }
-    .children(
-      arg[File]("<studentified repo  folder>")
-        .validate { studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action { (repo, c) =>
-          c.copy(studentifiedRepo = Some(repo))
-        })
+    .children(arg[File]("<studentified repo  folder>").validate(_.existsAndIsADirectory).action { (repo, c) =>
+      c.copy(studentifiedRepo = Some(repo))
+    })
 
 private def pullSolutionParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
   import builder.*
   cmd("pull-solution")
     .text("Pull solution for a given exercise")
     .action { (_, c) => c.copy(command = PullSolution) }
-    .children(
-      arg[File]("<studentified repo  folder>")
-        .validate { studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action { (repo, c) =>
-          c.copy(studentifiedRepo = Some(repo))
-        })
+    .children(arg[File]("<studentified repo  folder>").validate(_.existsAndIsADirectory).action { (repo, c) =>
+      c.copy(studentifiedRepo = Some(repo))
+    })
 
 private def saveStateParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
   import builder.*
   cmd("save-state")
     .text("Save state of current exercise")
     .action { (_, c) => c.copy(command = SaveState) }
-    .children(
-      arg[File]("<studentified repo  folder>")
-        .validate { studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action { (repo, c) =>
-          c.copy(studentifiedRepo = Some(repo))
-        })
+    .children(arg[File]("<studentified repo  folder>").validate(_.existsAndIsADirectory).action { (repo, c) =>
+      c.copy(studentifiedRepo = Some(repo))
+    })
 
 private def savedStateParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
   import builder.*
   cmd("list-saved-states")
     .text("List all saved exercise states")
     .action { (_, c) => c.copy(command = ListSavedStates) }
-    .children(
-      arg[File]("<studentified repo  folder>")
-        .validate { studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action { (repo, c) =>
-          c.copy(studentifiedRepo = Some(repo))
-        })
+    .children(arg[File]("<studentified repo  folder>").validate(_.existsAndIsADirectory).action { (repo, c) =>
+      c.copy(studentifiedRepo = Some(repo))
+    })
 
 private def restoreStateParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
   import builder.*
@@ -199,15 +137,9 @@ private def restoreStateParser(using builder: OParserBuilder[CmtcOptions]): OPar
       arg[String]("<exercise ID>").action { case (exercise, c) =>
         c.copy(command = RestoreState(Some(exercise)))
       },
-      arg[File]("<studentified repo  folder>")
-        .validate { studentifiedFolder =>
-          if studentifiedFolder.exists
-          then success
-          else failure(s"$studentifiedFolder: doesn't exist")
-        }
-        .action { (repo, c) =>
-          c.copy(studentifiedRepo = Some(repo))
-        })
+      arg[File]("<studentified repo  folder>").validate(_.existsAndIsADirectory).action { (repo, c) =>
+        c.copy(studentifiedRepo = Some(repo))
+      })
 
 private def versionParser(using builder: OParserBuilder[CmtcOptions]): OParser[Unit, CmtcOptions] =
   import builder.*

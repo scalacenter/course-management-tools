@@ -1,5 +1,6 @@
 package cmt
 
+import cmt.core.cli.CmdLineParseError
 import cmt.version.BuildInfo
 import scopt.OEffect.ReportError
 

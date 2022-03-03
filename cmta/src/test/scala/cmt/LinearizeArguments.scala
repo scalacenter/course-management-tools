@@ -1,6 +1,9 @@
 package cmt
 
-import cmt.TestDirectories.{firstRealDirectory, nonExistentDirectory, realFile, secondRealDirectory}
+import cmt.TestDirectories
+import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
+import cmt.admin.cli.CliCommand.Linearize
+import cmt.admin.cli.CliOptions
 import cmt.support.CommandLineArguments
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
@@ -10,7 +13,7 @@ import sbt.io.IO
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 
-object LinearizeArguments extends CommandLineArguments[CmtaOptions] with Tables {
+object LinearizeArguments extends CommandLineArguments[CliOptions] with Tables with TestDirectories {
 
   val identifier = "linearize"
 
@@ -35,19 +38,22 @@ object LinearizeArguments extends CommandLineArguments[CmtaOptions] with Tables 
     ("args", "expectedResult"),
     (
       Seq(identifier, firstRealDirectory, secondRealDirectory),
-      CmtaOptions(
-        file(".").getAbsoluteFile.getParentFile,
-        Linearize(
-          linearizeBaseFolder = Some(file(secondRealDirectory)),
-          forceDeleteExistingDestinationFolder = false))),
+      CliOptions.default(
+        command = Linearize,
+        mainRepository = MainRepository(currentDirectory),
+        maybeLinearizeBaseFolder = Some(LinearizeBaseDirectory(file(secondRealDirectory))))),
     (
       Seq(identifier, firstRealDirectory, secondRealDirectory, "--force-delete"),
-      CmtaOptions(
-        file(".").getAbsoluteFile.getParentFile,
-        Linearize(linearizeBaseFolder = Some(file(secondRealDirectory)), forceDeleteExistingDestinationFolder = true))),
+      CliOptions.default(
+        command = Linearize,
+        mainRepository = MainRepository(currentDirectory),
+        maybeLinearizeBaseFolder = Some(LinearizeBaseDirectory(file(secondRealDirectory))),
+        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true))),
     (
       Seq(identifier, firstRealDirectory, secondRealDirectory, "-f"),
-      CmtaOptions(
-        file(".").getAbsoluteFile.getParentFile,
-        Linearize(linearizeBaseFolder = Some(file(secondRealDirectory)), forceDeleteExistingDestinationFolder = true))))
+      CliOptions.default(
+        command = Linearize,
+        mainRepository = MainRepository(currentDirectory),
+        maybeLinearizeBaseFolder = Some(LinearizeBaseDirectory(file(secondRealDirectory))),
+        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true))))
 }

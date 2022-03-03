@@ -1,7 +1,7 @@
 package cmt.support
 
+import cmt.core.cli.CmdLineParseError
 import cmt.support.EitherSupport
-import cmt.{CliParser, CmdLineParseError}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableFor2

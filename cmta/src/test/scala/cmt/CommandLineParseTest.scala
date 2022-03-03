@@ -1,10 +1,11 @@
 package cmt
 
+import cmt.admin.cli.{AdminCliParser, CliOptions}
 import cmt.support.CommandLineParseTestBase
 
 class CommandLineParseTest
-    extends CommandLineParseTestBase[CmtaOptions](
-      CmdLineParse.parse,
+    extends CommandLineParseTestBase[CliOptions](
+      AdminCliParser.parse,
       StudentifyArguments,
       DuplicateInsertBeforeArguments,
       LinearizeArguments,

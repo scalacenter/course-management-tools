@@ -1,12 +1,15 @@
 package cmt
 
-import cmt.TestDirectories.*
+import cmt.TestDirectories
+import cmt.admin.Domain.{ExerciseNumber, MainRepository}
+import cmt.admin.cli.CliCommand.DuplicateInsertBefore
+import cmt.admin.cli.CliOptions
 import cmt.support.CommandLineArguments
 import org.scalatest.prop.Tables
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 
-object DuplicateInsertBeforeArguments extends CommandLineArguments[CmtaOptions] with Tables {
+object DuplicateInsertBeforeArguments extends CommandLineArguments[CliOptions] with Tables with TestDirectories {
 
   val identifier = "dib"
 
@@ -31,5 +34,5 @@ object DuplicateInsertBeforeArguments extends CommandLineArguments[CmtaOptions] 
     ("args", "expectedResult"),
     (
       Seq(identifier, firstRealDirectory, "--exercise-number", "1"),
-      CmtaOptions(file(".").getAbsoluteFile.getParentFile, DuplicateInsertBefore(1))))
+      CliOptions.default(command = DuplicateInsertBefore, exerciseNumber = ExerciseNumber(1))))
 }

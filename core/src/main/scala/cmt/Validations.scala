@@ -11,10 +11,10 @@ object ValidationExtensions:
     def existsAndIsADirectoryInAGitRepository: Either[String, Unit] =
       FileValidations.existsAndIsADirectoryInAGitRepository(file)
 
-  extension (int: Integer)
-    def isAnIntegerGreaterThanZero: Either[String, Unit] =
+  extension (int: Int)
+    def isGreaterThanZero: Either[String, Unit] =
       IntValidations.isGreaterThanZero(int)
-    def isANonNegativeInteger: Either[String, Unit] =
+    def isNotNegative: Either[String, Unit] =
       IntValidations.isNotNegative(int)
 
 object StringValidations:

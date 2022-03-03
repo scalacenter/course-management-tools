@@ -1,12 +1,15 @@
 package cmt
 
-import cmt.TestDirectories.{firstRealDirectory, nonExistentDirectory, realFile, secondRealDirectory}
+import cmt.TestDirectories
+import cmt.admin.Domain.{MainRepository, RenumberOffset, RenumberStart, RenumberStep}
+import cmt.admin.cli.CliCommand.RenumberExercises
+import cmt.admin.cli.CliOptions
 import cmt.support.CommandLineArguments
 import org.scalatest.prop.Tables
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 
-object RenumberArguments extends CommandLineArguments[CmtaOptions] with Tables {
+object RenumberArguments extends CommandLineArguments[CliOptions] with Tables with TestDirectories {
 
   val identifier = "renum"
 
@@ -25,27 +28,33 @@ object RenumberArguments extends CommandLineArguments[CmtaOptions] with Tables {
     ("args", "expectedResult"),
     (
       Seq(identifier, firstRealDirectory),
-      CmtaOptions(
-        file(".").getAbsoluteFile.getParentFile,
-        RenumberExercises(startRenumAt = None, renumOffset = 1, renumStep = 1))),
+      CliOptions.default(
+        command = RenumberExercises,
+        mainRepository = MainRepository(file(".").getAbsoluteFile.getParentFile))),
     (
       Seq(identifier, firstRealDirectory, "--from", "9"),
-      CmtaOptions(
-        file(".").getAbsoluteFile.getParentFile,
-        RenumberExercises(startRenumAt = Some(9), renumOffset = 1, renumStep = 1))),
+      CliOptions.default(
+        command = RenumberExercises,
+        mainRepository = MainRepository(currentDirectory),
+        maybeRenumberStart = Some(RenumberStart(9)))),
     (
       Seq(identifier, firstRealDirectory, "--to", "99"),
-      CmtaOptions(
-        file(".").getAbsoluteFile.getParentFile,
-        RenumberExercises(startRenumAt = None, renumOffset = 99, renumStep = 1))),
+      CliOptions.default(
+        command = RenumberExercises,
+        mainRepository = MainRepository(currentDirectory),
+        renumberOffset = RenumberOffset(99))),
     (
       Seq(identifier, firstRealDirectory, "--step", "999"),
-      CmtaOptions(
-        file(".").getAbsoluteFile.getParentFile,
-        RenumberExercises(startRenumAt = None, renumOffset = 1, renumStep = 999))),
+      CliOptions.default(
+        command = RenumberExercises,
+        mainRepository = MainRepository(currentDirectory),
+        renumberStep = RenumberStep(999))),
     (
       Seq(identifier, firstRealDirectory, "--from", "1", "--to", "2", "--step", "3"),
-      CmtaOptions(
-        file(".").getAbsoluteFile.getParentFile,
-        RenumberExercises(startRenumAt = Some(1), renumOffset = 2, renumStep = 3))))
+      CliOptions.default(
+        command = RenumberExercises,
+        mainRepository = MainRepository(currentDirectory),
+        maybeRenumberStart = Some(RenumberStart(1)),
+        renumberOffset = RenumberOffset(2),
+        renumberStep = RenumberStep(3))))
 }

@@ -1,6 +1,9 @@
 package cmt
 
-import cmt.TestDirectories.{firstRealDirectory, nonExistentDirectory, realFile, secondRealDirectory}
+import cmt.TestDirectories
+import cmt.admin.Domain.{LinearizeBaseDirectory, MainRepository}
+import cmt.admin.cli.CliCommand.DeLinearize
+import cmt.admin.cli.CliOptions
 import cmt.support.CommandLineArguments
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
@@ -10,7 +13,7 @@ import sbt.io.IO
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 
-object DelinearizeArguments extends CommandLineArguments[CmtaOptions] with Tables {
+object DelinearizeArguments extends CommandLineArguments[CliOptions] with Tables with TestDirectories {
 
   val identifier = "delinearize"
 
@@ -35,7 +38,8 @@ object DelinearizeArguments extends CommandLineArguments[CmtaOptions] with Table
     ("args", "expectedResult"),
     (
       Seq(identifier, firstRealDirectory, secondRealDirectory),
-      CmtaOptions(
-        file(".").getAbsoluteFile.getParentFile,
-        DeLinearize(linearizeBaseFolder = Some(file(secondRealDirectory))))))
+      CliOptions.default(
+        command = DeLinearize,
+        mainRepository = MainRepository(file(".").getAbsoluteFile.getParentFile),
+        maybeLinearizeBaseFolder = Some(LinearizeBaseDirectory(file(secondRealDirectory))))))
 }

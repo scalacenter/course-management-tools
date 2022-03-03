@@ -3,7 +3,7 @@ package cmt
 import sbt.io.syntax.File
 import sbt.io.syntax.file
 
-object TestDirectories {
+trait TestDirectories {
 
   def baseDirectory = file(".").getAbsoluteFile.getParentFile
 
@@ -11,4 +11,6 @@ object TestDirectories {
   val firstRealDirectory = "./cmta/src/test/resources/i-am-a-directory"
   val secondRealDirectory = "./cmta/src/test/resources/i-am-another-directory"
   val realFile = "./cmta/src/test/resources/i-am-a-file.txt"
+
+  val currentDirectory = file(".").getAbsoluteFile.getParentFile
 }

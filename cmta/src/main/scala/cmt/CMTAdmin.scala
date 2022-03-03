@@ -70,35 +70,38 @@ object CMTAdmin:
   end rangeOverlapsWithOtherExercises
 
   def duplicateInsertBefore(mainRepo: File, exerciseNumber: Int)(config: CMTaConfig): Either[String, Unit] =
-    val ExercisePrefixesAndExerciseNames_TBR(prefixes, exercises) =
-      getExercisePrefixAndExercises_TBR(mainRepo)(config)
-    validatePrefixes(prefixes)
-    val exercisePrefix = prefixes.head
+    for {
+      ExercisePrefixAndExerciseNames(exercisePrefix, exercises) <- getExercisePrefixAndExercises(mainRepo)(config)
 
-    val exerciseNumbers = exercises.map(extractExerciseNr)
-    val mainRepoExerciseFolder = mainRepo / config.mainRepoExerciseFolder
+      exerciseNumbers = exercises.map(extractExerciseNr)
+      mainRepoExerciseFolder = mainRepo / config.mainRepoExerciseFolder
 
-    if !exerciseNumbers.contains(exerciseNumber) then Left(s"No exercise with number $exerciseNumber")
-    else
-      val splitIndex = exerciseNumbers.indexOf(exerciseNumber)
-      val (exercisesNumsBeforeInsert, exercisesNumsAfterInsert) = exerciseNumbers.splitAt(splitIndex)
-      val (exercisesBeforeInsert, exercisesAfterInsert) = exercises.splitAt(splitIndex)
-      if exerciseNumber + exercisesNumsAfterInsert.size <= 999 then
-        if exerciseNumber == 0 || exercisesNumsBeforeInsert.nonEmpty && exercisesNumsBeforeInsert.last == exerciseNumber - 1
-        then
-          renumberExercises(mainRepo, Some(exerciseNumber), exerciseNumber + 1, 1)(config)
-          val duplicateFrom =
-            mainRepoExerciseFolder / renumberExercise(exercisesAfterInsert.head, exercisePrefix, exerciseNumber + 1)
-          val duplicateTo = mainRepoExerciseFolder / s"${exercisesAfterInsert.head}_copy"
-          sbtio.copyDirectory(duplicateFrom, duplicateTo)
-          Right(())
+      duplicateInsertBeforeResult <-
+        if !exerciseNumbers.contains(exerciseNumber)
+        then Left(s"No exercise with number $exerciseNumber")
         else
-          val duplicateFrom = mainRepoExerciseFolder / exercisesAfterInsert.head
-          val duplicateTo =
-            mainRepoExerciseFolder / s"${renumberExercise(exercisesAfterInsert.head, exercisePrefix, exerciseNumber - 1)}_copy"
-          sbtio.copyDirectory(duplicateFrom, duplicateTo)
-          Right(())
-      else Left("Cannot duplicate and insert an exercise as it would exceed the available exercise number space")
+          val splitIndex = exerciseNumbers.indexOf(exerciseNumber)
+          val (exercisesNumsBeforeInsert, exercisesNumsAfterInsert) = exerciseNumbers.splitAt(splitIndex)
+          val (exercisesBeforeInsert, exercisesAfterInsert) = exercises.splitAt(splitIndex)
+          if exerciseNumber + exercisesNumsAfterInsert.size <= 999 then
+            if exerciseNumber == 0 || exercisesNumsBeforeInsert.nonEmpty && exercisesNumsBeforeInsert.last == exerciseNumber - 1
+            then
+              renumberExercises(mainRepo, Some(exerciseNumber), exerciseNumber + 1, 1)(config)
+              val duplicateFrom =
+                mainRepoExerciseFolder / renumberExercise(exercisesAfterInsert.head, exercisePrefix, exerciseNumber + 1)
+              val duplicateTo = mainRepoExerciseFolder / s"${exercisesAfterInsert.head}_copy"
+              sbtio.copyDirectory(duplicateFrom, duplicateTo)
+              Right(())
+            else
+              val duplicateFrom = mainRepoExerciseFolder / exercisesAfterInsert.head
+              val duplicateTo =
+                mainRepoExerciseFolder / s"${renumberExercise(exercisesAfterInsert.head, exercisePrefix, exerciseNumber - 1)}_copy"
+              sbtio.copyDirectory(duplicateFrom, duplicateTo)
+              Right(())
+          else Left("Cannot duplicate and insert an exercise as it would exceed the available exercise number space")
+
+    } yield duplicateInsertBeforeResult
+
   end duplicateInsertBefore
 
   private def renumberExercise(exercise: String, exercisePrefix: String, newNumber: Int): String =

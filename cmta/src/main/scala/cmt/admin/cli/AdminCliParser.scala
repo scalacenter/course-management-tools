@@ -3,11 +3,11 @@ package cmt.admin.cli
 import cmt.ValidationExtensions.*
 import cmt.admin.Domain.*
 import cmt.admin.cli.CliCommand.*
-import cmt.core.cli.{CmdLineParseError, ScoptCliParser}
 import cmt.Helpers
 import sbt.io.syntax.File
 import scopt.{OParser, OParserBuilder}
 import cmt.ValidationExtensions.*
+import cmt.core.cli.{CmdLineParseError, ScoptCliParser}
 
 object AdminCliParser {
 

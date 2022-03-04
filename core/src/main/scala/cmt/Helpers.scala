@@ -142,11 +142,13 @@ object Helpers:
   def writeStudentifiedCMTBookmark(bookmarkFile: File, firstExercise: String): Unit =
     dumpStringToFile(firstExercise, bookmarkFile)
 
-  def withZipFile(solutionsFolder: File, exerciseID: String)(code: File => Any): Unit =
+  def withZipFile(solutionsFolder: File, exerciseID: String)(
+      code: File => Either[String, String]): Either[String, String] =
     val archive = solutionsFolder / s"$exerciseID.zip"
     sbtio.unzip(archive, solutionsFolder)
-    code(solutionsFolder / exerciseID)
+    val retVal = code(solutionsFolder / exerciseID)
     sbtio.delete(solutionsFolder / exerciseID)
+    retVal
   end withZipFile
 
   def initializeGitRepo(linearizedProject: File): Unit =

@@ -10,43 +10,56 @@ import sbt.io.syntax.*
 given Executable[Linearize] with
   extension (cmd: Linearize)
     def execute(): Either[String, String] = {
-      exitIfGitIndexOrWorkspaceIsntClean(cmd.mainRepository.value)
-
-      println(s"Linearizing ${toConsoleGreen(cmd.mainRepository.value.getPath)} to ${toConsoleGreen(
-          cmd.linearizeBaseDirectory.value.getPath)}")
-
-      val mainRepoName = cmd.mainRepository.value.getName
-
-      val tmpFolder = sbtio.createTemporaryDirectory
-      val cleanedMainRepo =
-        ProcessDSL.copyCleanViaGit(cmd.mainRepository.value, tmpFolder, mainRepoName)
-
-      val ExercisePrefixesAndExerciseNames_TBR(prefixes, exercises) =
-        getExercisePrefixAndExercises_TBR(cmd.mainRepository.value)(cmd.config)
-      validatePrefixes(prefixes)
-
-      val linearizedRootFolder = cmd.linearizeBaseDirectory.value / mainRepoName
-
-      if linearizedRootFolder.exists && cmd.forceDeleteDestinationDirectory.value then
-        sbtio.delete(linearizedRootFolder)
-      sbtio.createDirectory(linearizedRootFolder)
-
-      initializeGitRepo(linearizedRootFolder)
+      import LinearizeHelpers.*
 
       for {
-        exercise <- exercises
-        from = cleanedMainRepo / cmd.config.mainRepoExerciseFolder / exercise
-        linearizedCodeFolder =
-          linearizedRootFolder / cmd.config.linearizedRepoActiveExerciseFolder
-      } {
+        _ <- exitIfGitIndexOrWorkspaceIsntClean(cmd.mainRepository.value)
+        _ = println(s"Linearizing ${toConsoleGreen(cmd.mainRepository.value.getPath)} to ${toConsoleGreen(
+            cmd.linearizeBaseDirectory.value.getPath)}")
+
+        mainRepoName = cmd.mainRepository.value.getName
+        tmpFolder = sbtio.createTemporaryDirectory
+        cleanedMainRepo = tmpFolder / cmd.mainRepository.value.getName
+
+        _ <- copyCleanViaGit(cmd.mainRepository.value, tmpFolder, mainRepoName)
+
+        ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(cmd.mainRepository.value)(
+          cmd.config)
+
+        linearizedRootFolder = cmd.linearizeBaseDirectory.value / mainRepoName
+
+        _ = if linearizedRootFolder.exists && cmd.forceDeleteDestinationDirectory.value then
+          sbtio.delete(linearizedRootFolder)
+        _ = sbtio.createDirectory(linearizedRootFolder)
+
+        _ <- initializeGitRepo(linearizedRootFolder)
+
+        _ <- commitExercises(cleanedMainRepo, exercises, linearizedRootFolder, cmd)
+
+        _ = sbtio.delete(tmpFolder)
+        successMessage <- Right(s"Successfully linearized ${cmd.mainRepository.value.getPath}")
+
+      } yield successMessage
+    }
+end given
+
+private object LinearizeHelpers:
+  def commitExercises(
+      cleanedMainRepo: File,
+      exercises: Seq[String],
+      linearizedRootFolder: File,
+      cmd: Linearize): Either[String, Unit] =
+    exercises match
+      case exercise +: remainingExercises =>
+        val from = cleanedMainRepo / cmd.config.mainRepoExerciseFolder / exercise
+        val linearizedCodeFolder = linearizedRootFolder / cmd.config.linearizedRepoActiveExerciseFolder
         println(s"Copying from $from to $linearizedCodeFolder")
         sbtio.delete(linearizedCodeFolder)
         sbtio.createDirectory(linearizedCodeFolder)
         sbtio.copyDirectory(from, linearizedCodeFolder, preserveLastModified = true)
-        commitToGit(exercise, linearizedRootFolder)
-      }
-
-      sbtio.delete(tmpFolder)
-
-      Right(s"Successfully linearized ${cmd.mainRepository.value.getPath}")
-    }
+        val commitResult: Either[String, Unit] = commitToGit(exercise, linearizedRootFolder)
+        commitResult match
+          case Right(_) => commitExercises(cleanedMainRepo, remainingExercises, linearizedRootFolder, cmd)
+          case left     => left
+      case Nil => Right(())
+end LinearizeHelpers

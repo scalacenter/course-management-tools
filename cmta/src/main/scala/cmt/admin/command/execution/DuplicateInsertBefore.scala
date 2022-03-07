@@ -1,10 +1,9 @@
 package cmt.admin.command.execution
 
 import cmt.admin.command.execution.renumberExercise
-import cmt.Helpers.{ExercisePrefixAndExerciseNames, extractExerciseNr, getExercisePrefixAndExercises, validatePrefixes}
+import cmt.Helpers.{ExercisesMetadata, extractExerciseNr, getExerciseMetadata, validatePrefixes}
 import cmt.admin.Domain.{RenumberOffset, RenumberStart, RenumberStep}
 import cmt.admin.command.AdminCommand.{DuplicateInsertBefore, RenumberExercises}
-import cmt.admin.command.execution.given
 import cmt.admin.command.execution.renumberExercise
 import cmt.core.execution.Executable
 import sbt.io.IO as sbtio
@@ -14,10 +13,9 @@ given Executable[DuplicateInsertBefore] with
   extension (cmd: DuplicateInsertBefore)
     def execute(): Either[String, String] = {
       for {
-        ExercisePrefixAndExerciseNames(exercisePrefix, exercises) <- getExercisePrefixAndExercises(
-          cmd.mainRepository.value)(cmd.config)
+        ExercisesMetadata(exercisePrefix, exercises, exerciseNumbers) <- getExerciseMetadata(cmd.mainRepository.value)(
+          cmd.config)
 
-        exerciseNumbers = exercises.map(extractExerciseNr)
         mainRepoExerciseFolder = cmd.mainRepository.value / cmd.config.mainRepoExerciseFolder
 
         duplicateInsertBeforeResult <-
@@ -54,3 +52,4 @@ given Executable[DuplicateInsertBefore] with
 
       } yield duplicateInsertBeforeResult
     }
+end given

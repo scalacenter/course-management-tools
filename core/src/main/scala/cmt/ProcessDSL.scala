@@ -11,19 +11,12 @@ object ProcessDSL:
   final case class ProcessCmd(cmd: Seq[String], workingDir: File)
 
   extension (cmd: ProcessCmd)
-    def runAndExitIfFailed(errorMsg: String): Unit =
-      val status = Try(Process(cmd.cmd, cmd.workingDir).!)
-      if status.getOrElse(-1) != 0 then
-        System.err.println(s"""
-                   |$errorMsg
-                   |  Executed command: ${cmd.cmd.mkString(" ")}
-                   |  Working directory: ${cmd.workingDir}
-           """.stripMargin)
-        System.exit(status.getOrElse(-1))
 
-    def run: Int = {
+    def runWithStatus(msg: String): Either[String, Unit] = {
       val status = Try(Process(cmd.cmd, cmd.workingDir).!)
-      status.getOrElse(-1)
+      status match
+        case Success(_)  => Right(())
+        case Failure(ex) => Left(msg)
     }
 
     def runAndReadOutput(): Either[String, String] =
@@ -44,36 +37,5 @@ object ProcessDSL:
       val cmdArgs =
         SplitRegex.findAllMatchIn(command).map(_.toString.replaceAll(" $", "").replaceAll(""""""", "")).toVector
       ProcessCmd(cmdArgs, workingDir)
-
-  def copyCleanViaGit(mainRepo: File, tmpDir: File, repoName: String): File =
-
-    import java.util.UUID
-    val initBranch = UUID.randomUUID.toString
-    val tmpRemoteBranch = s"CMT-${UUID.randomUUID.toString}"
-    val script = List(
-      (s"${tmpDir.getPath}", List(s"mkdir ${repoName}.git", s"git init --bare ${repoName}.git")),
-      (
-        s"${mainRepo.getPath}",
-        List(
-          s"git remote add ${tmpRemoteBranch} ${tmpDir.getPath}/${repoName}.git",
-          s"git push ${tmpRemoteBranch} HEAD:refs/heads/${initBranch}")),
-      (
-        s"${tmpDir.getPath}",
-        List(
-          s"git clone -b ${initBranch} ${tmpDir.getPath}/${repoName}.git",
-          s"rm -rf ${tmpDir.getPath}/${repoName}.git")),
-      (s"${mainRepo.getPath}", List(s"git remote remove ${tmpRemoteBranch}")))
-    val commands = for {
-      (workingDir, commands) <- script
-      command <- commands
-    } yield command.toProcessCmd(new File(workingDir))
-
-    for {
-      command @ ProcessCmd(cmds, wd) <- commands
-      cmdAsString = cmds.mkString(" ")
-    } command.runAndExitIfFailed(cmdAsString)
-
-    tmpDir / mainRepo.getName
-  end copyCleanViaGit
 
 end ProcessDSL

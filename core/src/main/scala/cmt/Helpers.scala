@@ -1,5 +1,6 @@
 package cmt
 
+import cmt.ProcessDSL.ProcessCmd
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
@@ -35,7 +36,7 @@ object Helpers:
     "git rev-parse --show-toplevel".toProcessCmd(workingDir = repo).runAndReadOutput()
   }
 
-  def exitIfGitIndexOrWorkspaceIsntClean(mainRepo: File): Unit =
+  def exitIfGitIndexOrWorkspaceIsntClean(mainRepo: File): Either[String, Unit] =
     import ProcessDSL.toProcessCmd
     val workspaceIsUnclean = "git status --porcelain"
       .toProcessCmd(workingDir = mainRepo)
@@ -45,12 +46,13 @@ object Helpers:
 
     workspaceIsUnclean match {
       case Right(cnt) if cnt > 0 =>
-        printErrorAndExit(s"main repository isn't clean. Commit changes and try again")
-      case Right(_) => ()
-      case Left(_)  =>
+        Left(s"main repository isn't clean. Commit changes and try again")
+      case Right(_)  => Right(())
+      case Left(msg) => Left(msg)
     }
 
-  def createStudentifiedFolderSkeleton(stuBase: File, studentifiedRootFolder: File)(config: CMTaConfig) =
+  def createStudentifiedFolderSkeleton(stuBase: File, studentifiedRootFolder: File)(
+      config: CMTaConfig): StudentifiedSkelFolders =
     if studentifiedRootFolder.exists then printErrorAndExit(s"$studentifiedRootFolder exists already")
     if !stuBase.canWrite then printErrorAndExit(s"$stuBase isn't writeable")
 
@@ -59,17 +61,18 @@ object Helpers:
 
     sbtio.createDirectories(Seq(studentifiedRootFolder, solutionsFolder))
     StudentifiedSkelFolders(solutionsFolder)
+  end createStudentifiedFolderSkeleton
 
-  def addFirstExercise(cleanedMainRepo: File, firstExercise: String, studentifiedRootFolder: File)(config: CMTaConfig) =
+  def addFirstExercise(cleanedMainRepo: File, firstExercise: String, studentifiedRootFolder: File)(
+      config: CMTaConfig): Unit =
     sbtio.copyDirectory(
       cleanedMainRepo / config.mainRepoExerciseFolder / firstExercise,
       studentifiedRootFolder / config.studentifiedRepoActiveExerciseFolder)
+  end addFirstExercise
 
-  final case class ExercisePrefixesAndExerciseNames_TBR(prefixes: Set[String], exercises: Vector[String])
-  final case class ExercisePrefixAndExerciseNames(exercisePrefix: String, exercises: Vector[String])
+  final case class ExercisesMetadata(exercisePrefix: String, exercises: Vector[String], exerciseNumbers: Vector[Int])
 
-  def getExercisePrefixAndExercises(mainRepo: File)(
-      config: CMTaConfig): Either[String, ExercisePrefixAndExerciseNames] =
+  def getExerciseMetadata(mainRepo: File)(config: CMTaConfig): Either[String, ExercisesMetadata] =
     val PrefixSpec = raw"(.*)_\d{3}_\w+$$".r
     val matchedNames =
       sbtio.listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder).map(_.getName).to(List)
@@ -80,26 +83,13 @@ object Helpers:
       case exercises =>
         prefixes.size match
           case 0 => Left("No exercises found")
-          case 1 => Right(ExercisePrefixAndExerciseNames(prefixes.head, exercises))
+          case 1 =>
+            val exerciseNumbers = exercises.map(extractExerciseNr)
+            if exerciseNumbers.size == exerciseNumbers.to(Set).size then
+              Right(ExercisesMetadata(prefixes.head, exercises, exerciseNumbers))
+            else Left("Duplicate exercise numbers found")
           case _ => Left(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")
-  end getExercisePrefixAndExercises
-
-  // TODO: This method needs to be removed once the refactoring of all cmta command is completed
-  def getExercisePrefixAndExercises_TBR(mainRepo: File)(config: CMTaConfig): ExercisePrefixesAndExerciseNames_TBR =
-    val PrefixSpec = raw"(.*)_\d{3}_\w+$$".r
-    val matchedNames =
-      sbtio.listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder).map(_.getName).to(List)
-    val prefixes = matchedNames.map { case PrefixSpec(n) => n }.to(Set)
-    val exercises = sbtio
-      .listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder)
-      .map(_.getName)
-      .to(Vector)
-      .sorted match
-      case Vector() =>
-        printErrorAndExit("No exercises found. Check your configuration"); ???
-      case exercises => exercises
-    ExercisePrefixesAndExerciseNames_TBR(prefixes, exercises)
-  end getExercisePrefixAndExercises_TBR
+  end getExerciseMetadata
 
   def validatePrefixes(prefixes: Set[String]): Unit =
     if prefixes.size > 1 then printErrorAndExit(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")
@@ -151,22 +141,24 @@ object Helpers:
     retVal
   end withZipFile
 
-  def initializeGitRepo(linearizedProject: File): Unit =
+  def initializeGitRepo(linearizedProject: File): Either[String, Unit] =
     import ProcessDSL.toProcessCmd
     s"git init"
       .toProcessCmd(workingDir = linearizedProject)
-      .runAndExitIfFailed(
-        toConsoleRed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"))
+      .runWithStatus(toConsoleRed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"))
   end initializeGitRepo
 
-  def commitToGit(commitMessage: String, projectFolder: File): Unit =
+  def commitToGit(commitMessage: String, projectFolder: File): Either[String, Unit] =
     import ProcessDSL.toProcessCmd
-    s"git add -A"
-      .toProcessCmd(workingDir = projectFolder)
-      .runAndExitIfFailed(toConsoleRed(s"Failed to add first exercise files"))
-    s"""git commit -m "$commitMessage""""
-      .toProcessCmd(workingDir = projectFolder)
-      .runAndExitIfFailed(toConsoleRed(s"Failed to commit files for $commitMessage"))
+
+    for {
+      _ <- s"git add -A"
+        .toProcessCmd(workingDir = projectFolder)
+        .runWithStatus(toConsoleRed(s"Failed to add first exercise files"))
+      result <- s"""git commit -m "$commitMessage""""
+        .toProcessCmd(workingDir = projectFolder)
+        .runWithStatus(toConsoleRed(s"Failed to commit files for $commitMessage"))
+    } yield result
   end commitToGit
 
   private val ExerciseNumberSpec = raw".*_(\d{3})_.*".r
@@ -175,3 +167,48 @@ object Helpers:
     val ExerciseNumberSpec(d) = exercise: @unchecked
     d.toInt
   }
+
+  def copyCleanViaGit(mainRepo: File, tmpDir: File, repoName: String): Either[String, Unit] =
+
+    import ProcessDSL.*
+
+    import java.util.UUID
+    val initBranch = UUID.randomUUID.toString
+    val tmpRemoteBranch = s"CMT-${UUID.randomUUID.toString}"
+    val script = List(
+      (s"${tmpDir.getPath}", List(s"mkdir ${repoName}.git", s"git init --bare ${repoName}.git")),
+      (
+        s"${mainRepo.getPath}",
+        List(
+          s"git remote add ${tmpRemoteBranch} ${tmpDir.getPath}/${repoName}.git",
+          s"git push ${tmpRemoteBranch} HEAD:refs/heads/${initBranch}")),
+      (
+        s"${tmpDir.getPath}",
+        List(
+          s"git clone -b ${initBranch} ${tmpDir.getPath}/${repoName}.git",
+          s"rm -rf ${tmpDir.getPath}/${repoName}.git")),
+      (s"${mainRepo.getPath}", List(s"git remote remove ${tmpRemoteBranch}")))
+    val commands = for {
+      (workingDir, commands) <- script
+      command <- commands
+    } yield command.toProcessCmd(new File(workingDir))
+
+    for {
+      result <- runCommands(commands)
+    } yield result
+
+  end copyCleanViaGit
+
+  @scala.annotation.tailrec
+  private def runCommands(commands: Seq[ProcessCmd]): Either[String, Unit] =
+    import ProcessDSL.*
+
+    commands match
+      case (command @ ProcessCmd(cmds, wd)) +: remainingCommands =>
+        val commandAsString = cmds.mkString(" ")
+        command.runWithStatus(commandAsString) match
+          case r @ Right(_)  => runCommands(remainingCommands)
+          case l @ Left(msg) => Left(msg)
+      case Nil => Right(())
+
+end Helpers

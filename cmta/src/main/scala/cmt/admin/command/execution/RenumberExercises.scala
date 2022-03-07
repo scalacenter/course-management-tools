@@ -1,6 +1,6 @@
 package cmt.admin.command.execution
 
-import cmt.Helpers.{ExercisePrefixAndExerciseNames, extractExerciseNr, getExercisePrefixAndExercises, validatePrefixes}
+import cmt.Helpers.{ExercisesMetadata, extractExerciseNr, getExerciseMetadata, validatePrefixes}
 import cmt.admin.command.AdminCommand.RenumberExercises
 import cmt.admin.command.execution.renumberExercise
 import cmt.core.execution.Executable
@@ -8,13 +8,14 @@ import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
 given Executable[RenumberExercises] with
+  import RenumberExercisesHelpers.*
+
   extension (cmd: RenumberExercises)
     def execute(): Either[String, String] =
       for {
-        ExercisePrefixAndExerciseNames(exercisePrefix, exercises) <- getExercisePrefixAndExercises(
-          cmd.mainRepository.value)(cmd.config)
+        ExercisesMetadata(exercisePrefix, exercises, exerciseNumbers) <- getExerciseMetadata(cmd.mainRepository.value)(
+          cmd.config)
 
-        exerciseNumbers = exercises.map(extractExerciseNr)
         mainRepoExerciseFolder = cmd.mainRepository.value / cmd.config.mainRepoExerciseFolder
 
         renumStartAt <- resolveStartAt(cmd.maybeStart.map(_.value), exerciseNumbers)
@@ -54,21 +55,24 @@ given Executable[RenumberExercises] with
 
         moveResult <- tryMove
       } yield moveResult
+end given
 
-    private def resolveStartAt(renumStartAtOpt: Option[Int], exerciseNumbers: Vector[Int]) = {
-      renumStartAtOpt match
-        case None => Right(exerciseNumbers.head)
-        case Some(num) =>
-          if exerciseNumbers.contains(num)
-          then Right(num)
-          else Left(s"No exercise with number $num")
-    }
-    end resolveStartAt
+private object RenumberExercisesHelpers:
+  def resolveStartAt(renumStartAtOpt: Option[Int], exerciseNumbers: Vector[Int]) = {
+    renumStartAtOpt match
+      case None => Right(exerciseNumbers.head)
+      case Some(num) =>
+        if exerciseNumbers.contains(num)
+        then Right(num)
+        else Left(s"No exercise with number $num")
+  }
+  end resolveStartAt
 
-    private def exceedsAvailableSpace(exercisesAfterSplit: Vector[String], renumOffset: Int, renumStep: Int): Boolean =
-      renumOffset + (exercisesAfterSplit.size - 1) * renumStep > 999
-    end exceedsAvailableSpace
+  def exceedsAvailableSpace(exercisesAfterSplit: Vector[String], renumOffset: Int, renumStep: Int): Boolean =
+    renumOffset + (exercisesAfterSplit.size - 1) * renumStep > 999
+  end exceedsAvailableSpace
 
-    private def rangeOverlapsWithOtherExercises(before: Vector[Int], renumOffset: Int): Boolean =
-      before.nonEmpty && (renumOffset <= before.last)
-    end rangeOverlapsWithOtherExercises
+  def rangeOverlapsWithOtherExercises(before: Vector[Int], renumOffset: Int): Boolean =
+    before.nonEmpty && (renumOffset <= before.last)
+  end rangeOverlapsWithOtherExercises
+end RenumberExercisesHelpers

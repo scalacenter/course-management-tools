@@ -1,13 +1,14 @@
 import sbt._
-import sbt.Keys.{name, _}
+import sbt.Keys._
 import sbtbuildinfo.BuildInfoKey
 import sbtbuildinfo.BuildInfoKeys._
 
-object CompileOptions {
-  val compileOptions = Seq("-source:future")
-}
+object Build {
 
-object CommonSettings {
+  object CompileOptions {
+    val compileOptions = Seq("-source:future")
+  }
+
   lazy val commonSettings = Seq(
     organization := "com.github.eloots",
     version := "2.0.0-SNAPSHOT",
@@ -24,5 +25,5 @@ object CommonSettings {
   def buildKeysWithName(projectName: String): Seq[BuildInfoKey] =
     BuildInfoKey.map(name) { case (k, _) =>
       k -> projectName
-    } +: CommonSettings.commonBuildInfoKeys
+    } +: commonBuildInfoKeys
 }

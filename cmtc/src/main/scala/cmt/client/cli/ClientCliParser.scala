@@ -130,6 +130,7 @@ object ClientCliParser {
     import builder.*
     cmd("restore-state")
       .text("Restore state of a previously save exercise state")
+      .action((_, options) => options.copy(command = RestoreState))
       .children(
         arg[String]("<exercise ID>").action((exerciseId, options) => options.copy(exerciseId = ExerciseId(exerciseId))),
         arg[File]("<studentified directory>")

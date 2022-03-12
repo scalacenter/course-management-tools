@@ -12,7 +12,7 @@ object Main:
 
   def main(args: Array[String]): Unit =
     ClientCliParser.parse(args) match
-      case Right(options) => selectAndExecuteCommand(options)
+      case Right(options) => selectAndExecuteCommand(options).printResult()
       case Left(error)    => printErrorAndExit(s"Error(s): ${error.toErrorString()}")
 
   private def selectAndExecuteCommand(options: CliOptions): Either[String, String] =

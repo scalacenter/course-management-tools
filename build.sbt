@@ -23,7 +23,5 @@ lazy val cmtc = project
   .settings(buildInfoKeys := buildKeysWithName("Course Management Tools (Client)"))
 
 lazy val `functional-tests` = project.in(file("functional-tests"))
-  .configs(IntegrationTest)
   .dependsOn(cmta, cmtc)
   .settings(commonSettings: _*)
-  .settings(Defaults.itSettings)

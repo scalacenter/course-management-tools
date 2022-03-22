@@ -1,0 +1,17 @@
+{
+  "docs": {
+    "Getting Started": ["getting_started",
+                        "workflows",
+                        "install",
+                        "your_first_project"],
+    "Reference": ["reference-intro",
+                  "reference-mainadm",
+                  "reference-cmtstudentify",
+                  "reference-linearize",
+                  "reference-delinearize",
+                  "reference-config"]
+  },
+  "docs-other": {
+    "First Category": ["doc4", "doc5"]
+  }
+}

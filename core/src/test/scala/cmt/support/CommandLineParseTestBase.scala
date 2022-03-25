@@ -4,6 +4,7 @@ import cmt.core.cli.CmdLineParseError
 import cmt.support.EitherSupport
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.Tables.Table
 import org.scalatest.prop.TableFor2
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -17,6 +18,14 @@ trait CommandLineArguments[T] {
   val identifier: String
   def invalidArguments(tempDirectory: File): TableFor2[Seq[String], Seq[ReportError]]
   def validArguments(tempDirectory: File): TableFor2[Seq[String], T]
+}
+
+object CommandLineArguments {
+  def invalidArgumentsTable(args: (Seq[String], Seq[ReportError])*): TableFor2[Seq[String], Seq[ReportError]] =
+    Table(("args", "errors"), args*)
+
+  def validArgumentsTable[T](args: (Seq[String], T)*): TableFor2[Seq[String], T] =
+    Table(("args", "expectedResult"), args*)
 }
 
 abstract class CommandLineParseTestBase[T](

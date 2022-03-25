@@ -1,15 +1,10 @@
-package cmt
+package cmt.admin.cli
 
-import cmt.TestDirectories
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, MainRepository, StudentifyBaseDirectory}
 import cmt.admin.cli.CliCommand.Studentify
-import cmt.admin.cli.CliOptions
-import cmt.support.CommandLineArguments
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.matchers.should.Matchers
+import cmt.support.{CommandLineArguments, TestDirectories}
+import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 import org.scalatest.prop.Tables
-import org.scalatest.wordspec.AnyWordSpecLike
-import sbt.io.IO
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 
@@ -17,8 +12,7 @@ object StudentifyArguments extends CommandLineArguments[CliOptions] with Tables 
 
   val identifier = "studentify"
 
-  def invalidArguments(tempDirectory: File) = Table(
-    ("args", "expectedErrors"),
+  def invalidArguments(tempDirectory: File) = invalidArgumentsTable(
     (
       Seq(identifier),
       Seq(
@@ -38,8 +32,7 @@ object StudentifyArguments extends CommandLineArguments[CliOptions] with Tables 
       Seq(identifier, tempDirectory.getAbsolutePath, secondRealDirectory),
       Seq(ReportError(s"${tempDirectory.getAbsolutePath} is not in a git repository"))))
 
-  def validArguments(tempDirectory: File) = Table(
-    ("args", "expectedResult"),
+  def validArguments(tempDirectory: File) = validArgumentsTable(
     (
       Seq(identifier, firstRealDirectory, secondRealDirectory),
       CliOptions.default(

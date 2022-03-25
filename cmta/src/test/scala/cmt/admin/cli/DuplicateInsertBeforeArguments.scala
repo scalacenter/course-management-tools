@@ -1,12 +1,10 @@
-package cmt
+package cmt.admin.cli
 
-import cmt.TestDirectories
-import cmt.admin.Domain.{ExerciseNumber, MainRepository}
+import cmt.admin.Domain.ExerciseNumber
 import cmt.admin.cli.CliCommand.DuplicateInsertBefore
-import cmt.admin.cli.CliOptions
-import cmt.support.CommandLineArguments
+import cmt.support.{CommandLineArguments, TestDirectories}
 import org.scalatest.prop.Tables
-import sbt.io.syntax.{File, file}
+import sbt.io.syntax.File
 import scopt.OEffect.ReportError
 
 object DuplicateInsertBeforeArguments extends CommandLineArguments[CliOptions] with Tables with TestDirectories {

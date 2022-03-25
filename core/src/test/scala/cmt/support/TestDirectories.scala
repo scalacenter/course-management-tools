@@ -1,7 +1,6 @@
-package cmt
+package cmt.support
 
-import sbt.io.syntax.File
-import sbt.io.syntax.file
+import sbt.io.syntax.{File, file}
 
 trait TestDirectories {
 

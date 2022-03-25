@@ -9,6 +9,8 @@ import java.nio.charset.StandardCharsets
 import Helpers.*
 
 class CMTcConfig(studentifiedRepo: File):
+  private val separatorChar: Char = java.io.File.separatorChar
+
   val bookmarkFile: File = studentifiedRepo / ".bookmark"
 
   private val cmtConfigFile = studentifiedRepo / ".cmt-config"
@@ -18,13 +20,22 @@ class CMTcConfig(studentifiedRepo: File):
 
   val exercises: collection.mutable.Seq[String] = cmtSettings.getStringList("exercises").asScala
 
+  private def adaptToOSSeparatorChar(path: String): String =
+    separatorChar match
+      case '\\' =>
+        path.replaceAll("/", """\\""")
+      case '/' =>
+        path
+      case _ =>
+        path.replaceAll(s"/", s"$separatorChar")
+
   val dontTouch: Set[String] =
-    cmtSettings.getStringList("cmt-studentified-dont-touch").asScala.toSet
+    cmtSettings.getStringList("cmt-studentified-dont-touch").asScala.toSet.map(adaptToOSSeparatorChar)
 
   val testCodeFolders: Set[String] =
-    cmtSettings.getStringList("test-code-folders").asScala.toSet
+    cmtSettings.getStringList("test-code-folders").asScala.toSet.map(adaptToOSSeparatorChar)
 
-  val readMeFiles: Set[String] = cmtSettings.getStringList("read-me-files").asScala.toSet
+  val readMeFiles: Set[String] = cmtSettings.getStringList("read-me-files").asScala.toSet.map(adaptToOSSeparatorChar)
 
   val activeExerciseFolder: File =
     studentifiedRepo / cmtSettings.getString("active-exercise-folder")

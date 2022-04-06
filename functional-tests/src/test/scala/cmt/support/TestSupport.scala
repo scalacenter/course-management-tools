@@ -14,7 +14,7 @@ package cmt.support
   */
 
 import cmt.CMTaConfig
-import cmt.Helpers.{commitToGit, dumpStringToFile, initializeGitRepo, setGitConfig}
+import cmt.Helpers.{commitToGit, dumpStringToFile, initializeGitRepo, setGitConfig, adaptToOSSeparatorChar}
 import cmt.admin.Domain.MainRepository
 import cmt.admin.cli.CliCommand.Studentify
 import sbt.io.IO as sbtio
@@ -31,7 +31,7 @@ opaque type ExerciseMetadata = Map[ExerciseName, SourcesStruct]
 
 extension (sfs: SourceFileStruct)
   def toSourceFiles: SourceFiles =
-    sfs.map(n => (n, UUID.randomUUID())).to(Map)
+    sfs.map(n => (n, UUID.randomUUID())).to(Map).map { case (k, v) => (adaptToOSSeparatorChar(k), v) }
 
 object ExerciseMetadata:
   def apply(): ExerciseMetadata = Map.empty
@@ -74,12 +74,16 @@ object Exercises:
 
     def getMainCode(exerciseName: ExerciseName): SourceFiles =
       exercises(exerciseName).main
+
     def getMainFile(exerciseName: ExerciseName, filePath: String): Tuple2[FilePath, CheckSum] =
-      filePath -> getMainCode(exerciseName)(filePath)
+      adaptToOSSeparatorChar(filePath) -> getMainCode(exerciseName)(adaptToOSSeparatorChar(filePath))
+
     def getTestCode(exerciseName: ExerciseName): SourceFiles =
       exercises(exerciseName).test
+
     def getReadmeCode(exerciseName: ExerciseName): SourceFiles =
       exercises(exerciseName).readme
+
     def getAllCode(exerciseName: ExerciseName): SourceFiles =
       getMainCode(exerciseName) ++ getTestCode(exerciseName) ++ getReadmeCode(exerciseName)
 

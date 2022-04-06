@@ -13,6 +13,7 @@ package cmt.admin.cli
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
+import cmt.Helpers
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
 import cmt.admin.cli.CliCommand.Linearize
 import cmt.support.{CommandLineArguments, TestDirectories}
@@ -46,20 +47,20 @@ object LinearizeArguments extends CommandLineArguments[CliOptions] with Tables w
       Seq(identifier, firstRealDirectory, secondRealDirectory),
       CliOptions.default(
         command = Linearize,
-        mainRepository = MainRepository(currentDirectory),
+        mainRepository = MainRepository(baseDirectoryGitRoot),
         maybeLinearizeBaseFolder = Some(LinearizeBaseDirectory(file(secondRealDirectory))))),
     (
       Seq(identifier, firstRealDirectory, secondRealDirectory, "--force-delete"),
       CliOptions.default(
         command = Linearize,
-        mainRepository = MainRepository(currentDirectory),
+        mainRepository = MainRepository(baseDirectoryGitRoot),
         maybeLinearizeBaseFolder = Some(LinearizeBaseDirectory(file(secondRealDirectory))),
         forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true))),
     (
       Seq(identifier, firstRealDirectory, secondRealDirectory, "-f"),
       CliOptions.default(
         command = Linearize,
-        mainRepository = MainRepository(currentDirectory),
+        mainRepository = MainRepository(baseDirectoryGitRoot),
         maybeLinearizeBaseFolder = Some(LinearizeBaseDirectory(file(secondRealDirectory))),
         forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true))))
 }

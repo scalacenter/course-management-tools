@@ -19,10 +19,9 @@ import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.jdk.CollectionConverters.*
 import java.nio.charset.StandardCharsets
-import Helpers.*
 
 class CMTcConfig(studentifiedRepo: File):
-  private val separatorChar: Char = java.io.File.separatorChar
+  import Helpers.adaptToOSSeparatorChar
 
   val bookmarkFile: File = studentifiedRepo / ".bookmark"
 
@@ -32,15 +31,6 @@ class CMTcConfig(studentifiedRepo: File):
   val cmtSettings: Config = ConfigFactory.parseFile(cmtConfigFile)
 
   val exercises: collection.mutable.Seq[String] = cmtSettings.getStringList("exercises").asScala
-
-  private def adaptToOSSeparatorChar(path: String): String =
-    separatorChar match
-      case '\\' =>
-        path.replaceAll("/", """\\""")
-      case '/' =>
-        path
-      case _ =>
-        path.replaceAll(s"/", s"$separatorChar")
 
   val dontTouch: Set[String] =
     cmtSettings.getStringList("cmt-studentified-dont-touch").asScala.toSet.map(adaptToOSSeparatorChar)

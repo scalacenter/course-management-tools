@@ -13,6 +13,7 @@ package cmt.admin.cli
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
+import cmt.Helpers
 import cmt.admin.Domain.{LinearizeBaseDirectory, MainRepository}
 import cmt.admin.cli.CliCommand.DeLinearize
 import cmt.support.{CommandLineArguments, TestDirectories}
@@ -46,6 +47,6 @@ object DelinearizeArguments extends CommandLineArguments[CliOptions] with Tables
       Seq(identifier, firstRealDirectory, secondRealDirectory),
       CliOptions.default(
         command = DeLinearize,
-        mainRepository = MainRepository(file(".").getAbsoluteFile.getParentFile),
+        mainRepository = MainRepository(baseDirectoryGitRoot),
         maybeLinearizeBaseFolder = Some(LinearizeBaseDirectory(file(secondRealDirectory))))))
 }

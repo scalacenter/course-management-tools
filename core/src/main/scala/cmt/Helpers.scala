@@ -201,24 +201,21 @@ object Helpers:
     import java.util.UUID
     val initBranch = UUID.randomUUID.toString
     val tmpRemoteBranch = s"CMT-${UUID.randomUUID.toString}"
+    val bareRepoFolder = tmpDir / s"${repoName}.git"
     val script = List(
-      (s"${tmpDir.getPath}", List(s"mkdir ${repoName}.git", s"git init --bare ${repoName}.git")),
+      (s"${tmpDir.getPath}", List(s"git init --bare ${repoName}.git")),
       (
         s"${mainRepo.getPath}",
         List(
           s"git remote add ${tmpRemoteBranch} ${tmpDir.getPath}/${repoName}.git",
           s"git push ${tmpRemoteBranch} HEAD:refs/heads/${initBranch}")),
-      (
-        s"${tmpDir.getPath}",
-        List(
-          s"git clone -b ${initBranch} ${tmpDir.getPath}/${repoName}.git",
-          s"rm -rf ${tmpDir.getPath}/${repoName}.git")),
+      (s"${tmpDir.getPath}", List(s"git clone -b ${initBranch} ${tmpDir.getPath}/${repoName}.git")),
       (s"${mainRepo.getPath}", List(s"git remote remove ${tmpRemoteBranch}")))
     val commands = for {
       (workingDir, commands) <- script
       command <- commands
     } yield command.toProcessCmd(new File(workingDir))
-
+    sbtio.delete(bareRepoFolder)
     for {
       result <- runCommands(commands)
     } yield result
@@ -236,5 +233,16 @@ object Helpers:
           case r @ Right(_)  => runCommands(remainingCommands)
           case l @ Left(msg) => Left(msg)
       case Nil => Right(())
+
+  private val separatorChar: Char = java.io.File.separatorChar
+
+  def adaptToOSSeparatorChar(path: String): String =
+    separatorChar match
+      case '\\' =>
+        path.replaceAll("/", """\\""")
+      case '/' =>
+        path
+      case _ =>
+        path.replaceAll(s"/", s"$separatorChar")
 
 end Helpers

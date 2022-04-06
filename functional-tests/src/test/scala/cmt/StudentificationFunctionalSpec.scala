@@ -182,7 +182,8 @@ trait StudentifiedRepoFixture {
     import cmt.client.command.ClientCommand.PullTemplate
     import cmt.client.Domain.TemplatePath
     import cmt.client.command.execution.given
-    PullTemplate(config, StudentifiedRepo(studentifiedRepo), TemplatePath(templatePath)).execute()
+    PullTemplate(config, StudentifiedRepo(studentifiedRepo), TemplatePath(Helpers.adaptToOSSeparatorChar(templatePath)))
+      .execute()
 
   def addFileToStudentifiedRepo(studentifiedRepo: File, filePath: String): SourceFiles =
     val fileContent = UUID.randomUUID()
@@ -235,7 +236,9 @@ final class StudentificationFunctionalSpec
       When("a file is added to a folder that is marked as 'don't touch' in the main configuration")
 
       val dontTouchMeFile =
-        addFileToStudentifiedRepo(studentifiedRepoCodeFolder, ".mvn/someFolder/mustNotBeTouchedByCmt")
+        addFileToStudentifiedRepo(
+          studentifiedRepoCodeFolder,
+          Helpers.adaptToOSSeparatorChar(".mvn/someFolder/mustNotBeTouchedByCmt"))
 
       Then("We should see that file as part of the overall file set")
 
@@ -361,8 +364,12 @@ final class StudentificationFunctionalSpec
       When("the current state of an exercise is mutated and subsequently saved with the 'save-state' command")
 
       val modifiedMainCode =
-        addFileToStudentifiedRepo(studentifiedRepoCodeFolder, "src/main/cmt/Main.scala") ++
-          addFileToStudentifiedRepo(studentifiedRepoCodeFolder, "src/main/cmt/pack/Toto.scala")
+        addFileToStudentifiedRepo(
+          studentifiedRepoCodeFolder,
+          Helpers.adaptToOSSeparatorChar("src/main/cmt/Main.scala")) ++
+          addFileToStudentifiedRepo(
+            studentifiedRepoCodeFolder,
+            Helpers.adaptToOSSeparatorChar("src/main/cmt/pack/Toto.scala"))
 
       saveState(cMTcConfig, studentifiedRepoFolder)
 
@@ -403,7 +410,9 @@ final class StudentificationFunctionalSpec
       When("restoring the previously saved state using the 'restore-state' command")
 
       val dontTouchMeFile_1 =
-        addFileToStudentifiedRepo(studentifiedRepoCodeFolder, ".mvn/someFolder/mustNotBeTouchedByCmt")
+        addFileToStudentifiedRepo(
+          studentifiedRepoCodeFolder,
+          Helpers.adaptToOSSeparatorChar(".mvn/someFolder/mustNotBeTouchedByCmt"))
       restoreState(cMTcConfig, studentifiedRepoFolder, "exercise_001_desc")
 
       Then("should fully reflect what was saved")

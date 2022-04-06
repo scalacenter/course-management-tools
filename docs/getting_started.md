@@ -41,7 +41,7 @@ achieve were:
 - create a tool that allows a course creator or maintainer to change exercises using **_git_**
   interactive rebasing when this makes sense
 
-Over time, practical experience showed that there are other very useful use cases for the tooling.
+Over time, practical experience showed that there are other useful use cases for the tooling.
 That's what is described in the following section.
 
 ## Why CMT?

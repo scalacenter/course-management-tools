@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>cmt-studentify Command Reference · Course Management Tools</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="Docusaurus"/><meta name="description" content="## Command Invocation"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="cmt-studentify Command Reference · Course Management Tools"/><meta property="og:type" content="website"/><meta property="og:url" content="https://eloots.github.io/course-management-tools/"/><meta property="og:description" content="## Command Invocation"/><meta property="og:image" content="https://eloots.github.io/course-management-tools/img/build.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://eloots.github.io/course-management-tools/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/course-management-tools/img/favicon.ico"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"/><link rel="alternate" type="application/atom+xml" href="https://eloots.github.io/course-management-tools/blog/atom.xml" title="Course Management Tools Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://eloots.github.io/course-management-tools/blog/feed.xml" title="Course Management Tools Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/course-management-tools/js/scrollSpy.js"></script><link rel="stylesheet" href="/course-management-tools/css/main.css"/><script src="/course-management-tools/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/course-management-tools/"><img class="logo" src="/course-management-tools/img/favicon.ico" alt="Course Management Tools"/><h2 class="headerTitleWithLogo">Course Management Tools</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/course-management-tools/docs/getting_started" target="_self">Docs</a></li><li class=""><a href="https://github.com/eloots/course-management-tools" target="_blank">GitHub</a></li><li class=""><a href="/course-management-tools/blog/" target="_self">Blog</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Reference</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Getting Started</h3><ul class=""><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/getting_started">Introduction</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/workflows">Workflows</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/install">Installation</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/your_first_project">Your first CMT project</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Reference</h3><ul class=""><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-intro">Introduction</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-mainadm">cmt-mainadm</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/course-management-tools/docs/reference-cmtstudentify">cmt-studentify</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-linearize">cmt-linearize</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-delinearize">cmt-delinearize</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-config">CMT configuration</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 id="__docusaurus" class="postHeaderTitle">cmt-studentify Command Reference</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="command-invocation"></a><a href="#command-invocation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Command Invocation</h2>
+<pre><code class="hljs"><span class="hljs-attribute">Usage</span>: studentify [options] mainRepo out
+
+<span class="applescript">  mainRepo                 base folder holding main course repository
+  out                      base folder <span class="hljs-keyword">for</span> student repo
+  -mjvm, <span class="hljs-comment">--multi-jvm       generate multi-jvm build file</span>
+  -fe, <span class="hljs-comment">--first-exercise &lt;value&gt;</span>
+                           <span class="hljs-built_in">name</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">first</span> exercise <span class="hljs-keyword">to</span> output
+  -le, <span class="hljs-comment">--last-exercise &lt;value&gt;</span>
+                           <span class="hljs-built_in">name</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">last</span> exercise <span class="hljs-keyword">to</span> output
+  -sfe, <span class="hljs-comment">--selected-first-exercise &lt;value&gt;</span>
+                           <span class="hljs-built_in">name</span> <span class="hljs-keyword">of</span> initial exercise <span class="hljs-keyword">on</span> start
+  -cfg, <span class="hljs-comment">--config-file &lt;value&gt;</span>
+                           configuration <span class="hljs-built_in">file</span>
+  -g, <span class="hljs-comment">--git                initialise studentified repository as a git</span>
+                           repository
+  -dot, <span class="hljs-comment">--dotty            studentified repository is a Dotty project</span>
+  -nar, <span class="hljs-comment">--no-auto-reload-sbt</span>
+                           no automatic reload <span class="hljs-keyword">on</span> build definition change
+  <span class="hljs-comment">--help                   Prints the usage text</span>
+  -v, <span class="hljs-comment">--version            Prints the version info</span>
+</span></code></pre>
+<h2><a class="anchor" aria-hidden="true" id="_studentifying_-a-cmt-main-repository"></a><a href="#_studentifying_-a-cmt-main-repository" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><em>Studentifying</em> a CMT main repository</h2>
+<p>The process of creating a <em>studentified</em> version of a CMT main repository
+looks as follows:</p>
+<p><img src="https://i.imgur.com/8gH7Y7a.png" alt="studentify process"></p>
+<p>In its simplest form, this can be accomplished with the following invocation
+of <code>cmt-studentify</code>:</p>
+<pre><code class="hljs">cmt-studentify <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/Trainingen/</span>LBT/lunatech-scala<span class="hljs-number">-2</span>-to-scala3-course \
+               <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/tmp/</span>stu
+</code></pre>
+<p><br></p>
+<blockquote>
+<p>NOTE: <code>cmt-studentify</code> requires your working directory to have
+no unstaged files and your staging area to be clean. If this is not the case, you
+will see the following error message:</p>
+<p><code>YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN THE COMMAND</code></p>
+<p>As the error message suggest commit all changes and re-run the command.</p>
+</blockquote>
+<p>After a successful completion of this command, the <em>studentified</em> repository
+will be in subfolder <code>lunatech-scala-2-to-scala3-course</code> of folder
+<code>/Users/ericloots/tmp/stu</code>.</p>
+<p>The process of <em>studentifying</em> a main repository can be customised in a
+number of ways either by passing some options when invoking <code>cmt-studentify</code>
+or via configuration.</p>
+<p>The following sections cover the customisation via command-line options.</p>
+<p>For the sake of demonstration, the examples shown below work on a CMT main
+repository with the following exercises:</p>
+<p><img src="https://i.imgur.com/6iUQQPi.png" alt="Sample CMT repository"></p>
+<h3><a class="anchor" aria-hidden="true" id="-dot-dotty-compatible-build-definition"></a><a href="#-dot-dotty-compatible-build-definition" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>-dot</code>: Dotty compatible build definition</h3>
+<p>With this option, the Scala version is assumed to be set exactly in the
+<code>Version.scalaVersion</code> variable in your build definition. If this is not
+the case, you will set the sbt build's <code>scalaVersion</code> settings elsewhere.</p>
+<h3><a class="anchor" aria-hidden="true" id="-nar-do-not-automatically-reload-the-build-on-build-changes"></a><a href="#-nar-do-not-automatically-reload-the-build-on-build-changes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>-nar</code>: Do not automatically reload the build on build changes</h3>
+<p>This option is used to overrule the default behavior which is to
+automatically reload the build when a change in the build definition
+is detected by sbt.</p>
+<h3><a class="anchor" aria-hidden="true" id="selecting-a-range-of-exercises-to-_studentify_"></a><a href="#selecting-a-range-of-exercises-to-_studentify_" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Selecting a range of exercises to <em>studentify</em></h3>
+<p>In some cases, it can be handy to select a subset of the available exercises
+in a CMT main repository to <em>studentify</em>.</p>
+<p>For example, the CMT main repository may have alternative implementations of
+a series of exercises (e.g. using different libraries or programming languages)
+in the CMT main repository and depending on the scenario, one may wish to only
+export an exercise series for one specific alternative.</p>
+<p>The <code>-fe</code> and <code>-le</code> options allow to do just that. Here's an example that will
+export all exercises between exercises number 5 and 10 from a CMT main
+repository:</p>
+<pre><code class="hljs">cmt-studentify -fe exercise_005_extension_methods   \
+               -le exercise_010_opaque_type_aliases \
+               <span class="hljs-regexp">/Users/ericloots</span><span class="hljs-regexp">/Trainingen/</span>LBT/lunatech-scala-<span class="hljs-number">2</span>-to-scala3-course \
+               <span class="hljs-regexp">/Users/ericloots</span><span class="hljs-regexp">/tmp/stu</span>
+</code></pre>
+<p>Starting an sbt session in the <em>studentified</em> repository shows the result:</p>
+<pre><code class="hljs">$ cd /Users/ericloots/tmp/stu/lunatech-scala<span class="hljs-number">-2</span>-to-scala3-course
+
+$ $ sbt
+[info] welcome to sbt <span class="hljs-number">1.3</span><span class="hljs-number">.12</span> (N/A Java <span class="hljs-number">13.0</span><span class="hljs-number">.2</span>)
+
+&lt;elided&gt;
+
+man [e] &gt; Scala <span class="hljs-number">2</span> to Scala <span class="hljs-number">3</span> &gt; extension methods &gt; listExercises
+  <span class="hljs-number">1.</span> * exercise_005_extension_methods
+  <span class="hljs-number">2.</span>   exercise_006_using_and_summon
+  <span class="hljs-number">3.</span>   exercise_007_givens
+  <span class="hljs-number">4.</span>   exercise_008_enum_and_export
+  <span class="hljs-number">5.</span>   exercise_009_union_types
+  <span class="hljs-number">6.</span>   exercise_010_opaque_type_aliases
+man [e] &gt; Scala <span class="hljs-number">2</span> to Scala <span class="hljs-number">3</span> &gt; extension methods &gt;
+</code></pre>
+<p>The <code>*</code> in the exercise list marks the position of the current exercise.</p>
+<h3><a class="anchor" aria-hidden="true" id="changing-the-default-initial-exercise"></a><a href="#changing-the-default-initial-exercise" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Changing the default initial exercise</h3>
+<p>By default, <em>cmt-studentify</em> will set the current position of the exercises to
+the first exercise in the series of <em>studentified</em> exercises. This can be changed
+via the <code>-sfe</code> option as shown here:</p>
+<pre><code class="hljs">cmt-studentify -fe  exercise_005_extension_methods   <span class="hljs-string">\</span>
+               -le  exercise_010_opaque_type_aliases <span class="hljs-string">\</span>
+               -sfe exercise_008_enum_and_export     <span class="hljs-string">\</span>
+               /Users/ericloots/Trainingen/LBT/lunatech-scala-<span class="hljs-number">2</span>-<span class="hljs-keyword">to</span>-scala3-course <span class="hljs-string">\</span>
+               /Users/ericloots/tmp/stu
+</code></pre>
+<p>Starting an sbt session in the <em>studentified</em> repository shows the result and
+confirms that the current position is indeed at <code>exercise_008_enum_and_export</code>:</p>
+<pre><code class="hljs">$ cd /Users/ericloots/tmp/stu/lunatech-scala<span class="hljs-number">-2</span>-to-scala3-course
+
+$ sbt
+[info] welcome to sbt <span class="hljs-number">1.3</span><span class="hljs-number">.12</span> (N/A Java <span class="hljs-number">13.0</span><span class="hljs-number">.2</span>)
+
+&lt;elided&gt;
+
+man [e] &gt; Scala <span class="hljs-number">2</span> to Scala <span class="hljs-number">3</span> &gt; extension methods &gt; listExercises
+  <span class="hljs-number">1.</span>   exercise_005_extension_methods
+  <span class="hljs-number">2.</span>   exercise_006_using_and_summon
+  <span class="hljs-number">3.</span>   exercise_007_givens
+  <span class="hljs-number">4.</span> * exercise_008_enum_and_export
+  <span class="hljs-number">5.</span>   exercise_009_union_types
+  <span class="hljs-number">6.</span>   exercise_010_opaque_type_aliases
+man [e] &gt; Scala <span class="hljs-number">2</span> to Scala <span class="hljs-number">3</span> &gt; <span class="hljs-keyword">enum</span> <span class="hljs-keyword">and</span> export &gt;
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="initialise-a-_studentified_-repository-as-a-_git_-repository"></a><a href="#initialise-a-_studentified_-repository-as-a-_git_-repository" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Initialise a <em>studentified</em> repository as a <strong><em>git</em></strong> repository</h3>
+<p>The <code>-g</code> option will <em>studentify</em> a CMT main repository and initialise it as a
+<strong><em>git</em></strong> repository with a single commit.</p>
+<p>Here's a sample run and the output of <code>git status</code> on the <em>studentified</em>
+repository:</p>
+<pre><code class="hljs">$ cmt-studentify -g \
+                 <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/Trainingen/</span>LBT/lunatech-scala<span class="hljs-number">-2</span>-to-scala3-course \
+                 <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/tmp/</span>stu
+&lt;elided&gt;
+
+$ cd <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/tmp/</span>stu/lunatech-scala<span class="hljs-number">-2</span>-to-scala3-course
+
+$ git log --oneline
+<span class="hljs-number">8</span>d09228 (HEAD -&gt; main) Initial commit
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="the-sbt-build-definition-of-a-_studentified_-cmt-main-repository"></a><a href="#the-sbt-build-definition-of-a-_studentified_-cmt-main-repository" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>The sbt build definition of a <em>studentified</em> CMT main repository</h3>
+<p>The build definition of a studentified CMT repository is constructed as
+illustrated in the following diagram:</p>
+<p><img src="https://i.imgur.com/kozerak.png" alt=""></p>
+<h3><a class="anchor" aria-hidden="true" id="cmt-studentify-configuration-settings"></a><a href="#cmt-studentify-configuration-settings" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>cmt-studentify</code> configuration settings</h3>
+<p>A number of configuration settings can be used to influence the behaviour of <code>cmt-studentify</code>:</p>
+<ul>
+<li><a href="/course-management-tools/docs/reference-config#test-code-folders">test-code-folders</a></li>
+<li><a href="/course-management-tools/docs/reference-config#exercise-project-prefix">exercise-project-prefix</a></li>
+<li><a href="/course-management-tools/docs/reference-config#studentified-base-folder">studentified-base-folder</a></li>
+<li><a href="/course-management-tools/docs/reference-config#readme-in-test-resources">readme-in-test-resources</a></li>
+<li><a href="/course-management-tools/docs/reference-config#relative-source-folder">relative-source-folder</a></li>
+<li><a href="/course-management-tools/docs/reference-config#main-base-project-name--studentified-project-name">main-base-project-name &amp; studentified-project-name</a></li>
+<li><a href="/course-management-tools/docs/reference-config#exercise-preamble">exercise-preamble</a></li>
+<li><a href="/course-management-tools/docs/reference-config#studentify-files-to-clean-up">studentify-files-to-clean-up</a></li>
+<li><a href="/course-management-tools/docs/reference-config#console-colors">console-colors</a></li>
+<li><a href="/course-management-tools/docs/reference-config#common-project-enabled">common-project-enabled</a></li>
+<li><a href="/course-management-tools/docs/reference-config#use-configure-for-projects">use-configure-for-projects</a></li>
+</ul>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/course-management-tools/docs/reference-mainadm"><span class="arrow-prev">← </span><span>cmt-mainadm</span></a><a class="docs-next button" href="/course-management-tools/docs/reference-linearize"><span>cmt-linearize</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#command-invocation">Command Invocation</a></li><li><a href="#_studentifying_-a-cmt-main-repository"><em>Studentifying</em> a CMT main repository</a><ul class="toc-headings"><li><a href="#-dot-dotty-compatible-build-definition"><code>-dot</code>: Dotty compatible build definition</a></li><li><a href="#-nar-do-not-automatically-reload-the-build-on-build-changes"><code>-nar</code>: Do not automatically reload the build on build changes</a></li><li><a href="#selecting-a-range-of-exercises-to-_studentify_">Selecting a range of exercises to <em>studentify</em></a></li><li><a href="#changing-the-default-initial-exercise">Changing the default initial exercise</a></li><li><a href="#initialise-a-_studentified_-repository-as-a-_git_-repository">Initialise a <em>studentified</em> repository as a <strong><em>git</em></strong> repository</a></li><li><a href="#the-sbt-build-definition-of-a-_studentified_-cmt-main-repository">The sbt build definition of a <em>studentified</em> CMT main repository</a></li><li><a href="#cmt-studentify-configuration-settings"><code>cmt-studentify</code> configuration settings</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/course-management-tools/" class="nav-home"><img src="/course-management-tools/img/favicon.ico" alt="Course Management Tools" width="66" height="58"/></a><div><h5>Docs</h5><a href="/course-management-tools/docs/install">Getting Started</a><a href="/course-management-tools/docs/reference-intro">Reference</a></div><div><h5>Community</h5><a href="https://github.com/eloots/course-management-tools/issues" target="_blank">Open an issue or ask questions</a></div><div><h5>More</h5><a href="/course-management-tools/blog">Blog</a><a href="https://github.com/eloots/course-management-tools" target="_blank">GitHub</a><a class="github-button" href="https://github.com/eloots/course-management-tools" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div><div><img style="float:left;margin:5px" src="/course-management-tools/img/jetbrains.svg" alt="Course Management Tools" width="66" height="58"/><div><a href="https://www.jetbrains.com/?from=course-management-tools" target="_blank">JetBrains supports this project by providing core project contributors with a set of best-in-class developer tools free of charge.</a></div></div></section><section class="copyright">Copyright © 2022 Course Management Tools</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+                document.addEventListener('keyup', function(e) {
+                  if (e.target !== document.body) {
+                    return;
+                  }
+                  // keyCode for '/' (slash)
+                  if (e.keyCode === 191) {
+                    const search = document.getElementById('search_input_react');
+                    search && search.focus();
+                  }
+                });
+              </script><script>
+              var search = docsearch({
+                
+                apiKey: 'ad215f5ba694d2e808dde2e2c3c465f4',
+                indexName: 'eloots_course-management-tools',
+                inputSelector: '#search_input_react'
+              });
+            </script></body></html>

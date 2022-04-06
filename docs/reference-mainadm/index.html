@@ -1,0 +1,295 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>cmt-mainadm Command Reference · Course Management Tools</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="Docusaurus"/><meta name="description" content="## Command Invocation"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="cmt-mainadm Command Reference · Course Management Tools"/><meta property="og:type" content="website"/><meta property="og:url" content="https://eloots.github.io/course-management-tools/"/><meta property="og:description" content="## Command Invocation"/><meta property="og:image" content="https://eloots.github.io/course-management-tools/img/build.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://eloots.github.io/course-management-tools/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/course-management-tools/img/favicon.ico"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"/><link rel="alternate" type="application/atom+xml" href="https://eloots.github.io/course-management-tools/blog/atom.xml" title="Course Management Tools Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://eloots.github.io/course-management-tools/blog/feed.xml" title="Course Management Tools Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/course-management-tools/js/scrollSpy.js"></script><link rel="stylesheet" href="/course-management-tools/css/main.css"/><script src="/course-management-tools/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/course-management-tools/"><img class="logo" src="/course-management-tools/img/favicon.ico" alt="Course Management Tools"/><h2 class="headerTitleWithLogo">Course Management Tools</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/course-management-tools/docs/getting_started" target="_self">Docs</a></li><li class=""><a href="https://github.com/eloots/course-management-tools" target="_blank">GitHub</a></li><li class=""><a href="/course-management-tools/blog/" target="_self">Blog</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Reference</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Getting Started</h3><ul class=""><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/getting_started">Introduction</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/workflows">Workflows</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/install">Installation</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/your_first_project">Your first CMT project</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Reference</h3><ul class=""><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-intro">Introduction</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/course-management-tools/docs/reference-mainadm">cmt-mainadm</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-cmtstudentify">cmt-studentify</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-linearize">cmt-linearize</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-delinearize">cmt-delinearize</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-config">CMT configuration</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 id="__docusaurus" class="postHeaderTitle">cmt-mainadm Command Reference</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="command-invocation"></a><a href="#command-invocation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Command Invocation</h2>
+<pre><code class="hljs"><span class="hljs-attribute">Usage</span>: mainadm [init] [options] [mainRepo]
+
+<span class="livecodeserver">  mainRepo                 base <span class="hljs-built_in">folder</span> holding main course repository
+  -mjvm, <span class="hljs-comment">--multi-jvm       generate multi-jvm build file</span>
+  -b, <span class="hljs-comment">--build-file-regen   regenerate project root build file</span>
+  -d, <span class="hljs-comment">--delete &lt;value&gt;</span>
+  -r, <span class="hljs-comment">--renumber           renumber exercises</span>
+  -ro, <span class="hljs-comment">--renumber-offset &lt;value&gt;</span>
+                           renumber exercises - <span class="hljs-built_in">offset</span>
+  -rs, <span class="hljs-comment">--renumber-step &lt;value&gt;</span>
+                           renumber exercises - step
+  -dib, <span class="hljs-comment">--duplicate-insert-before &lt;value&gt;</span>
+
+  -cfg, <span class="hljs-comment">--config-file &lt;value&gt;</span>
+                           configuration <span class="hljs-built_in">file</span>
+  -c, <span class="hljs-comment">--check-main-repo    verify soundness of main repository</span>
+  -amc, <span class="hljs-comment">--add-main-commands</span>
+                           <span class="hljs-built_in">add</span> <span class="hljs-keyword">command</span> <span class="hljs-title">files</span> <span class="hljs-title">to</span> <span class="hljs-title">main</span> <span class="hljs-title">repository</span>
+  -t, <span class="hljs-comment">--generate-tests-script &lt;value&gt;</span>
+                           generate <span class="hljs-keyword">a</span> script that tests main repo, studentified repo functionality <span class="hljs-keyword">and</span> linearize/delinearize
+  -g, <span class="hljs-comment">--init-studentified-test-repo-as-git</span>
+                           Generate studentified repo <span class="hljs-keyword">as</span> <span class="hljs-keyword">a</span> git repo <span class="hljs-keyword">in</span> tests
+  -dot, <span class="hljs-comment">--dotty            studentified repository is a Dotty project</span>
+  -nar, <span class="hljs-comment">--no-auto-reload-sbt</span>
+                           no automatic reload <span class="hljs-keyword">on</span> <span class="hljs-title">build</span> <span class="hljs-title">definition</span> <span class="hljs-title">change</span>
+  <span class="hljs-comment">--help                   Prints the usage text</span>
+  -v, <span class="hljs-comment">--version            Prints the version info</span>
+
+Command: init [options]
+Creates <span class="hljs-keyword">a</span> <span class="hljs-built_in">new</span> project <span class="hljs-built_in">from</span> <span class="hljs-keyword">a</span> specified template
+  -l, <span class="hljs-comment">--list-templates     List all available course templates</span>
+  <span class="hljs-comment">--template &lt;value&gt;       Name of a course template</span>
+  <span class="hljs-comment">--name &lt;value&gt;           The course name</span>
+  <span class="hljs-comment">--target &lt;value&gt;         Target directory</span>
+</span></code></pre>
+<h2><a class="anchor" aria-hidden="true" id="main-administration-tasks"></a><a href="#main-administration-tasks" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Main administration tasks</h2>
+<p>The <code>cmt-mainadm</code> command can be invoked in two ways:</p>
+<ul>
+<li><em>init</em> command mode: this allows creating a new CMT master repository
+based on one of the CMT master templates. See section for more information, read
+the <a href="/course-management-tools/docs/your_first_project#starting-from-a-cmt-master-template">&quot;Starting from a CMT master template&quot;</a> section.</li>
+<li>admin mode. This chapter focuses on this mode.</li>
+</ul>
+<p>Depending on the action specified, the following options may apply:</p>
+<h3><a class="anchor" aria-hidden="true" id="-dot-dotty-compatible-build-definition"></a><a href="#-dot-dotty-compatible-build-definition" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>-dot</code>: Dotty compatible build definition</h3>
+<p>With this option, the Scala version is assumed to be set exactly in the
+<code>Version.scalaVersion</code> variable in your build definition. If this is not
+the case, you will set the sbt build's <code>scalaVersion</code> settings elsewhere.</p>
+<h3><a class="anchor" aria-hidden="true" id="-nar-do-not-automatically-reload-the-build-on-build-changes"></a><a href="#-nar-do-not-automatically-reload-the-build-on-build-changes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>-nar</code>: Do not automatically reload the build on build changes</h3>
+<p>This option is used to overrule the default behavior which is to
+automatically reload the build when a change in the build definition
+is detected by sbt.</p>
+<h2><a class="anchor" aria-hidden="true" id="deleting-an-exercise"></a><a href="#deleting-an-exercise" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Deleting an exercise</h2>
+<p>The following command will delete the exercise with number <code>n</code> from the main
+course repository and re-generate the root <code>build.sbt</code> file:</p>
+<pre><code class="hljs">$ cmt-mainadm -d &lt;n&gt; <span class="hljs-comment">[-cfg config_file]</span> <span class="hljs-comment">[-dot]</span> <span class="hljs-comment">[-nar]</span> &lt;main_repo&gt;
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="duplicate-a-given-exercise-and-insert-it-before-that-exercise"></a><a href="#duplicate-a-given-exercise-and-insert-it-before-that-exercise" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Duplicate a given exercise and insert it before that exercise</h2>
+<p>The following command will duplicate the exercise with number <code>n</code>.
+The duplicate will retain the number of the exercise that is duplicated
+while the latter and subsequent exercises to be shifted &quot;down&quot;.</p>
+<pre><code class="hljs">$ cmt-mainadm -dib &lt;n&gt; <span class="hljs-comment">[-cfg config_file]</span> <span class="hljs-comment">[-dot]</span> <span class="hljs-comment">[-nar]</span> &lt;main_repo&gt;
+</code></pre>
+<p>For example, imagine a CMT main repository with a list of exercises with
+exercise numbers increasing by 1. The following table shows the before
+and after when running the <code>cmt-mainadm -dib 3 ...</code> command:</p>
+<p><img src="https://i.imgur.com/oSp1KXY.png" alt="DIB exercise # 3 - no gap"></p>
+<p>If there is &quot;space&quot; to insert the duplicate, no renumbering will occur as
+the before and after shows when running the <code>cmt-mainadm -dib 6 ...</code> command:</p>
+<p><img src="https://i.imgur.com/CYJafQH.png" alt="DIB exercise # 3 - gap"></p>
+<h2><a class="anchor" aria-hidden="true" id="renumber-exercises-with-a-given-offset-and-step-size"></a><a href="#renumber-exercises-with-a-given-offset-and-step-size" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Renumber exercises with a given offset and step size</h2>
+<p>In some situations, it can be useful to renumber the exercises in a CMT main
+repository. Perhaps you want to create a &quot;gap&quot; in which some new exercises
+will be put, or you want to shift all exercises to some offset.</p>
+<p>This can be achieved with the <em>renumber</em> option on <code>cmt-mainadm</code>.</p>
+<p>Here are a couple of examples with a before and after situation.</p>
+<p>Running <code>cmt-mainadm -r -rs 5 -ro 10 ...</code></p>
+<p><img src="https://i.imgur.com/pm7m6f9.png" alt="Renumber with non-default offset and stepsize"></p>
+<p>Running <code>cmt-mainadm -r -rs 11 ...</code></p>
+<p><img src="https://i.imgur.com/URbqTV3.png" alt="Renumber with non-default stepsize"></p>
+<p>Running <code>cmt-mainadm -r -ro 10 ...</code></p>
+<p><img src="https://i.imgur.com/kBAaEaC.png" alt="Renumber with non-default offset"></p>
+<h2><a class="anchor" aria-hidden="true" id="generation-of-a-repository-test-script"></a><a href="#generation-of-a-repository-test-script" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Generation of a repository test script</h2>
+<p>In the course of the life-time of a CMT project, the exercise series most
+probably will change quite a bit by changing exercises, moving them around,
+deleting and adding exercises and you may want to switch to a new version of
+the CMT tools when it becomes available.</p>
+<p>You want to make sure that your project is still running fine: the code
+compiles without errors and all tests pass for <em><strong>each and every</strong></em> exercise.
+Verifying this manually is tedious and error prone.</p>
+<p>The alternative is to automate the process and this can be done with the
+help of <code>cmt-mainadm -t ...</code></p>
+<p>Running:</p>
+<pre><code class="hljs"><span class="hljs-selector-tag">cmt-mainadm</span> <span class="hljs-selector-tag">-t</span> &lt;<span class="hljs-selector-tag">some_test_file</span>&gt; <span class="hljs-selector-attr">[-cfg config_file]</span> <span class="hljs-selector-attr">[-dot]</span> <span class="hljs-selector-attr">[-nar]</span> &lt;<span class="hljs-selector-tag">main_repo</span>&gt;
+</code></pre>
+<p>will generate a script (with the file name passed as an argument to the <code>-t</code> option)
+that, when executed, will run the following steps:</p>
+<ul>
+<li>for each of the exercises in the main repository:
+<ul>
+<li>compile the exercise code</li>
+<li>run the exercise tests</li>
+<li>run the <code>man e</code> command</li>
+</ul></li>
+<li>it <em>linearizes</em> the main repository and it executes the test on the <em>last</em>
+exercise (at the HEAD of the <strong><em>git</em></strong> repo)</li>
+<li>it <em>studentifies</em> the main repository and in this repository, it runs
+through <em>all</em> the exercises in a random manner and for each of these
+exercise it:
+<ul>
+<li>jumps to that exercise</li>
+<li>pulls the solution</li>
+<li>runs the tests</li>
+<li>saves the state</li>
+<li>lists the saved states</li>
+<li>restores the saved state</li>
+</ul></li>
+</ul>
+<p>Ideally, you should set-up CI/CD to perform this test process on each PR and
+PR merge. For inspiration, you may want to have a look at
+<a href="https://github.com/lunatech-labs/lunatech-scala-2-to-scala3-course/blob/main/.github/workflows/ci.yml">the way this is done</a>
+via Github Actions in the Lunatech Labs <a href="https://github.com/lunatech-labs/lunatech-scala-2-to-scala3-course">Moving from Scala 2 to Scala 3 Github
+course</a>.</p>
+<blockquote>
+<p><strong>NOTE</strong><br>
+When the <code>-g</code> option is added when invoking <code>cmt-mainadm -t</code>, the generated
+test script will pass <code>-g</code> on invocations of <code>cmt-studentify</code> in the script.
+The reason why one might want to do this is to test studentified
+artifacts initialized as a <strong><em>git</em></strong> repository.</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="checking-the-soundness-of-a-cmt-main-repository"></a><a href="#checking-the-soundness-of-a-cmt-main-repository" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Checking the soundness of a CMT main repository</h2>
+<p>A CMT main repository has to be built according to a number of conventions.
+When building a new course, it may be difficult to check if all these
+conventions are followed. <code>cmt-mainadm</code>'s <em>check main repository soundness</em>
+feature allows one to run a check of most of these conventions and report
+any discrepancies.</p>
+<p>The following checks are made:</p>
+<ul>
+<li>Presence of a global course instruction file (<code>README.md</code>)</li>
+<li>Presence of exercise instruction files (<code>README.md</code>) for all exercises</li>
+<li>Presence of a course name file (<code>.courseName</code>)</li>
+<li>Presence of a number of files in the sbt build definition:
+<ul>
+<li><code>CommonSettings.scala</code></li>
+<li><code>AdditionalSettings.scala</code></li>
+<li><code>CompileOptions.scala</code></li>
+<li><code>Dependencies.scala</code></li>
+<li><code>build.properties</code></li>
+</ul></li>
+<li>Presence of the following files in the sbt build definition (note that in
+some use cases however, these files may not be present):
+<ul>
+<li><code>Man.scala</code></li>
+<li><code>Navigation.scala</code></li>
+<li><code>MPSelection.scala</code></li>
+<li><code>StudentCommandsPlugin.scala</code></li>
+<li><code>StudentKeys.scala</code></li>
+</ul></li>
+<li>Presence of a <code>common</code> project source folder in your build (unless your
+project has a configuration that disables a <code>common</code> project).</li>
+</ul>
+<p>Here's an example of a run of <code>cmt-mainadm -c</code> that reports no problems:</p>
+<pre><code class="hljs">$ cmt-mainadm -c /Users/ericloots/Trainingen/LBT/lunatech-scala-2-to-scala3-course
+git version 2.28.0
+On branch main
+Your branch is up to date <span class="hljs-keyword">with</span> <span class="hljs-string">'origin/main'</span>.
+
+<span class="hljs-keyword">nothing</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">commit</span>, working tree clean
+CHECKING WORKSPACE <span class="hljs-keyword">in</span> /<span class="hljs-keyword">Users</span>/ericloots/Trainingen/LBT/lunatech-scala<span class="hljs-number">-2</span>-<span class="hljs-keyword">to</span>-scala3-course
+<span class="hljs-keyword">Initialized</span> <span class="hljs-keyword">empty</span> Git repository <span class="hljs-keyword">in</span> /<span class="hljs-keyword">private</span>/<span class="hljs-keyword">var</span>/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_1166dfa5/lunatech-scala<span class="hljs-number">-2</span>-<span class="hljs-keyword">to</span>-scala3-course.git/
+<span class="hljs-keyword">To</span> /<span class="hljs-keyword">var</span>/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_1166dfa5/lunatech-scala<span class="hljs-number">-2</span>-<span class="hljs-keyword">to</span>-scala3-course.git
+ * [<span class="hljs-keyword">new</span> branch]      <span class="hljs-keyword">HEAD</span> -&gt; <span class="hljs-number">87</span>A371C8<span class="hljs-number">-3255</span><span class="hljs-number">-45</span>CA<span class="hljs-number">-8</span>A9F-AE2C00564636
+Cloning <span class="hljs-keyword">into</span> <span class="hljs-string">'lunatech-scala-2-to-scala3-course'</span>...
+done.
+<span class="hljs-keyword">No</span> issues <span class="hljs-keyword">found</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">main</span> <span class="hljs-keyword">project</span>
+</code></pre>
+<p><br></p>
+<blockquote>
+<p>NOTE: For some operations, <code>cmt-mainadm</code> requires your working directory to have
+no unstaged files and your staging area to be clean. If this is not the case, you
+will see the following error message:</p>
+<p><code>YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN THE COMMAND</code></p>
+<p>As the error message suggest commit all changes and re-run the command.</p>
+</blockquote>
+<h2><a class="anchor" aria-hidden="true" id="rebuild-the-root-buildsbt-of-a-cmt-main-repository"></a><a href="#rebuild-the-root-buildsbt-of-a-cmt-main-repository" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Rebuild the root <code>build.sbt</code> of a CMT main repository</h2>
+<p>Whenever manual changes are made to the exercise names in the main repository,
+the sbt build definition must be adapted to reflect this change. It is
+recommended to use <code>cmt-mainadm</code> to do this and it is done with the following
+command:</p>
+<pre><code class="hljs">$ cmt-mainadm -b <span class="hljs-comment">[-cfg config_file]</span> <span class="hljs-comment">[-dot]</span> <span class="hljs-comment">[-nar]</span> &lt;main_repo&gt;
+</code></pre>
+<p>It is recommended to utilise this option only when other feaures of
+<code>cmt-mainadm</code> cannot solve the task at hand. For example, this is the
+case when the name of an exercise is changed (e.g. from, say
+<code>exercise_007_given</code> to <code>exercise_007_given_keyword</code>)</p>
+<h2><a class="anchor" aria-hidden="true" id="wrapping-up"></a><a href="#wrapping-up" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Wrapping up</h2>
+<p>It is worthwhile to give an example of specifying a non-default CMT
+configuration file to round up this section. You may have to do this
+in your CMT project if you put the <code>course-management.conf</code> file in a
+non-default location or when you give it a different name.</p>
+<p>For the example, we use the CMT Github repository itself and we will
+run <code>cmt-mainadm -c</code> on the templates. Here is a sample run:</p>
+<pre><code class="hljs">$ cmt-mainadm -c \
+              -cfg course-templates/scala-cmt-template-common/course-management.conf \
+              /Users/ericloots/Trainingen/LBT/course-management-tools
+git version 2.28.0
+On branch documentation
+Your branch is ahead of 'origin/documentation' by 1 commit.
+  (<span class="hljs-keyword">use</span> <span class="hljs-string">"git push"</span> <span class="hljs-keyword">to</span> publish your <span class="hljs-keyword">local</span> commits)
+
+<span class="hljs-keyword">nothing</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">commit</span>, working tree clean
+CHECKING WORKSPACE <span class="hljs-keyword">in</span> /<span class="hljs-keyword">Users</span>/ericloots/Trainingen/LBT/course-<span class="hljs-keyword">management</span>-tools
+<span class="hljs-keyword">Initialized</span> <span class="hljs-keyword">empty</span> Git repository <span class="hljs-keyword">in</span> /<span class="hljs-keyword">private</span>/<span class="hljs-keyword">var</span>/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_eb5fc633/course-<span class="hljs-keyword">management</span>-tools.git/
+<span class="hljs-keyword">To</span> /<span class="hljs-keyword">var</span>/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_eb5fc633/course-<span class="hljs-keyword">management</span>-tools.git
+ * [<span class="hljs-keyword">new</span> branch]        <span class="hljs-keyword">HEAD</span> -&gt; <span class="hljs-number">657</span>B1907<span class="hljs-number">-032</span>F<span class="hljs-number">-4</span>F8F-A2C0-D9FB64D5F1C4
+Cloning <span class="hljs-keyword">into</span> <span class="hljs-string">'course-management-tools'</span>...
+done.
+<span class="hljs-keyword">No</span> issues <span class="hljs-keyword">found</span> <span class="hljs-keyword">in</span> <span class="hljs-keyword">main</span> <span class="hljs-keyword">project</span>
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/course-management-tools/docs/reference-intro"><span class="arrow-prev">← </span><span>Introduction</span></a><a class="docs-next button" href="/course-management-tools/docs/reference-cmtstudentify"><span>cmt-studentify</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#command-invocation">Command Invocation</a></li><li><a href="#main-administration-tasks">Main administration tasks</a><ul class="toc-headings"><li><a href="#-dot-dotty-compatible-build-definition"><code>-dot</code>: Dotty compatible build definition</a></li><li><a href="#-nar-do-not-automatically-reload-the-build-on-build-changes"><code>-nar</code>: Do not automatically reload the build on build changes</a></li></ul></li><li><a href="#deleting-an-exercise">Deleting an exercise</a></li><li><a href="#duplicate-a-given-exercise-and-insert-it-before-that-exercise">Duplicate a given exercise and insert it before that exercise</a></li><li><a href="#renumber-exercises-with-a-given-offset-and-step-size">Renumber exercises with a given offset and step size</a></li><li><a href="#generation-of-a-repository-test-script">Generation of a repository test script</a></li><li><a href="#checking-the-soundness-of-a-cmt-main-repository">Checking the soundness of a CMT main repository</a></li><li><a href="#rebuild-the-root-buildsbt-of-a-cmt-main-repository">Rebuild the root <code>build.sbt</code> of a CMT main repository</a></li><li><a href="#wrapping-up">Wrapping up</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/course-management-tools/" class="nav-home"><img src="/course-management-tools/img/favicon.ico" alt="Course Management Tools" width="66" height="58"/></a><div><h5>Docs</h5><a href="/course-management-tools/docs/install">Getting Started</a><a href="/course-management-tools/docs/reference-intro">Reference</a></div><div><h5>Community</h5><a href="https://github.com/eloots/course-management-tools/issues" target="_blank">Open an issue or ask questions</a></div><div><h5>More</h5><a href="/course-management-tools/blog">Blog</a><a href="https://github.com/eloots/course-management-tools" target="_blank">GitHub</a><a class="github-button" href="https://github.com/eloots/course-management-tools" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div><div><img style="float:left;margin:5px" src="/course-management-tools/img/jetbrains.svg" alt="Course Management Tools" width="66" height="58"/><div><a href="https://www.jetbrains.com/?from=course-management-tools" target="_blank">JetBrains supports this project by providing core project contributors with a set of best-in-class developer tools free of charge.</a></div></div></section><section class="copyright">Copyright © 2022 Course Management Tools</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+                document.addEventListener('keyup', function(e) {
+                  if (e.target !== document.body) {
+                    return;
+                  }
+                  // keyCode for '/' (slash)
+                  if (e.keyCode === 191) {
+                    const search = document.getElementById('search_input_react');
+                    search && search.focus();
+                  }
+                });
+              </script><script>
+              var search = docsearch({
+                
+                apiKey: 'ad215f5ba694d2e808dde2e2c3c465f4',
+                indexName: 'eloots_course-management-tools',
+                inputSelector: '#search_input_react'
+              });
+            </script></body></html>

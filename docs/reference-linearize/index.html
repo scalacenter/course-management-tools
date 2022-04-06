@@ -1,0 +1,180 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>cmt-linearize Command Reference · Course Management Tools</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="Docusaurus"/><meta name="description" content="## Command Invocation"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="cmt-linearize Command Reference · Course Management Tools"/><meta property="og:type" content="website"/><meta property="og:url" content="https://eloots.github.io/course-management-tools/"/><meta property="og:description" content="## Command Invocation"/><meta property="og:image" content="https://eloots.github.io/course-management-tools/img/build.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://eloots.github.io/course-management-tools/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/course-management-tools/img/favicon.ico"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"/><link rel="alternate" type="application/atom+xml" href="https://eloots.github.io/course-management-tools/blog/atom.xml" title="Course Management Tools Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://eloots.github.io/course-management-tools/blog/feed.xml" title="Course Management Tools Blog RSS Feed"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/course-management-tools/js/scrollSpy.js"></script><link rel="stylesheet" href="/course-management-tools/css/main.css"/><script src="/course-management-tools/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/course-management-tools/"><img class="logo" src="/course-management-tools/img/favicon.ico" alt="Course Management Tools"/><h2 class="headerTitleWithLogo">Course Management Tools</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/course-management-tools/docs/getting_started" target="_self">Docs</a></li><li class=""><a href="https://github.com/eloots/course-management-tools" target="_blank">GitHub</a></li><li class=""><a href="/course-management-tools/blog/" target="_self">Blog</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Reference</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Getting Started</h3><ul class=""><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/getting_started">Introduction</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/workflows">Workflows</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/install">Installation</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/your_first_project">Your first CMT project</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Reference</h3><ul class=""><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-intro">Introduction</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-mainadm">cmt-mainadm</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-cmtstudentify">cmt-studentify</a></li><li class="navListItem navListItemActive"><a class="navItem" href="/course-management-tools/docs/reference-linearize">cmt-linearize</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-delinearize">cmt-delinearize</a></li><li class="navListItem"><a class="navItem" href="/course-management-tools/docs/reference-config">CMT configuration</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 id="__docusaurus" class="postHeaderTitle">cmt-linearize Command Reference</h1></header><article><div><span><h2><a class="anchor" aria-hidden="true" id="command-invocation"></a><a href="#command-invocation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Command Invocation</h2>
+<pre><code class="hljs"><span class="hljs-attribute">Usage</span>: linearize [options] mainRepo linearRepo
+
+<span class="livecodeserver">  mainRepo                 base <span class="hljs-built_in">folder</span> holding main course repository
+  linearRepo               base <span class="hljs-built_in">folder</span> <span class="hljs-keyword">for</span> linearized <span class="hljs-built_in">version</span> repo
+  -mjvm, <span class="hljs-comment">--multi-jvm       generate multi-jvm build file</span>
+  -f, <span class="hljs-comment">--force-delete       Force-delete a pre-existing destination folder</span>
+  -cfg, <span class="hljs-comment">--config-file &lt;value&gt;</span>
+                           configuration <span class="hljs-built_in">file</span>
+  -dot, <span class="hljs-comment">--dotty            studentified repository is a Dotty project</span>
+  -nar, <span class="hljs-comment">--no-auto-reload-sbt</span>
+                           no automatic reload <span class="hljs-keyword">on</span> <span class="hljs-title">build</span> <span class="hljs-title">definition</span> <span class="hljs-title">change</span>
+  -m, <span class="hljs-comment">--bare-lin-repo      create a linearized repo without any of the CMT plugin functionality</span>
+  <span class="hljs-comment">--help                   Prints the usage text</span>
+  -v, <span class="hljs-comment">--version            Prints the version info</span>
+</span></code></pre>
+<h2><a class="anchor" aria-hidden="true" id="linearizing-a-cmt-main-repository"></a><a href="#linearizing-a-cmt-main-repository" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Linearizing a CMT main repository</h2>
+<p>A <em>linearized</em> repository is a git repository in which each exercise in the CMT
+main repository is &quot;mapped&quot; to a commit. The following diagrams depicts
+the process:</p>
+<p><img src="https://i.imgur.com/hsJy9ZT.png" alt="Linearize process"></p>
+<p>In its simplest form, a linearized repository is created by invoking the
+<code>cmt-linearize</code> command as follows:</p>
+<pre><code class="hljs">cmt-linearize -dot <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/Trainingen/</span>LBT/lunatech-scala<span class="hljs-number">-2</span>-to-scala3-course \
+                   <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/tmp/</span>lin
+</code></pre>
+<p><br></p>
+<blockquote>
+<p>NOTE: <code>cmt-linearize</code> requires your working directory to have
+no unstaged files and your staging area to be clean. If this is not the case, you
+will see the following error message:</p>
+<p><code>YOU HAVE UNCOMMITTED CHANGES IN YOUR GIT INDEX. COMMIT CHANGES AND RE-RUN THE COMMAND</code></p>
+<p>As the error message suggest commit all changes and re-run the command.</p>
+</blockquote>
+<p><br>
+Apart from the creation of a git repository, the sbt build definition
+of the <em>linearized</em> repository is slightly different from the CMT main
+repository's build definition. This is shown in the following diagram:</p>
+<p><img src="https://i.imgur.com/jqihk1w.png" alt=""></p>
+<p>An important takeaway from this diagram is that 4 files are key with respect
+to the build definition of your project: <code>CommonSettings.scala</code>, <code>CompileOptions.scala</code>,
+<code>Dependencies.scala</code>, and <code>AdditionalSettings.scala</code>.</p>
+<p>The following sections cover the customisation via command-line options.</p>
+<p>For the sake of demonstration, the examples shown below work on a CMT main
+repository with the following exercises:</p>
+<p><img src="https://i.imgur.com/6iUQQPi.png" alt="Sample CMT repository"></p>
+<h3><a class="anchor" aria-hidden="true" id="-dot-dotty-compatible-build-definition"></a><a href="#-dot-dotty-compatible-build-definition" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>-dot</code>: Dotty compatible build definition</h3>
+<p>With this option, the Scala version is assumed to be set exactly in the
+<code>Version.scalaVersion</code> variable in your build definition. If this is not
+the case, you will set the sbt build's <code>scalaVersion</code> settings elsewhere.</p>
+<h3><a class="anchor" aria-hidden="true" id="-nar-do-not-automatically-reload-the-build-on-build-changes"></a><a href="#-nar-do-not-automatically-reload-the-build-on-build-changes" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>-nar</code>: Do not automatically reload the build on build changes</h3>
+<p>This option is used to overrule the default behavior which is to
+automatically reload the build when a change in the build definition
+is detected by sbt.</p>
+<h3><a class="anchor" aria-hidden="true" id="-b-create-a-linearized-repository-without-any-of-the-cmt-plugin-functionality"></a><a href="#-b-create-a-linearized-repository-without-any-of-the-cmt-plugin-functionality" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>-b</code>: Create a linearized repository without any of the CMT plugin functionality</h3>
+<p>This option is useful when the <em>linearized</em> repository's main use is to inspect
+the differences between consecutive exercises: it allows users to focus on just
+that. By having no CMT plugin, the user is not confused or distracted by the
+plugin code. Also, the root build definition (<code>build.sbt</code>) is reduced to its
+minimal form.</p>
+<p>The following diagrams illustrates how the build definition of the <em>linearized</em>
+repository is generated:</p>
+<p><img src="https://i.imgur.com/20hu1g2.png" alt="Bare linearized build definition"></p>
+<p>An important consequence is that one shouldn't have references to members
+of the plugin source files in build definition files such as
+<code>CommonSettings.scala</code>, <code>CompileOptions.scala</code>, <code>Dependencies.scala</code>,
+<code>build.sbt</code>, and <code>AdditionalSettings.scala</code></p>
+<h3><a class="anchor" aria-hidden="true" id="-f-force-delete-a-pre-existing-destination-folder"></a><a href="#-f-force-delete-a-pre-existing-destination-folder" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>-f</code>: Force delete a pre-existing destination folder</h3>
+<p>By default, <code>cmt-linearize</code> will not overwrite a destination folder to avoid
+&quot;accidents&quot;. For convenience, the <code>-f</code> option will override this behavior and
+remove a pre-existing folder and create a new one from scratch.</p>
+<h3><a class="anchor" aria-hidden="true" id="cmt-linearize-configuration-settings"></a><a href="#cmt-linearize-configuration-settings" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a><code>cmt-linearize</code> configuration settings</h3>
+<p>A number of configuration settings can be used to influence the behaviour of <code>cmt-linearize</code>:</p>
+<ul>
+<li><a href="/course-management-tools/docs/reference-config#exercise-project-prefix">exercise-project-prefix</a></li>
+<li><a href="/course-management-tools/docs/reference-config#studentified-base-folder">studentified-base-folder</a></li>
+<li><a href="/course-management-tools/docs/reference-config#relative-source-folder">relative-source-folder</a></li>
+<li><a href="/course-management-tools/docs/reference-config#main-base-project-name--studentified-project-name">studentified-project-name</a></li>
+<li><a href="/course-management-tools/docs/reference-config#exercise-preamble">exercise-preamble</a></li>
+<li><a href="/course-management-tools/docs/reference-config#use-configure-for-projects">use-configure-for-projects</a></li>
+</ul>
+<blockquote>
+<p><strong>WARNING</strong><br>
+When a <em>linearized</em> repository is used in a <em>linearize</em>/<em>delinearize</em>
+code refactoring process, make sure to keep the CMT main repository and
+the <em>linearized</em> repository consistent. This means that, if a <em>linearized</em>
+repository exists and one applies changes directly on the CMT main repo,
+the <em>linearized</em> is no longer consistent with the content of the CMT main
+repository.
+In that case, regenerate the <em>linearized</em> repository.</p>
+</blockquote>
+<blockquote>
+<p><strong>NOTE</strong><br>
+<code>cmt-linearize</code> requires your working directory to have no unstaged files
+and your staging area to be clean. If that condition is not met, resolve
+it before trying again.</p>
+</blockquote>
+<blockquote>
+<p><strong>NOTE</strong><br>
+Even though a <em>linearized</em> repository contains code and files that are shared
+by different exercises, these should not be edited in this repository as
+any such changes will <strong>NOT</strong> be reflected back to the CMT main repository
+during the <em>linearize</em>/<em>delinearize</em> refactoring process. Instead, apply
+such changes directly on the CMT main repository.</p>
+</blockquote>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/course-management-tools/docs/reference-cmtstudentify"><span class="arrow-prev">← </span><span>cmt-studentify</span></a><a class="docs-next button" href="/course-management-tools/docs/reference-delinearize"><span>cmt-delinearize</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#command-invocation">Command Invocation</a></li><li><a href="#linearizing-a-cmt-main-repository">Linearizing a CMT main repository</a><ul class="toc-headings"><li><a href="#-dot-dotty-compatible-build-definition"><code>-dot</code>: Dotty compatible build definition</a></li><li><a href="#-nar-do-not-automatically-reload-the-build-on-build-changes"><code>-nar</code>: Do not automatically reload the build on build changes</a></li><li><a href="#-b-create-a-linearized-repository-without-any-of-the-cmt-plugin-functionality"><code>-b</code>: Create a linearized repository without any of the CMT plugin functionality</a></li><li><a href="#-f-force-delete-a-pre-existing-destination-folder"><code>-f</code>: Force delete a pre-existing destination folder</a></li><li><a href="#cmt-linearize-configuration-settings"><code>cmt-linearize</code> configuration settings</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/course-management-tools/" class="nav-home"><img src="/course-management-tools/img/favicon.ico" alt="Course Management Tools" width="66" height="58"/></a><div><h5>Docs</h5><a href="/course-management-tools/docs/install">Getting Started</a><a href="/course-management-tools/docs/reference-intro">Reference</a></div><div><h5>Community</h5><a href="https://github.com/eloots/course-management-tools/issues" target="_blank">Open an issue or ask questions</a></div><div><h5>More</h5><a href="/course-management-tools/blog">Blog</a><a href="https://github.com/eloots/course-management-tools" target="_blank">GitHub</a><a class="github-button" href="https://github.com/eloots/course-management-tools" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div><div><img style="float:left;margin:5px" src="/course-management-tools/img/jetbrains.svg" alt="Course Management Tools" width="66" height="58"/><div><a href="https://www.jetbrains.com/?from=course-management-tools" target="_blank">JetBrains supports this project by providing core project contributors with a set of best-in-class developer tools free of charge.</a></div></div></section><section class="copyright">Copyright © 2022 Course Management Tools</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+                document.addEventListener('keyup', function(e) {
+                  if (e.target !== document.body) {
+                    return;
+                  }
+                  // keyCode for '/' (slash)
+                  if (e.keyCode === 191) {
+                    const search = document.getElementById('search_input_react');
+                    search && search.focus();
+                  }
+                });
+              </script><script>
+              var search = docsearch({
+                
+                apiKey: 'ad215f5ba694d2e808dde2e2c3c465f4',
+                indexName: 'eloots_course-management-tools',
+                inputSelector: '#search_input_react'
+              });
+            </script></body></html>

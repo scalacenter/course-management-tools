@@ -4,22 +4,165 @@ title: Workflows
 sidebar_label: Workflows
 ---
 
+## Introduction 
+
+In this section, we will describe typical CMT workfows used when building
+and maintaining a training course.
+
+We will use a sample main repository named `lunatech-beginner-quarkus-course-v2` that contains
+sixteen exercises. Let's have a look at what is in the master repo.
+
+```bash
+$ cd simple-repo
+
+$ ls
+code                   course-management.conf
+
+$ ls -l code
+$ ls -l
+total 0
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_001_initial_state
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_002_a_qute_hello_world
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_003_qute_products
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_004_even_qute_products
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_005_products_from_the_database
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_006_CDI_and_ArC
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_007_Convert_endpoints_to_JSON
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_008_Adding_REST_data_Panache
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_009_Hook_up_the_React_app
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_010_Validation_and_PUT
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_011_Going_Reactive
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_012_Reactive_search_endpoint
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_013_Listen_and_Notify
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_014_Internal_Channels
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_015_Connecting_to_Kafka
+drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_016_Dead_Letter_Queue_and_Stream_filtering
+```
+
+As explained in the [CMT approach](getting_started.md#the-cmt-approach) section,
+CMT doesn't care about what build tool, if any, is used in the different exercises.
+However, we do need to configure a couple of things to get the correct behaviour
+for the student. The `course-management.conf` file in the root folder of the main
+repo looks as follows:
+
+```bash
+$ cat course-management.conf
+cmt {
+  test-code-folders = [
+    "src/test"
+  ]
+
+  read-me-files = [
+    "README.md"
+  ]
+
+  cmt-studentified-dont-touch = [
+    .idea
+    .vscode
+    .mvn
+    target
+    pom.xml
+  ]
+}
+```
+
+> Note: the configuration file shown above contains just three settings. It is useful to
+note that these settings _all_ relate to functionality in a studentified artifact of the
+main repo.
+
+Let's have a look at each of these settings.
+
+### Setting `test` folders
+
+The first setting we find in the configuration file is `cmt.test-code-folders`. This setting is
+a list that, in the case of `lunatech-beginner-quarkus-course-v2`, contains a single item `src/test`.
+
+When a student moves between different exercises, CMT will pull in any code residing in the
+folder(s) contained in this setting while leaving any other code unchanged.
+
+### Setting `README` files
+
+The setting `cmt.read-me-file` is a list of files (in this example a single file name `README.md`)
+that are assumed to provide exercise specific information (such as exercise instructions).
+
+As with the `test` setting, this file or files are pulled in when moving between exercises.
+
+### Setting files and folders that shouldn't be touched
+
+When a student executes one of the `cmtc` commands, for example to move to the next exercise or to
+pull the solution for the current exercise, what happens is that the set of files that comprises
+the exercise is manipulated. Files may be deleted, created, of the content of existing files may be
+altered.
+
+Without any extra measure, this file manipulation may interfere with the tooling or editors the
+student utilises. For example, when using _Maven_ as build tool, a `.mvn` folder will be created
+by _Maven_ and the content of that folder should not be touched by CMT. Similarly, when using say,
+the IntelliJ IDE, a `.idea` folder is created who's content should also be left untouched by CMT.
+
+So, this is where the `cmt.cmt-studentified-dont-touch` setting comes into play: it contains a list
+of folders and files that `cmtc` should leave untouched when performing its job.
+
+The `lunatech-beginner-quarkus-course-v2` project uses _Java_ as programming language and _Maven_
+as build tool. As it is quite common to use either [_vscode_](https://code.visualstudio.com) or
+the [_IntelliJ IDE_](https://www.jetbrains.com/idea/) we end up with the configuration shown above.
 
 ## Studentifying a CMT main repository
 
 A _studentified_ artifact can be generated from a CMT main repository
-by running the `cmt-studentify` command. The process looks as follows:
+by running the `cmta studentify` command:
 
-![studentify process](https://i.imgur.com/8gH7Y7a.png)
+```bash
+$ cd lunatech-beginner-quarkus-course-v2 ; ls
+code                   course-management.conf
+
+$ cmta studentify -f . ~/tmp/stu
+Studentifying /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2 to /Users/ericloots/tmp/stu
+<elided>
+Processed exercises:
+  exercise_001_initial_state
+  exercise_002_a_qute_hello_world
+  exercise_003_qute_products
+  exercise_004_even_qute_products
+  exercise_005_products_from_the_database
+  exercise_006_CDI_and_ArC
+  exercise_007_Convert_endpoints_to_JSON
+  exercise_008_Adding_REST_data_Panache
+  exercise_009_Hook_up_the_React_app
+  exercise_010_Validation_and_PUT
+  exercise_011_Going_Reactive
+  exercise_012_Reactive_search_endpoint
+  exercise_013_Listen_and_Notify
+  exercise_014_Internal_Channels
+  exercise_015_Connecting_to_Kafka
+  exercise_016_Dead_Letter_Queue_and_Stream_filtering
+
+$ ls ~/tmp/stu
+lunatech-beginner-quarkus-course-v2
+
+$ ls ~/tmp/stu/lunatech-beginner-quarkus-course-v2
+code
+
+$ ls ~/tmp/stu/lunatech-beginner-quarkus-course-v2/code
+EXERCISES.md       docker-compose.yml mvnw               pom.xml
+README.md          materials          mvnw.cmd           src
+
+```
+
+As one can see, `cmta studentify` has created a folder `lunatech-beginner-quarkus-course-v2`
+that contains a  sub-folder `code` that contains the code for the first exercise.
+
+In summary, the process can be depicted as follows:
+
+![studentify process](https://imgur.com/eEKgbye.png)
 
 The _studentified_ artifact is self-contained (and can optionally be generated
-as a **_git_** repository) sbt build and is typically used in a training
-context.
+as a **_git_** repository).
 
-When sbt is started in the root folder of the _studentified_ artifact,
-the following commands can be run from the sbt prompt:
+A student can "manipulate" the studentified repo using `cmtc` by passing the
+appropriate sub-command. The available subcommands are summarised in the following
+table:
 
-![Studentified repo - commands](https://i.imgur.com/TgJ6rCD.png)
+![Studentified repo - commands](https://imgur.com/HueGxyg.png)
 
 ## Evolving the content of a CMT main repository
 
@@ -29,7 +172,6 @@ its content. For example, one may need to:
 - add an exercise at the end of the existing series of exercises
 - insert a new exercise between two consecutive exercises
 - change the title of an exercise
-- change the course name
 - change the code in an exercise and make the required changes
   to subsequent exercises
 
@@ -45,129 +187,102 @@ implement them. There are two approaches to applying changes:
   the changes needs to be applied to subsequent exercises. The generic
   approach when using **_git_** is to apply interactive rebasing.
   Obviously, there's no way we can do this on the CMT main repository
-  and that's where `cmt-linearize` comes in.
+  and that's where `cmta linearize` and `cmta delinearize` come in.
 
 A _linearized_ repo is a git repository in which each exercise in the CMT main
-repo repository is "mapped" to a commit. The following diagrams depicts
-the process:
+repo repository is "mapped" to a commit. We'll use a different main repository
+named `lunatech-beginner-quarkus-course-v2` to illustrate the
+_linearize_/_delinearize_ workflow.
 
-![Linearize process](https://i.imgur.com/hsJy9ZT.png)  
+The following diagrams depicts the _linearization_ process:
+
+![Linearize process](https://imgur.com/qCMgsDk.png)
 
 To illustrate the process, assume we run the following command to linearize
 a CMT main repository:
+
 ```
-cmt-linearize -dot /Users/ericloots/Trainingen/LBT/lunatech-scala-2-to-scala3-course \
-                   /Users/ericloots/tmp/lin
+$ cd lunatech-beginner-quarkus-course-v2; ls
+README.md              code                   course-management.conf slides
+
+$ cmta linearize . ~/tmp/lin
+Linearizing /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2 to /Users/ericloots/tmp/lin
+<elided>
+Successfully linearized /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2
 ```
 
 After a successful completion of this command, the _linearized_ repo will be
-in a subfolder of `/Users/ericloots/tmp/lin` named `lunatech-scala-2-to-scala3-course`.
+in a subfolder of `/Users/ericloots/tmp/lin` named `lunatech-beginner-quarkus-course-v2`.
 
 We can verify a couple of things on the _linearized_ repo.
 
 ```
-$ cd /Users/ericloots/tmp/lin/lunatech-scala-2-to-scala3-course
+$ cd ~/tmp/lin/lunatech-beginner-quarkus-course-v2
 
 $ git log --oneline
-d92f752 (HEAD -> main) exercise_011_multiversal_equality
-8e2cd20 exercise_010_opaque_type_aliases
-ae5447e exercise_009_union_types
-a3989c7 exercise_008_enum_and_export
-bd9ad74 exercise_007_givens
-e1052c7 exercise_006_using_and_summon
-badeca3 exercise_005_extension_methods
-aa02237 exercise_004_parameter_untupling
-9b8bb2c exercise_003_top_level_definitions
-6d55244 exercise_002_dotty_new_syntax_and_indentation_based_syntax
-96e94ea exercise_001_dotty_deprecated_syntax_rewriting
-098aa38 exercise_000_sudoku_solver_initial_state
+9aed004 (HEAD -> main) exercise_016_Dead_Letter_Queue_and_Stream_filtering
+2259623 exercise_015_Connecting_to_Kafka
+af38c66 exercise_014_Internal_Channels
+05afccd exercise_013_Listen_and_Notify
+9129021 exercise_012_Reactive_search_endpoint
+229338a exercise_011_Going_Reactive
+af2d53b exercise_010_Validation_and_PUT
+76ee852 exercise_009_Hook_up_the_React_app
+5ce44e9 exercise_008_Adding_REST_data_Panache
+0544507 exercise_007_Convert_endpoints_to_JSON
+537d732 exercise_006_CDI_and_ArC
+15193f7 exercise_005_products_from_the_database
+4087296 exercise_004_even_qute_products
+a291630 exercise_003_qute_products
+b51a7a9 exercise_002_a_qute_hello_world
+6288f05 exercise_001_initial_state
 ```
 
 We can observe that the last commit (HEAD) corresponds to the last exercise
 on the main repository.
 
-We can also inspect the differences between, say, exercises 8 and 9 as illustrated
+We can also inspect the differences between, say, exercises 12 and 13 as illustrated
 here. Let's first see which files were changed between these exercises.
 
 ```
 $ git diff --name-only HEAD~3 HEAD~2
-exercises/README.md
-exercises/src/main/scala/org/lunatechlabs/dotty/sudoku/SudokuProblemSender.scala
-exercises/src/main/scala/org/lunatechlabs/dotty/sudoku/SudokuSolver.scala
+code/README.md
+code/pom.xml
+code/src/main/java/com/lunatech/training/quarkus/PriceUpdate.java
+code/src/main/java/com/lunatech/training/quarkus/PriceUpdateStreams.java
+code/src/main/java/com/lunatech/training/quarkus/PriceUpdatesResource.java
 ```
 
-Let's see what changed in `SudokuSolver.scala`:
+It is to be expected that the README file has changed. Let's see what changed in
+file `PriceUpdate.java`.
 
 ```
-$ git diff HEAD~3 HEAD~2  \
-      exercises/src/main/scala/org/lunatechlabs/dotty/sudoku/SudokuProblemSender.scala
-diff --git a/exercises/src/main/scala/org/lunatechlabs/dotty/sudoku/SudokuProblemSender.scala b/exercises/src/main/scala/org/lunatechlabs/dotty/sudoku/SudokuProblemSender.scala
-index 8d5ef31..1ab0200 100644
---- a/exercises/src/main/scala/org/lunatechlabs/dotty/sudoku/SudokuProblemSender.scala
-+++ b/exercises/src/main/scala/org/lunatechlabs/dotty/sudoku/SudokuProblemSender.scala
-@@ -9,36 +9,31 @@ object SudokuProblemSender {
-
-   enum Command {
-     case SendNewSudoku
--    // Wrapped responses
--    case SolutionWrapper(result: SudokuSolver.Response)
-   }
-   export Command._
-
-+  type CommandAndResponses = Command | SudokuSolver.Response
+$ git diff HEAD~3 HEAD~2 code/src/main/java/com/lunatech/training/quarkus/PriceUpdate.java
+diff --git a/code/src/main/java/com/lunatech/training/quarkus/PriceUpdate.java b/code/src/main/java/com/lunatech/training/quarkus/PriceUpdate.java
+new file mode 100644
+index 0000000..1d466cd
+--- /dev/null
++++ b/code/src/main/java/com/lunatech/training/quarkus/PriceUpdate.java
+@@ -0,0 +1,19 @@
++package com.lunatech.training.quarkus;
 +
-   private val rowUpdates: Vector[SudokuDetailProcessor.RowUpdate] =
-     SudokuIO
-       .readSudokuFromFile(new File("sudokus/001.sudoku"))
-       .map ((rowIndex, update) => SudokuDetailProcessor.RowUpdate(rowIndex, update))
-
-   def apply(sudokuSolver: ActorRef[SudokuSolver.Command],
--            sudokuSolverSettings: SudokuSolverSettings
--  ): Behavior[Command] =
--    Behaviors.setup { context =>
-+            sudokuSolverSettings: SudokuSolverSettings): Behavior[Command] =
-+    Behaviors.setup[CommandAndResponses] { context =>
-       Behaviors.withTimers { timers =>
-         new SudokuProblemSender(sudokuSolver, context, timers, sudokuSolverSettings).sending()
-       }
--    }
-+    }.narrow // Restrict the actor's [external] protocol to its set of commands
- }
-
- class SudokuProblemSender private (sudokuSolver: ActorRef[SudokuSolver.Command],
--                                   context: ActorContext[SudokuProblemSender.Command],
--                                   timers: TimerScheduler[SudokuProblemSender.Command],
--                                   sudokuSolverSettings: SudokuSolverSettings
--) {
-+                                   context: ActorContext[SudokuProblemSender.CommandAndResponses],
-+                                   timers: TimerScheduler[SudokuProblemSender.CommandAndResponses],
-+                                   sudokuSolverSettings: SudokuSolverSettings) {
-   import SudokuProblemSender._
-
--  private val solutionWrapper: ActorRef[SudokuSolver.Response] =
--    context.messageAdapter(response => SolutionWrapper(response))
--
-   private val initialSudokuField = rowUpdates.toSudokuField
-
-   private val rowUpdatesSeq = LazyList
-@@ -77,14 +72,14 @@ class SudokuProblemSender private (sudokuSolver: ActorRef[SudokuSolver.Command],
-                                problemSendInterval
-   ) // on a 5 node RPi 4 based cluster in steady state, this can be lowered to about 6ms
-
--  def sending(): Behavior[Command] =
-+  def sending(): Behavior[CommandAndResponses] =
-     Behaviors.receiveMessage {
-       case SendNewSudoku =>
-         context.log.debug("sending new sudoku problem")
-         val nextRowUpdates = rowUpdatesSeq.next
--        sudokuSolver ! SudokuSolver.InitialRowUpdates(nextRowUpdates, solutionWrapper)
-+        sudokuSolver ! SudokuSolver.InitialRowUpdates(nextRowUpdates, context.self)
-         Behaviors.same
--      case SolutionWrapper(solution: SudokuSolver.SudokuSolution) =>
-+      case solution: SudokuSolver.SudokuSolution =>
-         context.log.info(s"${SudokuIO.sudokuPrinter(solution)}")
-         Behaviors.same
-     }
++import java.math.BigDecimal;
++
++public class PriceUpdate {
++    public Long productId;
++    public BigDecimal price;
++
++    public PriceUpdate(){}
++
++    public PriceUpdate(Long productId, BigDecimal price) {
++        this.productId = productId;
++        this.price = price;
++    }
++
++    public String toString() {
++        return "Price(" + productId + ", " + price.toString() + ")";
++    }
++}
 ```
 
 This illustrates another use case of a _linearized_ repository: figuring out
@@ -183,75 +298,64 @@ minor differences in formatting may slip in. Therefore, it is recommended to
 use **_git_** interactive rebasing instead as depicted in the following
 diagram.
 
-![Interactive rebasing process](https://i.imgur.com/z7N2Z4J.png)
+![Interactive rebasing process](https://imgur.com/cac7Ls4.png)
 
 When making large changes, it is recommended to split these in a series
 of smaller steps. This may simplify the process of merge conflict resolution
 if these arise during the completion of the interactive rebasing process.
 
-The _linearized_ repo is generated in such a way that it can be loaded in
-sbt (or an IDE). This means that tests can be run during the editing process
-to verify that the refactored code still works correctly.
+Note that during the interactive rebasing process, the code can be loaded in
+an IDE to assist in the rebasing process and to test the changes.
 
 Once the refactoring of the code in the _linearized_ repository is complete,
 the applied changes need to be reflected in the CMT main repository. This is
 done via the _delinearization_ process as depicted in the following diagram:
 
-![Delinearize process](https://i.imgur.com/BYlAaPh.png)
+![Delinearize process](https://imgur.com/t0Wahtt.png)
 
-In our sample scenario, we run the following `cmt-delinearize` command to perform
+In our sample scenario, we run the following `cmta delinearize` command to perform
 the _delinearization_:
 
 ```
-cmt-linearize /Users/ericloots/Trainingen/LBT/lunatech-scala-2-to-scala3-course \
-              /Users/ericloots/tmp/lin/lunatech-scala-2-to-scala3-course
+$ cd lunatech-beginner-quarkus-course-v2; ls
+README.md              code                   course-management.conf slides
+
+$ cmta delinearize . ~/tmp/lin
+De-linearizing /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2 to /Users/ericloots/tmp/lin
+<elided>
+Successfully delinearised /Users/ericloots/tmp/lin
+
 ```
 
 Running the `git status` command on the CMT master repository will show _all_
 the files that were changed in the editing process.
 
 With a refactoring cycle completed, we can repeat the process. As long as we
-don't make any direct edits on any of the exercises in the CMT master repo,
+don't make any direct edits on any of the exercises in the CMT main repo,
 we can repeat the **_git_** interactive rebasing process/_delinearization_
-as many times as needed. Between iterations, we can also do the following:
+as many times as needed.
+
+![Repeat interactive rebasing process](https://imgur.com/3rNbSqd.png)
+
+Between iterations, we can also do the following:
 
 - "checkpoint" what we already have on the CMT master repository by committing
   it. This doesn't hurt and if needed this can be undone easily.
-- run the tests on all exercises. This can be done in two ways:
-  - in sbt, select the root project and run the `test` command. This will
-    run all the tests in all exercises
-  - generate a test script via `cmt-mainadm` (see section 
-    [_"generation of a test script"_](reference-mainadm.md#generation-of-a-repository-test-script)
-    for details). Doing the tests in this way not only runs the exercises
-    tests, but also verify the proper functioning of both the _studentified_ and
-    _linearized_ artifacts.
+- run the tests on all exercises. As the tooling is oblivious to the build tool
+  and the testing tools used in the exercises, there's no pre-baked solution
+  to automate this process.  Imagine that a CMT project uses Maven as build tool.
+  Chances are that we can test any exercise by running `mvn test`. It would be
+  trivial to build a small test script to automate the testing. The script would
+  loop over each of the exercise folders, cd into them one by one and execute
+  the tests.
 
-## Inserting, deleting and renumbering exercises
+## Inserting, deleting, and renumbering exercises
 
-`cmt-mainadm` is your friend for these kind of tasks. See the following
+`cmta` is your friend for these kind of tasks. See the following
 sections in the reference chapter:
 
-- [inserting an exercise](reference-mainadm.md#duplicate-a-given-exercise-and-insert-it-before-that-exercise)
-- [deleting an exercise](reference-mainadm.md#deleting-an-exercise)
-- [renumbering exercises](reference-mainadm.md#renumber-exercises-with-a-given-offset-and-step-size)
+- [inserting an exercise](reference-cmta.md#cmta-dib)
+- [renumbering exercises](reference-cmta.md#cmta-renum)
 
-## Changing the title of a course
-
-The title of a course, which is displayed in the sbt prompt in both the CMT main
-repository and the _studentified_ repo, is retrieved from a file name `.courseName`
-in the CMT main repository's root folder. Simply edit the first line of this file
-to reflect the desired course name.
-
-## Verify a CMT main repository
-
-Checking the full functionality of a CMT main repository manually is a
-tedious and time-consuming process. For this reason, `cmt-mainadm` has an option
-to create a test script that will run the following tests:
-
-- execute all tests on every exercise in the CMT main repository
-- _studentify_ the repo and run a series of commands (just like a student
-  would do) on the _studentified_ repository
-- _linearize_ the CMT main repository and run the tests on the "HEAD" exercise
-
-Have a look at section [_"generation of a test script"_](reference-mainadm.md#generation-of-a-repository-test-script)
-for more details.
+Finally, deleting an exercise is as simple as deleting the corresponding exercise
+folder.

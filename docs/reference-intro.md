@@ -4,34 +4,32 @@ title: Introduction
 sidebar_label: Introduction
 ---
 
-In this section you will find the CMT reference documentation. The
-behaviour of the CMT commands can be controlled in two ways:
+In this section you will find the CMT reference documentation.
 
-Each CMT command has a number of:
+There are three types of CMT repositories:
 
-- command line options that control its function
-  and behaviour
-- settings that are controlled via a 
-  configuration file. A complete overview of all the available
-  settings can be found in the
-  [CMT configuration](reference-config.md) section. If there's
-  a configuration file named `course-management.conf` in the
-  main course repository's root folder, CMT command will apply
-  the settings provided in that file. One can also pass an
-  alternative configuration file to a CMT command with the `-cfg`
-  option. The path of the passed in configuration file is
-  relative to the main course repository's root folder.
+- The main repository which is the only source of truth. It contains
+  all exercises as a series of folders.
+- The so-called _studentified_ repository: an artifact derived from
+  the main repository.
+- To so-called _linearized_ repository: an artifact derived from the
+  main repository.
 
-### Note
+As far as the tooling is concerned, there are two commands,[`cmta`](reference-cmta.md) and
+[`cmtc`](reference-cmtc.md).
 
-All Course Management Tools commands take as first argument
-the _absolute_ path to the **_root_** folder of the **_git_** main
-course repository. In examples in this section, we will use
-_<main_repo>_ as a placeholder.
+[`cmta`](reference-cmta.md), the CMT admin command, operates on a main
+repository and is used, among other things, to generate the _studentified_
+repository or the _linearized_ repository. It can also used to perform the
+inverse of the linearization of a main repo via a process called
+_delinearization_.
 
-`cmt-delinearize` takes as second argument the _absolute_ path to
-the folder containing the delinearized artifact. In examples in
-this section, we will use _<linearized_repo>_ as a placeholder.
+Note that, in general, a _linearized_ repository is an artifact that
+can effectively be considered to be a scratch pad and as such, it is
+discarded after having served its purpose.
 
-
-
+[`cmtc`](reference-cmtc.md), the CMT client command, operates on a
+studentified repository. It is used to "manipulate" the state of the
+latter. Examples of this are navigating between exercises, pulling one
+or more files from an exercise solution into the current exercise workpace,
+etc.

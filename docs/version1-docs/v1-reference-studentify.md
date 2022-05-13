@@ -1,5 +1,5 @@
 ---
-id: reference-cmtstudentify
+id: v1-reference-cmtstudentify
 title: cmt-studentify Command Reference
 sidebar_label: cmt-studentify
 ---
@@ -189,15 +189,15 @@ illustrated in the following diagram:
 
 A number of configuration settings can be used to influence the behaviour of `cmt-studentify`:
 
-- [test-code-folders](reference-config.md#test-code-folders)
-- [exercise-project-prefix](reference-config.md#exercise-project-prefix)
-- [studentified-base-folder](reference-config.md#studentified-base-folder)
-- [readme-in-test-resources](reference-config.md#readme-in-test-resources)
-- [relative-source-folder](reference-config.md#relative-source-folder)
-- [main-base-project-name & studentified-project-name](reference-config.md#main-base-project-name--studentified-project-name)
-- [exercise-preamble](reference-config.md#exercise-preamble)
-- [studentify-files-to-clean-up](reference-config.md#studentify-files-to-clean-up)
-- [console-colors](reference-config.md#console-colors)
-- [common-project-enabled](reference-config.md#common-project-enabled)
-- [use-configure-for-projects](reference-config.md#use-configure-for-projects)
+- [test-code-folders](v1-reference-config.md#test-code-folders)
+- [exercise-project-prefix](v1-reference-config.md#exercise-project-prefix)
+- [studentified-base-folder](v1-reference-config.md#studentified-base-folder)
+- [readme-in-test-resources](v1-reference-config.md#readme-in-test-resources)
+- [relative-source-folder](v1-reference-config.md#relative-source-folder)
+- [main-base-project-name & studentified-project-name](v1-reference-config.md#main-base-project-name--studentified-project-name)
+- [exercise-preamble](v1-reference-config.md#exercise-preamble)
+- [studentify-files-to-clean-up](v1-reference-config.md#studentify-files-to-clean-up)
+- [console-colors](v1-reference-config.md#console-colors)
+- [common-project-enabled](v1-reference-config.md#common-project-enabled)
+- [use-configure-for-projects](v1-reference-config.md#use-configure-for-projects)
 

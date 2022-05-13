@@ -163,13 +163,13 @@ object Helpers:
 
   def setGitConfig(linearizedProject: File): Either[String, Unit] =
     import ProcessDSL.toProcessCmd
-    s"git config --global init.defaultBranch main"
+    s"git config --local init.defaultBranch main"
       .toProcessCmd(workingDir = linearizedProject)
       .runWithStatus(toConsoleRed(s"Failed to default branch name in ${linearizedProject.getPath}"))
-    s"""git config --global user.email "eric.loots@toto.com""""
+    s"""git config --local user.email "eric.loots@toto.com""""
       .toProcessCmd(workingDir = linearizedProject)
       .runWithStatus(toConsoleRed(s"Failed to set 'user.mail' in git configuration"))
-    s"""git config --global user.name "Eric Loots""""
+    s"""git config --local user.name "Eric Loots""""
       .toProcessCmd(workingDir = linearizedProject)
       .runWithStatus(toConsoleRed(s"Failed to set 'user.name' in git configuration"))
   end setGitConfig

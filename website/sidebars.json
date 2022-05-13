@@ -2,16 +2,39 @@
   "docs": {
     "Getting Started": ["getting_started",
                         "workflows",
-                        "install",
-                        "your_first_project"],
-    "Reference": ["reference-intro",
-                  "reference-mainadm",
-                  "reference-cmtstudentify",
-                  "reference-linearize",
-                  "reference-delinearize",
-                  "reference-config"]
+                        "install"],
+                        
+    "Reference": [
+                  "reference-intro",
+                  "reference-cmta",
+                  "reference-cmtc",
+                  "reference-config"
+                 ],
+    "Version 1 docs": [
+               {
+                 "type": "subcategory",
+                 "label": "Getting Started", 
+                 "ids": ["version1-docs/v1-getting_started",
+                         "version1-docs/v1-workflows",
+                         "version1-docs/v1-install",
+                         "version1-docs/v1-your_first_project"
+                        ]
+               },
+               {
+                 "type": "subcategory",
+                 "label": "Reference",
+                 "ids": ["version1-docs/v1-reference-intro",
+                         "version1-docs/v1-reference-mainadm",
+                         "version1-docs/v1-reference-cmtstudentify",
+                         "version1-docs/v1-reference-linearize",
+                         "version1-docs/v1-reference-delinearize",
+                         "version1-docs/v1-reference-config"
+                        ]
+               }
+    ]
   },
   "docs-other": {
     "First Category": ["doc4", "doc5"]
   }
 }
+

@@ -1,5 +1,5 @@
 ---
-id: reference-mainadm
+id: v1-reference-mainadm
 title: cmt-mainadm Command Reference
 sidebar_label: cmt-mainadm
 ---
@@ -48,7 +48,7 @@ The `cmt-mainadm` command can be invoked in two ways:
 
 - _init_ command mode: this allows creating a new CMT master repository
   based on one of the CMT master templates. See section for more information, read
-  the ["Starting from a CMT master template"](your-first-project.md#starting-from-a-cmt-master-template) section.
+  the ["Starting from a CMT master template"](v1-your-first-project.md#starting-from-a-cmt-master-template) section.
 - admin mode. This chapter focuses on this mode.
 
 Depending on the action specified, the following options may apply:

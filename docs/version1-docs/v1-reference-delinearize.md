@@ -1,5 +1,5 @@
 ---
-id: reference-delinearize
+id: v1-reference-delinearize
 title: cmt-delinearize Command Reference
 sidebar_label: cmt-delinearize
 ---
@@ -30,9 +30,9 @@ repository via a process of de-linearization as depicted here:
 A number of configuration settings can be used to influence the behaviour
 of `cmt-delinearize`:
 
-- [exercise-project-prefix](reference-config.md#exercise-project-prefix)
-- [studentified-base-folder](reference-config.md#studentified-base-folder)
-- [relative-source-folder](reference-config.md#relative-source-folder)
+- [exercise-project-prefix](v1-reference-config.md#exercise-project-prefix)
+- [studentified-base-folder](v1-reference-config.md#studentified-base-folder)
+- [relative-source-folder](v1-reference-config.md#relative-source-folder)
 
 > IMPORTANT NOTE: `cmt-delinearize` will only write modifications applied
 > in the `exercises` project. Any other changes will be discarded. If you

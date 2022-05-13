@@ -1,5 +1,5 @@
 ---
-id: reference-linearize
+id: v1-reference-linearize
 title:  cmt-linearize Command Reference
 sidebar_label: cmt-linearize
 ---
@@ -105,12 +105,11 @@ remove a pre-existing folder and create a new one from scratch.
 
 A number of configuration settings can be used to influence the behaviour of `cmt-linearize`:
 
-- [exercise-project-prefix](reference-config.md#exercise-project-prefix)
-- [studentified-base-folder](reference-config.md#studentified-base-folder)
-- [relative-source-folder](reference-config.md#relative-source-folder)
-- [studentified-project-name](reference-config.md#main-base-project-name--studentified-project-name)
-- [exercise-preamble](reference-config.md#exercise-preamble)
-- [use-configure-for-projects](reference-config.md#use-configure-for-projects)
+- [exercise-project-prefix](v1-reference-config.md#exercise-project-prefix)
+- [studentified-base-folder](v1-reference-config.md#relative-source-folder)
+- [studentified-project-name](v1-reference-config.md#main-base-project-name--studentified-project-name)
+- [exercise-preamble](v1-reference-config.md#exercise-preamble)
+- [use-configure-for-projects](v1-reference-config.md#use-configure-for-projects)
 
 > **WARNING**<br>
 > When a _linearized_ repository is used in a _linearize_/_delinearize_

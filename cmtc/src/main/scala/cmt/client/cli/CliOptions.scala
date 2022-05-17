@@ -60,7 +60,7 @@ final case class CliOptions(
     new CMTcConfig(studentifiedRepo.value)
 
   private def configure(): ClientCommand =
-    ClientCommand.Configure()
+    ClientCommand.Configure
 
   private def gotoExercise(): ClientCommand =
     ClientCommand.GotoExercise(toConfig(), studentifiedRepo, exerciseId)

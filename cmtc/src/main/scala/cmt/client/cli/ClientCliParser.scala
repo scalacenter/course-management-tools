@@ -49,9 +49,9 @@ object ClientCliParser {
 
   private def configureParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
     import builder.*
-    cmd("configure")
-      .text("Configure the default settings for CMT - CMT_HOME and course storage directories")
-      .action { (_, c) => c.copy(command = Configure) }
+    cmd("configure").text("Configure the default settings for CMT - CMT_HOME and course storage directories").action {
+      (_, c) => c.copy(command = Configure)
+    }
 
   private def previousExerciseParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
     import builder.*

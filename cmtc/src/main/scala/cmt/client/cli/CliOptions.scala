@@ -20,6 +20,7 @@ import cmt.client.command.ClientCommand
 
 sealed trait CliCommand
 object CliCommand:
+  case object Configure extends CliCommand
   case object GotoExercise extends CliCommand
   case object GotoFirstExercise extends CliCommand
   case object ListExercises extends CliCommand
@@ -41,6 +42,7 @@ final case class CliOptions(
 
   def toCommand: ClientCommand =
     command match
+      case Configure         => configure()
       case GotoExercise      => gotoExercise()
       case GotoFirstExercise => gotoFirstExercise()
       case ListExercises     => listExercises()
@@ -56,6 +58,9 @@ final case class CliOptions(
 
   private def toConfig(): CMTcConfig =
     new CMTcConfig(studentifiedRepo.value)
+
+  private def configure(): ClientCommand =
+    ClientCommand.Configure()
 
   private def gotoExercise(): ClientCommand =
     ClientCommand.GotoExercise(toConfig(), studentifiedRepo, exerciseId)

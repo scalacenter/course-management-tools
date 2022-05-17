@@ -18,6 +18,7 @@ import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
 
 sealed trait ClientCommand
 object ClientCommand:
+  final case class Configure() extends ClientCommand
   final case class GotoFirstExercise(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
   final case class ListExercises(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
   final case class ListSavedStates(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand

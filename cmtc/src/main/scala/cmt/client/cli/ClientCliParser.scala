@@ -32,6 +32,7 @@ object ClientCliParser {
 
     OParser.sequence(
       programName("cmtc"),
+      configureParser,
       pullSolutionParser,
       listExercisesParser,
       gotoExerciseParser,
@@ -45,6 +46,12 @@ object ClientCliParser {
       versionParser,
       validateConfig)
   }
+
+  private def configureParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
+    import builder.*
+    cmd("configure")
+      .text("Configure the default settings for CMT - CMT_HOME and course storage directories")
+      .action { (_, c) => c.copy(command = Configure) }
 
   private def previousExerciseParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
     import builder.*
@@ -161,6 +168,7 @@ object ClientCliParser {
     checkConfig(config =>
       config.command match
         case NoCommand         => failure("missing command")
+        case Configure         => success
         case PullSolution      => success
         case ListExercises     => success
         case NextExercise      => success

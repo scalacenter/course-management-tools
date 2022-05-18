@@ -32,7 +32,6 @@ object ClientCliParser {
 
     OParser.sequence(
       programName("cmtc"),
-      configureParser,
       pullSolutionParser,
       listExercisesParser,
       gotoExerciseParser,
@@ -43,15 +42,10 @@ object ClientCliParser {
       saveStateParser,
       restoreStateParser,
       savedStateParser,
+      setCurrentCourseParser,
       versionParser,
       validateConfig)
   }
-
-  private def configureParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
-    import builder.*
-    cmd("configure").text("Configure the default settings for CMT - CMT_HOME and course storage directories").action {
-      (_, c) => c.copy(command = Configure)
-    }
 
   private def previousExerciseParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
     import builder.*
@@ -157,6 +151,16 @@ object ClientCliParser {
           .validate(_.existsAndIsADirectory)
           .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))))
 
+  private def setCurrentCourseParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
+    import builder.*
+    cmd("set-current-course")
+      .text("Sets the global cmtc config to point to the repo passed as the current course")
+      .action((_, c) => c.copy(command = SetCurrentCourse))
+      .children(
+        arg[File]("<studentified directory>")
+          .validate(_.existsAndIsADirectory)
+          .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))))
+
   private def versionParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
     import builder.*
     cmd("version").text("Print version information").action { (_, c) =>
@@ -168,7 +172,6 @@ object ClientCliParser {
     checkConfig(config =>
       config.command match
         case NoCommand         => failure("missing command")
-        case Configure         => success
         case PullSolution      => success
         case ListExercises     => success
         case NextExercise      => success
@@ -179,6 +182,7 @@ object ClientCliParser {
         case GotoExercise      => success
         case GotoFirstExercise => success
         case PullTemplate      => success
+        case SetCurrentCourse  => success
         case Version           => success
     )
 }

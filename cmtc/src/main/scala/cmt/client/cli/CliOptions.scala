@@ -20,7 +20,6 @@ import cmt.client.command.ClientCommand
 
 sealed trait CliCommand
 object CliCommand:
-  case object Configure extends CliCommand
   case object GotoExercise extends CliCommand
   case object GotoFirstExercise extends CliCommand
   case object ListExercises extends CliCommand
@@ -32,6 +31,7 @@ object CliCommand:
   case object PullTemplate extends CliCommand
   case object RestoreState extends CliCommand
   case object SaveState extends CliCommand
+  case object SetCurrentCourse extends CliCommand
   case object Version extends CliCommand
 
 final case class CliOptions(
@@ -42,7 +42,6 @@ final case class CliOptions(
 
   def toCommand: ClientCommand =
     command match
-      case Configure         => configure()
       case GotoExercise      => gotoExercise()
       case GotoFirstExercise => gotoFirstExercise()
       case ListExercises     => listExercises()
@@ -54,13 +53,11 @@ final case class CliOptions(
       case PullTemplate      => pullTemplate()
       case RestoreState      => restoreState()
       case SaveState         => saveState()
+      case SetCurrentCourse  => setCurrentCourse()
       case Version           => version()
 
   private def toConfig(): CMTcConfig =
     new CMTcConfig(studentifiedRepo.value)
-
-  private def configure(): ClientCommand =
-    ClientCommand.Configure
 
   private def gotoExercise(): ClientCommand =
     ClientCommand.GotoExercise(toConfig(), studentifiedRepo, exerciseId)
@@ -91,6 +88,9 @@ final case class CliOptions(
 
   private def saveState(): ClientCommand =
     ClientCommand.SaveState(toConfig(), studentifiedRepo)
+
+  private def setCurrentCourse(): ClientCommand =
+    ClientCommand.SetCurrentCourse(toConfig(), studentifiedRepo)
 
   private def noCommand(): ClientCommand =
     ClientCommand.NoCommand

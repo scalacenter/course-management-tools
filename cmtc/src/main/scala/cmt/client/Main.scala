@@ -30,7 +30,7 @@ object Main:
 
   private def selectAndExecuteCommand(options: CliOptions): Either[String, String] =
     options.toCommand match
-      case Configure              => Configure.execute()
+      case cmd: SetCurrentCourse  => cmd.execute()
       case cmd: GotoFirstExercise => cmd.execute()
       case cmd: ListExercises     => cmd.execute()
       case cmd: ListSavedStates   => cmd.execute()

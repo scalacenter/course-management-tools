@@ -1,8 +1,9 @@
 package cmt.client.command.execution
 
+import cmt.client.{Configuration, CurrentCourse}
 import cmt.client.Domain.StudentifiedRepo
 import cmt.client.command.ClientCommand.SetCurrentCourse
-import cmt.client.command.{Configuration, CurrentCourse}
+import cmt.client.command.CurrentCourse
 import cmt.core.execution.Executable
 
 given Executable[SetCurrentCourse] with

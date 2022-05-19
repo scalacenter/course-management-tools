@@ -1,6 +1,7 @@
-package cmt.client.command
+package cmt.client
 
 import cmt.client.Domain.StudentifiedRepo
+import cmt.client.command.{Configuration, CoursesDirectory, CurrentCourse}
 import com.typesafe.config.ConfigFactory
 import sbt.io.IO.write
 import sbt.io.syntax.{File, file}

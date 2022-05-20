@@ -14,23 +14,37 @@ package cmt.client.command
   */
 
 import cmt.CMTcConfig
+import cmt.client.Configuration
 import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
 
 sealed trait ClientCommand
 object ClientCommand:
-  final case class SetCurrentCourse(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
-  final case class GotoFirstExercise(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
-  final case class ListExercises(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
-  final case class ListSavedStates(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
+  final case class SetCurrentCourse(configuration: Configuration, studentifiedRepo: StudentifiedRepo)
+      extends ClientCommand
+  final case class GotoFirstExercise(configuration: Configuration, studentifiedRepo: StudentifiedRepo)
+      extends ClientCommand
+  final case class ListExercises(configuration: Configuration, studentifiedRepo: StudentifiedRepo) extends ClientCommand
+  final case class ListSavedStates(configuration: Configuration, studentifiedRepo: StudentifiedRepo)
+      extends ClientCommand
   case object NoCommand extends ClientCommand
-  final case class NextExercise(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
-  final case class PreviousExercise(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
-  final case class PullSolution(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
-  final case class SaveState(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
+  final case class NextExercise(configuration: Configuration, studentifiedRepo: StudentifiedRepo) extends ClientCommand
+  final case class PreviousExercise(configuration: Configuration, studentifiedRepo: StudentifiedRepo)
+      extends ClientCommand
+  final case class PullSolution(configuration: Configuration, studentifiedRepo: StudentifiedRepo) extends ClientCommand
+  final case class SaveState(configuration: Configuration, studentifiedRepo: StudentifiedRepo) extends ClientCommand
   case object Version extends ClientCommand
-  final case class GotoExercise(config: CMTcConfig, studentifiedRepo: StudentifiedRepo, exerciseId: ExerciseId)
+  final case class GotoExercise(
+      configuration: Configuration,
+      studentifiedRepo: StudentifiedRepo,
+      exerciseId: ExerciseId)
       extends ClientCommand
-  final case class PullTemplate(config: CMTcConfig, studentifiedRepo: StudentifiedRepo, templatePath: TemplatePath)
+  final case class PullTemplate(
+      configuration: Configuration,
+      studentifiedRepo: StudentifiedRepo,
+      templatePath: TemplatePath)
       extends ClientCommand
-  final case class RestoreState(config: CMTcConfig, studentifiedRepo: StudentifiedRepo, exerciseId: ExerciseId)
+  final case class RestoreState(
+      configuration: Configuration,
+      studentifiedRepo: StudentifiedRepo,
+      exerciseId: ExerciseId)
       extends ClientCommand

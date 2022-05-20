@@ -27,14 +27,14 @@ given Executable[SaveState] with
   extension (cmd: SaveState)
     def execute(): Either[String, String] = {
       val currentExercise =
-        sbtio.readLines(cmd.config.bookmarkFile, StandardCharsets.UTF_8).head
-      val savedStatesFolder = cmd.config.studentifiedSavedStatesFolder
+        sbtio.readLines(cmd.studentifiedRepo.bookmarkFile, StandardCharsets.UTF_8).head
+      val savedStatesFolder = cmd.studentifiedRepo.studentifiedSavedStatesFolder
       sbtio.delete(savedStatesFolder / currentExercise)
-      val filesInScope = getCurrentExerciseState(cmd.studentifiedRepo.value)(cmd.config)
+      val filesInScope = getCurrentExerciseState(cmd.studentifiedRepo)
 
       for {
         file <- filesInScope
-        f <- file.relativeTo(cmd.config.activeExerciseFolder)
+        f <- file.relativeTo(cmd.studentifiedRepo.activeExerciseFolder)
         dest = savedStatesFolder / currentExercise / f.getPath
       } {
         sbtio.touch(dest)

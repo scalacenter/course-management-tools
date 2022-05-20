@@ -14,6 +14,7 @@ package cmt.client.command
   */
 
 import cmt.Helpers.writeStudentifiedCMTBookmark
+import cmt.client.Domain.StudentifiedRepo
 import cmt.{CMTcConfig, Helpers}
 import sbt.io.syntax.File
 import sbt.io.IO as sbtio
@@ -25,36 +26,36 @@ package object execution {
 
   private final case class PathAR(absolutePath: File, relativePath: File)
 
-  def getCurrentExerciseState(studentifiedRepo: File)(config: CMTcConfig): Seq[File] =
+  def getCurrentExerciseState(studentifiedRepo: StudentifiedRepo): Seq[File] =
     Helpers
-      .fileList(config.activeExerciseFolder)
-      .map(fileAbsolute => PathARO(fileAbsolute, fileAbsolute.relativeTo(studentifiedRepo)))
+      .fileList(studentifiedRepo.activeExerciseFolder)
+      .map(fileAbsolute => PathARO(fileAbsolute, fileAbsolute.relativeTo(studentifiedRepo.value)))
       .collect { case PathARO(fileAbsolute, Some(fileRelative)) =>
         PathAR(fileAbsolute, fileRelative)
       }
       .filterNot { case PathAR(_, fileRelative) =>
-        config.dontTouch.exists(lead => fileRelative.getPath.startsWith(lead))
+        studentifiedRepo.dontTouch.exists(lead => fileRelative.getPath.startsWith(lead))
       }
       .map { _.absolutePath }
 
-  def deleteCurrentState(studentifiedRepo: File)(config: CMTcConfig): Unit =
-    val filesToBeDeleted: Seq[File] = getCurrentExerciseState(studentifiedRepo)(config)
+  def deleteCurrentState(studentifiedRepo: StudentifiedRepo): Unit =
+    val filesToBeDeleted: Seq[File] = getCurrentExerciseState(studentifiedRepo)
     sbtio.deleteFilesEmptyDirs(filesToBeDeleted)
 
-  def copyTestCodeAndReadMeFiles(solution: File, prevOrNextExercise: String)(config: CMTcConfig): Unit =
+  def copyTestCodeAndReadMeFiles(studentifiedRepo: StudentifiedRepo, solution: File, prevOrNextExercise: String): Unit =
     for {
-      testCodeFolder <- config.testCodeFolders
+      testCodeFolder <- studentifiedRepo.testCodeFolders
       fromFolder = solution / testCodeFolder
-      toFolder = config.activeExerciseFolder / testCodeFolder
+      toFolder = studentifiedRepo.activeExerciseFolder / testCodeFolder
     } {
       sbtio.delete(toFolder)
       sbtio.copyDirectory(fromFolder, toFolder)
     }
     for {
-      readmeFile <- config.readMeFiles if (solution / readmeFile).exists
-    } sbtio.copyFile(solution / readmeFile, config.activeExerciseFolder / readmeFile)
+      readmeFile <- studentifiedRepo.readMeFiles if (solution / readmeFile).exists
+    } sbtio.copyFile(solution / readmeFile, studentifiedRepo.activeExerciseFolder / readmeFile)
 
-    writeStudentifiedCMTBookmark(config.bookmarkFile, prevOrNextExercise)
+    writeStudentifiedCMTBookmark(studentifiedRepo.bookmarkFile, prevOrNextExercise)
 
   def starCurrentExercise(currentExercise: String, exercise: String): String =
     if (currentExercise == exercise) " * " else "   "

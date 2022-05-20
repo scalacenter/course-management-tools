@@ -24,12 +24,12 @@ given Executable[ListSavedStates] with
       val MatchDotzip = ".zip".r
       val savedStates =
         sbtio
-          .listFiles(cmd.config.studentifiedSavedStatesFolder)
+          .listFiles(cmd.studentifiedRepo.studentifiedSavedStatesFolder)
           .to(List)
           .sorted
           .map(_.getName)
           .map(item => MatchDotzip.replaceAllIn(item, ""))
-          .filter(cmd.config.exercises.contains(_))
+          .filter(cmd.studentifiedRepo.exercises.contains(_))
 
       Right(
         toConsoleGreen(s"Saved states available for exercises:\n") + toConsoleYellow(

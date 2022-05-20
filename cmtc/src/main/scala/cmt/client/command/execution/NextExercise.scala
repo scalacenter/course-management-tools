@@ -25,14 +25,18 @@ given Executable[NextExercise] with
   extension (cmd: NextExercise)
     def execute(): Either[String, String] = {
       val currentExercise =
-        sbtio.readLines(cmd.config.bookmarkFile, StandardCharsets.UTF_8).head
+        sbtio.readLines(cmd.studentifiedRepo.bookmarkFile, StandardCharsets.UTF_8).head
 
-      if currentExercise == cmd.config.exercises.last
+      if currentExercise == cmd.studentifiedRepo.exercises.last
       then Left(toConsoleGreen(s"You're already at the last exercise: $currentExercise"))
       else
-        withZipFile(cmd.config.solutionsFolder, cmd.config.nextExercise(currentExercise)) { solution =>
-          copyTestCodeAndReadMeFiles(solution, cmd.config.nextExercise(currentExercise))(cmd.config)
-          Right(
-            s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${cmd.config.nextExercise(currentExercise)}")}")
+        withZipFile(cmd.studentifiedRepo.solutionsFolder, cmd.studentifiedRepo.nextExercise(currentExercise)) {
+          solution =>
+            copyTestCodeAndReadMeFiles(
+              cmd.studentifiedRepo,
+              solution,
+              cmd.studentifiedRepo.nextExercise(currentExercise))
+            Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(
+                s"${cmd.studentifiedRepo.nextExercise(currentExercise)}")}")
         }
     }

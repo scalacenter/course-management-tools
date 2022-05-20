@@ -14,6 +14,7 @@ package cmt.client.cli
   */
 
 import cmt.CMTcConfig
+import cmt.client.Configuration
 import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
 import cmt.client.cli.CliCommand.*
 import cmt.client.command.ClientCommand
@@ -35,6 +36,7 @@ object CliCommand:
   case object Version extends CliCommand
 
 final case class CliOptions(
+    configuration: Configuration,
     command: CliCommand,
     studentifiedRepo: StudentifiedRepo,
     exerciseId: ExerciseId,
@@ -56,41 +58,38 @@ final case class CliOptions(
       case SetCurrentCourse  => setCurrentCourse()
       case Version           => version()
 
-  private def toConfig(): CMTcConfig =
-    new CMTcConfig(studentifiedRepo.value)
-
   private def gotoExercise(): ClientCommand =
-    ClientCommand.GotoExercise(toConfig(), studentifiedRepo, exerciseId)
+    ClientCommand.GotoExercise(configuration, studentifiedRepo, exerciseId)
 
   private def gotoFirstExercise(): ClientCommand =
-    ClientCommand.GotoFirstExercise(toConfig(), studentifiedRepo)
+    ClientCommand.GotoFirstExercise(configuration, studentifiedRepo)
 
   private def listExercises(): ClientCommand =
-    ClientCommand.ListExercises(toConfig(), studentifiedRepo)
+    ClientCommand.ListExercises(configuration, studentifiedRepo)
 
   private def listSavedStates(): ClientCommand =
-    ClientCommand.ListSavedStates(toConfig(), studentifiedRepo)
+    ClientCommand.ListSavedStates(configuration, studentifiedRepo)
 
   private def nextExercise(): ClientCommand =
-    ClientCommand.NextExercise(toConfig(), studentifiedRepo)
+    ClientCommand.NextExercise(configuration, studentifiedRepo)
 
   private def previousExercise(): ClientCommand =
-    ClientCommand.PreviousExercise(toConfig(), studentifiedRepo)
+    ClientCommand.PreviousExercise(configuration, studentifiedRepo)
 
   private def pullSolution(): ClientCommand =
-    ClientCommand.PullSolution(toConfig(), studentifiedRepo)
+    ClientCommand.PullSolution(configuration, studentifiedRepo)
 
   private def pullTemplate(): ClientCommand =
-    ClientCommand.PullTemplate(toConfig(), studentifiedRepo, templatePath)
+    ClientCommand.PullTemplate(configuration, studentifiedRepo, templatePath)
 
   private def restoreState(): ClientCommand =
-    ClientCommand.RestoreState(toConfig(), studentifiedRepo, exerciseId)
+    ClientCommand.RestoreState(configuration, studentifiedRepo, exerciseId)
 
   private def saveState(): ClientCommand =
-    ClientCommand.SaveState(toConfig(), studentifiedRepo)
+    ClientCommand.SaveState(configuration, studentifiedRepo)
 
   private def setCurrentCourse(): ClientCommand =
-    ClientCommand.SetCurrentCourse(toConfig(), studentifiedRepo)
+    ClientCommand.SetCurrentCourse(configuration, studentifiedRepo)
 
   private def noCommand(): ClientCommand =
     ClientCommand.NoCommand
@@ -99,9 +98,10 @@ final case class CliOptions(
     ClientCommand.Version
 }
 object CliOptions:
-  def default(
-      command: CliCommand = CliCommand.NoCommand,
-      studentifiedRepo: StudentifiedRepo = StudentifiedRepo.default,
-      exerciseId: ExerciseId = ExerciseId.default,
-      template: TemplatePath = TemplatePath.default): CliOptions =
-    CliOptions(command, studentifiedRepo, exerciseId, template)
+  def default(configuration: Configuration): CliOptions =
+    CliOptions(
+      configuration,
+      CliCommand.NoCommand,
+      configuration.currentCourse.value,
+      ExerciseId.default,
+      TemplatePath.default)

@@ -22,11 +22,11 @@ import cmt.{toConsoleGreen, toConsoleYellow}
 given Executable[GotoExercise] with
   extension (cmd: GotoExercise)
     def execute(): Either[String, String] = {
-      if !cmd.config.exercises.contains(cmd.exerciseId.value)
+      if !cmd.studentifiedRepo.exercises.contains(cmd.exerciseId.value)
       then Left(s"No such exercise: ${cmd.exerciseId.value}")
       else
-        withZipFile(cmd.config.solutionsFolder, cmd.exerciseId.value) { solution =>
-          copyTestCodeAndReadMeFiles(solution, cmd.exerciseId.value)(cmd.config)
+        withZipFile(cmd.studentifiedRepo.solutionsFolder, cmd.exerciseId.value) { solution =>
+          copyTestCodeAndReadMeFiles(cmd.studentifiedRepo, solution, cmd.exerciseId.value)
           Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${cmd.exerciseId.value}")}")
         }
     }

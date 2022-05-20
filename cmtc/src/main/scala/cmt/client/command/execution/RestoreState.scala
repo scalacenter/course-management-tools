@@ -24,20 +24,20 @@ import sbt.io.syntax.singleFileFinder
 given Executable[RestoreState] with
   extension (cmd: RestoreState)
     def execute(): Either[String, String] = {
-      val savedState = cmd.config.studentifiedSavedStatesFolder / s"${cmd.exerciseId.value}.zip"
+      val savedState = cmd.studentifiedRepo.studentifiedSavedStatesFolder / s"${cmd.exerciseId.value}.zip"
       if !savedState.exists
       then Left(s"No such saved state: ${cmd.exerciseId.value}")
       else {
-        deleteCurrentState(cmd.studentifiedRepo.value)(cmd.config)
+        deleteCurrentState(cmd.studentifiedRepo)
 
-        Helpers.withZipFile(cmd.config.studentifiedSavedStatesFolder, cmd.exerciseId.value) { solution =>
+        Helpers.withZipFile(cmd.studentifiedRepo.studentifiedSavedStatesFolder, cmd.exerciseId.value) { solution =>
           val files = Helpers.fileList(solution / cmd.exerciseId.value)
           sbtio.copyDirectory(
-            cmd.config.studentifiedSavedStatesFolder / cmd.exerciseId.value,
-            cmd.config.activeExerciseFolder,
+            cmd.studentifiedRepo.studentifiedSavedStatesFolder / cmd.exerciseId.value,
+            cmd.studentifiedRepo.activeExerciseFolder,
             preserveLastModified = true)
 
-          Helpers.writeStudentifiedCMTBookmark(cmd.config.bookmarkFile, cmd.exerciseId.value)
+          Helpers.writeStudentifiedCMTBookmark(cmd.studentifiedRepo.bookmarkFile, cmd.exerciseId.value)
           Right(toConsoleGreen(s"Restored state for ${cmd.exerciseId.value}"))
         }
       }

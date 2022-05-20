@@ -20,4 +20,4 @@ import cmt.core.execution.Executable
 given Executable[GotoFirstExercise] with
   extension (cmd: GotoFirstExercise)
     def execute(): Either[String, String] =
-      GotoExercise(cmd.config, cmd.studentifiedRepo, ExerciseId(cmd.config.exercises.head)).execute()
+      GotoExercise(cmd.configuration, cmd.studentifiedRepo, ExerciseId(cmd.studentifiedRepo.exercises.head)).execute()

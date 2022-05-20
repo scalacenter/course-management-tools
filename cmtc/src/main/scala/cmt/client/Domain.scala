@@ -13,14 +13,49 @@ package cmt.client
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import sbt.io.syntax.{File, file}
+import cmt.printErrorAndExit
+import cmt.Helpers.adaptToOSSeparatorChar
+import com.typesafe.config.{Config, ConfigFactory}
+import sbt.io.syntax.*
+import scala.jdk.CollectionConverters.*
 
 object Domain:
   final case class ExerciseId(value: String)
   object ExerciseId:
     val default: ExerciseId = ExerciseId("")
 
-  final case class StudentifiedRepo(value: File)
+  final case class StudentifiedRepo(value: File) {
+    if !cmtConfigFile.exists then printErrorAndExit("missing CMT configuration file")
+
+    private lazy val cmtConfigFile = value / ".cmt-config"
+
+    lazy val bookmarkFile: File = value / ".bookmark"
+
+    lazy val cmtSettings: Config = ConfigFactory.parseFile(cmtConfigFile)
+
+    lazy val exercises: collection.mutable.Seq[String] = cmtSettings.getStringList("exercises").asScala
+
+    lazy val dontTouch: Set[String] =
+      cmtSettings.getStringList("cmt-studentified-dont-touch").asScala.toSet.map(adaptToOSSeparatorChar)
+
+    lazy val testCodeFolders: Set[String] =
+      cmtSettings.getStringList("test-code-folders").asScala.toSet.map(adaptToOSSeparatorChar)
+
+    lazy val readMeFiles: Set[String] =
+      cmtSettings.getStringList("read-me-files").asScala.toSet.map(adaptToOSSeparatorChar)
+
+    lazy val activeExerciseFolder: File =
+      value / cmtSettings.getString("active-exercise-folder")
+
+    lazy val solutionsFolder: File = value / cmtSettings.getString("studentified-repo-solutions-folder")
+    lazy val studentifiedSavedStatesFolder: File =
+      solutionsFolder / cmtSettings.getString("studentified-saved-states-folder")
+
+    lazy val nextExercise: Map[String, String] = exercises.zip(exercises.tail).to(Map)
+
+    lazy val previousExercise: Map[String, String] =
+      exercises.tail.zip(exercises).to(Map)
+  }
   object StudentifiedRepo:
     val default: StudentifiedRepo = StudentifiedRepo(file(".").getAbsoluteFile.getParentFile)
 

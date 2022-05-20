@@ -28,15 +28,15 @@ given Executable[PullSolution] with
   extension (cmd: PullSolution)
     def execute(): Either[String, String] = {
       val currentExercise =
-        sbtio.readLines(cmd.config.bookmarkFile, StandardCharsets.UTF_8).head
+        sbtio.readLines(cmd.studentifiedRepo.bookmarkFile, StandardCharsets.UTF_8).head
 
-      deleteCurrentState(cmd.studentifiedRepo.value)(cmd.config)
+      deleteCurrentState(cmd.studentifiedRepo)
 
-      withZipFile(cmd.config.solutionsFolder, currentExercise) { solution =>
+      withZipFile(cmd.studentifiedRepo.solutionsFolder, currentExercise) { solution =>
         val files = fileList(solution / currentExercise)
         sbtio.copyDirectory(
-          cmd.config.solutionsFolder / currentExercise,
-          cmd.config.activeExerciseFolder,
+          cmd.studentifiedRepo.solutionsFolder / currentExercise,
+          cmd.studentifiedRepo.activeExerciseFolder,
           preserveLastModified = true)
         Right(toConsoleGreen(s"Pulled solution for $currentExercise"))
       }

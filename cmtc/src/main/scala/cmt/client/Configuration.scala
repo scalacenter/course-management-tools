@@ -1,7 +1,6 @@
 package cmt.client
 
 import cmt.client.Domain.StudentifiedRepo
-import cmt.client.command.{Configuration, CoursesDirectory, CurrentCourse}
 import com.typesafe.config.ConfigFactory
 import sbt.io.IO.write
 import sbt.io.syntax.{File, file}
@@ -21,6 +20,15 @@ object Configuration:
   private val CurrentCourseToken = "CURRENT_COURSE"
   private val DefaultConfigFileName = "config.default.conf"
 
+  private val configStringTemplate =
+    """
+      |cmtc {
+      |
+      |    courses-directory = COURSES_DIRECTORY
+      |    current-course = CURRENT_COURSE
+      |}
+      |""".stripMargin
+
   def load(): Configuration = {
     createIfNotExists()
     readFromConfigFile(CmtGlobalConfig)
@@ -28,7 +36,6 @@ object Configuration:
 
   def save(configuration: Configuration): Unit = {
     writeGlobalConfig(
-      () => Source.fromFile(CmtGlobalConfig).getLines().mkString("\n"),
       _.replaceAll(CoursesDirectoryToken, s""""${configuration.coursesDirectory.value.getCanonicalPath}"""")
         .replaceAll(CurrentCourseToken, s""""${configuration.currentCourse.value.value.getCanonicalPath}""""))
   }
@@ -36,7 +43,13 @@ object Configuration:
   private def readFromConfigFile(configFile: File): Configuration = {
     val config = ConfigFactory.parseFile(configFile)
     val coursesDirectory = CoursesDirectory(file(config.getString("cmtc.courses-directory")))
-    val currentCourse = CurrentCourse(StudentifiedRepo(file(config.getString("cmtc.current-course"))))
+    val currentCourse = {
+      val currentCourseString = config.getString("cmtc.current-course")
+      val currentCourseFile = Option
+        .when(currentCourseString == CurrentCourseToken)(file(System.getProperty("user.dir")))
+        .getOrElse(file(currentCourseString))
+      CurrentCourse(StudentifiedRepo(currentCourseFile))
+    }
     Configuration(coursesDirectory, currentCourse)
   }
 
@@ -46,28 +59,23 @@ object Configuration:
     copyDefaultConfigToCmtHome()
   }
 
-  private def createCourseHomeIfNotExists(): Unit = {
+  private def createCourseHomeIfNotExists(): Unit =
     if (!CmtCourseHome.exists()) {
       CmtCourseHome.mkdir()
     }
-  }
 
   private def createCmtHomeIfNotExists(): Unit =
     if (!CmtHome.exists()) {
       CmtHome.mkdir()
     }
 
-  private def readDefaultConfigString(): String =
-    Source.fromInputStream(getClass.getResourceAsStream(s"/$DefaultConfigFileName")).getLines().mkString("\n")
-
   private def copyDefaultConfigToCmtHome(): Unit = {
     writeGlobalConfig(
-      readDefaultConfigString,
-      _.replaceAll(CoursesDirectoryToken, s""""${CmtCourseHome.getCanonicalPath}""""))
+      _.replaceAll(CoursesDirectoryToken, s""""${CmtCourseHome.getCanonicalPath}"""")
+        .replaceAll(CurrentCourseToken, s""""${System.getProperty("user.dir")}""""))
   }
 
-  private def writeGlobalConfig(configStringReader: () => String, replaceTokens: String => String): Unit = {
-    val defaultConfigStr = configStringReader()
-    val configStrToWrite = replaceTokens(defaultConfigStr)
+  private def writeGlobalConfig(replaceTokens: String => String): Unit = {
+    val configStrToWrite = replaceTokens(configStringTemplate)
     write(CmtGlobalConfig, configStrToWrite)
   }

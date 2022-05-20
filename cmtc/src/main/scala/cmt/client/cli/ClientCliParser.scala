@@ -19,12 +19,13 @@ import cmt.core.cli.{CmdLineParseError, ScoptCliParser}
 import sbt.io.syntax.File
 import scopt.{OParser, OParserBuilder}
 import cmt.ValidationExtensions.*
+import cmt.client.Configuration
 import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
 
 object ClientCliParser {
 
   def parse(args: Array[String]): Either[CmdLineParseError, CliOptions] =
-    ScoptCliParser.parse(parser, CliOptions.default())(args)
+    ScoptCliParser.parse(parser, CliOptions.default(Configuration.load()))(args)
 
   val parser = {
     given builder: OParserBuilder[CliOptions] = OParser.builder[CliOptions]
@@ -170,19 +171,29 @@ object ClientCliParser {
   private def validateConfig(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
     import builder.*
     checkConfig(config =>
-      config.command match
-        case NoCommand         => failure("missing command")
-        case PullSolution      => success
-        case ListExercises     => success
-        case NextExercise      => success
-        case PreviousExercise  => success
-        case SaveState         => success
-        case ListSavedStates   => success
-        case RestoreState      => success
-        case GotoExercise      => success
-        case GotoFirstExercise => success
-        case PullTemplate      => success
-        case SetCurrentCourse  => success
-        case Version           => success
-    )
+      for {
+        _ <- validateCommand(config.command)
+        _ <- validateStudentifiedRepo(config.studentifiedRepo)
+      } yield ())
+
+  private def validateCommand(command: CliCommand)(using builder: OParserBuilder[CliOptions]): Either[String, Unit] =
+    import builder.*
+    command match
+      case NoCommand         => failure("missing command")
+      case PullSolution      => success
+      case ListExercises     => success
+      case NextExercise      => success
+      case PreviousExercise  => success
+      case SaveState         => success
+      case ListSavedStates   => success
+      case RestoreState      => success
+      case GotoExercise      => success
+      case GotoFirstExercise => success
+      case PullTemplate      => success
+      case SetCurrentCourse  => success
+      case Version           => success
+
+  private def validateStudentifiedRepo(studentifiedRepo: StudentifiedRepo): Either[String, Unit] =
+    studentifiedRepo.value.existsAndIsADirectory.left.map(_ =>
+      "you have not specified a studentified repository for cmtc to work with - have you run `set-current-course`?")
 }

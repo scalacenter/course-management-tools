@@ -28,9 +28,9 @@ given Executable[PullTemplate] with
   extension (cmd: PullTemplate)
     def execute(): Either[String, String] = {
       val currentExercise =
-        sbtio.readLines(cmd.config.bookmarkFile, StandardCharsets.UTF_8).head
+        sbtio.readLines(cmd.studentifiedRepo.bookmarkFile, StandardCharsets.UTF_8).head
 
-      withZipFile(cmd.config.solutionsFolder, currentExercise) { solution =>
+      withZipFile(cmd.studentifiedRepo.solutionsFolder, currentExercise) { solution =>
         val fullTemplatePath = solution / cmd.templatePath.value
         (fullTemplatePath.exists, fullTemplatePath.isDirectory) match
           case (false, _) =>
@@ -38,13 +38,13 @@ given Executable[PullTemplate] with
           case (true, false) =>
             sbtio.copyFile(
               fullTemplatePath,
-              cmd.config.activeExerciseFolder / cmd.templatePath.value,
+              cmd.studentifiedRepo.activeExerciseFolder / cmd.templatePath.value,
               CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
             Right(toConsoleGreen(s"Pulled template file: ") + toConsoleYellow(cmd.templatePath.value))
           case (true, true) =>
             sbtio.copyDirectory(
               fullTemplatePath,
-              cmd.config.activeExerciseFolder / cmd.templatePath.value,
+              cmd.studentifiedRepo.activeExerciseFolder / cmd.templatePath.value,
               CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
             Right(toConsoleGreen(s"Pulled template folder: ") + toConsoleYellow(cmd.templatePath.value))
       }

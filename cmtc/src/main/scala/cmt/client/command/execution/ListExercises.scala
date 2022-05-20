@@ -24,8 +24,8 @@ given Executable[ListExercises] with
   extension (cmd: ListExercises)
     def execute(): Either[String, String] = {
       val currentExercise =
-        sbtio.readLines(cmd.config.bookmarkFile, StandardCharsets.UTF_8).head
-      val messages = cmd.config.exercises.zipWithIndex
+        sbtio.readLines(cmd.studentifiedRepo.bookmarkFile, StandardCharsets.UTF_8).head
+      val messages = cmd.studentifiedRepo.exercises.zipWithIndex
         .map { case (exName, index) =>
           toConsoleGreen(f"${index + 1}%3d. ${starCurrentExercise(currentExercise, exName)}  $exName")
         }

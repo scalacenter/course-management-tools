@@ -18,6 +18,7 @@ import cmt.Helpers.dumpStringToFile
 import java.util.UUID
 import java.nio.charset.StandardCharsets
 import cmt.admin.Domain.MainRepository
+import cmt.client.Configuration
 import cmt.client.Domain.StudentifiedRepo
 import cmt.client.cli.CliCommand.PullTemplate
 import cmt.support.{ExerciseMetadata, SourcesStruct}
@@ -146,39 +147,39 @@ trait StudentifiedRepoFixture {
     } yield (fileName.getPath, checksum)
     SourceFiles(filesAndChecksums.to(Map))
 
-  def gotoNextExercise(config: CMTcConfig, studentifiedRepo: File): Unit =
+  def gotoNextExercise(configuration: Configuration, studentifiedRepo: File): Unit =
     import cmt.client.command.ClientCommand.NextExercise
     import cmt.client.command.execution.given
-    NextExercise(config, StudentifiedRepo(studentifiedRepo)).execute()
+    NextExercise(configuration, StudentifiedRepo(studentifiedRepo)).execute()
 
-  def pullSolution(config: CMTcConfig, studentifiedRepo: File): Unit =
+  def pullSolution(configuration: Configuration, studentifiedRepo: File): Unit =
     import cmt.client.command.ClientCommand.PullSolution
     import cmt.client.command.execution.given
-    PullSolution(config, StudentifiedRepo(studentifiedRepo)).execute()
+    PullSolution(configuration, StudentifiedRepo(studentifiedRepo)).execute()
 
-  def gotoExercise(config: CMTcConfig, studentifiedRepo: File, exercise: String): Unit =
+  def gotoExercise(configuration: Configuration, studentifiedRepo: File, exercise: String): Unit =
     import cmt.client.command.ClientCommand.GotoExercise
     import cmt.client.Domain.ExerciseId
     import cmt.client.command.execution.given
-    GotoExercise(config, StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
+    GotoExercise(configuration, StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
 
-  def gotoFirstExercise(config: CMTcConfig, studentifiedRepo: File): Unit =
+  def gotoFirstExercise(configuration: Configuration, studentifiedRepo: File): Unit =
     import cmt.client.command.ClientCommand.GotoFirstExercise
     import cmt.client.command.execution.given
-    GotoFirstExercise(config, StudentifiedRepo(studentifiedRepo)).execute()
+    GotoFirstExercise(configuration, StudentifiedRepo(studentifiedRepo)).execute()
 
-  def saveState(config: CMTcConfig, studentifiedRepo: File): Unit =
+  def saveState(configuration: Configuration, studentifiedRepo: File): Unit =
     import cmt.client.command.ClientCommand.SaveState
     import cmt.client.command.execution.given
-    SaveState(config, StudentifiedRepo(studentifiedRepo)).execute()
+    SaveState(configuration, StudentifiedRepo(studentifiedRepo)).execute()
 
-  def restoreState(config: CMTcConfig, studentifiedRepo: File, exercise: String): Unit =
+  def restoreState(configuration: Configuration, studentifiedRepo: File, exercise: String): Unit =
     import cmt.client.command.ClientCommand.RestoreState
     import cmt.client.Domain.ExerciseId
     import cmt.client.command.execution.given
-    RestoreState(config, StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
+    RestoreState(configuration, StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
 
-  def pullTemplate(config: CMTcConfig, studentifiedRepo: File, templatePath: String): Unit =
+  def pullTemplate(configuration: Configuration, studentifiedRepo: File, templatePath: String): Unit =
     import cmt.client.command.ClientCommand.PullTemplate
     import cmt.client.Domain.TemplatePath
     import cmt.client.command.execution.given
@@ -221,7 +222,7 @@ final class StudentificationFunctionalSpec
       When("the main repository is studentified")
 
       val studentifiedRepoFolder = studentifyMainRepo(tmpDir, "Functional-Test-Repo", mainRepo)
-      val cMTcConfig: CMTcConfig = CMTcConfig(studentifiedRepoFolder)
+//      val cMTcConfig: CMTcConfig = CMTcConfig(studentifiedRepoFolder)
 
       val studentifiedRepoCodeFolder = studentifiedRepoFolder / "code"
 
@@ -250,7 +251,7 @@ final class StudentificationFunctionalSpec
 
       When("the studentified repository is moved to the second exercise")
 
-      gotoNextExercise(cMTcConfig, studentifiedRepoFolder)
+      gotoNextExercise(studentifiedRepoFolder)
 
       Then(
         "readme and test code for that exercise should have been pulled in and deleted test code should not be present")

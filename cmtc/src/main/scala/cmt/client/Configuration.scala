@@ -9,16 +9,19 @@ import scala.io.Source
 
 final case class Configuration(coursesDirectory: CoursesDirectory, currentCourse: CurrentCourse)
 final case class CoursesDirectory(value: File)
+object CoursesDirectory:
+  def default(): CoursesDirectory =
+    CoursesDirectory(Configuration.CmtCourseHome)
 final case class CurrentCourse(value: StudentifiedRepo)
 
 object Configuration:
-  private val UserHome = System.getProperty("user.home")
-  private val CmtHome = file(s"$UserHome/.cmt")
-  private val CmtGlobalConfig = file(s"$CmtHome/cmt.conf")
-  private val CmtCourseHome = file(s"$UserHome/Courses")
-  private val CoursesDirectoryToken = "COURSES_DIRECTORY"
-  private val CurrentCourseToken = "CURRENT_COURSE"
-  private val DefaultConfigFileName = "config.default.conf"
+  val UserHome = System.getProperty("user.home")
+  val CmtHome = file(s"$UserHome/.cmt")
+  val CmtGlobalConfig = file(s"$CmtHome/cmt.conf")
+  val CmtCourseHome = file(s"$UserHome/Courses")
+  val CoursesDirectoryToken = "COURSES_DIRECTORY"
+  val CurrentCourseToken = "CURRENT_COURSE"
+  val DefaultConfigFileName = "config.default.conf"
 
   private val configStringTemplate =
     """

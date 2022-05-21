@@ -21,6 +21,7 @@ import cmt.admin.Domain.MainRepository
 import cmt.client.Configuration
 import cmt.client.Domain.StudentifiedRepo
 import cmt.client.cli.CliCommand.PullTemplate
+import cmt.client.support.ConfigurationSupport
 import cmt.support.{ExerciseMetadata, SourcesStruct}
 import org.scalatest.{BeforeAndAfterAll, GivenWhenThen}
 import org.scalatest.featurespec.AnyFeatureSpecLike
@@ -183,7 +184,7 @@ trait StudentifiedRepoFixture {
     import cmt.client.command.ClientCommand.PullTemplate
     import cmt.client.Domain.TemplatePath
     import cmt.client.command.execution.given
-    PullTemplate(config, StudentifiedRepo(studentifiedRepo), TemplatePath(Helpers.adaptToOSSeparatorChar(templatePath)))
+    PullTemplate(configuration, StudentifiedRepo(studentifiedRepo), TemplatePath(Helpers.adaptToOSSeparatorChar(templatePath)))
       .execute()
 
   def addFileToStudentifiedRepo(studentifiedRepo: File, filePath: String): SourceFiles =
@@ -199,9 +200,11 @@ final class StudentificationFunctionalSpec
     with Matchers
     with GivenWhenThen
     with StudentifiedRepoFixture
-    with BeforeAndAfterAll {
+    with BeforeAndAfterAll
+    with ConfigurationSupport {
 
   val tmpDir: File = sbtio.createTemporaryDirectory
+  val configuration = createConfiguration(tmpDir)
 
   override def afterAll(): Unit =
     println("deleting temp directory")
@@ -251,7 +254,7 @@ final class StudentificationFunctionalSpec
 
       When("the studentified repository is moved to the second exercise")
 
-      gotoNextExercise(studentifiedRepoFolder)
+      gotoNextExercise(configuration, studentifiedRepoFolder)
 
       Then(
         "readme and test code for that exercise should have been pulled in and deleted test code should not be present")
@@ -275,7 +278,7 @@ final class StudentificationFunctionalSpec
 
       When("pulling the solution for an exercise")
 
-      pullSolution(cMTcConfig, studentifiedRepoFolder)
+      pullSolution(configuration, studentifiedRepoFolder)
 
       Then("main code should be pulled in")
 
@@ -293,7 +296,7 @@ final class StudentificationFunctionalSpec
 
       When("the studentified is moved to the third exercise")
 
-      gotoNextExercise(cMTcConfig, studentifiedRepoFolder)
+      gotoNextExercise(configuration, studentifiedRepoFolder)
 
       Then(
         "readme and test code for that exercise should have been pulled in and deleted test code should not be present")
@@ -317,8 +320,8 @@ final class StudentificationFunctionalSpec
       When(
         "the solution for the third exercise is pulled and the studentified is moved to the second exercise using the 'goto-exercise' functionality")
 
-      pullSolution(cMTcConfig, studentifiedRepoFolder)
-      gotoExercise(cMTcConfig, studentifiedRepoFolder, "exercise_002_desc")
+      pullSolution(configuration, studentifiedRepoFolder)
+      gotoExercise(configuration, studentifiedRepoFolder, "exercise_002_desc")
 
       Then(
         "readme and test code for that exercise should have been pulled in and deleted test code should not be present and the main code for the third exercise should have been pulled")
@@ -341,7 +344,7 @@ final class StudentificationFunctionalSpec
 
       When("moving to the first exercise using the goto-first-exercise command")
 
-      gotoFirstExercise(cMTcConfig, studentifiedRepoFolder)
+      gotoFirstExercise(configuration, studentifiedRepoFolder)
 
       Then(
         "readme and test code for that exercise should have been pulled and the main code for the third exercise should be there")
@@ -372,7 +375,7 @@ final class StudentificationFunctionalSpec
             studentifiedRepoCodeFolder,
             Helpers.adaptToOSSeparatorChar("src/main/cmt/pack/Toto.scala"))
 
-      saveState(cMTcConfig, studentifiedRepoFolder)
+      saveState(configuration, studentifiedRepoFolder)
 
       Then("this should be reflected in the studentified repository")
 
@@ -391,8 +394,8 @@ final class StudentificationFunctionalSpec
 
       When("moving to the second exercise and pulling the solution")
 
-      gotoExercise(cMTcConfig, studentifiedRepoCodeFolder, "exercise_002_desc")
-      pullSolution(cMTcConfig, studentifiedRepoFolder)
+      gotoExercise(configuration, studentifiedRepoCodeFolder, "exercise_002_desc")
+      pullSolution(configuration, studentifiedRepoFolder)
 
       Then("the current studentified repo should reflect that")
 
@@ -414,7 +417,7 @@ final class StudentificationFunctionalSpec
         addFileToStudentifiedRepo(
           studentifiedRepoCodeFolder,
           Helpers.adaptToOSSeparatorChar(".mvn/someFolder/mustNotBeTouchedByCmt"))
-      restoreState(cMTcConfig, studentifiedRepoFolder, "exercise_001_desc")
+      restoreState(configuration, studentifiedRepoFolder, "exercise_001_desc")
 
       Then("should fully reflect what was saved")
 
@@ -434,10 +437,10 @@ final class StudentificationFunctionalSpec
       When(
         "moving to and pulling the solution for the first exercise, moving to the last exercise and pulling a template file")
 
-      gotoFirstExercise(cMTcConfig, studentifiedRepoFolder)
-      pullSolution(cMTcConfig, studentifiedRepoFolder)
-      gotoExercise(cMTcConfig, studentifiedRepoFolder, "exercise_004_desc")
-      pullTemplate(cMTcConfig, studentifiedRepoFolder, "src/main/cmt/sample/Sample1.scala")
+      gotoFirstExercise(configuration, studentifiedRepoFolder)
+      pullSolution(configuration, studentifiedRepoFolder)
+      gotoExercise(configuration, studentifiedRepoFolder, "exercise_004_desc")
+      pullTemplate(configuration, studentifiedRepoFolder, "src/main/cmt/sample/Sample1.scala")
 
       Then("should be the solution for the first exercise + the pulled in template file")
 
@@ -457,7 +460,7 @@ final class StudentificationFunctionalSpec
 
       When("having already pulled one template file for the last exercise, pulling in a template folder")
 
-      pullTemplate(cMTcConfig, studentifiedRepoFolder, "src/main/cmt/template")
+      pullTemplate(configuration, studentifiedRepoFolder, "src/main/cmt/template")
 
       Then(
         "should be the solution for the first exercise + the pulled template file + the files in the template folder")

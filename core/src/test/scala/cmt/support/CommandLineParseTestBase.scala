@@ -60,7 +60,7 @@ abstract class CommandLineParseTestBase[T](
     commandArguments.foreach { command =>
       s"given invalid ${command.identifier} arguments" should {
 
-        "report appropriate errors" in {
+        "report expected errors" in {
           forAll(command.invalidArguments(tempDirectory)) { (args: Seq[String], errors: Seq[ReportError]) =>
             assertFailureWithErrors(args.toArray, errors*)
           }

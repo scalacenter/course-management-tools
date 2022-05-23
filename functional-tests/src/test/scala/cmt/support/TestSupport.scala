@@ -13,13 +13,15 @@ package cmt.support
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.CMTaConfig
-import cmt.Helpers.{commitToGit, dumpStringToFile, initializeGitRepo, setGitConfig, adaptToOSSeparatorChar}
+import cmt.{CMTaConfig, CMTcConfig, Helpers}
+import cmt.Helpers.{adaptToOSSeparatorChar, commitToGit, dumpStringToFile, initializeGitRepo, setGitConfig}
 import cmt.admin.Domain.MainRepository
 import cmt.admin.cli.CliCommand.Studentify
+import cmt.client.Domain.StudentifiedRepo
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
+import java.nio.charset.StandardCharsets
 import java.util.UUID
 import scala.annotation.targetName
 
@@ -116,3 +118,86 @@ object SourceFiles:
         (filePath, _) <- otherSourceFiles
       } assert(!sf.contains(filePath), s"Actual sourceFiles shouldn't contain ${filePath}")
 end SourceFiles
+
+def createMainRepo(tmpDir: File, repoName: String, exercises: Exercises, testConfig: String): File =
+  import Exercises.*
+  val mainRepo = tmpDir / repoName
+  sbtio.touch(mainRepo / "course-management.conf")
+  Helpers.dumpStringToFile(testConfig, mainRepo / "course-management.conf")
+  println(s"Mainrepo = $mainRepo")
+  exercises.createRepo(mainRepo, "code")
+  mainRepo
+
+def studentifyMainRepo(tmpDir: File, repoName: String, mainRepo: File): File =
+  import cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, StudentifyBaseDirectory}
+  import cmt.admin.command.AdminCommand.Studentify
+  import cmt.admin.command.execution.given
+  val studentifyBase = tmpDir / "stu"
+  sbtio.createDirectory(studentifyBase)
+  val cmd = Studentify(
+    MainRepository(mainRepo),
+    new CMTaConfig(mainRepo, Some(mainRepo / "course-management.conf")),
+    StudentifyBaseDirectory(studentifyBase),
+    forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(false),
+    initializeAsGitRepo = InitializeGitRepo(false))
+  cmd.execute()
+  studentifyBase / repoName
+
+def extractCodeFromRepo(codeFolder: File): SourceFiles =
+  val files = Helpers.fileList(codeFolder)
+  val filesAndChecksums = for {
+    file <- files
+    Some(fileName) = file.relativeTo(codeFolder): @unchecked
+    checksum = java.util.UUID.fromString(sbtio.readLines(file, StandardCharsets.UTF_8).head)
+  } yield (fileName.getPath, checksum)
+  SourceFiles(filesAndChecksums.to(Map))
+
+def gotoNextExercise(config: CMTcConfig, studentifiedRepo: File): Unit =
+  import cmt.client.command.ClientCommand.NextExercise
+  import cmt.client.command.execution.given
+  NextExercise(config, StudentifiedRepo(studentifiedRepo)).execute()
+
+def gotoPreviousExercise(config: CMTcConfig, studentifiedRepo: File): Unit =
+  import cmt.client.command.ClientCommand.PreviousExercise
+  import cmt.client.command.execution.given
+  PreviousExercise(config, StudentifiedRepo(studentifiedRepo)).execute()
+
+def pullSolution(config: CMTcConfig, studentifiedRepo: File): Unit =
+  import cmt.client.command.ClientCommand.PullSolution
+  import cmt.client.command.execution.given
+  PullSolution(config, StudentifiedRepo(studentifiedRepo)).execute()
+
+def gotoExercise(config: CMTcConfig, studentifiedRepo: File, exercise: String): Unit =
+  import cmt.client.command.ClientCommand.GotoExercise
+  import cmt.client.Domain.ExerciseId
+  import cmt.client.command.execution.given
+  GotoExercise(config, StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
+
+def gotoFirstExercise(config: CMTcConfig, studentifiedRepo: File): Unit =
+  import cmt.client.command.ClientCommand.GotoFirstExercise
+  import cmt.client.command.execution.given
+  GotoFirstExercise(config, StudentifiedRepo(studentifiedRepo)).execute()
+
+def saveState(config: CMTcConfig, studentifiedRepo: File): Unit =
+  import cmt.client.command.ClientCommand.SaveState
+  import cmt.client.command.execution.given
+  SaveState(config, StudentifiedRepo(studentifiedRepo)).execute()
+
+def restoreState(config: CMTcConfig, studentifiedRepo: File, exercise: String): Unit =
+  import cmt.client.command.ClientCommand.RestoreState
+  import cmt.client.Domain.ExerciseId
+  import cmt.client.command.execution.given
+  RestoreState(config, StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
+
+def pullTemplate(config: CMTcConfig, studentifiedRepo: File, templatePath: String): Unit =
+  import cmt.client.command.ClientCommand.PullTemplate
+  import cmt.client.Domain.TemplatePath
+  import cmt.client.command.execution.given
+  PullTemplate(config, StudentifiedRepo(studentifiedRepo), TemplatePath(Helpers.adaptToOSSeparatorChar(templatePath)))
+    .execute()
+
+def addFileToStudentifiedRepo(studentifiedRepo: File, filePath: String): SourceFiles =
+  val fileContent = UUID.randomUUID()
+  sbtio.touch(studentifiedRepo / filePath)
+  dumpStringToFile(fileContent.toString, studentifiedRepo / filePath)
+  SourceFiles(Map(filePath -> fileContent))

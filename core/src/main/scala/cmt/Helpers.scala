@@ -116,6 +116,32 @@ object Helpers:
     sbtio.delete(baseFolder / exercise)
   end zipAndDeleteOriginal
 
+  def extractUniquePaths(paths: Seq[String]): (Seq[String], Seq[String]) =
+
+    @scala.annotation.tailrec
+    def fmsp(
+        paths: Seq[String],
+        prefix: String,
+        unique: Seq[String],
+        redundant: Seq[String]): (Seq[String], Seq[String]) =
+      paths match {
+        case Nil =>
+          (unique, redundant)
+        case p +: remainder =>
+          if (p.startsWith(prefix))
+            fmsp(remainder, prefix, unique, p +: redundant)
+          else
+            fmsp(remainder, p, p +: unique, redundant)
+      }
+    end fmsp
+
+    if (paths.isEmpty) (paths, Seq.empty)
+    else {
+      val pathsSorted = paths.sorted
+      fmsp(pathsSorted.tail, pathsSorted.head, List(pathsSorted.head), List.empty)
+    }
+  end extractUniquePaths
+
   def hideExercises(cleanedMainRepo: File, solutionsFolder: File, exercises: Vector[String])(config: CMTaConfig): Unit =
     val now: Option[Long] = Some(java.time.Instant.now().toEpochMilli())
     for (exercise <- exercises)

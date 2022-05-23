@@ -42,17 +42,32 @@ package object execution {
     sbtio.deleteFilesEmptyDirs(filesToBeDeleted)
 
   def copyTestCodeAndReadMeFiles(solution: File, prevOrNextExercise: String)(config: CMTcConfig): Unit =
+
+    val (pathsToCopy, redundantPaths) =
+      Helpers.extractUniquePaths(config.testCodeFolders.to(List) ++ config.readMeFiles.to(List))
+
     for {
-      testCodeFolder <- config.testCodeFolders
-      fromFolder = solution / testCodeFolder
-      toFolder = config.activeExerciseFolder / testCodeFolder
+      path <- pathsToCopy
+    } sbtio.delete(config.activeExerciseFolder / path)
+
+    val (dirs, files) =
+      pathsToCopy
+        .filter { path =>
+          val solutionPath = solution / path
+          solution.exists()
+        }
+        .partition(path => (solution / path).isDirectory)
+
+    for {
+      dir <- dirs
+      fromFolder = solution / dir
+      toFolder = config.activeExerciseFolder / dir
     } {
-      sbtio.delete(toFolder)
       sbtio.copyDirectory(fromFolder, toFolder)
     }
     for {
-      readmeFile <- config.readMeFiles if (solution / readmeFile).exists
-    } sbtio.copyFile(solution / readmeFile, config.activeExerciseFolder / readmeFile)
+      file <- files if (solution / file).exists
+    } sbtio.copyFile(solution / file, config.activeExerciseFolder / file)
 
     writeStudentifiedCMTBookmark(config.bookmarkFile, prevOrNextExercise)
 

@@ -4,30 +4,15 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
 trait ExtractUniquePathsFixture {
-  
+
   val nonOverlappingPaths: List[String] =
-    List(
-      "config",
-      "src/test",
-      "otherSrc/test",
-      "README.md",
-      "docs/i.png"
-    )
+    List("config", "src/test", "otherSrc/test", "README.md", "docs/i.png")
 
   val overlappingPaths: List[String] =
-    List(
-      "config",
-      "src/test",
-      "src/test/cmt/MySpec.scala",
-      "README.md",
-      "config/example-1.yaml"
-    )
+    List("config", "src/test", "src/test/cmt/MySpec.scala", "README.md", "config/example-1.yaml")
 }
 
-final class ExtractUniquePathsSpec
-  extends AnyWordSpec
-  with Matchers
-  with ExtractUniquePathsFixture {
+final class ExtractUniquePathsSpec extends AnyWordSpec with Matchers with ExtractUniquePathsFixture {
 
   import scala.util.Random
   import cmt.Helpers.extractUniquePaths
@@ -56,10 +41,7 @@ final class ExtractUniquePathsSpec
           val (actualUniquePaths, actualRedundantPaths) = (uniquePaths.to(Set), redundantPaths.to(Set))
 
           val (expectedUniquePaths, expectedRedundantPaths) =
-            (
-              Set("src/test", "config", "README.md"),
-              Set("src/test/cmt/MySpec.scala", "config/example-1.yaml")
-            )
+            (Set("src/test", "config", "README.md"), Set("src/test/cmt/MySpec.scala", "config/example-1.yaml"))
 
           assert(actualUniquePaths == expectedUniquePaths)
           assert(actualRedundantPaths == expectedRedundantPaths)

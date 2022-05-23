@@ -135,7 +135,7 @@ final class StudentificationFunctionalSpec
   Feature("Studentification") {
 
     Scenario("A user creates a main repository") {
-      
+
       Given("a main repository")
 
       val exercises: Exercises = exerciseMetadata.toExercises

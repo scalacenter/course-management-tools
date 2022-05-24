@@ -97,8 +97,7 @@ private object LinearizeHelpers:
         printErrorAndExit(s"$linearizedRootFolder exists already")
 
       case (false, _) =>
-        if linearizeBaseDirectory.canWrite then
-          sbtio.createDirectory(linearizedRootFolder)
+        if linearizeBaseDirectory.canWrite then sbtio.createDirectory(linearizedRootFolder)
         else printErrorAndExit(s"${linearizeBaseDirectory.getPath} isn't writeable")
 
 end LinearizeHelpers

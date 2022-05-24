@@ -16,7 +16,7 @@ package cmt.admin.command.execution
 import cmt.Helpers.*
 import cmt.admin.command.AdminCommand.Studentify
 import cmt.core.execution.Executable
-import cmt.{StudentifiedSkelFolders, toConsoleGreen}
+import cmt.{Helpers, StudentifiedSkelFolders, toConsoleGreen}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
@@ -24,6 +24,15 @@ given Executable[Studentify] with
   extension (cmd: Studentify)
     def execute(): Either[String, String] =
       import StudentifyHelpers.*
+
+      def checkForOverlappingPathsInConfig(): Unit =
+        val (_, redundantPaths) =
+          Helpers.extractUniquePaths(cmd.config.testCodeFolders.to(List) ++ cmd.config.readMeFiles.to(List))
+        if (redundantPaths.nonEmpty)
+          for (redundantPath <- redundantPaths)
+            println(cmt.toConsoleYellow(s"WARNING: Redundant path detected in CMT configuration: $redundantPath"))
+
+      checkForOverlappingPathsInConfig()
 
       for {
         _ <- exitIfGitIndexOrWorkspaceIsntClean(cmd.mainRepository.value)

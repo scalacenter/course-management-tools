@@ -28,7 +28,7 @@ import support.*
 import sbt.io.syntax.*
 import sbt.io.IO as sbtio
 
-trait StudentifiedRepoFixture {
+trait StudentificationMovingBetweenExercisesFunctionalFixture {
 
   val testConfig: String =
     """cmt {
@@ -38,7 +38,7 @@ trait StudentifiedRepoFixture {
       |  studentified-repo-active-exercise-folder = code
       |  linearized-repo-active-exercise-folder = code
       |  config-file-default-name = course-management.conf
-      |  test-code-folders = [ "src/test" ]
+      |  test-code-folders = [ "config", "readme/README.md" ]
       |  read-me-files = [ "README.md" ]
       |  cmt-studentified-config-file = .cmt-config
       |  cmt-studentified-dont-touch = [ ".mvn" ]
@@ -52,14 +52,15 @@ trait StudentifiedRepoFixture {
           SourcesStruct(
             test =
               List(
-                "src/test/cmt/T1.scala",
-                "src/test/cmt/pkg/T2.scala"
+                "config/example-1.yaml",
+                "readme/README.md"
               ),
             readme = List("README.md"),
             main =
               List(
                 "build.sbt",
-                "src/main/cmt/Main.scala")
+                "src/main/cmt/Main.scala"
+              )
           )
       )
       .addExercise(
@@ -67,15 +68,15 @@ trait StudentifiedRepoFixture {
           SourcesStruct(
             test =
               List(
-                "src/test/cmt/T1.scala",
-                "src/test/cmt/pkg/T2.scala"
+                "config/example-1.yaml",
+                "config/example-2.yaml"
               ),
             readme = List("README.md"),
             main =
               List(
                 "build.sbt",
-                "src/main/cmt/Main.scala",
-                "src/main/cmt/Main1.scala")
+                "src/main/cmt/Main.scala"
+              )
           )
       )
       .addExercise(
@@ -83,43 +84,25 @@ trait StudentifiedRepoFixture {
           SourcesStruct(
             test =
               List(
-                "src/test/cmt/T1.scala",
-                "src/test/cmt/pkg/T3.scala"
+                "config/example-2.yaml",
+                "config/example-3.yaml"
               ),
             readme = List("README.md"),
             main =
               List(
                 "build.sbt",
-                "src/main/cmt/Main1.scala"
+                "src/main/cmt/Main.scala"
               )
           )
-      )
-      .addExercise("exercise_004_desc" ->
-        SourcesStruct(
-          test =
-            List(
-              "src/test/cmt/T1.scala",
-              "src/test/cmt/pkg/T3.scala"
-            ),
-          readme = List("README.md"),
-          main = List(
-            "build.sbt",
-            "src/main/cmt/Main1.scala",
-            "src/main/cmt/sample/Sample1.scala",
-            "src/main/cmt/sample/Sample2.scala",
-            "src/main/cmt/template/Template1.scala",
-            "src/main/cmt/template/Template2.scala"
-          )
-        )
       )
     // @formatter:on
 }
 
-final class StudentificationFunctionalSpec
+final class StudentificationMovingBetweenExercisesFunctionalSpec
     extends AnyFeatureSpecLike
     with Matchers
     with GivenWhenThen
-    with StudentifiedRepoFixture
+    with StudentificationMovingBetweenExercisesFunctionalFixture
     with BeforeAndAfterAll {
 
   val tmpDir: File = sbtio.createTemporaryDirectory
@@ -135,7 +118,6 @@ final class StudentificationFunctionalSpec
   Feature("Studentification") {
 
     Scenario("A user creates a main repository") {
-
       Given("a main repository")
 
       val exercises: Exercises = exerciseMetadata.toExercises
@@ -236,23 +218,21 @@ final class StudentificationFunctionalSpec
         actualCode.doesNotContain(deletedTests)
       }
 
-      When(
-        "the solution for the third exercise is pulled and the studentified is moved to the second exercise using the 'goto-exercise' functionality")
+      When("we move back to the previous exercise")
 
-      pullSolution(cMTcConfig, studentifiedRepoFolder)
-      gotoExercise(cMTcConfig, studentifiedRepoFolder, "exercise_002_desc")
+      gotoPreviousExercise(cMTcConfig, studentifiedRepoFolder)
 
       Then(
-        "readme and test code for that exercise should have been pulled in and deleted test code should not be present and the main code for the third exercise should have been pulled")
+        "readme and test code for that exercise should have been pulled in and deleted test code should not be present")
 
       {
         val actualCode: SourceFiles = extractCodeFromRepo(studentifiedRepoCodeFolder)
         // @formatter:off
         val expectedCode: SourceFiles =
           exercises.getTestCode("exercise_002_desc") ++
-          exercises.getReadmeCode("exercise_002_desc") ++
-          exercises.getMainCode("exercise_003_desc") ++
-          dontTouchMeFile
+            exercises.getReadmeCode("exercise_002_desc") ++
+            exercises.getMainCode("exercise_002_desc") ++
+            dontTouchMeFile
         // @formatter:on
         actualCode shouldBe expectedCode
 
@@ -261,144 +241,27 @@ final class StudentificationFunctionalSpec
         actualCode.doesNotContain(deletedTests)
       }
 
-      When("moving to the first exercise using the goto-first-exercise command")
+      When("we move back to the first exercise")
 
-      gotoFirstExercise(cMTcConfig, studentifiedRepoFolder)
+      gotoPreviousExercise(cMTcConfig, studentifiedRepoFolder)
 
       Then(
-        "readme and test code for that exercise should have been pulled and the main code for the third exercise should be there")
+        "readme and test code for that exercise should have been pulled in and deleted test code should not be present")
 
       {
         val actualCode: SourceFiles = extractCodeFromRepo(studentifiedRepoCodeFolder)
         // @formatter:off
         val expectedCode: SourceFiles =
           exercises.getTestCode("exercise_001_desc") ++
-          exercises.getReadmeCode("exercise_001_desc") ++
-          exercises.getMainCode("exercise_003_desc") ++
-          dontTouchMeFile
+            exercises.getReadmeCode("exercise_001_desc") ++
+            exercises.getMainCode("exercise_002_desc") ++
+            dontTouchMeFile
         // @formatter:on
         actualCode shouldBe expectedCode
 
         val deletedTests: SourceFiles =
-          exercises.getTestCode("exercise_003_desc") -- exercises.getTestCode("exercise_002_desc")
+          exercises.getTestCode("exercise_002_desc") -- exercises.getTestCode("exercise_001_desc")
         actualCode.doesNotContain(deletedTests)
-      }
-
-      When("the current state of an exercise is mutated and subsequently saved with the 'save-state' command")
-
-      val modifiedMainCode =
-        addFileToStudentifiedRepo(
-          studentifiedRepoCodeFolder,
-          Helpers.adaptToOSSeparatorChar("src/main/cmt/Main.scala")) ++
-          addFileToStudentifiedRepo(
-            studentifiedRepoCodeFolder,
-            Helpers.adaptToOSSeparatorChar("src/main/cmt/pack/Toto.scala"))
-
-      saveState(cMTcConfig, studentifiedRepoFolder)
-
-      Then("this should be reflected in the studentified repository")
-
-      {
-        val actualCode: SourceFiles = extractCodeFromRepo(studentifiedRepoCodeFolder)
-        // @formatter:off
-        val expectedCode: SourceFiles =
-          exercises.getTestCode("exercise_001_desc") ++
-          exercises.getReadmeCode("exercise_001_desc") ++
-          exercises.getMainCode("exercise_003_desc") ++
-          dontTouchMeFile ++
-          modifiedMainCode
-        // @formatter:on
-        actualCode shouldBe expectedCode
-      }
-
-      When("moving to the second exercise and pulling the solution")
-
-      gotoExercise(cMTcConfig, studentifiedRepoCodeFolder, "exercise_002_desc")
-      pullSolution(cMTcConfig, studentifiedRepoFolder)
-
-      Then("the current studentified repo should reflect that")
-
-      {
-        val actualCode: SourceFiles = extractCodeFromRepo(studentifiedRepoCodeFolder)
-        // @formatter:off
-        val expectedCode: SourceFiles =
-          exercises.getTestCode("exercise_002_desc") ++
-          exercises.getReadmeCode("exercise_002_desc") ++
-          exercises.getMainCode("exercise_002_desc") ++
-          dontTouchMeFile
-        // @formatter:on
-        actualCode shouldBe expectedCode
-      }
-
-      When("restoring the previously saved state using the 'restore-state' command")
-
-      val dontTouchMeFile_1 =
-        addFileToStudentifiedRepo(
-          studentifiedRepoCodeFolder,
-          Helpers.adaptToOSSeparatorChar(".mvn/someFolder/mustNotBeTouchedByCmt"))
-      restoreState(cMTcConfig, studentifiedRepoFolder, "exercise_001_desc")
-
-      Then("should fully reflect what was saved")
-
-      {
-        val actualCode: SourceFiles = extractCodeFromRepo(studentifiedRepoCodeFolder)
-        // @formatter:off
-        val expectedCode: SourceFiles =
-          exercises.getTestCode("exercise_001_desc") ++
-          exercises.getReadmeCode("exercise_001_desc") ++
-          exercises.getMainCode("exercise_003_desc") ++
-          dontTouchMeFile_1 ++
-          modifiedMainCode
-        // @formatter:on
-        actualCode shouldBe expectedCode
-      }
-
-      When(
-        "moving to and pulling the solution for the first exercise, moving to the last exercise and pulling a template file")
-
-      gotoFirstExercise(cMTcConfig, studentifiedRepoFolder)
-      pullSolution(cMTcConfig, studentifiedRepoFolder)
-      gotoExercise(cMTcConfig, studentifiedRepoFolder, "exercise_004_desc")
-      pullTemplate(cMTcConfig, studentifiedRepoFolder, "src/main/cmt/sample/Sample1.scala")
-
-      Then("should be the solution for the first exercise + the pulled in template file")
-
-      {
-        val actualCode = extractCodeFromRepo(studentifiedRepoCodeFolder)
-
-        // @formatter:off
-        val expectedCode =
-          exercises.getMainCode("exercise_001_desc") ++
-          exercises.getTestCode("exercise_004_desc") ++
-          dontTouchMeFile_1 ++
-          exercises.getReadmeCode("exercise_004_desc") +
-          exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala")
-        // @formatter:on
-        actualCode shouldBe expectedCode
-      }
-
-      When("having already pulled one template file for the last exercise, pulling in a template folder")
-
-      pullTemplate(cMTcConfig, studentifiedRepoFolder, "src/main/cmt/template")
-
-      Then(
-        "should be the solution for the first exercise + the pulled template file + the files in the template folder")
-
-      {
-        val actualCode = extractCodeFromRepo(studentifiedRepoCodeFolder)
-
-        // @formatter:off
-        val expectedCode =
-          exercises.getMainCode("exercise_001_desc") ++
-          exercises.getTestCode("exercise_004_desc") ++
-          dontTouchMeFile_1 ++
-          exercises.getReadmeCode("exercise_004_desc") +
-          exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
-          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
-          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
-        // @formatter:on
-
-        actualCode shouldBe expectedCode
       }
     }
   }

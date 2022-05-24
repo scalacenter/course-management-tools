@@ -64,17 +64,24 @@ object Helpers:
       case Left(msg) => Left(msg)
     }
 
-  def createStudentifiedFolderSkeleton(stuBase: File, studentifiedRootFolder: File)(
-      config: CMTaConfig): StudentifiedSkelFolders =
-    if studentifiedRootFolder.exists then printErrorAndExit(s"$studentifiedRootFolder exists already")
-    if !stuBase.canWrite then printErrorAndExit(s"$stuBase isn't writeable")
+  def checkpreExistingAndCreateArtifactRepo(
+      artifactBaseDirectory: File,
+      artifactRootFolder: File,
+      forceDeleteDestinationDirectory: Boolean): Unit =
+    (artifactRootFolder.exists, forceDeleteDestinationDirectory) match
+      case (true, true) =>
+        if artifactBaseDirectory.canWrite then
+          sbtio.delete(artifactRootFolder)
+          sbtio.createDirectory(artifactRootFolder)
+        else printErrorAndExit(s"${artifactBaseDirectory.getPath} isn't writeable")
 
-    val solutionsFolder =
-      studentifiedRootFolder / config.studentifiedRepoSolutionsFolder
+      case (true, false) =>
+        printErrorAndExit(s"$artifactRootFolder exists already")
 
-    sbtio.createDirectories(Seq(studentifiedRootFolder, solutionsFolder))
-    StudentifiedSkelFolders(solutionsFolder)
-  end createStudentifiedFolderSkeleton
+      case (false, _) =>
+        if artifactBaseDirectory.canWrite then sbtio.createDirectory(artifactRootFolder)
+        else printErrorAndExit(s"${artifactBaseDirectory.getPath} isn't writeable")
+  end checkpreExistingAndCreateArtifactRepo
 
   def addFirstExercise(cleanedMainRepo: File, firstExercise: String, studentifiedRootFolder: File)(
       config: CMTaConfig): Unit =

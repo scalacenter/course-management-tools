@@ -41,7 +41,7 @@ given Executable[Linearize] with
 
         _ <- copyCleanViaGit(cmd.mainRepository.value, tmpFolder, mainRepoName)
 
-        _ = checkpreExistingLinearizedRepo(
+        _ = checkpreExistingAndCreateArtifactRepo(
           cmd.linearizeBaseDirectory.value,
           linearizedRootFolder,
           cmd.forceDeleteDestinationDirectory.value)
@@ -81,23 +81,5 @@ private object LinearizeHelpers:
           case Right(_) => commitExercises(cleanedMainRepo, remainingExercises, linearizedRootFolder, cmd)
           case left     => left
       case Nil => Right(())
-
-  def checkpreExistingLinearizedRepo(
-      linearizeBaseDirectory: File,
-      linearizedRootFolder: File,
-      forceDeleteDestinationDirectory: Boolean): Unit =
-    (linearizedRootFolder.exists, forceDeleteDestinationDirectory) match
-      case (true, true) =>
-        if linearizeBaseDirectory.canWrite then
-          sbtio.delete(linearizedRootFolder)
-          sbtio.createDirectory(linearizedRootFolder)
-        else printErrorAndExit(s"${linearizeBaseDirectory.getPath} isn't writeable")
-
-      case (true, false) =>
-        printErrorAndExit(s"$linearizedRootFolder exists already")
-
-      case (false, _) =>
-        if linearizeBaseDirectory.canWrite then sbtio.createDirectory(linearizedRootFolder)
-        else printErrorAndExit(s"${linearizeBaseDirectory.getPath} isn't writeable")
 
 end LinearizeHelpers

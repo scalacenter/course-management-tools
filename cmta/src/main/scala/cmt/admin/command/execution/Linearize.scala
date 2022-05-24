@@ -14,6 +14,7 @@ package cmt.admin.command.execution
   */
 
 import cmt.Helpers.*
+import cmt.printErrorAndExit
 import cmt.admin.command.AdminCommand.Linearize
 import cmt.core.execution.Executable
 import cmt.{ProcessDSL, toConsoleGreen}
@@ -27,23 +28,23 @@ given Executable[Linearize] with
 
       for {
         _ <- exitIfGitIndexOrWorkspaceIsntClean(cmd.mainRepository.value)
-        _ = println(s"Linearizing ${toConsoleGreen(cmd.mainRepository.value.getPath)} to ${toConsoleGreen(
-            cmd.linearizeBaseDirectory.value.getPath)}")
 
         mainRepoName = cmd.mainRepository.value.getName
         tmpFolder = sbtio.createTemporaryDirectory
         cleanedMainRepo = tmpFolder / cmd.mainRepository.value.getName
+        ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(cmd.mainRepository.value)(
+          cmd.config)
+        linearizedRootFolder = cmd.linearizeBaseDirectory.value / mainRepoName
+
+        _ = println(s"Linearizing ${toConsoleGreen(cmd.mainRepository.value.getPath)} to ${toConsoleGreen(
+            cmd.linearizeBaseDirectory.value.getPath)}")
 
         _ <- copyCleanViaGit(cmd.mainRepository.value, tmpFolder, mainRepoName)
 
-        ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(cmd.mainRepository.value)(
-          cmd.config)
-
-        linearizedRootFolder = cmd.linearizeBaseDirectory.value / mainRepoName
-
-        _ = if linearizedRootFolder.exists && cmd.forceDeleteDestinationDirectory.value then
-          sbtio.delete(linearizedRootFolder)
-        _ = sbtio.createDirectory(linearizedRootFolder)
+        _ = checkpreExistingLinearizedRepo(
+          cmd.linearizeBaseDirectory.value,
+          linearizedRootFolder,
+          cmd.forceDeleteDestinationDirectory.value)
 
         _ <- initializeGitRepo(linearizedRootFolder)
 
@@ -57,6 +58,7 @@ given Executable[Linearize] with
 end given
 
 private object LinearizeHelpers:
+
   def commitExercises(
       cleanedMainRepo: File,
       exercises: Seq[String],
@@ -79,4 +81,24 @@ private object LinearizeHelpers:
           case Right(_) => commitExercises(cleanedMainRepo, remainingExercises, linearizedRootFolder, cmd)
           case left     => left
       case Nil => Right(())
+
+  def checkpreExistingLinearizedRepo(
+      linearizeBaseDirectory: File,
+      linearizedRootFolder: File,
+      forceDeleteDestinationDirectory: Boolean): Unit =
+    (linearizedRootFolder.exists, forceDeleteDestinationDirectory) match
+      case (true, true) =>
+        if linearizeBaseDirectory.canWrite then
+          sbtio.delete(linearizedRootFolder)
+          sbtio.createDirectory(linearizedRootFolder)
+        else printErrorAndExit(s"${linearizeBaseDirectory.getPath} isn't writeable")
+
+      case (true, false) =>
+        printErrorAndExit(s"$linearizedRootFolder exists already")
+
+      case (false, _) =>
+        if linearizeBaseDirectory.canWrite then
+          sbtio.createDirectory(linearizedRootFolder)
+        else printErrorAndExit(s"${linearizeBaseDirectory.getPath} isn't writeable")
+
 end LinearizeHelpers

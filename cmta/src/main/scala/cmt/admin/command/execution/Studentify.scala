@@ -32,7 +32,7 @@ given Executable[Studentify] with
 
         mainRepoName = cmd.mainRepository.value.getName
         tmpFolder = sbtio.createTemporaryDirectory
-        cleanedMainRepo = tmpFolder / cmd.mainRepository.value.getName
+        cleanedMainRepo = tmpFolder / mainRepoName
 
         _ <- copyCleanViaGit(cmd.mainRepository.value, tmpFolder, mainRepoName)
 

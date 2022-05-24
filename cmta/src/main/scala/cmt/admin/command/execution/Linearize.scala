@@ -62,6 +62,10 @@ private object LinearizeHelpers:
       exercises: Seq[String],
       linearizedRootFolder: File,
       cmd: Linearize): Either[String, Unit] =
+
+    val dotIgnoreFile = cleanedMainRepo / ".gitignore"
+    if dotIgnoreFile.exists then sbtio.copyFile(dotIgnoreFile, linearizedRootFolder / ".gitignore")
+
     exercises match
       case exercise +: remainingExercises =>
         val from = cleanedMainRepo / cmd.config.mainRepoExerciseFolder / exercise

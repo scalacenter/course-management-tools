@@ -191,7 +191,7 @@ implement them. There are two approaches to applying changes:
   come in.
 
 A _linearized_ repo is a git repository in which each exercise in the CMT main
-repo repository is "mapped" to a commit. We'll the same main repository
+repo repository is "mapped" to a commit. We will use the same main repository
 `lunatech-beginner-quarkus-course-v2` as before to illustrate the
 _linearize_/_delinearize_ workflow.
 

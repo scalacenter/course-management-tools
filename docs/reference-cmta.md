@@ -139,7 +139,6 @@ The following options are available:
           can created gaps in the exercise numbering.
 </pre>
 
-
 &nbsp;&nbsp;&nbsp;&nbsp;**--step**: defines the increment between subsequent, renumbered exercises.
 <pre>.
           By default, this value is 1, so renumbered exercises will have numbers that are contiguous.

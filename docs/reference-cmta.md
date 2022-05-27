@@ -84,7 +84,7 @@ The following options are available:
 #### Description
 
 Apply the state of a linearized repository to its corresponding main repository. Before performing
-its task, de delinearization command will check that the liinearized repository and the main
+its task, the delinearization command will check that the linearized repository and the main
 repository "match", i.e. they should have the same number of exercises, with matching exercise names.
 
 ### cmta dib
@@ -101,7 +101,7 @@ The exercise number (N), passed in via the -n parameter, will be duplicated and 
 before the exercise with that number.
 
 It there is a gap before the original exercise in the exercise
-series, the duplicated exercise will have as sequence number N - 1. Otherwise, room will be made for the
+series, the duplicated exercise will have sequence number N - 1. Otherwise, room will be made for the
 duplicated exercise by shifting exercises around. Note that if the exercises after the insertion point
 have one or more gaps in the numbering, those gaps will be removed and the exercises will be renumbered as a
 continuous series.
@@ -129,6 +129,19 @@ The following options are available:
 &nbsp;&nbsp;&nbsp;&nbsp;**--from**: number of the exercise at which the renumbering needs to be started.
 <pre>
           This option enables partial renumbering of the exercise set. The value passed as an
-          argument to this option is the number of the exercise at which the renumbering shoulds
+          argument to this option is the number of the exercise at which the renumbering should
           start. All subsequent exercises, if any, will be renumbered.
+</pre>
+
+&nbsp;&nbsp;&nbsp;&nbsp;**--to**: move the exercise pointed-to by **--from** to this **--to** offset.
+<pre>
+          This option allows moving a subset of the exercises to a new point (offset). As such, it
+          can created gaps in the exercise numbering.
+</pre>
+
+&nbsp;&nbsp;&nbsp;&nbsp;**--step**: defines the increment between subsequent, renumbered exercises.
+<pre>.
+          By default, this value is 1, so renumbered exercises will have numbers that are contiguous.
+          Using a value different than 1 will introduce gaps in the numbering between consecutive
+          exercises
 </pre>

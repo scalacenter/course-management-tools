@@ -74,7 +74,7 @@ The file name of the CMT configuration file. It is recommended to leave this val
 
 Default value = `[ "src/test" ]`
 
-This is a list of folders, relative to the exercise folder's path, in which
+This is a list of files or folders, relative to the exercise folder's path, in which
 test code is located.
 
 If the CMT main repository has exercises that have test code in other folders
@@ -88,6 +88,13 @@ Default value = ` [ "README.md" ]`
 
 A list of files or folders that contain exercise specific "Read me" information, such
 as exercise instructions, reading materials, images, etc.
+
+> NOTE: even though settings `test-code-folders` and `read-me-files` are different,
+> settings, the files and folders they refer to are handled in exactly the same way:
+> they are automatically pulled in when moving between exercises. As such, one could
+> do with just putting all test code folders (or files) and readme files (or folders)
+> in one of the two settings. The reason for splitting them across two settings is 
+> to arrange them according to their utilisation.
 
 ### cmt-studentified-dont-touch
 

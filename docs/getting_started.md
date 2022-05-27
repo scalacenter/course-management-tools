@@ -19,7 +19,7 @@ Before describing the principle behind the tooling, we will start with having a 
 
 ### The naive approach to CMT
 
-When faced with the problem of maintaining a series of exercises, one approach that people who are familiar with version control software such as git apply is to maintain the exercises as a series of commits in a git repository.
+When faced with the problem of maintaining a series of exercises, one approach applied by people who are familiar with version control software such as git, is to maintain the exercises as a series of commits in a git repository.
 
 Imagine we have a 16-exercise course —let's label it as version 1.0— in a git repository as depicted here:
 
@@ -29,7 +29,7 @@ Nice, but suppose we want now want to create version 1.1 of the course in which 
 
 ![The Naive Approach 2](https://imgur.com/b8eJUkC.png)
 
-So, we've achieved our goal, which was to change exercise 5, however, there are a number of problems with this approach and a number of questions for which the answer is rather difficult.
+So, we've achieved our goal, which was to change exercise 5, however, there are a number of problems with this approach and a number of questions that are rather difficult to answer...
 
 - We've had to rewrite the git history. As a result, if the repo is on Github, we'll have to force push the change, effectively destroying version 1.0. At best, we can, before force pushing version 1.0, 'park' version 1.0 on a dedicated branch. Not very useful.
 - Any open Pull Request on version 1.0 becomes detached and of little use on the current 1.1 version of the course. This is bad for collaboration.
@@ -44,7 +44,7 @@ In summary, the naive approach clearly is just a part of a larger puzzle. Let's 
 
 ## The CMT approach
 
-A key characteristic of the CMT approach is that it add the possibility to track the version of a course in tis entirety. In other words, it allows tracking of changes in the two dimensions we referred to in the introduction of this chapter.
+A key characteristic of the CMT approach is that it adds the possibility to track the version of a course in its entirety. In other words, it allows tracking of changes in the two dimensions we referred to in the introduction of this chapter.
 
 It makes this tracking in the second dimension possible by taking an unusual first step: it introduces the so-called _main repository_ from which, by means of one of the CMT tools, a number of artefacts can be derived for specific use cases.
 
@@ -73,7 +73,7 @@ The following illustration summarizes the interactive rebasing process in the co
 
 ![Lin-Delin process](https://imgur.com/tAdPsbL.png)
 
-> Note: a _linearised_ repo has other use cases. First of all, it can be utilised to inspect the changes between subsequent exercises. In some cases, this can be used as part of the educational experience because it allows students to quickly inspect the aforementioned changes.
+> Note: a _linearised_ repo has other use cases. For example, it can be utilised to inspect the changes between subsequent exercises. In some cases, this can be used as part of the educational experience because it allows students to quickly inspect the aforementioned changes.
 
 The [workflows section](workflows.md) dives into more detail on the linearize/delinearize workflow.
 

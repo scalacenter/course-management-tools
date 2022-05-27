@@ -13,7 +13,7 @@ We will use a sample main repository named `lunatech-beginner-quarkus-course-v2`
 sixteen exercises. Let's have a look at what is in the master repo.
 
 ```bash
-$ cd simple-repo
+$ cd lunatech-beginner-quarkus-course-v2
 
 $ ls
 code                   course-management.conf
@@ -82,8 +82,8 @@ folder(s) contained in this setting while leaving any other code unchanged.
 
 ### Setting `README` files
 
-The setting `cmt.read-me-file` is a list of files (in this example a single file name `README.md`)
-that are assumed to provide exercise specific information (such as exercise instructions).
+The setting `cmt.read-me-file` is a list of files or folders (in this example a single file name
+`README.md`) that are assumed to provide exercise specific information (such as exercise instructions).
 
 As with the `test` setting, this file or files are pulled in when moving between exercises.
 
@@ -158,7 +158,7 @@ In summary, the process can be depicted as follows:
 The _studentified_ artifact is self-contained (and can optionally be generated
 as a **_git_** repository).
 
-A student can "manipulate" the studentified repo using `cmtc` by passing the
+A student can "manipulate" the studentified repo using `cmtc` by passing an
 appropriate sub-command. The available subcommands are summarised in the following
 table:
 
@@ -186,12 +186,13 @@ implement them. There are two approaches to applying changes:
   exercise that is followed by one or more exercises: the "effect" of
   the changes needs to be applied to subsequent exercises. The generic
   approach when using **_git_** is to apply interactive rebasing.
-  Obviously, there's no way we can do this on the CMT main repository
-  and that's where `cmta linearize` and `cmta delinearize` come in.
+  Obviously, there's no easy way to do this directly on the CMT main
+  repository and that's where `cmta linearize` and `cmta delinearize`
+  come in.
 
 A _linearized_ repo is a git repository in which each exercise in the CMT main
-repo repository is "mapped" to a commit. We'll use a different main repository
-named `lunatech-beginner-quarkus-course-v2` to illustrate the
+repo repository is "mapped" to a commit. We'll the same main repository
+`lunatech-beginner-quarkus-course-v2` as before to illustrate the
 _linearize_/_delinearize_ workflow.
 
 The following diagrams depicts the _linearization_ process:
@@ -340,14 +341,17 @@ as many times as needed.
 Between iterations, we can also do the following:
 
 - "checkpoint" what we already have on the CMT master repository by committing
-  it. This doesn't hurt and if needed this can be undone easily.
+  it. This doesn't hurt and if needed this can be undone easily. After a number
+  of smaller changes were successfully committed to the CMT main repo, these
+  commits can be squashed to reduce the clutter.
 - run the tests on all exercises. As the tooling is oblivious to the build tool
   and the testing tools used in the exercises, there's no pre-baked solution
   to automate this process.  Imagine that a CMT project uses Maven as build tool.
   Chances are that we can test any exercise by running `mvn test`. It would be
   trivial to build a small test script to automate the testing. The script would
   loop over each of the exercise folders, cd into them one by one and execute
-  the tests.
+  the tests. For the `lunatech-beginner-quarkus-course-v2` course, this testing
+  has been automated by integrating it in the [CI process of the course](https://github.com/lunatech-labs/lunatech-beginner-quarkus-course-v2/blob/main/.github/workflows/maven.yml).
 
 ## Inserting, deleting, and renumbering exercises
 

@@ -34,6 +34,6 @@ lazy val docs = project
   .in(file("course-management-tools-docs"))
   .settings(
     moduleName := "course-management-tools-docs",
-    skip.in(publish) := true
+    publish / skip := true
   )
   .enablePlugins(MdocPlugin, DocusaurusPlugin)

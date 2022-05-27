@@ -59,7 +59,7 @@
 and maintaining a training course.</p>
 <p>We will use a sample main repository named <code>lunatech-beginner-quarkus-course-v2</code> that contains
 sixteen exercises. Let's have a look at what is in the master repo.</p>
-<pre><code class="hljs css language-bash">$ <span class="hljs-built_in">cd</span> simple-repo
+<pre><code class="hljs css language-bash">$ <span class="hljs-built_in">cd</span> lunatech-beginner-quarkus-course-v2
 
 $ ls
 code                   course-management.conf
@@ -120,8 +120,8 @@ a list that, in the case of <code>lunatech-beginner-quarkus-course-v2</code>, co
 <p>When a student moves between different exercises, CMT will pull in any code residing in the
 folder(s) contained in this setting while leaving any other code unchanged.</p>
 <h3><a class="anchor" aria-hidden="true" id="setting-readme-files"></a><a href="#setting-readme-files" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Setting <code>README</code> files</h3>
-<p>The setting <code>cmt.read-me-file</code> is a list of files (in this example a single file name <code>README.md</code>)
-that are assumed to provide exercise specific information (such as exercise instructions).</p>
+<p>The setting <code>cmt.read-me-file</code> is a list of files or folders (in this example a single file name
+<code>README.md</code>) that are assumed to provide exercise specific information (such as exercise instructions).</p>
 <p>As with the <code>test</code> setting, this file or files are pulled in when moving between exercises.</p>
 <h3><a class="anchor" aria-hidden="true" id="setting-files-and-folders-that-shouldnt-be-touched"></a><a href="#setting-files-and-folders-that-shouldnt-be-touched" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Setting files and folders that shouldn't be touched</h3>
 <p>When a student executes one of the <code>cmtc</code> commands, for example to move to the next exercise or to
@@ -181,7 +181,7 @@ that contains a  sub-folder <code>code</code> that contains the code for the fir
 <p><img src="https://imgur.com/eEKgbye.png" alt="studentify process"></p>
 <p>The <em>studentified</em> artifact is self-contained (and can optionally be generated
 as a <strong><em>git</em></strong> repository).</p>
-<p>A student can &quot;manipulate&quot; the studentified repo using <code>cmtc</code> by passing the
+<p>A student can &quot;manipulate&quot; the studentified repo using <code>cmtc</code> by passing an
 appropriate sub-command. The available subcommands are summarised in the following
 table:</p>
 <p><img src="https://imgur.com/HueGxyg.png" alt="Studentified repo - commands"></p>
@@ -206,12 +206,13 @@ This approach is recommended when code changes are applied in an
 exercise that is followed by one or more exercises: the &quot;effect&quot; of
 the changes needs to be applied to subsequent exercises. The generic
 approach when using <strong><em>git</em></strong> is to apply interactive rebasing.
-Obviously, there's no way we can do this on the CMT main repository
-and that's where <code>cmta linearize</code> and <code>cmta delinearize</code> come in.</li>
+Obviously, there's no easy way to do this directly on the CMT main
+repository and that's where <code>cmta linearize</code> and <code>cmta delinearize</code>
+come in.</li>
 </ul>
 <p>A <em>linearized</em> repo is a git repository in which each exercise in the CMT main
-repo repository is &quot;mapped&quot; to a commit. We'll use a different main repository
-named <code>lunatech-beginner-quarkus-course-v2</code> to illustrate the
+repo repository is &quot;mapped&quot; to a commit. We'll the same main repository
+<code>lunatech-beginner-quarkus-course-v2</code> as before to illustrate the
 <em>linearize</em>/<em>delinearize</em> workflow.</p>
 <p>The following diagrams depicts the <em>linearization</em> process:</p>
 <p><img src="https://imgur.com/qCMgsDk.png" alt="Linearize process"></p>
@@ -330,14 +331,17 @@ as many times as needed.</p>
 <p>Between iterations, we can also do the following:</p>
 <ul>
 <li>&quot;checkpoint&quot; what we already have on the CMT master repository by committing
-it. This doesn't hurt and if needed this can be undone easily.</li>
+it. This doesn't hurt and if needed this can be undone easily. After a number
+of smaller changes were successfully committed to the CMT main repo, these
+commits can be squashed to reduce the clutter.</li>
 <li>run the tests on all exercises. As the tooling is oblivious to the build tool
 and the testing tools used in the exercises, there's no pre-baked solution
 to automate this process.  Imagine that a CMT project uses Maven as build tool.
 Chances are that we can test any exercise by running <code>mvn test</code>. It would be
 trivial to build a small test script to automate the testing. The script would
 loop over each of the exercise folders, cd into them one by one and execute
-the tests.</li>
+the tests. For the <code>lunatech-beginner-quarkus-course-v2</code> course, this testing
+has been automated by integrating it in the <a href="https://github.com/lunatech-labs/lunatech-beginner-quarkus-course-v2/blob/main/.github/workflows/maven.yml">CI process of the course</a>.</li>
 </ul>
 <h2><a class="anchor" aria-hidden="true" id="inserting-deleting-and-renumbering-exercises"></a><a href="#inserting-deleting-and-renumbering-exercises" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Inserting, deleting, and renumbering exercises</h2>
 <p><code>cmta</code> is your friend for these kind of tasks. See the following

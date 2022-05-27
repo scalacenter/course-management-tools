@@ -107,9 +107,9 @@ next exercise. Which files are pulled in is defined in settings
 <a href="/course-management-tools/docs/reference-config#test-code-folders"><code>cmt.test-code-folders</code></a> and
 <a href="/course-management-tools/docs/reference-config#read-me-files"><code>cmt.read-me-files</code></a>. All other files are left as-is.
 This command will be part of the normal workflow used by someone solving all exercises in-sequence:
-After finishing an exercise successfully (and making the tests pass), the student executes
-the <code>cmtc next-exercise</code> command, which pulls in the exercise instructions and test and
-the process can continue.</p>
+After finishing an exercise successfully (by making all tests pass), the student executes
+the <code>cmtc next-exercise</code> command, which pulls in the instructions and tests for the next
+exercise and the exercise solving process can continue.</p>
 <blockquote>
 <p>Warning: this command will overwrite any modification that a student has made to tests.
 Any custom tests have to be saved in a location that is not part of the configured
@@ -142,7 +142,7 @@ in the source code folder will be overwritten.</p>
 <p>This command allows a student to selectively pull a part of the solution for the current
 exercise.</p>
 <p>It is useful in the case where an exercise requires supporting code or files (data, ...)
-that are to complex to have the students create themselves or that are not really relevant
+that is too complex to have the students create themselves or that are not really relevant
 in the context of what the course aims to teach.</p>
 <p>If the template is a single file, that file will be pulled from the reference solution.
 If the template is a folder, the folder and its content will be pulled recursively.</p>

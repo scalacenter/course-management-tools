@@ -50,19 +50,21 @@ class CMTaConfig(mainRepo: File, configFileOpt: Option[File]):
     else
       referenceConfig
 
+  // Static settings for cmt specific folders and files
+  // CMT metadata root folder
+  val cmtMetadataRootFolder = ".cmt"
+  val studentifiedRepoSolutionsFolder = s"$cmtMetadataRootFolder/.cue"
+  val studentifiedSavedStatesFolder = s"$studentifiedRepoSolutionsFolder/.savedStates"
+  val studentifiedRepoBookmarkFile = s"$cmtMetadataRootFolder/.bookmark"
+  val cmtStudentifiedConfigFile = s"$cmtMetadataRootFolder/.cmt-config"
+
   val mainRepoExerciseFolder = config.getString("cmt.main-repo-exercise-folder")
   val testCodeFolders = config.getStringList("cmt.test-code-folders").asScala
   val readMeFiles = config.getStringList("cmt.read-me-files").asScala.toSet
-  val studentifiedRepoSolutionsFolder =
-    config.getString("cmt.studentified-repo-solutions-folder")
-  val studentifiedSavedStatesFolder =
-    config.getString("cmt.studentified-saved-states-folder")
   val studentifiedRepoActiveExerciseFolder =
     config.getString("cmt.studentified-repo-active-exercise-folder")
   val linearizedRepoActiveExerciseFolder =
     config.getString("cmt.linearized-repo-active-exercise-folder")
-  val cmtStudentifiedConfigFile =
-    config.getString("cmt.cmt-studentified-config-file")
   val cmtStudentifiedDontTouch =
     config.getStringList("cmt.cmt-studentified-dont-touch").asScala
 

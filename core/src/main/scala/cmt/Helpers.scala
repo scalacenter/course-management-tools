@@ -164,6 +164,7 @@ object Helpers:
     val configMap = Map(
       "studentified-repo-solutions-folder" -> config.studentifiedRepoSolutionsFolder,
       "studentified-saved-states-folder" -> config.studentifiedSavedStatesFolder,
+      "studentified-repo-bookmark-file" -> config.studentifiedRepoBookmarkFile,
       "active-exercise-folder" -> config.studentifiedRepoActiveExerciseFolder,
       "test-code-folders" -> config.testCodeFolders.asJava,
       "read-me-files" -> config.readMeFiles.asJava,

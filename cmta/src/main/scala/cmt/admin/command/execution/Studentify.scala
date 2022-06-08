@@ -84,7 +84,7 @@ private object StudentifyHelpers:
     hideExercises(cleanedMainRepo, solutionsFolder, exercises)(cmd.config)
 
     writeStudentifiedCMTConfig(studentifiedRootFolder / cmd.config.cmtStudentifiedConfigFile, exercises)(cmd.config)
-    writeStudentifiedCMTBookmark(studentifiedRootFolder / ".bookmark", exercises.head)
+    writeStudentifiedCMTBookmark(studentifiedRootFolder / cmd.config.studentifiedRepoBookmarkFile, exercises.head)
 
     val successMessage = exercises.mkString("Processed exercises:\n  ", "\n  ", "\n")
     if cmd.initializeAsGitRepo.value then

@@ -23,12 +23,12 @@ import java.nio.charset.StandardCharsets
 class CMTcConfig(studentifiedRepo: File):
   import Helpers.adaptToOSSeparatorChar
 
-  val bookmarkFile: File = studentifiedRepo / ".bookmark"
-
-  private val cmtConfigFile = studentifiedRepo / ".cmt-config"
+  private val cmtConfigFile = studentifiedRepo / ".cmt/.cmt-config"
   if !cmtConfigFile.exists then printErrorAndExit("missing CMT configuration file")
 
   val cmtSettings: Config = ConfigFactory.parseFile(cmtConfigFile)
+
+  val bookmarkFile: File = studentifiedRepo / cmtSettings.getString("studentified-repo-bookmark-file")
 
   val exercises: collection.mutable.Seq[String] = cmtSettings.getStringList("exercises").asScala
 

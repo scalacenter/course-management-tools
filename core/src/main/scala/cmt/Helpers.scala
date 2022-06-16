@@ -33,8 +33,7 @@ object Helpers:
         case (rem, result) if rem.isEmpty => filesSoFar ++ result
         case (rem, tally)                 => fileList(filesSoFar ++ tally, rem)
 
-    if base.isFile then
-      Vector(base)
+    if base.isFile then Vector(base)
     else
       val (seedFolders, seedFiles) =
         sbtio.listFiles(base).partition(_.isDirectory)

@@ -33,9 +33,12 @@ object Helpers:
         case (rem, result) if rem.isEmpty => filesSoFar ++ result
         case (rem, tally)                 => fileList(filesSoFar ++ tally, rem)
 
-    val (seedFolders, seedFiles) =
-      sbtio.listFiles(base).partition(_.isDirectory)
-    fileList(seedFiles.toVector, seedFolders.toVector)
+    if base.isFile then
+      Vector(base)
+    else
+      val (seedFolders, seedFiles) =
+        sbtio.listFiles(base).partition(_.isDirectory)
+      fileList(seedFiles.toVector, seedFolders.toVector)
   end fileList
 
   def resolveMainRepoPath(mainRepo: File): Either[String, File] = {

@@ -27,10 +27,9 @@ import java.nio.charset.StandardCharsets
 given Executable[PullTemplate] with
   extension (cmd: PullTemplate)
     def execute(): Either[String, String] = {
-      val currentExercise =
-        sbtio.readLines(cmd.config.bookmarkFile, StandardCharsets.UTF_8).head
+      val currentExerciseId = getCurrentExerciseId(cmd.config.bookmarkFile)
 
-      withZipFile(cmd.config.solutionsFolder, currentExercise) { solution =>
+      withZipFile(cmd.config.solutionsFolder, currentExerciseId) { solution =>
         val fullTemplatePath = solution / cmd.templatePath.value
         (fullTemplatePath.exists, fullTemplatePath.isDirectory) match
           case (false, _) =>

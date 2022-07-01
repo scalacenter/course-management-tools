@@ -24,15 +24,16 @@ import java.nio.charset.StandardCharsets
 given Executable[PreviousExercise] with
   extension (cmd: PreviousExercise)
     def execute(): Either[String, String] = {
-      val currentExercise =
-        sbtio.readLines(cmd.config.bookmarkFile, StandardCharsets.UTF_8).head
+      val currentExerciseId = getCurrentExerciseId(cmd.config.bookmarkFile)
+      val FistExerciseId = cmd.config.exercises.head
 
-      if currentExercise == cmd.config.exercises.head
-      then Left(toConsoleGreen(s"You're already at the first exercise: $currentExercise"))
-      else
-        withZipFile(cmd.config.solutionsFolder, cmd.config.previousExercise(currentExercise)) { solution =>
-          copyTestCodeAndReadMeFiles(solution, cmd.config.previousExercise(currentExercise))(cmd.config)
-          Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(
-              s"${cmd.config.previousExercise(currentExercise)}")}")
-        }
+      currentExerciseId match {
+        case FistExerciseId => Left(toConsoleGreen(s"You're already at the first exercise: $currentExerciseId"))
+        case _ =>
+          withZipFile(cmd.config.solutionsFolder, cmd.config.previousExercise(currentExerciseId)) { solution =>
+            copyTestCodeAndReadMeFiles(solution, cmd.config.previousExercise(currentExerciseId))(cmd.config)
+            Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(
+                s"${cmd.config.previousExercise(currentExerciseId)}")}")
+          }
+      }
     }

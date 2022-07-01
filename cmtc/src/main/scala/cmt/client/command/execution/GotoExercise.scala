@@ -22,11 +22,17 @@ import cmt.{toConsoleGreen, toConsoleYellow}
 given Executable[GotoExercise] with
   extension (cmd: GotoExercise)
     def execute(): Either[String, String] = {
-      if !cmd.config.exercises.contains(cmd.exerciseId.value)
-      then Left(s"No such exercise: ${cmd.exerciseId.value}")
-      else
-        withZipFile(cmd.config.solutionsFolder, cmd.exerciseId.value) { solution =>
-          copyTestCodeAndReadMeFiles(solution, cmd.exerciseId.value)(cmd.config)
-          Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${cmd.exerciseId.value}")}")
-        }
+      val currentExerciseId = getCurrentExerciseId(cmd.config.bookmarkFile)
+      val GotoExerciseId = cmd.exerciseId.value
+      val gotoExerciseIdExists = cmd.config.exercises.contains(GotoExerciseId)
+
+      (gotoExerciseIdExists, currentExerciseId) match {
+        case (false, _)             => Left(toConsoleGreen(s"No such exercise: ${cmd.exerciseId.value}"))
+        case (true, GotoExerciseId) => Left(toConsoleGreen(s"You're already at exercise ${GotoExerciseId}"))
+        case _ =>
+          withZipFile(cmd.config.solutionsFolder, cmd.exerciseId.value) { solution =>
+            copyTestCodeAndReadMeFiles(solution, cmd.exerciseId.value)(cmd.config)
+            Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${cmd.exerciseId.value}")}")
+          }
+      }
     }

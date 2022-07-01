@@ -26,22 +26,25 @@ import java.nio.charset.StandardCharsets
 given Executable[SaveState] with
   extension (cmd: SaveState)
     def execute(): Either[String, String] = {
-      val currentExercise =
-        sbtio.readLines(cmd.config.bookmarkFile, StandardCharsets.UTF_8).head
+      val currentExerciseId = getCurrentExerciseId(cmd.config.bookmarkFile)
       val savedStatesFolder = cmd.config.studentifiedSavedStatesFolder
-      sbtio.delete(savedStatesFolder / currentExercise)
+
+      sbtio.delete(savedStatesFolder / currentExerciseId)
       val filesInScope = getCurrentExerciseState(cmd.studentifiedRepo.value)(cmd.config)
 
       for {
         file <- filesInScope
         f <- file.relativeTo(cmd.config.activeExerciseFolder)
-        dest = savedStatesFolder / currentExercise / f.getPath
+        dest = savedStatesFolder / currentExerciseId / f.getPath
       } {
         sbtio.touch(dest)
         sbtio.copyFile(file, dest)
       }
 
-      zipAndDeleteOriginal(baseFolder = savedStatesFolder, zipToFolder = savedStatesFolder, exercise = currentExercise)
+      zipAndDeleteOriginal(
+        baseFolder = savedStatesFolder,
+        zipToFolder = savedStatesFolder,
+        exercise = currentExerciseId)
 
-      Right(toConsoleGreen(s"Saved state for $currentExercise"))
+      Right(toConsoleGreen(s"Saved state for $currentExerciseId"))
     }

@@ -19,6 +19,8 @@ import sbt.io.syntax.File
 import sbt.io.IO as sbtio
 import sbt.io.syntax.fileToRichFile
 
+import java.nio.charset.StandardCharsets
+
 package object execution {
 
   private final case class PathARO(absolutePath: File, maybeRelativePath: Option[File])
@@ -40,6 +42,9 @@ package object execution {
   def deleteCurrentState(studentifiedRepo: File)(config: CMTcConfig): Unit =
     val filesToBeDeleted: Seq[File] = getCurrentExerciseState(studentifiedRepo)(config)
     sbtio.deleteFilesEmptyDirs(filesToBeDeleted)
+
+  def getCurrentExerciseId(bookmarkFile: File): String =
+    sbtio.readLines(bookmarkFile, StandardCharsets.UTF_8).head
 
   def copyTestCodeAndReadMeFiles(solution: File, prevOrNextExercise: String)(config: CMTcConfig): Unit =
 

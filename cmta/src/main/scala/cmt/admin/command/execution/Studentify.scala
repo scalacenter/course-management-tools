@@ -17,6 +17,7 @@ import cmt.Helpers.*
 import cmt.admin.command.AdminCommand.Studentify
 import cmt.core.execution.Executable
 import cmt.{Helpers, StudentifiedSkelFolders, toConsoleGreen}
+import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
@@ -79,7 +80,10 @@ private object StudentifyHelpers:
       solutionsFolder: File,
       cmd: Studentify,
       tmpFolder: File): Either[String, String] =
+
     addFirstExercise(cleanedMainRepo, exercises.head, studentifiedRootFolder)(cmd.config)
+
+    writeTestReadmeCodeMetadata(cleanedMainRepo, exercises, studentifiedRootFolder, cmd.config)
 
     hideExercises(cleanedMainRepo, solutionsFolder, exercises)(cmd.config)
 

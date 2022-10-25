@@ -56,12 +56,7 @@ package object execution {
     } sbtio.delete(config.activeExerciseFolder / path)
 
     val (dirs, files) =
-      pathsToCopy
-        .filter { path =>
-          val solutionPath = solution / path
-          solution.exists()
-        }
-        .partition(path => (solution / path).isDirectory)
+      pathsToCopy.filter(path => (solution / path).exists()).partition(path => (solution / path).isDirectory)
 
     for {
       dir <- dirs

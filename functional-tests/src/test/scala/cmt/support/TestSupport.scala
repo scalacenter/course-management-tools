@@ -13,11 +13,11 @@ package cmt.support
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.{CMTaConfig, CMTcConfig, Helpers}
-import cmt.Helpers.{adaptToOSSeparatorChar, commitToGit, dumpStringToFile, initializeGitRepo, setGitConfig}
+import cmt.Helpers.*
 import cmt.admin.Domain.MainRepository
 import cmt.admin.cli.CliCommand.Studentify
-import cmt.client.Domain.{StudentifiedRepo, ForceMoveToExercise}
+import cmt.client.Domain.{ForceMoveToExercise, StudentifiedRepo}
+import cmt.{CMTaConfig, CMTcConfig, Helpers}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
@@ -155,13 +155,17 @@ def extractCodeFromRepo(codeFolder: File): SourceFiles =
 def gotoNextExercise(config: CMTcConfig, studentifiedRepo: File): Unit =
   import cmt.client.command.ClientCommand.NextExercise
   import cmt.client.command.execution.given
-  // Todo force move to exercise is hardcoded
   NextExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo)).execute()
+
+def gotoNextExerciseForced(config: CMTcConfig, studentifiedRepo: File): Unit =
+  import cmt.client.command.ClientCommand.NextExercise
+  import cmt.client.command.execution.given
+  NextExercise(config, ForceMoveToExercise(true), StudentifiedRepo(studentifiedRepo)).execute()
 
 def gotoPreviousExercise(config: CMTcConfig, studentifiedRepo: File): Unit =
   import cmt.client.command.ClientCommand.PreviousExercise
   import cmt.client.command.execution.given
-  PreviousExercise(config, StudentifiedRepo(studentifiedRepo)).execute()
+  PreviousExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo)).execute()
 
 def pullSolution(config: CMTcConfig, studentifiedRepo: File): Unit =
   import cmt.client.command.ClientCommand.PullSolution
@@ -169,15 +173,15 @@ def pullSolution(config: CMTcConfig, studentifiedRepo: File): Unit =
   PullSolution(config, StudentifiedRepo(studentifiedRepo)).execute()
 
 def gotoExercise(config: CMTcConfig, studentifiedRepo: File, exercise: String): Unit =
-  import cmt.client.command.ClientCommand.GotoExercise
   import cmt.client.Domain.ExerciseId
+  import cmt.client.command.ClientCommand.GotoExercise
   import cmt.client.command.execution.given
-  GotoExercise(config, StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
+  GotoExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
 
 def gotoFirstExercise(config: CMTcConfig, studentifiedRepo: File): Unit =
   import cmt.client.command.ClientCommand.GotoFirstExercise
   import cmt.client.command.execution.given
-  GotoFirstExercise(config, StudentifiedRepo(studentifiedRepo)).execute()
+  GotoFirstExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo)).execute()
 
 def saveState(config: CMTcConfig, studentifiedRepo: File): Unit =
   import cmt.client.command.ClientCommand.SaveState
@@ -185,14 +189,14 @@ def saveState(config: CMTcConfig, studentifiedRepo: File): Unit =
   SaveState(config, StudentifiedRepo(studentifiedRepo)).execute()
 
 def restoreState(config: CMTcConfig, studentifiedRepo: File, exercise: String): Unit =
-  import cmt.client.command.ClientCommand.RestoreState
   import cmt.client.Domain.ExerciseId
+  import cmt.client.command.ClientCommand.RestoreState
   import cmt.client.command.execution.given
   RestoreState(config, StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
 
 def pullTemplate(config: CMTcConfig, studentifiedRepo: File, templatePath: String): Unit =
-  import cmt.client.command.ClientCommand.PullTemplate
   import cmt.client.Domain.TemplatePath
+  import cmt.client.command.ClientCommand.PullTemplate
   import cmt.client.command.execution.given
   PullTemplate(config, StudentifiedRepo(studentifiedRepo), TemplatePath(Helpers.adaptToOSSeparatorChar(templatePath)))
     .execute()

@@ -13,53 +13,39 @@ package cmt.client.command.execution
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.Helpers.{
-  deleteFileIfExists,
-  exerciseFileHasBeenModified,
-  extractExerciseNr,
-  fileSha256Hex,
-  fileSize,
-  pullTestCode,
-  withZipFile,
-  writeStudentifiedCMTBookmark,
-  getFilesToCopyAndDelete
-}
+import cmt.Helpers.*
 import cmt.client.command.ClientCommand.NextExercise
 import cmt.core.execution.Executable
 import cmt.{CMTcConfig, toConsoleGreen, toConsoleYellow}
-import sbt.io.IO as sbtio
-import sbt.io.syntax
-import sbt.io.syntax.fileToRichFile
 import com.typesafe.config.{Config, ConfigFactory, ConfigObject, ConfigValue}
+import sbt.io.IO as sbtio
+import sbt.io.syntax.*
 
-//import java.io.File
-import scala.jdk.CollectionConverters.*
 import java.nio.charset.StandardCharsets
+import scala.jdk.CollectionConverters.*
 
 given Executable[NextExercise] with
   extension (cmd: NextExercise)
     def execute(): Either[String, String] = {
+      import cmt.client.Domain.ForceMoveToExercise
       val cMTcConfig = cmd.config
       val currentExerciseId = getCurrentExerciseId(cMTcConfig.bookmarkFile)
       val LastExerciseId = cMTcConfig.exercises.last
 
-      currentExerciseId match {
-        case LastExerciseId => Left(toConsoleGreen(s"You're already at the last exercise: $currentExerciseId"))
+      val activeExerciseFolder = cMTcConfig.activeExerciseFolder
+      val toExerciseId = cMTcConfig.nextExercise(currentExerciseId)
+
+      val (currentTestCodeFiles, filesToBeDeleted, filesToBeCopied) =
+        getFilesToCopyAndDelete(currentExerciseId, toExerciseId, cMTcConfig)
+
+      (currentExerciseId, cmd.forceMoveToExercise) match {
+        case (LastExerciseId, _) =>
+          Left(toConsoleGreen(s"You're already at the last exercise: $currentExerciseId"))
+
+        case (_, ForceMoveToExercise(true)) =>
+          pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
+
         case _ =>
-          val activeExerciseFolder = cMTcConfig.activeExerciseFolder
-          val toExerciseId = cMTcConfig.nextExercise(currentExerciseId)
-          val currentReadmeFiles = cMTcConfig.readmeFilesMetaData(currentExerciseId).keys.to(Set)
-          val nextReadmeFiles = cMTcConfig.readmeFilesMetaData(toExerciseId).keys.to(Set)
-          val nextTestCodeFiles = cMTcConfig.testCodeMetaData(toExerciseId).keys.to(Set)
-
-          val (
-            currentTestCodeFiles,
-            readmefilesToBeDeleted,
-            readmeFilesToBeCopied,
-            testCodeFilesToBeDeleted,
-            testCodeFilesToBeCopied) =
-            getFilesToCopyAndDelete(currentExerciseId, toExerciseId, cMTcConfig)
-
           val existingTestCodeFiles =
             currentTestCodeFiles.filter(file => (activeExerciseFolder / file).exists())
 
@@ -67,18 +53,21 @@ given Executable[NextExercise] with
             exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, cMTcConfig))
 
           if (modifiedTestCodeFiles.nonEmpty)
+            // TODO: need to add a suggested fix when this case triggers:
+            // Either:
+            //   - overwrite modifications by repeating the command and using the force (-f) option
+            //     maybe in combination with cmtc save-state in case the modifications should be
+            //     retrieveable later
+            //   - rename modified files (and probably change class names as well)
+            //
+            // This needs to be added to the `previous-exercise`, `goto-exercise`, and `goto-first-exercise`
+            // commands too.
             Left(s"""next-exercise cancelled.
-                 |You have modified the following file(s):
-                 |${modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n")}
+                 |
+                 |${toConsoleYellow("You have modified the following file(s):")}
+                 |${toConsoleGreen(modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n"))}
                  |""".stripMargin)
           else
-            pullTestCode(
-              toExerciseId,
-              activeExerciseFolder,
-              readmefilesToBeDeleted,
-              readmeFilesToBeCopied,
-              testCodeFilesToBeDeleted,
-              testCodeFilesToBeCopied,
-              cMTcConfig)
+            pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
       }
     }

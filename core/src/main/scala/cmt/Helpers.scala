@@ -308,7 +308,7 @@ object Helpers:
   def getFilesToCopyAndDelete(
       currentExerciseId: String,
       toExerciseId: String,
-      config: CMTcConfig): (Set[String], Set[String], Set[String], Set[String], Set[String]) =
+      config: CMTcConfig): (Set[String], Set[String], Set[String]) =
     val currentReadmeFiles = config.readmeFilesMetaData(currentExerciseId).keys.to(Set)
     val nextReadmeFiles = config.readmeFilesMetaData(toExerciseId).keys.to(Set)
     val nextTestCodeFiles = config.testCodeMetaData(toExerciseId).keys.to(Set)
@@ -321,30 +321,20 @@ object Helpers:
 
     (
       currentTestCodeFiles,
-      readmefilesToBeDeleted,
-      readmeFilesToBeCopied,
-      testCodeFilesToBeDeleted,
-      testCodeFilesToBeCopied)
+      readmefilesToBeDeleted ++ testCodeFilesToBeDeleted,
+      readmeFilesToBeCopied ++ testCodeFilesToBeCopied)
   def pullTestCode(
       toExerciseId: String,
       activeExerciseFolder: File,
-      readmefilesToBeDeleted: Set[String],
-      readmeFilesToBeCopied: Set[String],
-      testCodeFilesToBeDeleted: Set[String],
-      testCodeFilesToBeCopied: Set[String],
+      filesToBeDeleted: Set[String],
+      filesToBeCopied: Set[String],
       config: CMTcConfig): Either[String, String] =
     withZipFile(config.solutionsFolder, toExerciseId) { solution =>
       for {
-        file <- readmefilesToBeDeleted
+        file <- filesToBeDeleted
       } deleteFileIfExists(activeExerciseFolder / file)
       for {
-        file <- readmeFilesToBeCopied
-      } sbtio.copyFile(solution / file, activeExerciseFolder / file)
-      for {
-        file <- testCodeFilesToBeDeleted
-      } deleteFileIfExists(activeExerciseFolder / file)
-      for {
-        file <- testCodeFilesToBeCopied
+        file <- filesToBeCopied
       } sbtio.copyFile(solution / file, activeExerciseFolder / file)
 
       writeStudentifiedCMTBookmark(config.bookmarkFile, toExerciseId)

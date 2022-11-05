@@ -14,7 +14,7 @@ package cmt.client.cli
   */
 
 import cmt.CMTcConfig
-import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath, ForceMoveToExercise}
+import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo, TemplatePath}
 import cmt.client.cli.CliCommand.*
 import cmt.client.command.ClientCommand
 
@@ -59,10 +59,10 @@ final case class CliOptions(
     new CMTcConfig(studentifiedRepo.value)
 
   private def gotoExercise(): ClientCommand =
-    ClientCommand.GotoExercise(toConfig(), studentifiedRepo, exerciseId)
+    ClientCommand.GotoExercise(toConfig(), forceMoveToExercise, studentifiedRepo, exerciseId)
 
   private def gotoFirstExercise(): ClientCommand =
-    ClientCommand.GotoFirstExercise(toConfig(), studentifiedRepo)
+    ClientCommand.GotoFirstExercise(toConfig(), forceMoveToExercise, studentifiedRepo)
 
   private def listExercises(): ClientCommand =
     ClientCommand.ListExercises(toConfig(), studentifiedRepo)
@@ -74,7 +74,7 @@ final case class CliOptions(
     ClientCommand.NextExercise(toConfig(), forceMoveToExercise, studentifiedRepo)
 
   private def previousExercise(): ClientCommand =
-    ClientCommand.PreviousExercise(toConfig(), studentifiedRepo)
+    ClientCommand.PreviousExercise(toConfig(), forceMoveToExercise, studentifiedRepo)
 
   private def pullSolution(): ClientCommand =
     ClientCommand.PullSolution(toConfig(), studentifiedRepo)

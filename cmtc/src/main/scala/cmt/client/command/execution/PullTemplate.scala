@@ -16,11 +16,9 @@ package cmt.client.command.execution
 import cmt.Helpers.withZipFile
 import cmt.client.command.ClientCommand.PullTemplate
 import cmt.core.execution.Executable
-import sbt.io.CopyOptions
 import cmt.{toConsoleGreen, toConsoleYellow}
-import sbt.io.IO as sbtio
-import sbt.io.syntax.fileToRichFile
-import sbt.io.syntax.singleFileFinder
+import sbt.io.{CopyOptions, IO as sbtio}
+import sbt.io.syntax.{fileToRichFile, singleFileFinder}
 
 import java.nio.charset.StandardCharsets
 

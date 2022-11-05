@@ -14,11 +14,9 @@ package cmt.client
   */
 
 import cmt.client.cli.{CliOptions, ClientCliParser}
-import cmt.printMessage
-import cmt.printErrorAndExit
-import cmt.toConsoleRed
 import cmt.client.command.ClientCommand.*
 import cmt.client.command.execution.given
+import cmt.{printErrorAndExit, printMessage, toConsoleRed}
 import cmt.version.BuildInfo
 
 object Main:

@@ -18,8 +18,7 @@ import cmt.client.command.ClientCommand.SaveState
 import cmt.core.execution.Executable
 import cmt.{Helpers, toConsoleGreen}
 import sbt.io.IO as sbtio
-import sbt.io.syntax.fileToRichFile
-import sbt.io.syntax.singleFileFinder
+import sbt.io.syntax.{fileToRichFile, singleFileFinder}
 
 import java.nio.charset.StandardCharsets
 

@@ -15,9 +15,8 @@ package cmt.client.command
 
 import cmt.Helpers.writeStudentifiedCMTBookmark
 import cmt.{CMTcConfig, Helpers}
-import sbt.io.syntax.File
 import sbt.io.IO as sbtio
-import sbt.io.syntax.fileToRichFile
+import sbt.io.syntax.{File, fileToRichFile}
 
 import java.nio.charset.StandardCharsets
 

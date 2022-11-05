@@ -17,7 +17,7 @@ import cmt.{CMTaConfig, CMTcConfig, Helpers}
 import cmt.Helpers.{adaptToOSSeparatorChar, commitToGit, dumpStringToFile, initializeGitRepo, setGitConfig}
 import cmt.admin.Domain.MainRepository
 import cmt.admin.cli.CliCommand.Studentify
-import cmt.client.Domain.StudentifiedRepo
+import cmt.client.Domain.{StudentifiedRepo, ForceMoveToExercise}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
@@ -155,7 +155,8 @@ def extractCodeFromRepo(codeFolder: File): SourceFiles =
 def gotoNextExercise(config: CMTcConfig, studentifiedRepo: File): Unit =
   import cmt.client.command.ClientCommand.NextExercise
   import cmt.client.command.execution.given
-  NextExercise(config, StudentifiedRepo(studentifiedRepo)).execute()
+  // Todo force move to exercise is hardcoded
+  NextExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo)).execute()
 
 def gotoPreviousExercise(config: CMTcConfig, studentifiedRepo: File): Unit =
   import cmt.client.command.ClientCommand.PreviousExercise

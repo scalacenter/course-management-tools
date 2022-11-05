@@ -14,7 +14,7 @@ package cmt.client.cli
   */
 
 import cmt.CMTcConfig
-import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
+import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath, ForceMoveToExercise}
 import cmt.client.cli.CliCommand.*
 import cmt.client.command.ClientCommand
 
@@ -36,6 +36,7 @@ object CliCommand:
 final case class CliOptions(
     command: CliCommand,
     studentifiedRepo: StudentifiedRepo,
+    forceMoveToExercise: ForceMoveToExercise,
     exerciseId: ExerciseId,
     templatePath: TemplatePath) {
 
@@ -70,7 +71,7 @@ final case class CliOptions(
     ClientCommand.ListSavedStates(toConfig(), studentifiedRepo)
 
   private def nextExercise(): ClientCommand =
-    ClientCommand.NextExercise(toConfig(), studentifiedRepo)
+    ClientCommand.NextExercise(toConfig(), forceMoveToExercise, studentifiedRepo)
 
   private def previousExercise(): ClientCommand =
     ClientCommand.PreviousExercise(toConfig(), studentifiedRepo)
@@ -98,5 +99,6 @@ object CliOptions:
       command: CliCommand = CliCommand.NoCommand,
       studentifiedRepo: StudentifiedRepo = StudentifiedRepo.default,
       exerciseId: ExerciseId = ExerciseId.default,
+      forceMoveToExercise: ForceMoveToExercise = ForceMoveToExercise(false),
       template: TemplatePath = TemplatePath.default): CliOptions =
-    CliOptions(command, studentifiedRepo, exerciseId, template)
+    CliOptions(command, studentifiedRepo, forceMoveToExercise, exerciseId, template)

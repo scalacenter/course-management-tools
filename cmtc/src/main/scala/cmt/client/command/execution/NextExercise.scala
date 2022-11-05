@@ -13,10 +13,20 @@ package cmt.client.command.execution
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.Helpers.{deleteFileIfExists, fileSize, fileSha256Hex, withZipFile, writeStudentifiedCMTBookmark}
+import cmt.Helpers.{
+  deleteFileIfExists,
+  exerciseFileHasBeenModified,
+  extractExerciseNr,
+  fileSha256Hex,
+  fileSize,
+  pullTestCode,
+  withZipFile,
+  writeStudentifiedCMTBookmark,
+  getFilesToCopyAndDelete
+}
 import cmt.client.command.ClientCommand.NextExercise
 import cmt.core.execution.Executable
-import cmt.{toConsoleGreen, toConsoleYellow}
+import cmt.{CMTcConfig, toConsoleGreen, toConsoleYellow}
 import sbt.io.IO as sbtio
 import sbt.io.syntax
 import sbt.io.syntax.fileToRichFile
@@ -33,64 +43,42 @@ given Executable[NextExercise] with
       val currentExerciseId = getCurrentExerciseId(cMTcConfig.bookmarkFile)
       val LastExerciseId = cMTcConfig.exercises.last
 
-//      cmd.config.readmeFilesMetaData.foreach { case (k, v) => println(s"$k ->\n${v.mkString("    ", "\n    ", "\n")}")}
-
       currentExerciseId match {
         case LastExerciseId => Left(toConsoleGreen(s"You're already at the last exercise: $currentExerciseId"))
         case _ =>
           val activeExerciseFolder = cMTcConfig.activeExerciseFolder
-          val nextExercise = cMTcConfig.nextExercise(currentExerciseId)
+          val toExerciseId = cMTcConfig.nextExercise(currentExerciseId)
           val currentReadmeFiles = cMTcConfig.readmeFilesMetaData(currentExerciseId).keys.to(Set)
-          val nextReadmeFiles = cMTcConfig.readmeFilesMetaData(nextExercise).keys.to(Set)
-          val currentTestCodeFiles = cMTcConfig.testCodeMetaData(currentExerciseId).keys.to(Set)
-          val nextTestCodeFiles = cMTcConfig.testCodeMetaData(nextExercise).keys.to(Set)
+          val nextReadmeFiles = cMTcConfig.readmeFilesMetaData(toExerciseId).keys.to(Set)
+          val nextTestCodeFiles = cMTcConfig.testCodeMetaData(toExerciseId).keys.to(Set)
 
-          val readmefilesToBeDeleted = currentReadmeFiles &~ nextReadmeFiles
-          val readmeFilesToBeCopied = nextReadmeFiles &~ readmefilesToBeDeleted
-          val testCodeFilesToBeDeleted = currentTestCodeFiles &~ nextTestCodeFiles
-          val testCodeFilesToBeCopied = nextTestCodeFiles &~ testCodeFilesToBeDeleted
+          val (
+            currentTestCodeFiles,
+            readmefilesToBeDeleted,
+            readmeFilesToBeCopied,
+            testCodeFilesToBeDeleted,
+            testCodeFilesToBeCopied) =
+            getFilesToCopyAndDelete(currentExerciseId, toExerciseId, cMTcConfig)
 
-          val (existingTestCodeFiles, deletedTestCodeFiles) =
-            currentTestCodeFiles.partition(file => (activeExerciseFolder / file).exists())
+          val existingTestCodeFiles =
+            currentTestCodeFiles.filter(file => (activeExerciseFolder / file).exists())
 
-          val modifiedTestCodeFiles = existingTestCodeFiles.foldLeft(List.empty[String]) { case (acc, file) =>
-            if (
-              (activeExerciseFolder / file).exists() &&
-              (fileSize(activeExerciseFolder / file) !=
-                cMTcConfig.testCodeMetaData(currentExerciseId)(file).size ||
-                fileSha256Hex(activeExerciseFolder / file) !=
-                cMTcConfig.testCodeMetaData(currentExerciseId)(file).sha256)
-            )
-              file +: acc
-            else
-              acc
-          }
+          val modifiedTestCodeFiles = existingTestCodeFiles.filter(
+            exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, cMTcConfig))
 
-          if (!modifiedTestCodeFiles.isEmpty)
+          if (modifiedTestCodeFiles.nonEmpty)
             Left(s"""next-exercise cancelled.
                  |You have modified the following file(s):
                  |${modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n")}
-
-                    |""".stripMargin)
+                 |""".stripMargin)
           else
-            withZipFile(cmd.config.solutionsFolder, nextExercise) { solution =>
-              for {
-                file <- readmefilesToBeDeleted
-              } deleteFileIfExists(activeExerciseFolder / file)
-              for {
-                file <- readmeFilesToBeCopied
-              } sbtio.copyFile(solution / file, activeExerciseFolder / file)
-              for {
-                file <- testCodeFilesToBeDeleted
-              } deleteFileIfExists(activeExerciseFolder / file)
-              for {
-                file <- testCodeFilesToBeCopied
-              } sbtio.copyFile(solution / file, activeExerciseFolder / file)
-
-              writeStudentifiedCMTBookmark(cMTcConfig.bookmarkFile, nextExercise)
-
-              Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(
-                  s"${cmd.config.nextExercise(currentExerciseId)}")}")
-            }
+            pullTestCode(
+              toExerciseId,
+              activeExerciseFolder,
+              readmefilesToBeDeleted,
+              readmeFilesToBeCopied,
+              testCodeFilesToBeDeleted,
+              testCodeFilesToBeCopied,
+              cMTcConfig)
       }
     }

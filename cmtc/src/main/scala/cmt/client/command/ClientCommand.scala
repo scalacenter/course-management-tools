@@ -14,7 +14,7 @@ package cmt.client.command
   */
 
 import cmt.CMTcConfig
-import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
+import cmt.client.Domain.{ExerciseId, StudentifiedRepo, ForceMoveToExercise, TemplatePath}
 
 sealed trait ClientCommand
 object ClientCommand:
@@ -22,7 +22,11 @@ object ClientCommand:
   final case class ListExercises(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
   final case class ListSavedStates(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
   case object NoCommand extends ClientCommand
-  final case class NextExercise(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
+  final case class NextExercise(
+      config: CMTcConfig,
+      forceMoveToExercise: ForceMoveToExercise,
+      studentifiedRepo: StudentifiedRepo)
+      extends ClientCommand
   final case class PreviousExercise(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
   final case class PullSolution(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand
   final case class SaveState(config: CMTcConfig, studentifiedRepo: StudentifiedRepo) extends ClientCommand

@@ -21,6 +21,7 @@ object Domain:
     val default: ExerciseId = ExerciseId("")
 
   final case class StudentifiedRepo(value: File)
+  final case class ForceMoveToExercise(forceMove: Boolean)
   object StudentifiedRepo:
     val default: StudentifiedRepo = StudentifiedRepo(file(".").getAbsoluteFile.getParentFile)
 

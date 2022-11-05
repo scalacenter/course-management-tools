@@ -295,6 +295,62 @@ object Helpers:
     val digest = MessageDigest.getInstance("SHA-256").digest(fileContents)
     Hex.encodeHexString(digest)
 
+  def exerciseFileHasBeenModified(
+      activeExerciseFolder: File,
+      exerciseId: String,
+      file: String,
+      config: CMTcConfig): Boolean =
+    fileSize(activeExerciseFolder / file) !=
+      config.testCodeMetaData(exerciseId)(file).size ||
+      fileSha256Hex(activeExerciseFolder / file) !=
+      config.testCodeMetaData(exerciseId)(file).sha256
+
+  def getFilesToCopyAndDelete(
+      currentExerciseId: String,
+      toExerciseId: String,
+      config: CMTcConfig): (Set[String], Set[String], Set[String], Set[String], Set[String]) =
+    val currentReadmeFiles = config.readmeFilesMetaData(currentExerciseId).keys.to(Set)
+    val nextReadmeFiles = config.readmeFilesMetaData(toExerciseId).keys.to(Set)
+    val nextTestCodeFiles = config.testCodeMetaData(toExerciseId).keys.to(Set)
+
+    val currentTestCodeFiles = config.testCodeMetaData(currentExerciseId).keys.to(Set)
+    val readmefilesToBeDeleted = currentReadmeFiles &~ nextReadmeFiles
+    val readmeFilesToBeCopied = nextReadmeFiles &~ readmefilesToBeDeleted
+    val testCodeFilesToBeDeleted = currentTestCodeFiles &~ nextTestCodeFiles
+    val testCodeFilesToBeCopied = nextTestCodeFiles &~ testCodeFilesToBeDeleted
+
+    (
+      currentTestCodeFiles,
+      readmefilesToBeDeleted,
+      readmeFilesToBeCopied,
+      testCodeFilesToBeDeleted,
+      testCodeFilesToBeCopied)
+  def pullTestCode(
+      toExerciseId: String,
+      activeExerciseFolder: File,
+      readmefilesToBeDeleted: Set[String],
+      readmeFilesToBeCopied: Set[String],
+      testCodeFilesToBeDeleted: Set[String],
+      testCodeFilesToBeCopied: Set[String],
+      config: CMTcConfig): Either[String, String] =
+    withZipFile(config.solutionsFolder, toExerciseId) { solution =>
+      for {
+        file <- readmefilesToBeDeleted
+      } deleteFileIfExists(activeExerciseFolder / file)
+      for {
+        file <- readmeFilesToBeCopied
+      } sbtio.copyFile(solution / file, activeExerciseFolder / file)
+      for {
+        file <- testCodeFilesToBeDeleted
+      } deleteFileIfExists(activeExerciseFolder / file)
+      for {
+        file <- testCodeFilesToBeCopied
+      } sbtio.copyFile(solution / file, activeExerciseFolder / file)
+
+      writeStudentifiedCMTBookmark(config.bookmarkFile, toExerciseId)
+
+      Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"$toExerciseId")}")
+    }
   def writeTestReadmeCodeMetadata(
       cleanedMainRepo: File,
       exercises: Vector[String],

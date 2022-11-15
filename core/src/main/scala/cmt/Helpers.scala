@@ -275,6 +275,15 @@ object Helpers:
 
   private val separatorChar: Char = java.io.File.separatorChar
 
+  def adaptToNixSeparatorChar(path: String): String =
+    separatorChar match
+      case '\\' =>
+        path.replaceAll("""\\""", "/")
+      case '/' =>
+        path
+      case _ =>
+        path.replaceAll(s"/", s"$separatorChar")
+
   def adaptToOSSeparatorChar(path: String): String =
     separatorChar match
       case '\\' =>
@@ -363,7 +372,10 @@ object Helpers:
         (srcTestCodeFiles ++ srcTestCodeFolders.flatMap(fileList))
           .map(f => (sbtio.relativizeFile(cleanedMainRepo / cmtaConfig.mainRepoExerciseFolder / exercise, f), f))
           .collect { case (Some(s), f) =>
-            Map(s""""${s.getPath}"""" -> Map("size" -> fileSize(f), "sha256" -> fileSha256Hex(f)).asJava).asJava
+            Map(
+              s""""${adaptToNixSeparatorChar(s.getPath)}"""" -> Map(
+                "size" -> fileSize(f),
+                "sha256" -> fileSha256Hex(f)).asJava).asJava
           }
 
     } yield exercise -> allFiles.asJava).to(Map)
@@ -378,7 +390,10 @@ object Helpers:
         (srcReadmeFiles ++ srcReadmeFolders.flatMap(fileList))
           .map(f => (sbtio.relativizeFile(cleanedMainRepo / cmtaConfig.mainRepoExerciseFolder / exercise, f), f))
           .collect { case (Some(s), f) =>
-            Map(s""""${s.getPath}"""" -> Map("size" -> fileSize(f), "sha256" -> fileSha256Hex(f)).asJava).asJava
+            Map(
+              s""""${adaptToNixSeparatorChar(s.getPath)}"""" -> Map(
+                "size" -> fileSize(f),
+                "sha256" -> fileSha256Hex(f)).asJava).asJava
           }
 
     } yield exercise -> allFiles.asJava).to(Map)

@@ -17,7 +17,7 @@ import scopt.{OEffect, OParser}
 
 trait CliParser {
 
-  protected def _parse[T](parser: OParser[_, T], options: T)(
+  protected def _parse[T](parser: OParser[?, T], options: T)(
       args: Array[String]): Either[cmt.core.cli.CmdLineParseError, T] =
     OParser.runParser(parser, args, options) match {
       case (result, effects) => handleParsingResult(result, effects)

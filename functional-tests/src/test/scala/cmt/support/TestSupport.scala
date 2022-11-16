@@ -101,6 +101,17 @@ object SourceFiles:
         dumpStringToFile(checksum.toString, baseFolder / codeFolder / exercise / filePath)
       }
 
+    def moveFile(baseFolder: File, fromPath: String, toPath: String): SourceFiles =
+      for {
+        (path, checksum) <- sf
+        tp =
+          if (fromPath == path)
+            println(s"Moving from ${baseFolder / fromPath} to ${baseFolder / toPath}")
+            sbtio.move(baseFolder / fromPath, baseFolder / toPath)
+            toPath
+          else path
+      } yield (tp, checksum)
+
     @targetName("mergeWith")
     def ++(other: SourceFiles): SourceFiles =
       sf ++ other

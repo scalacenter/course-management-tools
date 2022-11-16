@@ -6,7 +6,7 @@ import sbtbuildinfo.BuildInfoKeys._
 object Build {
 
   object CompileOptions {
-    val compileOptions = Seq("-source:future")
+    val compileOptions = Seq("-source:future", "-deprecation")
   }
 
   lazy val commonSettings = Seq(

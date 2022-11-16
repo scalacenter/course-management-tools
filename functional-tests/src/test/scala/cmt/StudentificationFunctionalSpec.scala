@@ -14,19 +14,18 @@ package cmt
   */
 
 import cmt.Helpers.{dumpStringToFile, fileList}
-
-import java.util.UUID
-import java.nio.charset.StandardCharsets
 import cmt.admin.Domain.MainRepository
 import cmt.client.Domain.StudentifiedRepo
 import cmt.client.cli.CliCommand.PullTemplate
-import cmt.support.{ExerciseMetadata, SourcesStruct}
-import org.scalatest.{BeforeAndAfterAll, GivenWhenThen}
+import cmt.support.*
 import org.scalatest.featurespec.AnyFeatureSpecLike
 import org.scalatest.matchers.should.Matchers
-import support.*
-import sbt.io.syntax.*
+import org.scalatest.{BeforeAndAfterAll, GivenWhenThen}
 import sbt.io.IO as sbtio
+import sbt.io.syntax.*
+
+import java.nio.charset.StandardCharsets
+import java.util.UUID
 
 trait StudentifiedRepoFixture {
 
@@ -125,7 +124,6 @@ final class StudentificationFunctionalSpec
   val tmpDir: File = sbtio.createTemporaryDirectory
 
   override def afterAll(): Unit =
-    println("deleting temp directory")
     sbtio.delete(tmpDir)
 
   info("As a user")
@@ -419,13 +417,13 @@ final class StudentificationFunctionalSpec
         // @formatter:off
         val expectedCode =
           exercises.getMainCode("exercise_001_desc") ++
-            exercises.getTestCode("exercise_003_desc") ++
-            dontTouchMeFile_1 ++
-            uniqueTestCodeFile ++
-            exercises.getReadmeCode("exercise_003_desc") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+          exercises.getTestCode("exercise_003_desc") ++
+          dontTouchMeFile_1 ++
+          uniqueTestCodeFile ++
+          exercises.getReadmeCode("exercise_003_desc") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
         // @formatter:on
 
         actualCode shouldBe expectedCode
@@ -478,14 +476,14 @@ final class StudentificationFunctionalSpec
         // @formatter:off
         val expectedCode =
           exercises.getMainCode("exercise_001_desc") ++
-            exercises.getTestCode("exercise_003_desc") ++
-            dontTouchMeFile_1 ++
-            uniqueTestCodeFile ++
-            changedTestFile ++
-            exercises.getReadmeCode("exercise_003_desc") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+          exercises.getTestCode("exercise_003_desc") ++
+          dontTouchMeFile_1 ++
+          uniqueTestCodeFile ++
+          changedTestFile ++
+          exercises.getReadmeCode("exercise_003_desc") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
         // @formatter:on
 
         actualCode shouldBe expectedCode
@@ -511,13 +509,13 @@ final class StudentificationFunctionalSpec
         // @formatter:off
         val expectedCode =
           exercises.getMainCode("exercise_001_desc") ++
-            exercises.getTestCode("exercise_004_desc") ++
-            dontTouchMeFile_1 ++
-            uniqueTestCodeFile ++
-            exercises.getReadmeCode("exercise_004_desc") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+          exercises.getTestCode("exercise_004_desc") ++
+          dontTouchMeFile_1 ++
+          uniqueTestCodeFile ++
+          exercises.getReadmeCode("exercise_004_desc") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
         // @formatter:on
 
         actualCode shouldBe expectedCode
@@ -545,14 +543,14 @@ final class StudentificationFunctionalSpec
         // @formatter:off
         val expectedCode =
           exercises.getMainCode("exercise_001_desc") ++
-            exercises.getTestCode("exercise_003_desc") ++
-            dontTouchMeFile_1 ++
-            uniqueTestCodeFile ++
-            changedTestFile ++
-            exercises.getReadmeCode("exercise_003_desc") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+          exercises.getTestCode("exercise_003_desc") ++
+          dontTouchMeFile_1 ++
+          uniqueTestCodeFile ++
+          changedTestFile ++
+          exercises.getReadmeCode("exercise_003_desc") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
         // @formatter:on
 
         actualCode shouldBe expectedCode
@@ -568,16 +566,54 @@ final class StudentificationFunctionalSpec
         // @formatter:off
         val expectedCodeForced =
           exercises.getMainCode("exercise_001_desc") ++
-            exercises.getTestCode("exercise_004_desc") ++
-            dontTouchMeFile_1 ++
-            uniqueTestCodeFile ++
-            exercises.getReadmeCode("exercise_004_desc") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
-            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+          exercises.getTestCode("exercise_004_desc") ++
+          dontTouchMeFile_1 ++
+          uniqueTestCodeFile ++
+          exercises.getReadmeCode("exercise_004_desc") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
         // @formatter:on
 
         actualCodeForced shouldBe expectedCodeForced
+
+      }
+
+      When("an exercise state is restored that contains a modified test code file")
+
+      // Let's first save the current state of the exercise so that we can restore it for other test scenarios
+      restoreState(cMTcConfig, studentifiedRepoFolder, "exercise_003_desc")
+
+      Then(
+        "moving the modified file to a different path (not part of the existing test code paths) should make a move to another exercise possible")
+
+      {
+        val movedFile = changedTestFile.moveFile(
+          studentifiedRepoCodeFolder,
+          "src/test/cmt/pkg/T3.scala",
+          "src/test/cmt/pkg/T3NotInTestCode.scala")
+        println(s"moved file: $movedFile")
+        val gotoNextExerciseResult = gotoNextExercise(cMTcConfig, studentifiedRepoFolder)
+
+        val gotoNextExerciseExpectedResult = Symbol("right")
+        gotoNextExerciseResult shouldBe gotoNextExerciseExpectedResult
+
+        val actualCode = extractCodeFromRepo(studentifiedRepoCodeFolder)
+
+        // @formatter:off
+        val expectedCode =
+          exercises.getMainCode("exercise_001_desc") ++
+          exercises.getTestCode("exercise_004_desc") ++
+          dontTouchMeFile_1 ++
+          uniqueTestCodeFile ++
+          movedFile ++
+          exercises.getReadmeCode("exercise_004_desc") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+          exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+        // @formatter:on
+
+        actualCode shouldBe expectedCode
 
       }
     }

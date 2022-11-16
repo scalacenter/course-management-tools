@@ -487,7 +487,6 @@ final class StudentificationFunctionalSpec
         // @formatter:on
 
         actualCode shouldBe expectedCode
-
       }
 
       When("a test code file that is part of the solution and that was modified is restored to its original content")
@@ -519,12 +518,11 @@ final class StudentificationFunctionalSpec
         // @formatter:on
 
         actualCode shouldBe expectedCode
-
       }
 
       When("an exercise state is restored that contains a modified test code file")
 
-      // Let's first save the current state of the exercise so that we can restore it for other test scenarios
+      // Start from a known (saved) state in previous scenario
       restoreState(cMTcConfig, studentifiedRepoFolder, "exercise_003_desc")
 
       Then("moving to the next exercise should generate an error unless the move is forced")
@@ -576,12 +574,11 @@ final class StudentificationFunctionalSpec
         // @formatter:on
 
         actualCodeForced shouldBe expectedCodeForced
-
       }
 
       When("an exercise state is restored that contains a modified test code file")
 
-      // Let's first save the current state of the exercise so that we can restore it for other test scenarios
+      // Start from a known (saved) state
       restoreState(cMTcConfig, studentifiedRepoFolder, "exercise_003_desc")
 
       Then(
@@ -592,7 +589,6 @@ final class StudentificationFunctionalSpec
           studentifiedRepoCodeFolder,
           "src/test/cmt/pkg/T3.scala",
           "src/test/cmt/pkg/T3NotInTestCode.scala")
-        println(s"moved file: $movedFile")
         val gotoNextExerciseResult = gotoNextExercise(cMTcConfig, studentifiedRepoFolder)
 
         val gotoNextExerciseExpectedResult = Symbol("right")
@@ -614,7 +610,6 @@ final class StudentificationFunctionalSpec
         // @formatter:on
 
         actualCode shouldBe expectedCode
-
       }
     }
   }

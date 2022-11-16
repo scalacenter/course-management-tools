@@ -105,10 +105,10 @@ object SourceFiles:
       for {
         (path, checksum) <- sf
         tp =
-          if (fromPath == path)
-            println(s"Moving from ${baseFolder / fromPath} to ${baseFolder / toPath}")
-            sbtio.move(baseFolder / fromPath, baseFolder / toPath)
-            toPath
+          if (adaptToOSSeparatorChar(fromPath) == path)
+            val localToPath = adaptToOSSeparatorChar(toPath)
+            sbtio.move(baseFolder / path, baseFolder / localToPath)
+            localToPath
           else path
       } yield (tp, checksum)
 

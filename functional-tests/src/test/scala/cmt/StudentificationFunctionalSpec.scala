@@ -13,7 +13,7 @@ package cmt
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.Helpers.dumpStringToFile
+import cmt.Helpers.{dumpStringToFile, fileList}
 
 import java.util.UUID
 import java.nio.charset.StandardCharsets
@@ -123,6 +123,7 @@ final class StudentificationFunctionalSpec
     with BeforeAndAfterAll {
 
   val tmpDir: File = sbtio.createTemporaryDirectory
+  println(s"~~> Test tmp dir: $tmpDir\n")
 
   override def afterAll(): Unit =
     println("deleting temp directory")
@@ -399,6 +400,186 @@ final class StudentificationFunctionalSpec
         // @formatter:on
 
         actualCode shouldBe expectedCode
+      }
+
+      When(
+        "Adding a file in the src code that isn't part of the current exercise test code and moving to the previous exercise")
+
+      val uniqueTestCodeFile =
+        addFileToStudentifiedRepo(
+          studentifiedRepoCodeFolder,
+          Helpers.adaptToOSSeparatorChar("src/test/cmt/pkg/T2-unique.scala"))
+      gotoPreviousExercise(cMTcConfig, studentifiedRepoFolder)
+
+      Then(
+        "should be the solution for the first exercise + the pulled template file + the files in the template folder")
+
+      {
+        val actualCode = extractCodeFromRepo(studentifiedRepoCodeFolder)
+
+        // @formatter:off
+        val expectedCode =
+          exercises.getMainCode("exercise_001_desc") ++
+            exercises.getTestCode("exercise_003_desc") ++
+            dontTouchMeFile_1 ++
+            uniqueTestCodeFile ++
+            exercises.getReadmeCode("exercise_003_desc") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+        // @formatter:on
+
+        actualCode shouldBe expectedCode
+      }
+
+      When("a test code file that is part of the solution is modified")
+
+      val changedTestFile =
+        addFileToStudentifiedRepo(
+          studentifiedRepoCodeFolder,
+          Helpers.adaptToOSSeparatorChar("src/test/cmt/pkg/T3.scala"))
+
+      Then("any move (next, previous, first, random) to another exercise should generate an error")
+
+      {
+        val gotoPreviousExerciseResult = gotoPreviousExercise(cMTcConfig, studentifiedRepoFolder)
+        val gotoPreviousExerciseExpectedResult = Left(s"""previous-exercise cancelled.
+             |
+             |${toConsoleYellow("You have modified the following file(s):")}
+             |${toConsoleGreen(List("src/test/cmt/pkg/T3.scala").mkString("\n   ", "\n   ", "\n"))}
+             |""".stripMargin)
+        gotoPreviousExerciseResult shouldBe gotoPreviousExerciseExpectedResult
+
+        val gotoNextExerciseResult = gotoNextExercise(cMTcConfig, studentifiedRepoFolder)
+        val gotoNextExerciseExpectedResult = Left(s"""next-exercise cancelled.
+             |
+             |${toConsoleYellow("You have modified the following file(s):")}
+             |${toConsoleGreen(List("src/test/cmt/pkg/T3.scala").mkString("\n   ", "\n   ", "\n"))}
+             |""".stripMargin)
+        gotoNextExerciseResult shouldBe gotoNextExerciseExpectedResult
+
+        val gotoFirstExerciseResult = gotoFirstExercise(cMTcConfig, studentifiedRepoFolder)
+        val gotoFirstExerciseExpectedResult = Left(s"""goto-exercise cancelled.
+             |
+             |${toConsoleYellow("You have modified the following file(s):")}
+             |${toConsoleGreen(List("src/test/cmt/pkg/T3.scala").mkString("\n   ", "\n   ", "\n"))}
+             |""".stripMargin)
+        gotoFirstExerciseResult shouldBe gotoFirstExerciseExpectedResult
+
+        val gotoSecondExerciseResult = gotoExercise(cMTcConfig, studentifiedRepoFolder, "exercise_002_desc")
+        val gotoSecondExerciseExpectedResult = Left(s"""goto-exercise cancelled.
+             |
+             |${toConsoleYellow("You have modified the following file(s):")}
+             |${toConsoleGreen(List("src/test/cmt/pkg/T3.scala").mkString("\n   ", "\n   ", "\n"))}
+             |""".stripMargin)
+        gotoSecondExerciseResult shouldBe gotoSecondExerciseExpectedResult
+
+        val actualCode = extractCodeFromRepo(studentifiedRepoCodeFolder)
+
+        // @formatter:off
+        val expectedCode =
+          exercises.getMainCode("exercise_001_desc") ++
+            exercises.getTestCode("exercise_003_desc") ++
+            dontTouchMeFile_1 ++
+            uniqueTestCodeFile ++
+            changedTestFile ++
+            exercises.getReadmeCode("exercise_003_desc") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+        // @formatter:on
+
+        actualCode shouldBe expectedCode
+
+      }
+
+      When("a test code file that is part of the solution and that was modified is restored to its original content")
+
+      // Let's first save the current state of the exercise so that we can restore it for other test scenarios
+      saveState(cMTcConfig, studentifiedRepoFolder)
+      // Restore the test code file to its original content
+      pullTemplate(cMTcConfig, studentifiedRepoFolder, "src/test/cmt/pkg/T3.scala")
+
+      Then("it should be possible to move to the next exercise without forcing it")
+
+      {
+        val gotoNextExerciseResult = gotoNextExercise(cMTcConfig, studentifiedRepoFolder)
+        val gotoNextExerciseExpectedResult = Symbol("right")
+        gotoNextExerciseResult shouldBe gotoNextExerciseExpectedResult
+
+        val actualCode = extractCodeFromRepo(studentifiedRepoCodeFolder)
+
+        // @formatter:off
+        val expectedCode =
+          exercises.getMainCode("exercise_001_desc") ++
+            exercises.getTestCode("exercise_004_desc") ++
+            dontTouchMeFile_1 ++
+            uniqueTestCodeFile ++
+            exercises.getReadmeCode("exercise_004_desc") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+        // @formatter:on
+
+        actualCode shouldBe expectedCode
+
+      }
+
+      When("an exercise state is restored that contains a modified test code file")
+
+      // Let's first save the current state of the exercise so that we can restore it for other test scenarios
+      restoreState(cMTcConfig, studentifiedRepoFolder, "exercise_003_desc")
+
+      Then("moving to the next exercise should generate an error unless the move is forced")
+
+      {
+        val gotoNextExerciseResult = gotoNextExercise(cMTcConfig, studentifiedRepoFolder)
+        val gotoNextExerciseExpectedResult = Left(s"""next-exercise cancelled.
+             |
+             |${toConsoleYellow("You have modified the following file(s):")}
+             |${toConsoleGreen(List("src/test/cmt/pkg/T3.scala").mkString("\n   ", "\n   ", "\n"))}
+             |""".stripMargin)
+        gotoNextExerciseResult shouldBe gotoNextExerciseExpectedResult
+
+        val actualCode = extractCodeFromRepo(studentifiedRepoCodeFolder)
+
+        // @formatter:off
+        val expectedCode =
+          exercises.getMainCode("exercise_001_desc") ++
+            exercises.getTestCode("exercise_003_desc") ++
+            dontTouchMeFile_1 ++
+            uniqueTestCodeFile ++
+            changedTestFile ++
+            exercises.getReadmeCode("exercise_003_desc") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+        // @formatter:on
+
+        actualCode shouldBe expectedCode
+
+        // Repeat the move but force it
+        val gotoNextExerciseForcedResult = gotoNextExerciseForced(cMTcConfig, studentifiedRepoFolder)
+        val gotoNextExerciseForcedExpectedResult = Symbol("right")
+
+        gotoNextExerciseForcedResult shouldBe gotoNextExerciseForcedExpectedResult
+
+        val actualCodeForced = extractCodeFromRepo(studentifiedRepoCodeFolder)
+
+        // @formatter:off
+        val expectedCodeForced =
+          exercises.getMainCode("exercise_001_desc") ++
+            exercises.getTestCode("exercise_004_desc") ++
+            dontTouchMeFile_1 ++
+            uniqueTestCodeFile ++
+            exercises.getReadmeCode("exercise_004_desc") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/sample/Sample1.scala") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template1.scala") +
+            exercises.getMainFile("exercise_004_desc", "src/main/cmt/template/Template2.scala")
+        // @formatter:on
+
+        actualCodeForced shouldBe expectedCodeForced
+
       }
     }
   }

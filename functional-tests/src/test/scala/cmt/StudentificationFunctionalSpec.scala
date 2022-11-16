@@ -123,7 +123,6 @@ final class StudentificationFunctionalSpec
     with BeforeAndAfterAll {
 
   val tmpDir: File = sbtio.createTemporaryDirectory
-  println(s"~~> Test tmp dir: $tmpDir\n")
 
   override def afterAll(): Unit =
     println("deleting temp directory")

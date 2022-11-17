@@ -29,7 +29,7 @@ final case class CmdLineParseError(errors: List[OEffect]) {
 
 object ScoptCliParser {
 
-  def parse[T](parser: OParser[_, T], options: T)(args: Array[String]): Either[CmdLineParseError, T] =
+  def parse[T](parser: OParser[?, T], options: T)(args: Array[String]): Either[CmdLineParseError, T] =
     OParser.runParser(parser, args, options) match
       case (result, effects) => handleParsingResult(result, effects)
 

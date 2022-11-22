@@ -13,41 +13,47 @@ package cmt.admin.cli
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
+import caseapp.Parser
 import cmt.Helpers
 import cmt.admin.Domain.{ExerciseNumber, MainRepository}
-import cmt.admin.cli.CliCommand.DuplicateInsertBefore
+import cmt.admin.command.DuplicateInsertBefore
 import cmt.support.{CommandLineArguments, TestDirectories}
 import org.scalatest.prop.Tables
 import sbt.io.syntax.File
 import scopt.OEffect.ReportError
+import cmt.admin.cli.ArgParsers.*
+import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 
-object DuplicateInsertBeforeArguments extends CommandLineArguments[CliOptions] with Tables with TestDirectories {
+object DuplicateInsertBeforeArguments
+    extends CommandLineArguments[DuplicateInsertBefore.Options]
+    with Tables
+    with TestDirectories {
 
   val identifier = "dib"
 
-  def invalidArguments(tempDirectory: File) = Table(
-    ("args", "errors"),
-    (
-      Seq(identifier),
-      Seq(ReportError("Missing argument <Main repo>"), ReportError("Missing option --exercise-number"))),
-    (
-      Seq(identifier, nonExistentDirectory(tempDirectory)),
-      Seq(
-        ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"),
-        ReportError("Missing option --exercise-number"))),
-    (
-      Seq(identifier, realFile),
-      Seq(ReportError(s"$realFile is not a directory"), ReportError("Missing option --exercise-number"))),
-    (
-      Seq(identifier, tempDirectory.getAbsolutePath),
-      Seq(ReportError(s"${tempDirectory.getAbsolutePath} is not in a git repository"))))
+  val parser: Parser[DuplicateInsertBefore.Options] = Parser.derive
 
-  def validArguments(tempDirectory: File) = Table(
-    ("args", "expectedResult"),
-    (
-      Seq(identifier, firstRealDirectory, "--exercise-number", "1"),
-      CliOptions.default(
-        command = DuplicateInsertBefore,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        exerciseNumber = ExerciseNumber(1))))
+  def invalidArguments(tempDirectory: File) = invalidArgumentsTable()
+//    (
+//      Seq(identifier),
+//      Seq(ReportError("Missing argument <Main repo>"), ReportError("Missing option --exercise-number"))),
+//    (
+//      Seq(identifier, nonExistentDirectory(tempDirectory)),
+//      Seq(
+//        ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"),
+//        ReportError("Missing option --exercise-number"))),
+//    (
+//      Seq(identifier, realFile),
+//      Seq(ReportError(s"$realFile is not a directory"), ReportError("Missing option --exercise-number"))),
+//    (
+//      Seq(identifier, tempDirectory.getAbsolutePath),
+//      Seq(ReportError(s"${tempDirectory.getAbsolutePath} is not in a git repository"))))
+
+  def validArguments(tempDirectory: File) = validArgumentsTable()
+//    (
+//      Seq(identifier, firstRealDirectory, "--exercise-number", "1"),
+//      CliOptions.default(
+//        command = DuplicateInsertBefore,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        exerciseNumber = ExerciseNumber(1))))
 }

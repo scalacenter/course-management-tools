@@ -17,11 +17,11 @@ import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTa
 import cmt.support.{CommandLineArguments, TestDirectories}
 import sbt.io.syntax.File
 
-object ListSavedStatesSpec extends CommandLineArguments[CliOptions] with TestDirectories {
+object ListSavedStatesSpec /*extends CommandLineArguments[CliOptions] with TestDirectories {
 
   val identifier = "list-saved-states"
 
   def invalidArguments(tempDirectory: File) = invalidArgumentsTable()
 
   def validArguments(tempDirectory: File) = validArgumentsTable()
-}
+}*/

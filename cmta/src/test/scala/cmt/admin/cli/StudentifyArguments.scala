@@ -13,88 +13,100 @@ package cmt.admin.cli
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.Helpers
+import caseapp.Parser
+import caseapp.core.Error.{CannotBeDisabled, Other, ParsingArgument, RequiredOptionNotSpecified, SeveralErrors}
+import cmt.{ErrorMessage, FailedToValidateArgument, Helpers, OptionName, RequiredOptionIsMissing}
+import cmt.admin.command.Studentify
+import cmt.admin.cli.ArgParsers.*
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, MainRepository, StudentifyBaseDirectory}
-import cmt.admin.cli.CliCommand.Studentify
 import cmt.support.{CommandLineArguments, TestDirectories}
 import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 import org.scalatest.prop.Tables
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
+import org.scalatest.matchers.should.Matchers
 
-object StudentifyArguments extends CommandLineArguments[CliOptions] with Tables with TestDirectories {
+object StudentifyArguments
+    extends CommandLineArguments[Studentify.Options]
+    with Tables
+    with TestDirectories
+    with Matchers {
 
   val identifier = "studentify"
 
+  val parser: Parser[Studentify.Options] = Parser.derive
+
   def invalidArguments(tempDirectory: File) = invalidArgumentsTable(
     (
-      Seq(identifier),
-      Seq(
-        ReportError("Missing argument <Main repo>"),
-        ReportError("Missing argument <studentified repo parent folder>"))),
+      Seq.empty,
+      Set(
+        RequiredOptionIsMissing(OptionName("--studentify-base-directory, -s")), RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
     (
-      Seq(identifier, nonExistentDirectory(tempDirectory), nonExistentDirectory(tempDirectory)),
-      Seq(
-        ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"),
-        ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"))),
+      Seq("-m", nonExistentDirectory(tempDirectory), "-s", nonExistentDirectory(tempDirectory)),
+      Set(FailedToValidateArgument(OptionName("m"), List(ErrorMessage(s"$tempDirectory/i/do/not/exist does not exist"), ErrorMessage(s"$tempDirectory/i/do/not/exist is not a directory"), ErrorMessage(s"$tempDirectory/i/do/not/exist is not in a git repository"))), FailedToValidateArgument(OptionName("s"), List(ErrorMessage(s"$tempDirectory/i/do/not/exist does not exist"), ErrorMessage(s"$tempDirectory/i/do/not/exist is not a directory"))), RequiredOptionIsMissing(OptionName("--studentify-base-directory, -s")), RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
     (
-      Seq(identifier, realFile, nonExistentDirectory(tempDirectory)),
-      Seq(
-        ReportError(s"$realFile is not a directory"),
-        ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"))),
+      Seq("-m", realFile, "-s", nonExistentDirectory(tempDirectory)),
+      Set(FailedToValidateArgument(OptionName("m"), List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))), FailedToValidateArgument(OptionName("s"), List(ErrorMessage(s"$tempDirectory/i/do/not/exist does not exist"), ErrorMessage(s"$tempDirectory/i/do/not/exist is not a directory"))), RequiredOptionIsMissing(OptionName("--studentify-base-directory, -s")), RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
     (
-      Seq(identifier, tempDirectory.getAbsolutePath, secondRealDirectory),
-      Seq(ReportError(s"${tempDirectory.getAbsolutePath} is not in a git repository"))))
+      Seq("-m", tempDirectory.getAbsolutePath, "-s", secondRealDirectory),
+      Set(FailedToValidateArgument(OptionName("m"), List(ErrorMessage(s"${tempDirectory.getAbsolutePath} is not in a git repository"))), RequiredOptionIsMissing(OptionName("--main-repository, -m"))))
+  )
 
   def validArguments(tempDirectory: File) = validArgumentsTable(
     (
-      Seq(identifier, firstRealDirectory, secondRealDirectory),
-      CliOptions.default(
-        command = Studentify,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))))),
-    (
-      Seq(identifier, firstRealDirectory, secondRealDirectory, "--force-delete"),
-      CliOptions.default(
-        command = Studentify,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
-        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true))),
-    (
-      Seq(identifier, firstRealDirectory, secondRealDirectory, "-f"),
-      CliOptions.default(
-        command = Studentify,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
-        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true))),
-    (
-      Seq(identifier, firstRealDirectory, secondRealDirectory, "--init-git"),
-      CliOptions.default(
-        command = Studentify,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
-        initializeAsGitRepo = InitializeGitRepo(true))),
-    (
-      Seq(identifier, firstRealDirectory, secondRealDirectory, "-g"),
-      CliOptions.default(
-        command = Studentify,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
-        initializeAsGitRepo = InitializeGitRepo(true))),
-    (
-      Seq(identifier, firstRealDirectory, secondRealDirectory, "--force-delete", "--init-git"),
-      CliOptions.default(
-        command = Studentify,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
-        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true),
-        initializeAsGitRepo = InitializeGitRepo(true))),
-    (
-      Seq(identifier, firstRealDirectory, secondRealDirectory, "-f", "-g"),
-      CliOptions.default(
-        command = Studentify,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
-        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true),
-        initializeAsGitRepo = InitializeGitRepo(true))))
+      Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-s", secondRealDirectory),
+      Studentify.Options(
+        studentifyBaseDirectory = StudentifyBaseDirectory(file(secondRealDirectory)),
+        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(false),
+        initializeAsGitRepo = InitializeGitRepo(false),
+        shared = SharedOptions(MainRepository(baseDirectoryGitRoot), maybeConfigFile = None))
+//      CliOptions.default(
+//        command = Studentify,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))))),
+//    (
+//      Seq(identifier, firstRealDirectory, secondRealDirectory, "--force-delete"),
+//      CliOptions.default(
+//        command = Studentify,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
+//        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true))),
+//    (
+//      Seq(identifier, firstRealDirectory, secondRealDirectory, "-f"),
+//      CliOptions.default(
+//        command = Studentify,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
+//        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true))),
+//    (
+//      Seq(identifier, firstRealDirectory, secondRealDirectory, "--init-git"),
+//      CliOptions.default(
+//        command = Studentify,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
+//        initializeAsGitRepo = InitializeGitRepo(true))),
+//    (
+//      Seq(identifier, firstRealDirectory, secondRealDirectory, "-g"),
+//      CliOptions.default(
+//        command = Studentify,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
+//        initializeAsGitRepo = InitializeGitRepo(true))),
+//    (
+//      Seq(identifier, firstRealDirectory, secondRealDirectory, "--force-delete", "--init-git"),
+//      CliOptions.default(
+//        command = Studentify,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
+//        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true),
+//        initializeAsGitRepo = InitializeGitRepo(true))),
+//    (
+//      Seq(identifier, firstRealDirectory, secondRealDirectory, "-f", "-g"),
+//      CliOptions.default(
+//        command = Studentify,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        maybeStudentifyBaseFolder = Some(StudentifyBaseDirectory(file(secondRealDirectory))),
+//        forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(true),
+//        initializeAsGitRepo = InitializeGitRepo(true))
+    ))
 }

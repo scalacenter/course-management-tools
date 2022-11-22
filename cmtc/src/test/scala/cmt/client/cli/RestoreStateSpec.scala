@@ -17,11 +17,11 @@ import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTa
 import cmt.support.{CommandLineArguments, TestDirectories}
 import sbt.io.syntax.File
 
-object RestoreStateSpec extends CommandLineArguments[CliOptions] with TestDirectories {
+object RestoreStateSpec /*extends CommandLineArguments[CliOptions] with TestDirectories {
 
   val identifier = "restore-state"
 
   def invalidArguments(tempDirectory: File) = invalidArgumentsTable()
 
   def validArguments(tempDirectory: File) = validArgumentsTable()
-}
+}*/

@@ -13,57 +13,61 @@ package cmt.admin.cli
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
+import caseapp.Parser
 import cmt.Helpers
 import cmt.admin.Domain.{MainRepository, RenumberOffset, RenumberStart, RenumberStep}
-import cmt.admin.cli.CliCommand.RenumberExercises
+import cmt.admin.command.RenumberExercises
 import cmt.support.{CommandLineArguments, TestDirectories}
 import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 import org.scalatest.prop.Tables
 import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
+import cmt.admin.cli.ArgParsers.*
 
-object RenumberArguments extends CommandLineArguments[CliOptions] with Tables with TestDirectories {
+object RenumberArguments extends CommandLineArguments[RenumberExercises.Options] with Tables with TestDirectories {
 
   val identifier = "renum"
 
-  def invalidArguments(tempDirectory: File) = invalidArgumentsTable(
-    (Seq(identifier), Seq(ReportError("Missing argument <Main repo>"))),
-    (
-      Seq(identifier, nonExistentDirectory(tempDirectory)),
-      Seq(ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"))),
-    (Seq(identifier, realFile), Seq(ReportError(s"$realFile is not a directory"))),
-    (
-      Seq(identifier, tempDirectory.getAbsolutePath),
-      Seq(ReportError(s"${tempDirectory.getAbsolutePath} is not in a git repository"))))
+  val parser: Parser[RenumberExercises.Options] = Parser.derive
 
-  def validArguments(tempDirectory: File) = validArgumentsTable(
-    (
-      Seq(identifier, firstRealDirectory),
-      CliOptions.default(command = RenumberExercises, mainRepository = MainRepository(baseDirectoryGitRoot))),
-    (
-      Seq(identifier, firstRealDirectory, "--from", "9"),
-      CliOptions.default(
-        command = RenumberExercises,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        maybeRenumberStart = Some(RenumberStart(9)))),
-    (
-      Seq(identifier, firstRealDirectory, "--to", "99"),
-      CliOptions.default(
-        command = RenumberExercises,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        renumberOffset = RenumberOffset(99))),
-    (
-      Seq(identifier, firstRealDirectory, "--step", "999"),
-      CliOptions.default(
-        command = RenumberExercises,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        renumberStep = RenumberStep(999))),
-    (
-      Seq(identifier, firstRealDirectory, "--from", "1", "--to", "2", "--step", "3"),
-      CliOptions.default(
-        command = RenumberExercises,
-        mainRepository = MainRepository(baseDirectoryGitRoot),
-        maybeRenumberStart = Some(RenumberStart(1)),
-        renumberOffset = RenumberOffset(2),
-        renumberStep = RenumberStep(3))))
+  def invalidArguments(tempDirectory: File) = invalidArgumentsTable()
+//    (Seq(identifier), Seq(ReportError("Missing argument <Main repo>"))),
+//    (
+//      Seq(identifier, nonExistentDirectory(tempDirectory)),
+//      Seq(ReportError(s"${nonExistentDirectory(tempDirectory)} does not exist"))),
+//    (Seq(identifier, realFile), Seq(ReportError(s"$realFile is not a directory"))),
+//    (
+//      Seq(identifier, tempDirectory.getAbsolutePath),
+//      Seq(ReportError(s"${tempDirectory.getAbsolutePath} is not in a git repository"))))
+
+  def validArguments(tempDirectory: File) = validArgumentsTable()
+//    (
+//      Seq(identifier, firstRealDirectory),
+//      CliOptions.default(command = RenumberExercises, mainRepository = MainRepository(baseDirectoryGitRoot))),
+//    (
+//      Seq(identifier, firstRealDirectory, "--from", "9"),
+//      CliOptions.default(
+//        command = RenumberExercises,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        maybeRenumberStart = Some(RenumberStart(9)))),
+//    (
+//      Seq(identifier, firstRealDirectory, "--to", "99"),
+//      CliOptions.default(
+//        command = RenumberExercises,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        renumberOffset = RenumberOffset(99))),
+//    (
+//      Seq(identifier, firstRealDirectory, "--step", "999"),
+//      CliOptions.default(
+//        command = RenumberExercises,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        renumberStep = RenumberStep(999))),
+//    (
+//      Seq(identifier, firstRealDirectory, "--from", "1", "--to", "2", "--step", "3"),
+//      CliOptions.default(
+//        command = RenumberExercises,
+//        mainRepository = MainRepository(baseDirectoryGitRoot),
+//        maybeRenumberStart = Some(RenumberStart(1)),
+//        renumberOffset = RenumberOffset(2),
+//        renumberStep = RenumberStep(3))))
 }

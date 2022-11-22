@@ -34,3 +34,12 @@ def printMessage(msg: String): Unit =
 
 def printNotification(msg: String): Unit =
   println(toConsoleGreen(msg))
+
+extension (result: Either[CmtError, String])
+  def printResult(): Unit =
+    result match
+      case Left(errorMessage) =>
+        System.err.println(toConsoleRed(s"Error: $errorMessage"))
+        System.exit(1)
+      case Right(message) =>
+        printMessage(message)

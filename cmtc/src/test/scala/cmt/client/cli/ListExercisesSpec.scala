@@ -17,11 +17,11 @@ import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTa
 import cmt.support.{CommandLineArguments, TestDirectories}
 import sbt.io.syntax.File
 
-object ListExercisesSpec extends CommandLineArguments[CliOptions] with TestDirectories {
+object ListExercisesSpec /*extends CommandLineArguments[CliOptions] with TestDirectories {
 
   val identifier = "list-exercises"
 
   def invalidArguments(tempDirectory: File) = invalidArgumentsTable()
 
   def validArguments(tempDirectory: File) = validArgumentsTable()
-}
+}*/

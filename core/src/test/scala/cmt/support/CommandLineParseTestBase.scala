@@ -13,6 +13,9 @@ package cmt.support
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
+import caseapp.Parser
+import caseapp.core.Error
+import caseapp.core.Error.SeveralErrors
 import cmt.core.cli.CmdLineParseError
 import cmt.support.EitherSupport
 import org.scalatest.BeforeAndAfterAll
@@ -23,27 +26,39 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import sbt.io.IO
 import sbt.io.syntax.*
-import scopt.OEffect.ReportError
+import cmt.{CmtError, toCmtError}
 
 import scala.language.postfixOps
 
 trait CommandLineArguments[T] {
   val identifier: String
-  def invalidArguments(tempDirectory: File): TableFor2[Seq[String], Seq[ReportError]]
+  val parser: Parser[T]
+  def invalidArguments(tempDirectory: File): TableFor2[Seq[String], Set[CmtError]]
   def validArguments(tempDirectory: File): TableFor2[Seq[String], T]
 }
 
 object CommandLineArguments {
-  def invalidArgumentsTable(args: (Seq[String], Seq[ReportError])*): TableFor2[Seq[String], Seq[ReportError]] =
+  def invalidArgumentsTable(args: (Seq[String], Set[CmtError])*): TableFor2[Seq[String], Set[CmtError]] =
     Table(("args", "errors"), args*)
 
   def validArgumentsTable[T](args: (Seq[String], T)*): TableFor2[Seq[String], T] =
     Table(("args", "expectedResult"), args*)
 }
 
-abstract class CommandLineParseTestBase[T](
-    parseFn: Array[String] => Either[CmdLineParseError, T],
-    commandArguments: CommandLineArguments[T]*)
+//extension (self: SeveralErrors)
+//  def extractParsingErrors: Set[Error.Other] = {
+//    def extractOther(error: Error): Set[Error.Other] =
+//      error match {
+//        case e: Error.Other => Set(e)
+//        case Error.ParsingArgument(_, e, _) => extractOther(e)
+//        case SeveralErrors(head, tail) => extractOther(head) ++ tail.flatMap(extractOther(_))
+//        case _ => Set.empty
+//      }
+//
+//    extractOther(self)
+//  }
+
+abstract class CommandLineParseTestBase[T](commandArguments: CommandLineArguments[T]*)
     extends AnyWordSpecLike
     with Matchers
     with BeforeAndAfterAll
@@ -61,8 +76,8 @@ abstract class CommandLineParseTestBase[T](
       s"given invalid ${command.identifier} arguments" should {
 
         "report appropriate errors" in {
-          forAll(command.invalidArguments(tempDirectory)) { (args: Seq[String], errors: Seq[ReportError]) =>
-            assertFailureWithErrors(args.toArray, errors*)
+          forAll(command.invalidArguments(tempDirectory)) { (args: Seq[String], errors: Set[CmtError]) =>
+            assertFailureWithErrors(command.parser, args.toArray, errors)
           }
         }
       }
@@ -73,21 +88,27 @@ abstract class CommandLineParseTestBase[T](
 
         "return expected results" in {
           forAll(command.validArguments(tempDirectory)) { (args: Seq[String], expectedResult: T) =>
-            assertSuccessWithResponse(args.toArray, expectedResult)
+            assertSuccessWithResponse(command.parser, args.toArray, expectedResult)
           }
         }
       }
     }
   }
 
-  private def assertFailureWithErrors(args: Array[String], errors: ReportError*) = {
-    val resultOr = parseFn(args)
+  private def assertFailureWithErrors(parser: Parser[T], args: Array[String], errors: Set[CmtError]) = {
+    val resultOr = parser.parse(args)
     val error = assertLeft(resultOr)
-    (error.errors should contain).allElementsOf(errors)
+
+    error match {
+      case e: SeveralErrors => e.toCmtError should contain theSameElementsAs errors
+      case _ => throw new IllegalArgumentException(s"expected SeveralErrors but found $error")
+    }
   }
 
-  private def assertSuccessWithResponse(args: Array[String], expectedResult: T) = {
-    val resultOr = parseFn(args)
+  private def assertSuccessWithResponse(parser: Parser[T], args: Array[String], expectedResult: T) = {
+    val resultOr = parser.parse(args).map { case (result, _) =>
+      result
+    }
     val result = assertRight(resultOr)
     result shouldBe expectedResult
   }

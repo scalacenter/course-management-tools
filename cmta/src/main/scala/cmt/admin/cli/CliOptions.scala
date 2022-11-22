@@ -44,13 +44,13 @@ final case class CliOptions(
 
   def toCommand: AdminCommand =
     command match
-      case RenumberExercises     => renumberExercises()
-      case DuplicateInsertBefore => duplicateInsertBefore()
-      case Studentify            => studentify()
-      case Linearize             => linearize()
-      case DeLinearize           => delinearize()
-      case Version               => version()
-      case NoCommand             => noCommand()
+      case CliCommand.RenumberExercises     => renumberExercises()
+      case CliCommand.DuplicateInsertBefore => duplicateInsertBefore()
+      case CliCommand.Studentify            => studentify()
+      case CliCommand.Linearize             => linearize()
+      case CliCommand.DeLinearize           => delinearize()
+      case CliCommand.Version               => version()
+      case CliCommand.NoCommand             => noCommand()
 
   private def toConfig(): CMTaConfig =
     new CMTaConfig(mainRepository.value, maybeConfigurationFile.map(_.value))

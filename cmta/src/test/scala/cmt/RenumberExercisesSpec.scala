@@ -15,7 +15,8 @@ package cmt
 
 import cmt.TestHelpers.getExercisePrefixAndExercises
 import cmt.admin.Domain.{MainRepository, RenumberOffset, RenumberStart, RenumberStep}
-import cmt.admin.command.AdminCommand.RenumberExercises
+import cmt.admin.cli.SharedOptions
+import cmt.admin.command.RenumberExercises
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -77,19 +78,20 @@ class RenumberExercisesSpec
     "given a renumbering" should {
       val (mainRepo, codeFolder, config) = getMainRepoAndConfig()
 
+      val shared: SharedOptions = SharedOptions(MainRepository(mainRepo), maybeConfigFile = None)
+
       val exerciseNames =
         Vector("exercise_001_desc", "exercise_002_desc", "exercise_003_desc", "exercise_004_desc", "exercise_005_desc")
       val exercises = createExercises(codeFolder, exerciseNames)
 
       "succeed if exercises are moved to a new offset and renumber step values" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = None,
           offset = RenumberOffset(20),
-          step = RenumberStep(2))
+          step = RenumberStep(2),
+          shared = shared)
         val result = command.execute()
-        result shouldBe Right(command.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage)
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -101,14 +103,13 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "succeed and return the original exercise set when using the default offset and renumber step alues" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = None,
           offset = RenumberOffset(1),
-          step = RenumberStep(1))
+          step = RenumberStep(1),
+          shared = shared)
         val result = command.execute()
-        result shouldBe Right(command.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage)
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -120,14 +121,13 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "succeed if exercises are moved to offset 0 and the first exercise to renumber is the first one in the exercise series" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = Some(RenumberStart(1)),
           offset = RenumberOffset(0),
-          step = RenumberStep(1))
+          step = RenumberStep(1),
+          shared = shared)
         val result = command.execute()
-        result shouldBe Right(command.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage)
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -139,14 +139,13 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "succeed and leave the first exercise number unchanged and create a gap between the first and second exercise" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = Some(RenumberStart(1)),
           offset = RenumberOffset(10),
-          step = RenumberStep(1))
+          step = RenumberStep(1),
+          shared = shared)
         val result = command.execute()
-        result shouldBe Right(command.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage)
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -158,14 +157,13 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "succeed when renumbering moves exercises to the end of the available exercise number space" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = None,
           offset = RenumberOffset(995),
-          step = RenumberStep(1))
+          step = RenumberStep(1),
+          shared = shared)
         val result = command.execute()
-        result shouldBe Right(command.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage)
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -177,12 +175,11 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "fail when renumbering would move outside the available exercise number space and leave the exercise name unchanged" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = None,
           offset = RenumberOffset(996),
-          step = RenumberStep(1))
+          step = RenumberStep(1),
+          shared = shared)
         val result = command.execute()
 
         result shouldBe Left(
@@ -197,15 +194,14 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "succeed when moving exercises up to a range that overlaps with the current one" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = None,
           offset = RenumberOffset(992),
-          step = RenumberStep(1))
+          step = RenumberStep(1),
+          shared = shared)
         val result = command.execute()
 
-        result shouldBe Right(command.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
           "exercise_992_desc",
@@ -216,15 +212,14 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "succeed when moving exercises down to a range that overlaps with the current one" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = None,
           offset = RenumberOffset(995),
-          step = RenumberStep(1))
+          step = RenumberStep(1),
+          shared = shared)
         val result = command.execute()
 
-        result shouldBe Right(command.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
           "exercise_995_desc",
@@ -235,15 +230,14 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "succeed and return a series of exercises numbered starting at 1 when renumbering with default args" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = None,
           offset = RenumberOffset(1),
-          step = RenumberStep(1))
+          step = RenumberStep(1),
+          shared = shared)
         val result = command.execute()
 
-        result shouldBe Right(command.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
           "exercise_001_desc",
@@ -254,12 +248,11 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "fail and leave the exercise numbers unchanged when default renumbering is applied again" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = None,
           offset = RenumberOffset(1),
-          step = RenumberStep(1))
+          step = RenumberStep(1),
+          shared = shared)
         val result = command.execute()
 
         result shouldBe Left("Renumber: nothing to renumber".toExecuteCommandErrorMessage)
@@ -273,12 +266,11 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "fail when trying to renumber a range of exercises that would clash with other exercises" in {
-        val command = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
+        val command = RenumberExercises.Options(
           maybeStart = Some(RenumberStart(3)),
           offset = RenumberOffset(2),
-          step = RenumberStep(1))
+          step = RenumberStep(1),
+          shared = shared)
         val result = command.execute()
 
         result shouldBe Left("Moved exercise range overlaps with other exercises".toExecuteCommandErrorMessage)
@@ -292,12 +284,13 @@ class RenumberExercisesSpec
         renumberedExercises shouldBe expectedExercises
       }
       "fail when trying to renumber an exercise if it would move into a gap in the numbering" in {
-        RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
-          maybeStart = Some(RenumberStart(3)),
-          offset = RenumberOffset(10),
-          step = RenumberStep(1)).execute()
+        RenumberExercises
+          .Options(
+            maybeStart = Some(RenumberStart(3)),
+            offset = RenumberOffset(10),
+            step = RenumberStep(1),
+            shared = shared)
+          .execute()
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -306,55 +299,49 @@ class RenumberExercisesSpec
           "exercise_010_desc",
           "exercise_011_desc",
           "exercise_012_desc")
-        val result = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
-          maybeStart = Some(RenumberStart(12)),
-          offset = RenumberOffset(5),
-          step = RenumberStep(1)).execute()
+        val result = RenumberExercises
+          .Options(
+            maybeStart = Some(RenumberStart(12)),
+            offset = RenumberOffset(5),
+            step = RenumberStep(1),
+            shared = shared)
+          .execute()
         result shouldBe Left("Moved exercise range overlaps with other exercises".toExecuteCommandErrorMessage)
         renumberedExercises shouldBe expectedExercises
       }
     }
     "given any renumbering in a fully packed exercise numbering space" should {
       val (mainRepo, codeFolder, config) = getMainRepoAndConfig()
+      val shared: SharedOptions = SharedOptions(MainRepository(mainRepo), maybeConfigFile = None)
 
       val exerciseNames = Vector.from(0 to 999).map(i => f"exercise_$i%03d_desc")
       val exercises = createExercises(codeFolder, exerciseNames)
 
       "fail when trying to shift all exercises one position downwards and leave the exercise name unchanged" in {
-        val result = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
-          maybeStart = None,
-          offset = RenumberOffset(1),
-          step = RenumberStep(1)).execute()
-        result shouldBe Left(
-          "Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
+        val result = RenumberExercises
+          .Options(maybeStart = None, offset = RenumberOffset(1), step = RenumberStep(1), shared = shared)
+          .execute()
+        result shouldBe Left("Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         renumberedExercises shouldBe exercises
       }
       "fail when trying to move the second to last exercise on position downwards and leave the exercise name unchanged" in {
-        val result = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
-          maybeStart = Some(RenumberStart(998)),
-          offset = RenumberOffset(999),
-          step = RenumberStep(1)).execute()
-        result shouldBe Left(
-          "Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
+        val result = RenumberExercises
+          .Options(
+            maybeStart = Some(RenumberStart(998)),
+            offset = RenumberOffset(999),
+            step = RenumberStep(1),
+            shared = shared)
+          .execute()
+        result shouldBe Left("Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         renumberedExercises shouldBe exercises
       }
       "fail when trying to insert holes in the numbering and leave the exercise name unchanged" in {
-        val result = RenumberExercises(
-          mainRepository = MainRepository(mainRepo),
-          config = config,
-          maybeStart = None,
-          offset = RenumberOffset(0),
-          step = RenumberStep(2)).execute()
-        result shouldBe Left(
-          "Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
+        val result = RenumberExercises
+          .Options(maybeStart = None, offset = RenumberOffset(0), step = RenumberStep(2), shared = shared)
+          .execute()
+        result shouldBe Left("Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         renumberedExercises shouldBe exercises
       }

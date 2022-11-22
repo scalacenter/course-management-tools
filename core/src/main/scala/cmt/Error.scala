@@ -1,5 +1,7 @@
 package cmt
 
+import cats.data.NonEmptyList
+
 sealed trait CmtError {
   def toDisplayString: String
 }
@@ -32,3 +34,23 @@ case class ErrorMessage(message: String)
 extension (errorMessage: String)
   def toExecuteCommandErrorMessage: FailedToExecuteCommand =
     FailedToExecuteCommand(ErrorMessage(errorMessage))
+
+extension (self: caseapp.core.Error)
+  def toCmtError: Set[CmtError] = {
+    def extractOther(error: caseapp.core.Error): Set[CmtError] =
+      error match {
+        case caseapp.core.Error.RequiredOptionNotSpecified(head, tail) => Set(RequiredOptionIsMissing(OptionName(s"""$head, ${tail.mkString(",")}""")))
+        case caseapp.core.Error.ParsingArgument(name, e, _) => Set(FailedToValidateArgument(OptionName(name.name), extractErrorMessages(e)))
+        case caseapp.core.Error.SeveralErrors(head, tail) => extractOther(head) ++ tail.flatMap(extractOther(_))
+        case _ => Set.empty
+      }
+
+    def extractErrorMessages(error: caseapp.core.Error): List[ErrorMessage] =
+      error match {
+        case caseapp.core.Error.SeveralErrors(head, tail) => extractErrorMessages(head) ++ tail.flatMap(extractErrorMessages(_))
+        case caseapp.core.Error.Other(message) => List(ErrorMessage(message))
+        case _ => List.empty
+      }
+
+    extractOther(self)
+  }

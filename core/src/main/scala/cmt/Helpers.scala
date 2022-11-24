@@ -167,6 +167,7 @@ object Helpers:
       "studentified-repo-solutions-folder" -> config.studentifiedRepoSolutionsFolder,
       "studentified-saved-states-folder" -> config.studentifiedSavedStatesFolder,
       "studentified-repo-bookmark-file" -> config.studentifiedRepoBookmarkFile,
+      "test-code-size-and-checksums" -> config.testCodeSizeAndChecksums,
       "active-exercise-folder" -> config.studentifiedRepoActiveExerciseFolder,
       "test-code-folders" -> config.testCodeFolders.asJava,
       "read-me-files" -> config.readMeFiles.asJava,
@@ -190,6 +191,8 @@ object Helpers:
     retVal
   end withZipFile
 
+  def deleteFileIfExists(file: File): Unit =
+    if (file.exists()) sbtio.delete(file)
   def initializeGitRepo(linearizedProject: File): Either[String, Unit] =
     import ProcessDSL.toProcessCmd
     s"git init"
@@ -272,6 +275,15 @@ object Helpers:
 
   private val separatorChar: Char = java.io.File.separatorChar
 
+  def adaptToNixSeparatorChar(path: String): String =
+    separatorChar match
+      case '\\' =>
+        path.replaceAll("""\\""", "/")
+      case '/' =>
+        path
+      case _ =>
+        path.replaceAll(s"/", s"$separatorChar")
+
   def adaptToOSSeparatorChar(path: String): String =
     separatorChar match
       case '\\' =>
@@ -280,5 +292,121 @@ object Helpers:
         path
       case _ =>
         path.replaceAll(s"/", s"$separatorChar")
+
+  import java.nio.file.{Files, Path}
+  import java.security.MessageDigest
+  import org.apache.commons.codec.binary.Hex
+  def fileSize(f: File): Long =
+    Files.size(f.toPath)
+
+  def fileSha256Hex(f: File): String =
+    val fileContents = Files.readAllBytes(f.toPath)
+    val digest = MessageDigest.getInstance("SHA-256").digest(fileContents)
+    Hex.encodeHexString(digest)
+
+  def exerciseFileHasBeenModified(
+      activeExerciseFolder: File,
+      exerciseId: String,
+      file: String,
+      config: CMTcConfig): Boolean =
+    fileSize(activeExerciseFolder / file) !=
+      config.testCodeMetaData(exerciseId)(file).size ||
+      fileSha256Hex(activeExerciseFolder / file) !=
+      config.testCodeMetaData(exerciseId)(file).sha256
+
+  def getFilesToCopyAndDelete(
+      currentExerciseId: String,
+      toExerciseId: String,
+      config: CMTcConfig): (Set[String], Set[String], Set[String]) =
+    val currentReadmeFiles = config.readmeFilesMetaData(currentExerciseId).keys.to(Set)
+    val nextReadmeFiles = config.readmeFilesMetaData(toExerciseId).keys.to(Set)
+    val nextTestCodeFiles = config.testCodeMetaData(toExerciseId).keys.to(Set)
+
+    val currentTestCodeFiles = config.testCodeMetaData(currentExerciseId).keys.to(Set)
+    val readmefilesToBeDeleted = currentReadmeFiles &~ nextReadmeFiles
+    val readmeFilesToBeCopied = nextReadmeFiles &~ readmefilesToBeDeleted
+    val testCodeFilesToBeDeleted = currentTestCodeFiles &~ nextTestCodeFiles
+    val testCodeFilesToBeCopied = nextTestCodeFiles &~ testCodeFilesToBeDeleted
+
+    (
+      currentTestCodeFiles,
+      readmefilesToBeDeleted ++ testCodeFilesToBeDeleted,
+      readmeFilesToBeCopied ++ testCodeFilesToBeCopied)
+  def pullTestCode(
+      toExerciseId: String,
+      activeExerciseFolder: File,
+      filesToBeDeleted: Set[String],
+      filesToBeCopied: Set[String],
+      config: CMTcConfig): Either[String, String] =
+    withZipFile(config.solutionsFolder, toExerciseId) { solution =>
+      for {
+        file <- filesToBeDeleted
+      } deleteFileIfExists(activeExerciseFolder / file)
+      for {
+        file <- filesToBeCopied
+      } sbtio.copyFile(solution / file, activeExerciseFolder / file)
+
+      writeStudentifiedCMTBookmark(config.bookmarkFile, toExerciseId)
+
+      Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"$toExerciseId")}")
+    }
+  def writeTestReadmeCodeMetadata(
+      cleanedMainRepo: File,
+      exercises: Vector[String],
+      studentifiedRootFolder: File,
+      cmtaConfig: CMTaConfig): Unit =
+
+    val testCodeFolders = cmtaConfig.testCodeFolders.to(List)
+
+    import scala.jdk.CollectionConverters.*
+
+    sbtio.createDirectory(studentifiedRootFolder / cmtaConfig.cmtMetadataRootFolder)
+
+    val testCodeFilesInExercises = (for {
+      exercise <- exercises
+      (srcTestCodeFiles, srcTestCodeFolders) =
+        testCodeFolders
+          .map(f => cleanedMainRepo / cmtaConfig.mainRepoExerciseFolder / exercise / f)
+          .partition(f => f.isFile)
+      allFiles =
+        (srcTestCodeFiles ++ srcTestCodeFolders.flatMap(fileList))
+          .map(f => (sbtio.relativizeFile(cleanedMainRepo / cmtaConfig.mainRepoExerciseFolder / exercise, f), f))
+          .collect { case (Some(s), f) =>
+            Map(
+              s""""${adaptToNixSeparatorChar(s.getPath)}"""" -> Map(
+                "size" -> fileSize(f),
+                "sha256" -> fileSha256Hex(f)).asJava).asJava
+          }
+
+    } yield exercise -> allFiles.asJava).to(Map)
+
+    val readmeFilesInExercises = (for {
+      exercise <- exercises
+      (srcReadmeFiles, srcReadmeFolders) =
+        cmtaConfig.readMeFiles
+          .map(f => cleanedMainRepo / cmtaConfig.mainRepoExerciseFolder / exercise / f)
+          .partition(f => f.isFile)
+      allFiles =
+        (srcReadmeFiles ++ srcReadmeFolders.flatMap(fileList))
+          .map(f => (sbtio.relativizeFile(cleanedMainRepo / cmtaConfig.mainRepoExerciseFolder / exercise, f), f))
+          .collect { case (Some(s), f) =>
+            Map(
+              s""""${adaptToNixSeparatorChar(s.getPath)}"""" -> Map(
+                "size" -> fileSize(f),
+                "sha256" -> fileSha256Hex(f)).asJava).asJava
+          }
+
+    } yield exercise -> allFiles.asJava).to(Map)
+
+    val cfgTestCode = ConfigFactory
+      .parseMap(Map("testcode-metadata" -> testCodeFilesInExercises.asJava).asJava)
+      .root()
+      .render(ConfigRenderOptions.concise().setJson(false).setFormatted(true))
+    val cfgReadmeFiles = ConfigFactory
+      .parseMap(Map("readmefiles-metadata" -> readmeFilesInExercises.asJava).asJava)
+      .root()
+      .render(ConfigRenderOptions.concise().setJson(false).setFormatted(true))
+    val metadataConfig = s"$cfgTestCode\n\n$cfgReadmeFiles"
+    dumpStringToFile(metadataConfig, studentifiedRootFolder / cmtaConfig.testCodeSizeAndChecksums)
 
 end Helpers

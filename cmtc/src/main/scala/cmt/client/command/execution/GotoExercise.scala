@@ -13,26 +13,50 @@ package cmt.client.command.execution
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.Helpers
-import cmt.Helpers.withZipFile
+import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode, withZipFile}
 import cmt.client.command.ClientCommand.GotoExercise
 import cmt.core.execution.Executable
-import cmt.{toConsoleGreen, toConsoleYellow}
+import cmt.{Helpers, toConsoleGreen, toConsoleYellow}
+import sbt.io.IO as sbtio
+import sbt.io.syntax.*
 
 given Executable[GotoExercise] with
   extension (cmd: GotoExercise)
     def execute(): Either[String, String] = {
-      val currentExerciseId = getCurrentExerciseId(cmd.config.bookmarkFile)
-      val GotoExerciseId = cmd.exerciseId.value
-      val gotoExerciseIdExists = cmd.config.exercises.contains(GotoExerciseId)
+      import cmt.client.Domain.ForceMoveToExercise
+      val cMTcConfig = cmd.config
+      val currentExerciseId = getCurrentExerciseId(cMTcConfig.bookmarkFile)
 
-      (gotoExerciseIdExists, currentExerciseId) match {
-        case (false, _)             => Left(toConsoleGreen(s"No such exercise: ${cmd.exerciseId.value}"))
-        case (true, GotoExerciseId) => Left(toConsoleGreen(s"You're already at exercise ${GotoExerciseId}"))
-        case _ =>
-          withZipFile(cmd.config.solutionsFolder, cmd.exerciseId.value) { solution =>
-            copyTestCodeAndReadMeFiles(solution, cmd.exerciseId.value)(cmd.config)
-            Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(s"${cmd.exerciseId.value}")}")
-          }
-      }
+      val activeExerciseFolder = cMTcConfig.activeExerciseFolder
+      val toExerciseId = cmd.exerciseId.value
+
+      if (!cmd.config.exercises.contains(toExerciseId))
+        Left(toConsoleGreen(s"No such exercise: ${cmd.exerciseId.value}"))
+      else
+        val (currentTestCodeFiles, filesToBeDeleted, filesToBeCopied) =
+          getFilesToCopyAndDelete(currentExerciseId, toExerciseId, cMTcConfig)
+
+        (cmd.forceMoveToExercise, currentExerciseId) match {
+          case (_, `toExerciseId`) =>
+            Left(toConsoleGreen(s"You're already at exercise ${toExerciseId}"))
+
+          case (ForceMoveToExercise(true), _) =>
+            pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
+
+          case _ =>
+            val existingTestCodeFiles =
+              currentTestCodeFiles.filter(file => (activeExerciseFolder / file).exists())
+
+            val modifiedTestCodeFiles = existingTestCodeFiles.filter(
+              exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, cMTcConfig))
+
+            if (modifiedTestCodeFiles.nonEmpty)
+              Left(s"""goto-exercise cancelled.
+                   |
+                   |${toConsoleYellow("You have modified the following file(s):")}
+                   |${toConsoleGreen(modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n"))}
+                   |""".stripMargin)
+            else
+              pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
+        }
     }

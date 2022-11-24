@@ -13,27 +13,50 @@ package cmt.client.command.execution
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.Helpers.withZipFile
+import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode, withZipFile}
 import cmt.client.command.ClientCommand.PreviousExercise
 import cmt.core.execution.Executable
 import cmt.{toConsoleGreen, toConsoleYellow}
 import sbt.io.IO as sbtio
+import sbt.io.syntax.*
 
 import java.nio.charset.StandardCharsets
 
 given Executable[PreviousExercise] with
   extension (cmd: PreviousExercise)
     def execute(): Either[String, String] = {
-      val currentExerciseId = getCurrentExerciseId(cmd.config.bookmarkFile)
-      val FistExerciseId = cmd.config.exercises.head
+      import cmt.client.Domain.ForceMoveToExercise
+      val cMTcConfig = cmd.config
+      val currentExerciseId = getCurrentExerciseId(cMTcConfig.bookmarkFile)
+      val FirstExerciseId = cmd.config.exercises.head
 
-      currentExerciseId match {
-        case FistExerciseId => Left(toConsoleGreen(s"You're already at the first exercise: $currentExerciseId"))
+      val activeExerciseFolder = cMTcConfig.activeExerciseFolder
+      val toExerciseId = cMTcConfig.previousExercise(currentExerciseId)
+
+      val (currentTestCodeFiles, filesToBeDeleted, filesToBeCopied) =
+        getFilesToCopyAndDelete(currentExerciseId, toExerciseId, cMTcConfig)
+
+      (currentExerciseId, cmd.forceMoveToExercise) match {
+        case (FirstExerciseId, _) =>
+          Left(toConsoleGreen(s"You're already at the first exercise: $currentExerciseId"))
+
+        case (_, ForceMoveToExercise(true)) =>
+          pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
+
         case _ =>
-          withZipFile(cmd.config.solutionsFolder, cmd.config.previousExercise(currentExerciseId)) { solution =>
-            copyTestCodeAndReadMeFiles(solution, cmd.config.previousExercise(currentExerciseId))(cmd.config)
-            Right(s"${toConsoleGreen("Moved to ")} " + "" + s"${toConsoleYellow(
-                s"${cmd.config.previousExercise(currentExerciseId)}")}")
-          }
+          val existingTestCodeFiles =
+            currentTestCodeFiles.filter(file => (activeExerciseFolder / file).exists())
+
+          val modifiedTestCodeFiles = existingTestCodeFiles.filter(
+            exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, cMTcConfig))
+
+          if (modifiedTestCodeFiles.nonEmpty)
+            Left(s"""previous-exercise cancelled.
+                 |
+                 |${toConsoleYellow("You have modified the following file(s):")}
+                 |${toConsoleGreen(modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n"))}
+                 |""".stripMargin)
+          else
+            pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
       }
     }

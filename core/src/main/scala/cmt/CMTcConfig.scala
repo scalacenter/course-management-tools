@@ -15,7 +15,7 @@ package cmt
 
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{Config, ConfigFactory, ConfigValue}
 
 import scala.jdk.CollectionConverters.*
 import java.nio.charset.StandardCharsets
@@ -44,12 +44,30 @@ class CMTcConfig(studentifiedRepo: File):
     studentifiedRepo / cmtSettings.getString("active-exercise-folder")
 
   val solutionsFolder: File = studentifiedRepo / cmtSettings.getString("studentified-repo-solutions-folder")
+
   val studentifiedSavedStatesFolder: File =
     solutionsFolder / cmtSettings.getString("studentified-saved-states-folder")
-
   val nextExercise: Map[String, String] = exercises.zip(exercises.tail).to(Map)
 
   val previousExercise: Map[String, String] =
     exercises.tail.zip(exercises).to(Map)
+
+  private val testCodeMetaDataFile = studentifiedRepo / cmtSettings.getString("test-code-size-and-checksums")
+
+  private val metadataConfig = ConfigFactory.parseFile(testCodeMetaDataFile)
+
+  val testCodeMetaData = exercises
+    .map { exercise =>
+      val x = metadataConfig.getConfig("testcode-metadata").getObjectList(exercise)
+      exercise -> exMetadata(x)
+    }
+    .to(Map)
+
+  val readmeFilesMetaData = exercises
+    .map { exercise =>
+      val x = metadataConfig.getConfig("readmefiles-metadata").getObjectList(exercise)
+      exercise -> exMetadata(x)
+    }
+    .to(Map)
 
 end CMTcConfig

@@ -15,12 +15,13 @@ object Library {
   val scopt = "com.github.scopt" %% "scopt" % Version.scopt
   val sbtio = "org.scala-sbt" %% "io" % Version.sbtio
   val typesafeConfig = "com.typesafe" % "config" % Version.typesafeConfig
+  val commonsCodec = "commons-codec" % "commons-codec" % "1.15"
 }
 
 object Dependencies {
 
   import Library._
 
-  val cmtDependencies = List(scopt, sbtio, typesafeConfig, scalaTest, scalaCheck)
+  val cmtDependencies = List(scopt, sbtio, typesafeConfig, scalaTest, scalaCheck, commonsCodec)
 
 }

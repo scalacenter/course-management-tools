@@ -13,13 +13,11 @@ package cmt.client.command.execution
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.Helpers
 import cmt.client.command.ClientCommand.RestoreState
 import cmt.core.execution.Executable
-import cmt.{toConsoleGreen, toConsoleYellow}
+import cmt.{Helpers, toConsoleGreen, toConsoleYellow}
 import sbt.io.IO as sbtio
-import sbt.io.syntax.fileToRichFile
-import sbt.io.syntax.singleFileFinder
+import sbt.io.syntax.{fileToRichFile, singleFileFinder}
 
 given Executable[RestoreState] with
   extension (cmd: RestoreState)

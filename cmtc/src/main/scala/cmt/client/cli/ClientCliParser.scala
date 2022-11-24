@@ -19,7 +19,7 @@ import cmt.core.cli.{CmdLineParseError, ScoptCliParser}
 import sbt.io.syntax.File
 import scopt.{OParser, OParserBuilder}
 import cmt.ValidationExtensions.*
-import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
+import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath, ForceMoveToExercise}
 
 object ClientCliParser {
 
@@ -54,7 +54,11 @@ object ClientCliParser {
       .children(
         arg[File]("<studentified directory>")
           .validate(_.existsAndIsADirectory)
-          .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))))
+          .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))),
+        opt[Unit]("force-move")
+          .text("Force move to previous exercise")
+          .abbr("f")
+          .action((_, options) => options.copy(forceMoveToExercise = ForceMoveToExercise(true))))
 
   private def nextExerciseParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
     import builder.*
@@ -64,7 +68,11 @@ object ClientCliParser {
       .children(
         arg[File]("<studentified directory>")
           .validate(_.existsAndIsADirectory)
-          .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))))
+          .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))),
+        opt[Unit]("force-move")
+          .text("Force move to next exercise")
+          .abbr("f")
+          .action((_, options) => options.copy(forceMoveToExercise = ForceMoveToExercise(true))))
 
   private def listExercisesParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
     import builder.*
@@ -97,7 +105,11 @@ object ClientCliParser {
         arg[String]("<exercise ID>").action((exerciseId, options) => options.copy(exerciseId = ExerciseId(exerciseId))),
         arg[File]("<studentified directory>")
           .validate(_.existsAndIsADirectory)
-          .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))))
+          .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))),
+        opt[Unit]("force-move")
+          .text("Force move to exercise")
+          .abbr("f")
+          .action((_, options) => options.copy(forceMoveToExercise = ForceMoveToExercise(true))))
 
   private def gotoFirstExerciseParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
     import builder.*
@@ -107,7 +119,11 @@ object ClientCliParser {
       .children(
         arg[File]("<studentified directory>")
           .validate(_.existsAndIsADirectory)
-          .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))))
+          .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))),
+        opt[Unit]("force-move")
+          .text("Force move to first exercise")
+          .abbr("f")
+          .action((_, options) => options.copy(forceMoveToExercise = ForceMoveToExercise(true))))
 
   private def pullSolutionParser(using builder: OParserBuilder[CliOptions]): OParser[Unit, CliOptions] =
     import builder.*

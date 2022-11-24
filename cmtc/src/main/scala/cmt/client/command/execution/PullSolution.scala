@@ -13,16 +13,14 @@ package cmt.client.command.execution
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.Helpers.withZipFile
-import cmt.Helpers.fileList
+import cmt.Helpers.{fileList, withZipFile}
 import cmt.client.command.ClientCommand.PullSolution
 import cmt.core.execution.Executable
-
-import java.nio.charset.StandardCharsets
 import cmt.{toConsoleGreen, toConsoleYellow}
 import sbt.io.IO as sbtio
-import sbt.io.syntax.fileToRichFile
-import sbt.io.syntax.singleFileFinder
+import sbt.io.syntax.{fileToRichFile, singleFileFinder}
+
+import java.nio.charset.StandardCharsets
 
 given Executable[PullSolution] with
   extension (cmd: PullSolution)

@@ -21,9 +21,9 @@ final case class FailedToValidateCommandOptions(reasons: List[ErrorMessage]) ext
     s"""Failed to validate command options:${reasons.foreach(str => s"\n    $str")}"""
 }
 
-final case class FailedToExecuteCommand() extends CmtError {
+final case class FailedToExecuteCommand(reason: ErrorMessage) extends CmtError {
   override def toDisplayString: String =
-    "Kaboom!"
+    s"""Failed to execute command: ${reason.message}"""
 }
 
 case class OptionName(value: String)

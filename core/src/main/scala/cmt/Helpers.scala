@@ -40,18 +40,18 @@ object Helpers:
       fileList(seedFiles.toVector, seedFolders.toVector)
   end fileList
 
-  def resolveMainRepoPath(mainRepo: File): Either[String, File] = {
+  def resolveMainRepoPath(mainRepo: File): Either[CmtError, File] = {
     for {
       rp <- getRepoPathFromGit(mainRepo)
     } yield new File(rp)
   }
 
-  private def getRepoPathFromGit(repo: File): Either[String, String] = {
+  private def getRepoPathFromGit(repo: File): Either[CmtError, String] = {
     import ProcessDSL.*
     "git rev-parse --show-toplevel".toProcessCmd(workingDir = repo).runAndReadOutput()
   }
 
-  def exitIfGitIndexOrWorkspaceIsntClean(mainRepo: File): Either[String, Unit] =
+  def exitIfGitIndexOrWorkspaceIsntClean(mainRepo: File): Either[CmtError, Unit] =
     import ProcessDSL.toProcessCmd
     val workspaceIsUnclean = "git status --porcelain"
       .toProcessCmd(workingDir = mainRepo)
@@ -61,7 +61,7 @@ object Helpers:
 
     workspaceIsUnclean match {
       case Right(cnt) if cnt > 0 =>
-        Left(s"main repository isn't clean. Commit changes and try again")
+        Left(FailedToExecuteCommand(ErrorMessage("main repository isn't clean. Commit changes and try again")))
       case Right(_)  => Right(())
       case Left(msg) => Left(msg)
     }
@@ -94,23 +94,23 @@ object Helpers:
 
   final case class ExercisesMetadata(exercisePrefix: String, exercises: Vector[String], exerciseNumbers: Vector[Int])
 
-  def getExerciseMetadata(mainRepo: File)(config: CMTaConfig): Either[String, ExercisesMetadata] =
+  def getExerciseMetadata(mainRepo: File)(config: CMTaConfig): Either[CmtError, ExercisesMetadata] =
     val PrefixSpec = raw"(.*)_\d{3}_\w+$$".r
     val matchedNames =
       sbtio.listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder).map(_.getName).to(List)
     val prefixes = matchedNames.map { case PrefixSpec(n) => n }.to(Set)
     sbtio.listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder).map(_.getName).to(Vector).sorted match
       case Vector() =>
-        Left("No exercises found. Check your configuration")
+        Left(FailedToExecuteCommand(ErrorMessage("No exercises found. Check your configuration")))
       case exercises =>
         prefixes.size match
-          case 0 => Left("No exercises found")
+          case 0 => Left(FailedToExecuteCommand(ErrorMessage("No exercises found")))
           case 1 =>
             val exerciseNumbers = exercises.map(extractExerciseNr)
             if exerciseNumbers.size == exerciseNumbers.to(Set).size then
               Right(ExercisesMetadata(prefixes.head, exercises, exerciseNumbers))
-            else Left("Duplicate exercise numbers found")
-          case _ => Left(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")
+            else Left(FailedToExecuteCommand(ErrorMessage("Duplicate exercise numbers found")))
+          case _ => Left(FailedToExecuteCommand(ErrorMessage(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")))
   end getExerciseMetadata
 
   def validatePrefixes(prefixes: Set[String]): Unit =
@@ -193,14 +193,14 @@ object Helpers:
 
   def deleteFileIfExists(file: File): Unit =
     if (file.exists()) sbtio.delete(file)
-  def initializeGitRepo(linearizedProject: File): Either[String, Unit] =
+  def initializeGitRepo(linearizedProject: File): Either[CmtError, Unit] =
     import ProcessDSL.toProcessCmd
     s"git init"
       .toProcessCmd(workingDir = linearizedProject)
       .runWithStatus(toConsoleRed(s"Failed to initialize linearized git repository in ${linearizedProject.getPath}"))
   end initializeGitRepo
 
-  def setGitConfig(linearizedProject: File): Either[String, Unit] =
+  def setGitConfig(linearizedProject: File): Either[CmtError, Unit] =
     import ProcessDSL.toProcessCmd
     s"git config --local init.defaultBranch main"
       .toProcessCmd(workingDir = linearizedProject)
@@ -213,7 +213,7 @@ object Helpers:
       .runWithStatus(toConsoleRed(s"Failed to set 'user.name' in git configuration"))
   end setGitConfig
 
-  def commitToGit(commitMessage: String, projectFolder: File): Either[String, Unit] =
+  def commitToGit(commitMessage: String, projectFolder: File): Either[CmtError, Unit] =
     import ProcessDSL.toProcessCmd
 
     for {
@@ -233,7 +233,7 @@ object Helpers:
     d.toInt
   }
 
-  def copyCleanViaGit(mainRepo: File, tmpDir: File, repoName: String): Either[String, Unit] =
+  def copyCleanViaGit(mainRepo: File, tmpDir: File, repoName: String): Either[CmtError, Unit] =
 
     import ProcessDSL.*
 
@@ -262,7 +262,7 @@ object Helpers:
   end copyCleanViaGit
 
   @scala.annotation.tailrec
-  private def runCommands(commands: Seq[ProcessCmd]): Either[String, Unit] =
+  private def runCommands(commands: Seq[ProcessCmd]): Either[CmtError, Unit] =
     import ProcessDSL.*
 
     commands match
@@ -270,7 +270,7 @@ object Helpers:
         val commandAsString = cmds.mkString(" ")
         command.runWithStatus(commandAsString) match
           case r @ Right(_)  => runCommands(remainingCommands)
-          case l @ Left(msg) => Left(msg)
+          case l @ Left(msg) => l
       case Nil => Right(())
 
   private val separatorChar: Char = java.io.File.separatorChar

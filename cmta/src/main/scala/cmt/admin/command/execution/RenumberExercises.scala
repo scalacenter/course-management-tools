@@ -19,12 +19,13 @@ import cmt.admin.command.execution.renumberExercise
 import cmt.core.execution.Executable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+import cmt.{CmtError, ErrorMessage, FailedToExecuteCommand}
 
 given Executable[RenumberExercises] with
   import RenumberExercisesHelpers.*
 
   extension (cmd: RenumberExercises)
-    def execute(): Either[String, String] =
+    def execute(): Either[CmtError, String] =
       for {
         ExercisesMetadata(exercisePrefix, exercises, exerciseNumbers) <- getExerciseMetadata(cmd.mainRepository.value)(
           cmd.config)
@@ -40,12 +41,12 @@ given Executable[RenumberExercises] with
         renumOffset = cmd.offset.value
         tryMove = (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) match
           case (Vector(), Vector(`renumOffset`, _)) =>
-            Left("Renumber: nothing to renumber")
+            Left(FailedToExecuteCommand(ErrorMessage("Renumber: nothing to renumber")))
           case (before, _) if rangeOverlapsWithOtherExercises(before, renumOffset) =>
-            Left("Moved exercise range overlaps with other exercises")
+            Left(FailedToExecuteCommand(ErrorMessage("Moved exercise range overlaps with other exercises")))
           case (_, _)
               if exceedsAvailableSpace(exercisesAfterSplit, renumOffset = renumOffset, renumStep = cmd.step.value) =>
-            Left(s"Cannot renumber exercises as it would exceed the available exercise number space")
+            Left(FailedToExecuteCommand(ErrorMessage(s"Cannot renumber exercises as it would exceed the available exercise number space")))
           case (_, _) =>
             val moves =
               for {
@@ -58,7 +59,7 @@ given Executable[RenumberExercises] with
               } yield (oldExerciseFolder, newExerciseFolder)
 
             if moves.isEmpty
-            then Left("Renumber: nothing to renumber")
+            then Left(FailedToExecuteCommand(ErrorMessage("Renumber: nothing to renumber")))
             else
               if renumOffset > renumStartAt
               then sbtio.move(moves.reverse)
@@ -71,13 +72,13 @@ given Executable[RenumberExercises] with
 end given
 
 private object RenumberExercisesHelpers:
-  def resolveStartAt(renumStartAtOpt: Option[Int], exerciseNumbers: Vector[Int]) = {
+  def resolveStartAt(renumStartAtOpt: Option[Int], exerciseNumbers: Vector[Int]): Either[CmtError, Int] = {
     renumStartAtOpt match
       case None => Right(exerciseNumbers.head)
       case Some(num) =>
         if exerciseNumbers.contains(num)
         then Right(num)
-        else Left(s"No exercise with number $num")
+        else Left(FailedToExecuteCommand(ErrorMessage(s"No exercise with number $num")))
   }
   end resolveStartAt
 

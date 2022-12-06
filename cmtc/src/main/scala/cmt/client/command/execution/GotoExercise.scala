@@ -16,13 +16,13 @@ package cmt.client.command.execution
 import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode, withZipFile}
 import cmt.client.command.ClientCommand.GotoExercise
 import cmt.core.execution.Executable
-import cmt.{Helpers, toConsoleGreen, toConsoleYellow}
+import cmt.{CmtError, FailedToExecuteCommand, Helpers, toConsoleGreen, toConsoleYellow, ErrorMessage}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
 given Executable[GotoExercise] with
   extension (cmd: GotoExercise)
-    def execute(): Either[String, String] = {
+    def execute(): Either[CmtError, String] = {
       import cmt.client.Domain.ForceMoveToExercise
       val cMTcConfig = cmd.config
       val currentExerciseId = getCurrentExerciseId(cMTcConfig.bookmarkFile)
@@ -31,14 +31,14 @@ given Executable[GotoExercise] with
       val toExerciseId = cmd.exerciseId.value
 
       if (!cmd.config.exercises.contains(toExerciseId))
-        Left(toConsoleGreen(s"No such exercise: ${cmd.exerciseId.value}"))
+        Left(FailedToExecuteCommand(ErrorMessage(toConsoleGreen(s"No such exercise: ${cmd.exerciseId.value}"))))
       else
         val (currentTestCodeFiles, filesToBeDeleted, filesToBeCopied) =
           getFilesToCopyAndDelete(currentExerciseId, toExerciseId, cMTcConfig)
 
         (cmd.forceMoveToExercise, currentExerciseId) match {
           case (_, `toExerciseId`) =>
-            Left(toConsoleGreen(s"You're already at exercise ${toExerciseId}"))
+            Left(FailedToExecuteCommand(ErrorMessage(toConsoleGreen(s"You're already at exercise ${toExerciseId}"))))
 
           case (ForceMoveToExercise(true), _) =>
             pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
@@ -51,11 +51,11 @@ given Executable[GotoExercise] with
               exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, cMTcConfig))
 
             if (modifiedTestCodeFiles.nonEmpty)
-              Left(s"""goto-exercise cancelled.
+              Left(FailedToExecuteCommand(ErrorMessage(s"""goto-exercise cancelled.
                    |
                    |${toConsoleYellow("You have modified the following file(s):")}
                    |${toConsoleGreen(modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n"))}
-                   |""".stripMargin)
+                   |""".stripMargin)))
             else
               pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
         }

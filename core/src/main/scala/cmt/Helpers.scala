@@ -183,7 +183,7 @@ object Helpers:
     dumpStringToFile(firstExercise, bookmarkFile)
 
   def withZipFile(solutionsFolder: File, exerciseID: String)(
-      code: File => Either[String, String]): Either[String, String] =
+      code: File => Either[CmtError, String]): Either[CmtError, String] =
     val archive = solutionsFolder / s"$exerciseID.zip"
     sbtio.unzip(archive, solutionsFolder)
     val retVal = code(solutionsFolder / exerciseID)
@@ -337,7 +337,7 @@ object Helpers:
       activeExerciseFolder: File,
       filesToBeDeleted: Set[String],
       filesToBeCopied: Set[String],
-      config: CMTcConfig): Either[String, String] =
+      config: CMTcConfig): Either[CmtError, String] =
     withZipFile(config.solutionsFolder, toExerciseId) { solution =>
       for {
         file <- filesToBeDeleted

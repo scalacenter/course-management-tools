@@ -16,7 +16,7 @@ package cmt.client.command.execution
 import cmt.Helpers.withZipFile
 import cmt.client.command.ClientCommand.PullTemplate
 import cmt.core.execution.Executable
-import cmt.{toConsoleGreen, toConsoleYellow}
+import cmt.{CmtError, FailedToExecuteCommand, toConsoleGreen, toConsoleYellow, ErrorMessage}
 import sbt.io.{CopyOptions, IO as sbtio}
 import sbt.io.syntax.{fileToRichFile, singleFileFinder}
 
@@ -24,14 +24,14 @@ import java.nio.charset.StandardCharsets
 
 given Executable[PullTemplate] with
   extension (cmd: PullTemplate)
-    def execute(): Either[String, String] = {
+    def execute(): Either[CmtError, String] = {
       val currentExerciseId = getCurrentExerciseId(cmd.config.bookmarkFile)
 
       withZipFile(cmd.config.solutionsFolder, currentExerciseId) { solution =>
         val fullTemplatePath = solution / cmd.templatePath.value
         (fullTemplatePath.exists, fullTemplatePath.isDirectory) match
           case (false, _) =>
-            Left(s"No such template: ${cmd.templatePath.value}")
+            Left(FailedToExecuteCommand(ErrorMessage(s"No such template: ${cmd.templatePath.value}")))
           case (true, false) =>
             sbtio.copyFile(
               fullTemplatePath,

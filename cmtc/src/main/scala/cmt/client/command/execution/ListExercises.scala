@@ -15,14 +15,14 @@ package cmt.client.command.execution
 
 import cmt.client.command.ClientCommand.ListExercises
 import cmt.core.execution.Executable
-import cmt.{toConsoleGreen, toConsoleYellow}
+import cmt.{CmtError, toConsoleGreen, toConsoleYellow}
 import sbt.io.IO as sbtio
 
 import java.nio.charset.StandardCharsets
 
 given Executable[ListExercises] with
   extension (cmd: ListExercises)
-    def execute(): Either[String, String] = {
+    def execute(): Either[CmtError, String] = {
       val currentExerciseId = getCurrentExerciseId(cmd.config.bookmarkFile)
 
       val messages = cmd.config.exercises.zipWithIndex

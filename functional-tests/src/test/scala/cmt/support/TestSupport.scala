@@ -17,7 +17,7 @@ import cmt.Helpers.*
 import cmt.admin.Domain.MainRepository
 import cmt.admin.cli.CliCommand.Studentify
 import cmt.client.Domain.{ForceMoveToExercise, StudentifiedRepo}
-import cmt.{CMTaConfig, CMTcConfig, Helpers}
+import cmt.{CMTaConfig, CMTcConfig, CmtError, Helpers}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
@@ -163,54 +163,54 @@ def extractCodeFromRepo(codeFolder: File): SourceFiles =
   } yield (fileName.getPath, checksum)
   SourceFiles(filesAndChecksums.to(Map))
 
-def gotoNextExercise(config: CMTcConfig, studentifiedRepo: File): Either[String, String] =
+def gotoNextExercise(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
   import cmt.client.command.ClientCommand.NextExercise
   import cmt.client.command.execution.given
   NextExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo)).execute()
 
-def gotoNextExerciseForced(config: CMTcConfig, studentifiedRepo: File): Either[String, String] =
+def gotoNextExerciseForced(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
   import cmt.client.command.ClientCommand.NextExercise
   import cmt.client.command.execution.given
   NextExercise(config, ForceMoveToExercise(true), StudentifiedRepo(studentifiedRepo)).execute()
 
-def gotoPreviousExercise(config: CMTcConfig, studentifiedRepo: File): Either[String, String] =
+def gotoPreviousExercise(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
   import cmt.client.command.ClientCommand.PreviousExercise
   import cmt.client.command.execution.given
   PreviousExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo)).execute()
 
-def gotoPreviousExerciseForced(config: CMTcConfig, studentifiedRepo: File): Either[String, String] =
+def gotoPreviousExerciseForced(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
   import cmt.client.command.ClientCommand.PreviousExercise
   import cmt.client.command.execution.given
   PreviousExercise(config, ForceMoveToExercise(true), StudentifiedRepo(studentifiedRepo)).execute()
 
-def pullSolution(config: CMTcConfig, studentifiedRepo: File): Either[String, String] =
+def pullSolution(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
   import cmt.client.command.ClientCommand.PullSolution
   import cmt.client.command.execution.given
   PullSolution(config, StudentifiedRepo(studentifiedRepo)).execute()
 
-def gotoExercise(config: CMTcConfig, studentifiedRepo: File, exercise: String): Either[String, String] =
+def gotoExercise(config: CMTcConfig, studentifiedRepo: File, exercise: String): Either[CmtError, String] =
   import cmt.client.Domain.ExerciseId
   import cmt.client.command.ClientCommand.GotoExercise
   import cmt.client.command.execution.given
   GotoExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
 
-def gotoFirstExercise(config: CMTcConfig, studentifiedRepo: File): Either[String, String] =
+def gotoFirstExercise(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
   import cmt.client.command.ClientCommand.GotoFirstExercise
   import cmt.client.command.execution.given
   GotoFirstExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo)).execute()
 
-def saveState(config: CMTcConfig, studentifiedRepo: File): Either[String, String] =
+def saveState(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
   import cmt.client.command.ClientCommand.SaveState
   import cmt.client.command.execution.given
   SaveState(config, StudentifiedRepo(studentifiedRepo)).execute()
 
-def restoreState(config: CMTcConfig, studentifiedRepo: File, exercise: String): Either[String, String] =
+def restoreState(config: CMTcConfig, studentifiedRepo: File, exercise: String): Either[CmtError, String] =
   import cmt.client.Domain.ExerciseId
   import cmt.client.command.ClientCommand.RestoreState
   import cmt.client.command.execution.given
   RestoreState(config, StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
 
-def pullTemplate(config: CMTcConfig, studentifiedRepo: File, templatePath: String): Either[String, String] =
+def pullTemplate(config: CMTcConfig, studentifiedRepo: File, templatePath: String): Either[CmtError, String] =
   import cmt.client.Domain.TemplatePath
   import cmt.client.command.ClientCommand.PullTemplate
   import cmt.client.command.execution.given

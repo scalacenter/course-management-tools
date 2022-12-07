@@ -440,35 +440,35 @@ final class StudentificationFunctionalSpec
 
       {
         val gotoPreviousExerciseResult = gotoPreviousExercise(cMTcConfig, studentifiedRepoFolder)
-        val gotoPreviousExerciseExpectedResult = Left(s"""previous-exercise cancelled.
+        val gotoPreviousExerciseExpectedResult = Left(FailedToExecuteCommand(ErrorMessage(s"""previous-exercise cancelled.
              |
              |${toConsoleYellow("You have modified the following file(s):")}
              |${toConsoleGreen(List("src/test/cmt/pkg/T3.scala").mkString("\n   ", "\n   ", "\n"))}
-             |""".stripMargin)
+             |""".stripMargin)))
         gotoPreviousExerciseResult shouldBe gotoPreviousExerciseExpectedResult
 
         val gotoNextExerciseResult = gotoNextExercise(cMTcConfig, studentifiedRepoFolder)
-        val gotoNextExerciseExpectedResult = Left(s"""next-exercise cancelled.
+        val gotoNextExerciseExpectedResult = Left(FailedToExecuteCommand(ErrorMessage(s"""next-exercise cancelled.
              |
              |${toConsoleYellow("You have modified the following file(s):")}
              |${toConsoleGreen(List("src/test/cmt/pkg/T3.scala").mkString("\n   ", "\n   ", "\n"))}
-             |""".stripMargin)
+             |""".stripMargin)))
         gotoNextExerciseResult shouldBe gotoNextExerciseExpectedResult
 
         val gotoFirstExerciseResult = gotoFirstExercise(cMTcConfig, studentifiedRepoFolder)
-        val gotoFirstExerciseExpectedResult = Left(s"""goto-exercise cancelled.
+        val gotoFirstExerciseExpectedResult = Left(FailedToExecuteCommand(ErrorMessage(s"""goto-exercise cancelled.
              |
              |${toConsoleYellow("You have modified the following file(s):")}
              |${toConsoleGreen(List("src/test/cmt/pkg/T3.scala").mkString("\n   ", "\n   ", "\n"))}
-             |""".stripMargin)
+             |""".stripMargin)))
         gotoFirstExerciseResult shouldBe gotoFirstExerciseExpectedResult
 
         val gotoSecondExerciseResult = gotoExercise(cMTcConfig, studentifiedRepoFolder, "exercise_002_desc")
-        val gotoSecondExerciseExpectedResult = Left(s"""goto-exercise cancelled.
+        val gotoSecondExerciseExpectedResult = Left(FailedToExecuteCommand(ErrorMessage(s"""goto-exercise cancelled.
              |
              |${toConsoleYellow("You have modified the following file(s):")}
              |${toConsoleGreen(List("src/test/cmt/pkg/T3.scala").mkString("\n   ", "\n   ", "\n"))}
-             |""".stripMargin)
+             |""".stripMargin)))
         gotoSecondExerciseResult shouldBe gotoSecondExerciseExpectedResult
 
         val actualCode = extractCodeFromRepo(studentifiedRepoCodeFolder)
@@ -529,11 +529,11 @@ final class StudentificationFunctionalSpec
 
       {
         val gotoNextExerciseResult = gotoNextExercise(cMTcConfig, studentifiedRepoFolder)
-        val gotoNextExerciseExpectedResult = Left(s"""next-exercise cancelled.
+        val gotoNextExerciseExpectedResult = Left(FailedToExecuteCommand(ErrorMessage(s"""next-exercise cancelled.
              |
              |${toConsoleYellow("You have modified the following file(s):")}
              |${toConsoleGreen(List("src/test/cmt/pkg/T3.scala").mkString("\n   ", "\n   ", "\n"))}
-             |""".stripMargin)
+             |""".stripMargin)))
         gotoNextExerciseResult shouldBe gotoNextExerciseExpectedResult
 
         val actualCode = extractCodeFromRepo(studentifiedRepoCodeFolder)

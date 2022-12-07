@@ -15,7 +15,15 @@ package cmt.client.command.execution
 
 import cmt.client.command.ClientCommand.RestoreState
 import cmt.core.execution.Executable
-import cmt.{CmtError, FailedToExecuteCommand, Helpers, toConsoleGreen, toConsoleYellow, ErrorMessage}
+import cmt.{
+  CmtError,
+  FailedToExecuteCommand,
+  Helpers,
+  toConsoleGreen,
+  toConsoleYellow,
+  ErrorMessage,
+  toExecuteCommandErrorMessage
+}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.{fileToRichFile, singleFileFinder}
 
@@ -24,7 +32,7 @@ given Executable[RestoreState] with
     def execute(): Either[CmtError, String] = {
       val savedState = cmd.config.studentifiedSavedStatesFolder / s"${cmd.exerciseId.value}.zip"
       if !savedState.exists
-      then Left(FailedToExecuteCommand(ErrorMessage(s"No such saved state: ${cmd.exerciseId.value}")))
+      then Left(s"No such saved state: ${cmd.exerciseId.value}".toExecuteCommandErrorMessage)
       else {
         deleteCurrentState(cmd.studentifiedRepo.value)(cmd.config)
 

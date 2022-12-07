@@ -16,8 +16,8 @@ package cmt.client
 import cmt.client.cli.{CliOptions, ClientCliParser}
 import cmt.client.command.ClientCommand.*
 import cmt.client.command.execution.given
-import cmt.{CmtError, printErrorAndExit, printMessage, toConsoleRed, FailedToExecuteCommand, ErrorMessage}
 import cmt.version.BuildInfo
+import cmt.{CmtError, printErrorAndExit, printMessage, toConsoleRed, toExecuteCommandErrorMessage}
 
 object Main:
 
@@ -39,7 +39,7 @@ object Main:
       case cmd: PullTemplate      => cmd.execute()
       case cmd: RestoreState      => cmd.execute()
       case Version                => Right(BuildInfo.toString)
-      case NoCommand              => Left(FailedToExecuteCommand(ErrorMessage("KABOOM!!")))
+      case NoCommand              => Left("KABOOM!!".toExecuteCommandErrorMessage)
 
   extension (result: Either[CmtError, String])
     def printResult(): Unit =

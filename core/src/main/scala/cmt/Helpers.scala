@@ -14,9 +14,9 @@ package cmt
   */
 
 import cmt.ProcessDSL.ProcessCmd
+import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 
 import scala.jdk.CollectionConverters.*
 
@@ -61,7 +61,7 @@ object Helpers:
 
     workspaceIsUnclean match {
       case Right(cnt) if cnt > 0 =>
-        Left(FailedToExecuteCommand(ErrorMessage("main repository isn't clean. Commit changes and try again")))
+        Left("main repository isn't clean. Commit changes and try again".toExecuteCommandErrorMessage)
       case Right(_)  => Right(())
       case Left(msg) => Left(msg)
     }
@@ -101,16 +101,16 @@ object Helpers:
     val prefixes = matchedNames.map { case PrefixSpec(n) => n }.to(Set)
     sbtio.listFiles(isExerciseFolder())(mainRepo / config.mainRepoExerciseFolder).map(_.getName).to(Vector).sorted match
       case Vector() =>
-        Left(FailedToExecuteCommand(ErrorMessage("No exercises found. Check your configuration")))
+        Left("No exercises found. Check your configuration".toExecuteCommandErrorMessage)
       case exercises =>
         prefixes.size match
-          case 0 => Left(FailedToExecuteCommand(ErrorMessage("No exercises found")))
+          case 0 => Left("No exercises found".toExecuteCommandErrorMessage)
           case 1 =>
             val exerciseNumbers = exercises.map(extractExerciseNr)
             if exerciseNumbers.size == exerciseNumbers.to(Set).size then
               Right(ExercisesMetadata(prefixes.head, exercises, exerciseNumbers))
-            else Left(FailedToExecuteCommand(ErrorMessage("Duplicate exercise numbers found")))
-          case _ => Left(FailedToExecuteCommand(ErrorMessage(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found")))
+            else Left("Duplicate exercise numbers found".toExecuteCommandErrorMessage)
+          case _ => Left(s"Multiple exercise prefixes (${prefixes.mkString(", ")}) found".toExecuteCommandErrorMessage)
   end getExerciseMetadata
 
   def validatePrefixes(prefixes: Set[String]): Unit =
@@ -293,9 +293,10 @@ object Helpers:
       case _ =>
         path.replaceAll(s"/", s"$separatorChar")
 
+  import org.apache.commons.codec.binary.Hex
+
   import java.nio.file.{Files, Path}
   import java.security.MessageDigest
-  import org.apache.commons.codec.binary.Hex
   def fileSize(f: File): Long =
     Files.size(f.toPath)
 

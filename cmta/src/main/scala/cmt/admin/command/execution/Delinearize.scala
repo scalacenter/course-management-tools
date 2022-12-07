@@ -73,7 +73,7 @@ private object DelinearizeHelpers:
       exercisesAndSHAs: Vector[ExerciseNameAndSHA]): Either[CmtError, Unit] =
     // TODO: in case repos are incompatible, print out the exercise list on both ends (if any)
     if exercisesInMain == exercisesAndSHAs.map(_.exName) then Right(())
-    else Left(FailedToExecuteCommand(ErrorMessage(s"Cannot de-linearize: repositories are incompatible")))
+    else Left(s"Cannot de-linearize: repositories are incompatible".toExecuteCommandErrorMessage)
   end checkReposMatch
 
   def putBackToMain(mainRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExerciseNameAndSHA])(

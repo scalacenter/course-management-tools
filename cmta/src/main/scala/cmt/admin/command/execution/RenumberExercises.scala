@@ -19,7 +19,7 @@ import cmt.admin.command.execution.renumberExercise
 import cmt.core.execution.Executable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import cmt.{CmtError, ErrorMessage, FailedToExecuteCommand}
+import cmt.{CmtError, toExecuteCommandErrorMessage}
 
 given Executable[RenumberExercises] with
   import RenumberExercisesHelpers.*
@@ -41,12 +41,13 @@ given Executable[RenumberExercises] with
         renumOffset = cmd.offset.value
         tryMove = (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) match
           case (Vector(), Vector(`renumOffset`, _)) =>
-            Left(FailedToExecuteCommand(ErrorMessage("Renumber: nothing to renumber")))
+            Left("Renumber: nothing to renumber".toExecuteCommandErrorMessage)
           case (before, _) if rangeOverlapsWithOtherExercises(before, renumOffset) =>
-            Left(FailedToExecuteCommand(ErrorMessage("Moved exercise range overlaps with other exercises")))
+            Left("Moved exercise range overlaps with other exercises".toExecuteCommandErrorMessage)
           case (_, _)
               if exceedsAvailableSpace(exercisesAfterSplit, renumOffset = renumOffset, renumStep = cmd.step.value) =>
-            Left(FailedToExecuteCommand(ErrorMessage(s"Cannot renumber exercises as it would exceed the available exercise number space")))
+            Left(
+              s"Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
           case (_, _) =>
             val moves =
               for {
@@ -59,7 +60,7 @@ given Executable[RenumberExercises] with
               } yield (oldExerciseFolder, newExerciseFolder)
 
             if moves.isEmpty
-            then Left(FailedToExecuteCommand(ErrorMessage("Renumber: nothing to renumber")))
+            then Left("Renumber: nothing to renumber".toExecuteCommandErrorMessage)
             else
               if renumOffset > renumStartAt
               then sbtio.move(moves.reverse)
@@ -78,7 +79,7 @@ private object RenumberExercisesHelpers:
       case Some(num) =>
         if exerciseNumbers.contains(num)
         then Right(num)
-        else Left(FailedToExecuteCommand(ErrorMessage(s"No exercise with number $num")))
+        else Left(s"No exercise with number $num".toExecuteCommandErrorMessage)
   }
   end resolveStartAt
 

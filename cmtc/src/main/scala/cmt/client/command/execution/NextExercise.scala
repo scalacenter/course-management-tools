@@ -21,6 +21,8 @@ import com.typesafe.config.{Config, ConfigFactory, ConfigObject, ConfigValue}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
+import cmt.toExecuteCommandErrorMessage
+
 import java.nio.charset.StandardCharsets
 import scala.jdk.CollectionConverters.*
 
@@ -40,7 +42,7 @@ given Executable[NextExercise] with
 
       (currentExerciseId, cmd.forceMoveToExercise) match {
         case (LastExerciseId, _) =>
-          Left(FailedToExecuteCommand(ErrorMessage(toConsoleGreen(s"You're already at the last exercise: $currentExerciseId"))))
+          Left(toConsoleGreen(s"You're already at the last exercise: $currentExerciseId").toExecuteCommandErrorMessage)
 
         case (_, ForceMoveToExercise(true)) =>
           pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
@@ -62,11 +64,11 @@ given Executable[NextExercise] with
             //
             // This needs to be added to the `previous-exercise`, `goto-exercise`, and `goto-first-exercise`
             // commands too.
-            Left(FailedToExecuteCommand(ErrorMessage(s"""next-exercise cancelled.
+            Left(s"""next-exercise cancelled.
                  |
                  |${toConsoleYellow("You have modified the following file(s):")}
                  |${toConsoleGreen(modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n"))}
-                 |""".stripMargin)))
+                 |""".stripMargin.toExecuteCommandErrorMessage)
           else
             pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
       }

@@ -28,3 +28,7 @@ final case class FailedToExecuteCommand(reason: ErrorMessage) extends CmtError {
 
 case class OptionName(value: String)
 case class ErrorMessage(message: String)
+
+extension (errorMessage: String)
+  def toExecuteCommandErrorMessage: FailedToExecuteCommand =
+    FailedToExecuteCommand(ErrorMessage(errorMessage))

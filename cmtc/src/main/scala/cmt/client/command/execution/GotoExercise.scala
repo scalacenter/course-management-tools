@@ -19,6 +19,7 @@ import cmt.core.execution.Executable
 import cmt.{CmtError, FailedToExecuteCommand, Helpers, toConsoleGreen, toConsoleYellow, ErrorMessage}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+import cmt.toExecuteCommandErrorMessage
 
 given Executable[GotoExercise] with
   extension (cmd: GotoExercise)
@@ -31,14 +32,14 @@ given Executable[GotoExercise] with
       val toExerciseId = cmd.exerciseId.value
 
       if (!cmd.config.exercises.contains(toExerciseId))
-        Left(FailedToExecuteCommand(ErrorMessage(toConsoleGreen(s"No such exercise: ${cmd.exerciseId.value}"))))
+        Left(toConsoleGreen(s"No such exercise: ${cmd.exerciseId.value}").toExecuteCommandErrorMessage)
       else
         val (currentTestCodeFiles, filesToBeDeleted, filesToBeCopied) =
           getFilesToCopyAndDelete(currentExerciseId, toExerciseId, cMTcConfig)
 
         (cmd.forceMoveToExercise, currentExerciseId) match {
           case (_, `toExerciseId`) =>
-            Left(FailedToExecuteCommand(ErrorMessage(toConsoleGreen(s"You're already at exercise ${toExerciseId}"))))
+            Left(s"You're already at exercise ${toExerciseId}".toExecuteCommandErrorMessage)
 
           case (ForceMoveToExercise(true), _) =>
             pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
@@ -51,11 +52,11 @@ given Executable[GotoExercise] with
               exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, cMTcConfig))
 
             if (modifiedTestCodeFiles.nonEmpty)
-              Left(FailedToExecuteCommand(ErrorMessage(s"""goto-exercise cancelled.
+              Left(s"""goto-exercise cancelled.
                    |
                    |${toConsoleYellow("You have modified the following file(s):")}
                    |${toConsoleGreen(modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n"))}
-                   |""".stripMargin)))
+                   |""".stripMargin.toExecuteCommandErrorMessage)
             else
               pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
         }

@@ -15,12 +15,12 @@ package cmt.client.command.execution
 
 import cmt.client.command.ClientCommand.ListSavedStates
 import cmt.core.execution.Executable
-import cmt.{toConsoleGreen, toConsoleYellow}
+import cmt.{CmtError, toConsoleGreen, toConsoleYellow}
 import sbt.io.IO as sbtio
 
 given Executable[ListSavedStates] with
   extension (cmd: ListSavedStates)
-    def execute(): Either[String, String] = {
+    def execute(): Either[CmtError, String] = {
       val MatchDotzip = ".zip".r
       val savedStates =
         sbtio

@@ -13,12 +13,13 @@ package cmt.client.command.execution
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
+import cmt.CmtError
 import cmt.client.Domain.ExerciseId
 import cmt.client.command.ClientCommand.{GotoExercise, GotoFirstExercise}
 import cmt.core.execution.Executable
 
 given Executable[GotoFirstExercise] with
   extension (cmd: GotoFirstExercise)
-    def execute(): Either[String, String] =
+    def execute(): Either[CmtError, String] =
       GotoExercise(cmd.config, cmd.forceMoveToExercise, cmd.studentifiedRepo, ExerciseId(cmd.config.exercises.head))
         .execute()

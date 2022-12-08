@@ -20,10 +20,11 @@ import cmt.{Helpers, StudentifiedSkelFolders, toConsoleGreen}
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+import cmt.CmtError
 
 given Executable[Studentify] with
   extension (cmd: Studentify)
-    def execute(): Either[String, String] =
+    def execute(): Either[CmtError, String] =
       import StudentifyHelpers.*
 
       def checkForOverlappingPathsInConfig(): Unit =
@@ -79,7 +80,7 @@ private object StudentifyHelpers:
       studentifiedRootFolder: File,
       solutionsFolder: File,
       cmd: Studentify,
-      tmpFolder: File): Either[String, String] =
+      tmpFolder: File): Either[CmtError, String] =
 
     addFirstExercise(cleanedMainRepo, exercises.head, studentifiedRootFolder)(cmd.config)
 

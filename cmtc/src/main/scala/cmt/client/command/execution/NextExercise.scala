@@ -16,17 +16,19 @@ package cmt.client.command.execution
 import cmt.Helpers.*
 import cmt.client.command.ClientCommand.NextExercise
 import cmt.core.execution.Executable
-import cmt.{CMTcConfig, toConsoleGreen, toConsoleYellow}
+import cmt.{CMTcConfig, CmtError, FailedToExecuteCommand, toConsoleGreen, toConsoleYellow, ErrorMessage}
 import com.typesafe.config.{Config, ConfigFactory, ConfigObject, ConfigValue}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+
+import cmt.toExecuteCommandErrorMessage
 
 import java.nio.charset.StandardCharsets
 import scala.jdk.CollectionConverters.*
 
 given Executable[NextExercise] with
   extension (cmd: NextExercise)
-    def execute(): Either[String, String] = {
+    def execute(): Either[CmtError, String] = {
       import cmt.client.Domain.ForceMoveToExercise
       val cMTcConfig = cmd.config
       val currentExerciseId = getCurrentExerciseId(cMTcConfig.bookmarkFile)
@@ -40,7 +42,7 @@ given Executable[NextExercise] with
 
       (currentExerciseId, cmd.forceMoveToExercise) match {
         case (LastExerciseId, _) =>
-          Left(toConsoleGreen(s"You're already at the last exercise: $currentExerciseId"))
+          Left(toConsoleGreen(s"You're already at the last exercise: $currentExerciseId").toExecuteCommandErrorMessage)
 
         case (_, ForceMoveToExercise(true)) =>
           pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
@@ -66,7 +68,7 @@ given Executable[NextExercise] with
                  |
                  |${toConsoleYellow("You have modified the following file(s):")}
                  |${toConsoleGreen(modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n"))}
-                 |""".stripMargin)
+                 |""".stripMargin.toExecuteCommandErrorMessage)
           else
             pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)
       }

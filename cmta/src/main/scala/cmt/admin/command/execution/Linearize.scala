@@ -20,10 +20,11 @@ import cmt.core.execution.Executable
 import cmt.{ProcessDSL, toConsoleGreen}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+import cmt.CmtError
 
 given Executable[Linearize] with
   extension (cmd: Linearize)
-    def execute(): Either[String, String] = {
+    def execute(): Either[CmtError, String] = {
       import LinearizeHelpers.*
 
       for {
@@ -63,7 +64,7 @@ private object LinearizeHelpers:
       cleanedMainRepo: File,
       exercises: Seq[String],
       linearizedRootFolder: File,
-      cmd: Linearize): Either[String, Unit] =
+      cmd: Linearize): Either[CmtError, Unit] =
 
     val dotIgnoreFile = cleanedMainRepo / ".gitignore"
     if dotIgnoreFile.exists then sbtio.copyFile(dotIgnoreFile, linearizedRootFolder / ".gitignore")
@@ -76,10 +77,10 @@ private object LinearizeHelpers:
         sbtio.delete(linearizedCodeFolder)
         sbtio.createDirectory(linearizedCodeFolder)
         sbtio.copyDirectory(from, linearizedCodeFolder, preserveLastModified = true)
-        val commitResult: Either[String, Unit] = commitToGit(exercise, linearizedRootFolder)
+        val commitResult: Either[CmtError, Unit] = commitToGit(exercise, linearizedRootFolder)
         commitResult match
-          case Right(_) => commitExercises(cleanedMainRepo, remainingExercises, linearizedRootFolder, cmd)
-          case left     => left
+          case Right(_)    => commitExercises(cleanedMainRepo, remainingExercises, linearizedRootFolder, cmd)
+          case l @ Left(_) => l
       case Nil => Right(())
 
 end LinearizeHelpers

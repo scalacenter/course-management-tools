@@ -16,7 +16,7 @@ package cmt.client.command.execution
 import cmt.Helpers.{fileList, withZipFile}
 import cmt.client.command.ClientCommand.PullSolution
 import cmt.core.execution.Executable
-import cmt.{toConsoleGreen, toConsoleYellow}
+import cmt.{CmtError, toConsoleGreen, toConsoleYellow}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.{fileToRichFile, singleFileFinder}
 
@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets
 
 given Executable[PullSolution] with
   extension (cmd: PullSolution)
-    def execute(): Either[String, String] = {
+    def execute(): Either[CmtError, String] = {
       val currentExerciseId = getCurrentExerciseId(cmd.config.bookmarkFile)
 
       deleteCurrentState(cmd.studentifiedRepo.value)(cmd.config)

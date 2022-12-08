@@ -16,7 +16,7 @@ package cmt.client.command.execution
 import cmt.Helpers.zipAndDeleteOriginal
 import cmt.client.command.ClientCommand.SaveState
 import cmt.core.execution.Executable
-import cmt.{Helpers, toConsoleGreen}
+import cmt.{CmtError, Helpers, toConsoleGreen}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.{fileToRichFile, singleFileFinder}
 
@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets
 
 given Executable[SaveState] with
   extension (cmd: SaveState)
-    def execute(): Either[String, String] = {
+    def execute(): Either[CmtError, String] = {
       val currentExerciseId = getCurrentExerciseId(cmd.config.bookmarkFile)
       val savedStatesFolder = cmd.config.studentifiedSavedStatesFolder
 

@@ -16,8 +16,8 @@ package cmt.client
 import cmt.client.cli.{CliOptions, ClientCliParser}
 import cmt.client.command.ClientCommand.*
 import cmt.client.command.execution.given
-import cmt.{printErrorAndExit, printMessage, toConsoleRed}
 import cmt.version.BuildInfo
+import cmt.{CmtError, printErrorAndExit, printMessage, toConsoleRed, toExecuteCommandErrorMessage}
 
 object Main:
 
@@ -26,7 +26,7 @@ object Main:
       case Right(options) => selectAndExecuteCommand(options).printResult()
       case Left(error)    => printErrorAndExit(s"Error(s): ${error.toErrorString()}")
 
-  private def selectAndExecuteCommand(options: CliOptions): Either[String, String] =
+  private def selectAndExecuteCommand(options: CliOptions): Either[CmtError, String] =
     options.toCommand match
       case cmd: GotoFirstExercise => cmd.execute()
       case cmd: ListExercises     => cmd.execute()
@@ -39,13 +39,13 @@ object Main:
       case cmd: PullTemplate      => cmd.execute()
       case cmd: RestoreState      => cmd.execute()
       case Version                => Right(BuildInfo.toString)
-      case NoCommand              => Left("KABOOM!!")
+      case NoCommand              => Left("KABOOM!!".toExecuteCommandErrorMessage)
 
-  extension (result: Either[String, String])
+  extension (result: Either[CmtError, String])
     def printResult(): Unit =
       result match
         case Left(errorMessage) =>
-          System.err.println(toConsoleRed(s"Error: $errorMessage"))
+          System.err.println(toConsoleRed(s"Error: ${errorMessage.toDisplayString}"))
           System.exit(1)
         case Right(message) =>
           printMessage(message)

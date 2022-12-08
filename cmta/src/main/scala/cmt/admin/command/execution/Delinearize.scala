@@ -20,16 +20,17 @@ import cmt.admin.command.AdminCommand.Delinearize
 import cmt.core.execution.Executable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+import cmt.CmtError
 
 case class ExerciseNameAndSHA(exName: String, exSHA: String)
 
 given Executable[Delinearize] with
   extension (cmd: Delinearize)
-    def execute(): Either[String, String] = {
+    def execute(): Either[CmtError, String] = {
       import DelinearizeHelpers.*
 
       for {
-        _ <- Right(()).withLeft[String]
+        _ <- Right(()).withLeft[CmtError]
         _ = println(s"De-linearizing ${toConsoleGreen(cmd.mainRepository.value.getPath)} to ${toConsoleGreen(
             cmd.linearizeBaseDirectory.value.getPath)}")
 
@@ -50,7 +51,7 @@ given Executable[Delinearize] with
     }
 
 private object DelinearizeHelpers:
-  def getExercisesAndSHAs(linearizedRootFolder: File): Either[String, Vector[ExerciseNameAndSHA]] =
+  def getExercisesAndSHAs(linearizedRootFolder: File): Either[CmtError, Vector[ExerciseNameAndSHA]] =
     "git log --oneline".toProcessCmd(linearizedRootFolder).runAndReadOutput().map(processGitLogOutput)
   end getExercisesAndSHAs
 
@@ -69,14 +70,14 @@ private object DelinearizeHelpers:
 
   def checkReposMatch(
       exercisesInMain: Seq[String],
-      exercisesAndSHAs: Vector[ExerciseNameAndSHA]): Either[String, Unit] =
+      exercisesAndSHAs: Vector[ExerciseNameAndSHA]): Either[CmtError, Unit] =
     // TODO: in case repos are incompatible, print out the exercise list on both ends (if any)
     if exercisesInMain == exercisesAndSHAs.map(_.exName) then Right(())
-    else Left(s"Cannot de-linearize: repositories are incompatible")
+    else Left(s"Cannot de-linearize: repositories are incompatible".toExecuteCommandErrorMessage)
   end checkReposMatch
 
   def putBackToMain(mainRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExerciseNameAndSHA])(
-      config: CMTaConfig): Either[String, Unit] =
+      config: CMTaConfig): Either[CmtError, Unit] =
 
     val mainRepoActiveExerciseFolder = mainRepo / config.mainRepoExerciseFolder
     val linearizedActiveExerciseFolder =
@@ -99,7 +100,7 @@ private object DelinearizeHelpers:
       mainRepoActiveExerciseFolder: File,
       linearizedRepo: File,
       linearizedActiveExerciseFolder: File,
-      exercisesAndSHAs: Seq[ExerciseNameAndSHA]): Either[String, Unit] =
+      exercisesAndSHAs: Seq[ExerciseNameAndSHA]): Either[CmtError, Unit] =
     exercisesAndSHAs match
       case ExerciseNameAndSHA(exercise, sha) +: remaining =>
         s"git checkout $sha"

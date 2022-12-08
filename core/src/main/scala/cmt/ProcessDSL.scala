@@ -13,11 +13,11 @@ package cmt
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import scala.sys.process.Process
-import scala.util.{Failure, Success, Try}
-
+import cmt.toExecuteCommandErrorMessage
 import sbt.io.syntax.*
 
+import scala.sys.process.Process
+import scala.util.{Failure, Success, Try}
 object ProcessDSL:
   final case class CmdWithsWorkingDir(cmd: String, workingDir: String)
 
@@ -25,14 +25,14 @@ object ProcessDSL:
 
   extension (cmd: ProcessCmd)
 
-    def runWithStatus(msg: String): Either[String, Unit] = {
+    def runWithStatus(msg: String): Either[CmtError, Unit] = {
       val status = Try(Process(cmd.cmd, cmd.workingDir).!)
       status match
         case Success(_)  => Right(())
-        case Failure(ex) => Left(msg)
+        case Failure(ex) => Left(msg.toExecuteCommandErrorMessage)
     }
 
-    def runAndReadOutput(): Either[String, String] =
+    def runAndReadOutput(): Either[CmtError, String] =
       val consoleRes = Try(Process(cmd.cmd, cmd.workingDir).!!)
       consoleRes match
         case Success(result) => Right(result.trim)
@@ -41,7 +41,7 @@ object ProcessDSL:
                        |  Executed command: ${cmd.cmd.mkString(" ")}
                        |  Working directory: ${cmd.workingDir}
           """.stripMargin
-          Left(msg)
+          Left(msg.toExecuteCommandErrorMessage)
   end extension
 
   extension (command: String)

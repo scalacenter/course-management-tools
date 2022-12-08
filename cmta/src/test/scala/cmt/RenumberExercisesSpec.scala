@@ -185,7 +185,8 @@ class RenumberExercisesSpec
           step = RenumberStep(1))
         val result = command.execute()
 
-        result shouldBe Left("Cannot renumber exercises as it would exceed the available exercise number space")
+        result shouldBe Left(
+          "Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
           "exercise_995_desc",
@@ -261,7 +262,7 @@ class RenumberExercisesSpec
           step = RenumberStep(1))
         val result = command.execute()
 
-        result shouldBe Left("Renumber: nothing to renumber")
+        result shouldBe Left("Renumber: nothing to renumber".toExecuteCommandErrorMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
           "exercise_001_desc",
@@ -280,7 +281,7 @@ class RenumberExercisesSpec
           step = RenumberStep(1))
         val result = command.execute()
 
-        result shouldBe Left("Moved exercise range overlaps with other exercises")
+        result shouldBe Left("Moved exercise range overlaps with other exercises".toExecuteCommandErrorMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
           "exercise_001_desc",
@@ -311,7 +312,7 @@ class RenumberExercisesSpec
           maybeStart = Some(RenumberStart(12)),
           offset = RenumberOffset(5),
           step = RenumberStep(1)).execute()
-        result shouldBe Left("Moved exercise range overlaps with other exercises")
+        result shouldBe Left("Moved exercise range overlaps with other exercises".toExecuteCommandErrorMessage)
         renumberedExercises shouldBe expectedExercises
       }
     }
@@ -328,7 +329,8 @@ class RenumberExercisesSpec
           maybeStart = None,
           offset = RenumberOffset(1),
           step = RenumberStep(1)).execute()
-        result shouldBe Left("Cannot renumber exercises as it would exceed the available exercise number space")
+        result shouldBe Left(
+          "Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         renumberedExercises shouldBe exercises
       }
@@ -339,7 +341,8 @@ class RenumberExercisesSpec
           maybeStart = Some(RenumberStart(998)),
           offset = RenumberOffset(999),
           step = RenumberStep(1)).execute()
-        result shouldBe Left("Cannot renumber exercises as it would exceed the available exercise number space")
+        result shouldBe Left(
+          "Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         renumberedExercises shouldBe exercises
       }
@@ -350,7 +353,8 @@ class RenumberExercisesSpec
           maybeStart = None,
           offset = RenumberOffset(0),
           step = RenumberStep(2)).execute()
-        result shouldBe Left("Cannot renumber exercises as it would exceed the available exercise number space")
+        result shouldBe Left(
+          "Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         renumberedExercises shouldBe exercises
       }

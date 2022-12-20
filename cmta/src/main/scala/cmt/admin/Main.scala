@@ -17,8 +17,8 @@ import caseapp.core.app.{Command, CommandsEntryPoint}
 import cmt.admin.command.{Delinearize, DuplicateInsertBefore, Linearize, RenumberExercises, Studentify}
 
 object Main extends CommandsEntryPoint:
-  override def progName: String = "cmta"
-  override def commands: Seq[Command[_]] = Seq(
+  override def progName = "cmta"
+  override def commands = Seq(
     Delinearize.command,
     DuplicateInsertBefore.command,
     Linearize.command,

@@ -24,7 +24,7 @@ import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 import cmt.admin.cli.ArgParsers.*
 
-object LinearizeArguments extends CommandLineArguments[Linearize.Options] with Tables with TestDirectories {
+object LinearizeArguments extends CommandLineArgumentsSpec[Linearize.Options] with TestDirectories {
 
   val identifier = "linearize"
 

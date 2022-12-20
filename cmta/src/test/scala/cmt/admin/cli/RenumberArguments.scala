@@ -24,7 +24,7 @@ import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 import cmt.admin.cli.ArgParsers.*
 
-object RenumberArguments extends CommandLineArguments[RenumberExercises.Options] with Tables with TestDirectories {
+object RenumberArguments extends CommandLineArgumentsSpec[RenumberExercises.Options] with TestDirectories {
 
   val identifier = "renum"
 

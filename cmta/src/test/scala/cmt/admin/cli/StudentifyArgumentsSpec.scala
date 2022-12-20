@@ -26,11 +26,7 @@ import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 import org.scalatest.matchers.should.Matchers
 
-object StudentifyArguments
-    extends CommandLineArguments[Studentify.Options]
-    with Tables
-    with TestDirectories
-    with Matchers {
+final class StudentifyArgumentsSpec extends CommandLineArgumentsSpec[Studentify.Options] with TestDirectories {
 
   val identifier = "studentify"
 

@@ -26,7 +26,7 @@ def printError(msg: String): Unit =
   System.err.println(toConsoleRed(msg))
 
 def printErrorAndExit(message: String): Unit =
-  System.err.println(toConsoleRed(s"Error: $errorMessage"))
+  System.err.println(toConsoleRed(s"Error: $message"))
   System.exit(1)
 
 def printMessage(msg: String): Unit =

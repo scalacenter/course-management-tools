@@ -24,7 +24,7 @@ import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 import cmt.admin.cli.ArgParsers.*
 
-object DelinearizeArguments extends CommandLineArguments[Delinearize.Options] with Tables with TestDirectories {
+final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delinearize.Options] with TestDirectories {
 
   val identifier = "delinearize"
 
@@ -34,8 +34,8 @@ object DelinearizeArguments extends CommandLineArguments[Delinearize.Options] wi
     (
       Seq.empty,
       Set(
-        RequiredOptionIsMissing(OptionName("--studentify-base-directory, -s"))))
-  )
+        RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+        RequiredOptionIsMissing(OptionName("--main-repository, -m")))))
 //    (
 //      Seq(identifier),
 //      Seq(ReportError("Missing argument <Main repo>"), ReportError("Missing argument linearized repo parent folder"))),

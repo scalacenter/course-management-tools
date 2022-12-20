@@ -45,19 +45,6 @@ object CommandLineArguments {
     Table(("args", "expectedResult"), args*)
 }
 
-//extension (self: SeveralErrors)
-//  def extractParsingErrors: Set[Error.Other] = {
-//    def extractOther(error: Error): Set[Error.Other] =
-//      error match {
-//        case e: Error.Other => Set(e)
-//        case Error.ParsingArgument(_, e, _) => extractOther(e)
-//        case SeveralErrors(head, tail) => extractOther(head) ++ tail.flatMap(extractOther(_))
-//        case _ => Set.empty
-//      }
-//
-//    extractOther(self)
-//  }
-
 abstract class CommandLineParseTestBase[T](commandArguments: CommandLineArguments[T]*)
     extends AnyWordSpecLike
     with Matchers

@@ -26,7 +26,7 @@ def printError(msg: String): Unit =
   System.err.println(toConsoleRed(msg))
 
 def printErrorAndExit(message: String): Unit =
-  System.err.println(toConsoleRed(message))
+  System.err.println(toConsoleRed(s"Error: $errorMessage"))
   System.exit(1)
 
 def printMessage(msg: String): Unit =
@@ -39,7 +39,6 @@ extension (result: Either[CmtError, String])
   def printResult(): Unit =
     result match
       case Left(errorMessage) =>
-        System.err.println(toConsoleRed(s"Error: $errorMessage"))
-        System.exit(1)
+        printErrorAndExit(errorMessage.toDisplayString)
       case Right(message) =>
         printMessage(message)

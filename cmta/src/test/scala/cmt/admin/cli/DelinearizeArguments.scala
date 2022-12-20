@@ -14,7 +14,7 @@ package cmt.admin.cli
   */
 
 import caseapp.Parser
-import cmt.Helpers
+import cmt.{Helpers, OptionName, RequiredOptionIsMissing}
 import cmt.admin.Domain.{LinearizeBaseDirectory, MainRepository}
 import cmt.admin.command.Delinearize
 import cmt.support.{CommandLineArguments, TestDirectories}
@@ -30,7 +30,12 @@ object DelinearizeArguments extends CommandLineArguments[Delinearize.Options] wi
 
   val parser: Parser[Delinearize.Options] = Parser.derive
 
-  def invalidArguments(tempDirectory: File) = invalidArgumentsTable()
+  def invalidArguments(tempDirectory: File) = invalidArgumentsTable(
+    (
+      Seq.empty,
+      Set(
+        RequiredOptionIsMissing(OptionName("--studentify-base-directory, -s"))))
+  )
 //    (
 //      Seq(identifier),
 //      Seq(ReportError("Missing argument <Main repo>"), ReportError("Missing argument linearized repo parent folder"))),

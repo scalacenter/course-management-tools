@@ -17,7 +17,7 @@ import cmt.admin.cli.{AdminCliParser, CliOptions}
 import cmt.support.CommandLineParseTestBase
 import cmt.*
 
-class CommandLineParseSpec extends CommandLineParseTestBase(StudentifyArguments)
+class CommandLineParseSpec extends CommandLineParseTestBase(DelinearizeArguments, StudentifyArguments)
 //      DuplicateInsertBeforeArguments,
 //      LinearizeArguments,
 //      DelinearizeArguments,

@@ -11,7 +11,11 @@ import sbt.io.syntax.*
 import cmt.admin.*
 import cmt.admin.cli.SharedOptions
 import cmt.core.validation.Validatable
-import cmt.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, initializeGitRepoArgParser, studentifyBaseDirectoryArgParser}
+import cmt.admin.cli.ArgParsers.{
+  forceDeleteDestinationDirectoryArgParser,
+  initializeGitRepoArgParser,
+  studentifyBaseDirectoryArgParser
+}
 import cmt.core.CmtCommand
 import cmt.toCmtError
 import cmt.toExecuteCommandErrorMessage
@@ -27,9 +31,11 @@ object Studentify:
       studentifyBaseDirectory: StudentifyBaseDirectory,
       @HelpMessage(
         "if set to 'true' the destination directory in which the studentified project is created will be wiped before the new studentified project is created")
-      forceDeleteDestinationDirectory: ForceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(false),
+      @ExtraName("f")
+      forceDelete: ForceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(false),
       @HelpMessage("if set to 'true' the destination directory will be created as a git repository")
-      initializeAsGitRepo: InitializeGitRepo = InitializeGitRepo(false),
+      @ExtraName("g")
+      initGit: InitializeGitRepo = InitializeGitRepo(false),
       @Recurse shared: SharedOptions)
 
   given Validatable[Studentify.Options] with
@@ -40,6 +46,7 @@ object Studentify:
         } else {
           Right(options)
         }
+      end validated
   end given
 
   given Executable[Studentify.Options] with
@@ -60,41 +67,40 @@ object Studentify:
         checkForOverlappingPathsInConfig()
 
         for {
-        _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
+          _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
 
-        _ = println(s"Studentifying ${toConsoleGreen(mainRepository.value.getPath)} to ${toConsoleGreen(
-          options.studentifyBaseDirectory.value.getPath)}")
+          _ = println(s"Studentifying ${toConsoleGreen(mainRepository.value.getPath)} to ${toConsoleGreen(
+              options.studentifyBaseDirectory.value.getPath)}")
 
-        mainRepoName = mainRepository.value.getName
-        tmpFolder = sbtio.createTemporaryDirectory
-        cleanedMainRepo = tmpFolder / mainRepoName
-        studentifiedRootFolder = options.studentifyBaseDirectory.value / mainRepoName
-        solutionsFolder = studentifiedRootFolder / config.studentifiedRepoSolutionsFolder
+          mainRepoName = mainRepository.value.getName
+          tmpFolder = sbtio.createTemporaryDirectory
+          cleanedMainRepo = tmpFolder / mainRepoName
+          studentifiedRootFolder = options.studentifyBaseDirectory.value / mainRepoName
+          solutionsFolder = studentifiedRootFolder / config.studentifiedRepoSolutionsFolder
 
-        _ = checkpreExistingAndCreateArtifactRepo(
-          options.studentifyBaseDirectory.value,
-          studentifiedRootFolder,
-          options.forceDeleteDestinationDirectory.value)
+          _ = checkpreExistingAndCreateArtifactRepo(
+            options.studentifyBaseDirectory.value,
+            studentifiedRootFolder,
+            options.forceDelete.value)
 
-        _ = sbtio.createDirectory(options.studentifyBaseDirectory.value / config.studentifiedRepoSolutionsFolder)
+          _ = sbtio.createDirectory(options.studentifyBaseDirectory.value / config.studentifiedRepoSolutionsFolder)
 
-        _ <- copyCleanViaGit(mainRepository.value, tmpFolder, mainRepoName)
+          _ <- copyCleanViaGit(mainRepository.value, tmpFolder, mainRepoName)
 
-        ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(
-          config)
+          ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(config)
 
-        _ = buildStudentifiedRepository(
-          cleanedMainRepo,
-          exercises,
-          studentifiedRootFolder,
-          solutionsFolder,
-          config,
-          options.initializeAsGitRepo,
-          tmpFolder)
+          _ = buildStudentifiedRepository(
+            cleanedMainRepo,
+            exercises,
+            studentifiedRootFolder,
+            solutionsFolder,
+            config,
+            options.initGit,
+            tmpFolder)
 
-        successMessage <- Right(exercises.mkString("Processed exercises:\n  ", "\n  ", "\n"))
+          successMessage <- Right(exercises.mkString("Processed exercises:\n  ", "\n  ", "\n"))
 
-      } yield successMessage
+        } yield successMessage
       end execute
   end given
 

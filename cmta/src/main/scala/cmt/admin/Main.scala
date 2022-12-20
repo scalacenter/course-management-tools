@@ -18,4 +18,9 @@ import cmt.admin.command.{Delinearize, DuplicateInsertBefore, Linearize, Renumbe
 
 object Main extends CommandsEntryPoint:
   override def progName: String = "cmta"
-  override def commands: Seq[Command[_]] = Seq(Delinearize.command, DuplicateInsertBefore.command, Linearize.command, RenumberExercises.command, Studentify.command)
+  override def commands: Seq[Command[_]] = Seq(
+    Delinearize.command,
+    DuplicateInsertBefore.command,
+    Linearize.command,
+    RenumberExercises.command,
+    Studentify.command)

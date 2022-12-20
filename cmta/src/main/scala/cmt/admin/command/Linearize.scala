@@ -39,12 +39,11 @@ object Linearize:
           mainRepoName = mainRepository.value.getName
           tmpFolder = sbtio.createTemporaryDirectory
           cleanedMainRepo = tmpFolder / mainRepository.value.getName
-          ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(
-            config)
+          ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(config)
           linearizedRootFolder = options.linearizeBaseDirectory.value / mainRepoName
 
           _ = println(s"Linearizing ${toConsoleGreen(mainRepository.value.getPath)} to ${toConsoleGreen(
-            options.linearizeBaseDirectory.value.getPath)}")
+              options.linearizeBaseDirectory.value.getPath)}")
 
           _ <- copyCleanViaGit(mainRepository.value, tmpFolder, mainRepoName)
 

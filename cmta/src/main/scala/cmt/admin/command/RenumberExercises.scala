@@ -59,7 +59,10 @@ object RenumberExercises:
             case (before, _) if rangeOverlapsWithOtherExercises(before, renumOffset) =>
               Left("Moved exercise range overlaps with other exercises".toExecuteCommandErrorMessage)
             case (_, _)
-              if exceedsAvailableSpace(exercisesAfterSplit, renumOffset = renumOffset, renumStep = options.step.value) =>
+                if exceedsAvailableSpace(
+                  exercisesAfterSplit,
+                  renumOffset = renumOffset,
+                  renumStep = options.step.value) =>
               Left(
                 s"Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
             case (_, _) =>

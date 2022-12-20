@@ -50,11 +50,13 @@ object DuplicateInsertBefore:
               if options.exerciseNumber.value + exercisesNumsAfterInsert.size <= 999 then
                 if options.exerciseNumber.value == 0 || exercisesNumsBeforeInsert.nonEmpty && exercisesNumsBeforeInsert.last == options.exerciseNumber.value - 1
                 then
-                  RenumberExercises.Options(
-                    Some(RenumberStart(options.exerciseNumber.value)),
-                    RenumberOffset(options.exerciseNumber.value + 1),
-                    RenumberStep(1),
-                    options.shared).execute()
+                  RenumberExercises
+                    .Options(
+                      Some(RenumberStart(options.exerciseNumber.value)),
+                      RenumberOffset(options.exerciseNumber.value + 1),
+                      RenumberStep(1),
+                      options.shared)
+                    .execute()
                   val duplicateFrom =
                     mainRepoExerciseFolder / renumberExercise(
                       exercisesAfterInsert.head,

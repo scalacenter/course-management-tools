@@ -40,7 +40,7 @@ object Delinearize:
         for {
           _ <- Right(()).withLeft[CmtError]
           _ = println(s"De-linearizing ${toConsoleGreen(mainRepository.value.getPath)} to ${toConsoleGreen(
-            options.linearizeBaseDirectory.value.getPath)}")
+              options.linearizeBaseDirectory.value.getPath)}")
 
           mainRepoName = mainRepository.value.getName
 
@@ -77,15 +77,15 @@ object Delinearize:
       shaAndExname.split("""\s+""").toVector
 
     def checkReposMatch(
-      exercisesInMain: Seq[String],
-      exercisesAndSHAs: Vector[ExerciseNameAndSHA]): Either[CmtError, Unit] =
-    // TODO: in case repos are incompatible, print out the exercise list on both ends (if any)
+        exercisesInMain: Seq[String],
+        exercisesAndSHAs: Vector[ExerciseNameAndSHA]): Either[CmtError, Unit] =
+      // TODO: in case repos are incompatible, print out the exercise list on both ends (if any)
       if exercisesInMain == exercisesAndSHAs.map(_.exName) then Right(())
       else Left(s"Cannot de-linearize: repositories are incompatible".toExecuteCommandErrorMessage)
     end checkReposMatch
 
     def putBackToMain(mainRepo: File, linearizedRepo: File, exercisesAndSHAs: Vector[ExerciseNameAndSHA])(
-      config: CMTaConfig): Either[CmtError, Unit] =
+        config: CMTaConfig): Either[CmtError, Unit] =
 
       val mainRepoActiveExerciseFolder = mainRepo / config.mainRepoExerciseFolder
       val linearizedActiveExerciseFolder =
@@ -105,10 +105,10 @@ object Delinearize:
 
     @scala.annotation.tailrec
     def checkoutAndCopy(
-      mainRepoActiveExerciseFolder: File,
-      linearizedRepo: File,
-      linearizedActiveExerciseFolder: File,
-      exercisesAndSHAs: Seq[ExerciseNameAndSHA]): Either[CmtError, Unit] =
+        mainRepoActiveExerciseFolder: File,
+        linearizedRepo: File,
+        linearizedActiveExerciseFolder: File,
+        exercisesAndSHAs: Seq[ExerciseNameAndSHA]): Either[CmtError, Unit] =
       exercisesAndSHAs match
         case ExerciseNameAndSHA(exercise, sha) +: remaining =>
           s"git checkout $sha"

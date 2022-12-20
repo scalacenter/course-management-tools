@@ -101,7 +101,7 @@ abstract class CommandLineParseTestBase[T](commandArguments: CommandLineArgument
 
     error match {
       case e: SeveralErrors => e.toCmtError should contain theSameElementsAs errors
-      case _ => throw new IllegalArgumentException(s"expected SeveralErrors but found $error")
+      case _                => throw new IllegalArgumentException(s"expected SeveralErrors but found $error")
     }
   }
 

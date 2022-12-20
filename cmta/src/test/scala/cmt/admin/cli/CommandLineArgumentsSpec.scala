@@ -1,7 +1,7 @@
 package cmt.admin.cli
 
 import caseapp.Parser
-import caseapp.core.Error.SeveralErrors
+import caseapp.core.Error.{RequiredOptionNotSpecified, SeveralErrors}
 import cmt.CmtError
 import cmt.support.EitherSupport
 import org.scalatest.BeforeAndAfterAll
@@ -63,8 +63,9 @@ abstract class CommandLineArgumentsSpec[T]
     val error = assertLeft(resultOr)
 
     error match {
-      case e: SeveralErrors => e.toCmtError should contain theSameElementsAs errors
-      case _                => throw new IllegalArgumentException(s"expected SeveralErrors but found $error")
+      case e: SeveralErrors              => e.toCmtError should contain theSameElementsAs errors
+      case e: RequiredOptionNotSpecified => e.toCmtError shouldBe errors
+      case _                             => throw new IllegalArgumentException(s"expected $errors but found $error")
     }
   }
 

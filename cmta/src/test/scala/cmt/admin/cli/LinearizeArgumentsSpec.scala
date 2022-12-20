@@ -15,8 +15,8 @@ package cmt.admin.cli
 
 import caseapp.Parser
 import cmt.{ErrorMessage, FailedToValidateArgument, Helpers, OptionName, RequiredOptionIsMissing}
-import cmt.admin.Domain.{LinearizeBaseDirectory, MainRepository}
-import cmt.admin.command.Delinearize
+import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
+import cmt.admin.command.Linearize
 import cmt.support.{CommandLineArguments, TestDirectories}
 import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 import org.scalatest.prop.Tables
@@ -24,11 +24,11 @@ import sbt.io.syntax.{File, file}
 import scopt.OEffect.ReportError
 import cmt.admin.cli.ArgParsers.*
 
-final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delinearize.Options] with TestDirectories {
+final class LinearizeArgumentsSpec extends CommandLineArgumentsSpec[Linearize.Options] with TestDirectories {
 
-  val identifier = "delinearize"
+  val identifier = "linearize"
 
-  val parser: Parser[Delinearize.Options] = Parser.derive
+  val parser: Parser[Linearize.Options] = Parser.derive
 
   def invalidArguments(tempDirectory: File) = invalidArgumentsTable(
     (
@@ -56,29 +56,31 @@ final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delineariz
         RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
         RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
     (
-      Seq("-m", realFile),
+      Seq("-m", tempDirectory.getAbsolutePath),
       Set(
         FailedToValidateArgument(
           OptionName("m"),
-          List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
+          List(ErrorMessage(s"${tempDirectory.getAbsolutePath} is not in a git repository"))),
         RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
-    (
-      Seq("-m", tempDirectory.getAbsolutePath),
-      Set(
-        FailedToValidateArgument(OptionName("m"), List(ErrorMessage(s"$tempDirectory is not in a git repository"))),
-        RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
-    (
-      Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-l", realFile),
-      Set(
-        FailedToValidateArgument(OptionName("l"), List(ErrorMessage(s"$realFile is not a directory"))),
-        RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")))))
+        RequiredOptionIsMissing(OptionName("--main-repository, -m")))))
 
   def validArguments(tempDirectory: File) = validArgumentsTable(
     (
-      Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-l", secondRealDirectory),
-      Delinearize.Options(
+      Seq("-m", firstRealDirectory, "-l", secondRealDirectory),
+      Linearize.Options(
         linearizeBaseDirectory = LinearizeBaseDirectory(file(secondRealDirectory)),
-        shared = SharedOptions(MainRepository(baseDirectoryGitRoot), maybeConfigFile = None))))
+        forceDelete = ForceDeleteDestinationDirectory(false),
+        shared = SharedOptions(MainRepository(file(firstRealDirectory)), maybeConfigFile = None))),
+    (
+      Seq("-m", firstRealDirectory, "-l", secondRealDirectory, "--force-delete"),
+      Linearize.Options(
+        linearizeBaseDirectory = LinearizeBaseDirectory(file(secondRealDirectory)),
+        forceDelete = ForceDeleteDestinationDirectory(true),
+        shared = SharedOptions(MainRepository(file(firstRealDirectory)), maybeConfigFile = None))),
+    (
+      Seq("-m", firstRealDirectory, "-l", secondRealDirectory, "-f"),
+      Linearize.Options(
+        linearizeBaseDirectory = LinearizeBaseDirectory(file(secondRealDirectory)),
+        forceDelete = ForceDeleteDestinationDirectory(true),
+        shared = SharedOptions(MainRepository(file(firstRealDirectory)), maybeConfigFile = None))))
 }

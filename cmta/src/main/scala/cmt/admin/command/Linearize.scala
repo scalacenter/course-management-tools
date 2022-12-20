@@ -1,6 +1,6 @@
 package cmt.admin.command
 
-import caseapp.{Command, CommandName, Recurse, RemainingArgs}
+import caseapp.{Command, CommandName, ExtraName, Recurse, RemainingArgs}
 import cmt.Helpers.*
 import cmt.{CMTaConfig, CmtError, ProcessDSL, printResult, toConsoleGreen}
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory}
@@ -15,8 +15,10 @@ object Linearize:
 
   @CommandName("linearize")
   final case class Options(
+      @ExtraName("l")
       linearizeBaseDirectory: LinearizeBaseDirectory,
-      forceDeleteDestinationDirectory: ForceDeleteDestinationDirectory,
+      @ExtraName("f")
+      forceDelete: ForceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(false),
       @Recurse shared: SharedOptions)
 
   given Validatable[Linearize.Options] with
@@ -50,7 +52,7 @@ object Linearize:
           _ = checkpreExistingAndCreateArtifactRepo(
             options.linearizeBaseDirectory.value,
             linearizedRootFolder,
-            options.forceDeleteDestinationDirectory.value)
+            options.forceDelete.value)
 
           _ <- initializeGitRepo(linearizedRootFolder)
 

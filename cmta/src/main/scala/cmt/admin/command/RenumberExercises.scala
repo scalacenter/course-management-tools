@@ -16,14 +16,14 @@ import cmt.toExecuteCommandErrorMessage
 object RenumberExercises:
 
   def successMessage(options: Options): String =
-    s"Renumbered exercises in ${options.shared.mainRepository.value.getPath} from ${options.maybeStart} to ${options.offset.value} by ${options.step.value}"
+    s"Renumbered exercises in ${options.shared.mainRepository.value.getPath} from ${options.from} to ${options.to.value} by ${options.step.value}"
 
   @CommandName("renumber-exercises")
   @HelpMessage("renumbers the exercises in the main repository")
   final case class Options(
-      maybeStart: Option[RenumberStart],
-      offset: RenumberOffset,
-      step: RenumberStep,
+      from: Option[RenumberStart] = None,
+      to: RenumberOffset = RenumberOffset(1),
+      step: RenumberStep = RenumberStep(1),
       @Recurse shared: SharedOptions)
 
   given Validatable[RenumberExercises.Options] with
@@ -46,13 +46,13 @@ object RenumberExercises:
 
           mainRepoExerciseFolder = mainRepository.value / config.mainRepoExerciseFolder
 
-          renumStartAt <- resolveStartAt(options.maybeStart.map(_.value), exerciseNumbers)
+          renumStartAt <- resolveStartAt(options.from.map(_.value), exerciseNumbers)
 
           splitIndex = exerciseNumbers.indexOf(renumStartAt)
           (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) = exerciseNumbers.splitAt(splitIndex)
           (_, exercisesAfterSplit) = exercises.splitAt(splitIndex)
 
-          renumOffset = options.offset.value
+          renumOffset = options.to.value
           tryMove = (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) match
             case (Vector(), Vector(`renumOffset`, _)) =>
               Left("Renumber: nothing to renumber".toExecuteCommandErrorMessage)
@@ -83,7 +83,7 @@ object RenumberExercises:
                 then sbtio.move(moves.reverse)
                 else sbtio.move(moves)
                 Right(
-                  s"Renumbered exercises in ${mainRepository.value.getPath} from ${options.maybeStart} to ${options.offset.value} by ${options.step.value}")
+                  s"Renumbered exercises in ${mainRepository.value.getPath} from ${options.from} to ${options.to.value} by ${options.step.value}")
 
           moveResult <- tryMove
         } yield moveResult

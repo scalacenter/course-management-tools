@@ -34,49 +34,49 @@ final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delineariz
   def invalidArguments(tempDirectory: File) = {
     val nonExistentFile = nonExistentDirectory(tempDirectory)
     invalidArgumentsTable(
-    (
-      Seq.empty,
-      Set(
-        RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
-    (
-      Seq("-m", nonExistentDirectory(tempDirectory)),
-      Set(
-        FailedToValidateArgument(
-          OptionName("m"),
-          List(
-            ErrorMessage(s"$nonExistentFile does not exist"),
-            ErrorMessage(s"$nonExistentFile is not a directory"),
-            ErrorMessage(s"$nonExistentFile is not in a git repository"))),
-        RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
-    (
-      Seq("-m", realFile),
-      Set(
-        FailedToValidateArgument(
-          OptionName("m"),
-          List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
-        RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
-    (
-      Seq("-m", realFile),
-      Set(
-        FailedToValidateArgument(
-          OptionName("m"),
-          List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
-        RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
-    (
-      Seq("-m", tempDirectory.getAbsolutePath),
-      Set(
-        FailedToValidateArgument(OptionName("m"), List(ErrorMessage(s"$tempDirectory is not in a git repository"))),
-        RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
-    (
-      Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-l", realFile),
-      Set(
-        FailedToValidateArgument(OptionName("l"), List(ErrorMessage(s"$realFile is not a directory"))),
-        RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")))))
+      (
+        Seq.empty,
+        Set(
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
+      (
+        Seq("-m", nonExistentDirectory(tempDirectory)),
+        Set(
+          FailedToValidateArgument(
+            OptionName("m"),
+            List(
+              ErrorMessage(s"$nonExistentFile does not exist"),
+              ErrorMessage(s"$nonExistentFile is not a directory"),
+              ErrorMessage(s"$nonExistentFile is not in a git repository"))),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
+      (
+        Seq("-m", realFile),
+        Set(
+          FailedToValidateArgument(
+            OptionName("m"),
+            List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
+      (
+        Seq("-m", realFile),
+        Set(
+          FailedToValidateArgument(
+            OptionName("m"),
+            List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
+      (
+        Seq("-m", tempDirectory.getAbsolutePath),
+        Set(
+          FailedToValidateArgument(OptionName("m"), List(ErrorMessage(s"$tempDirectory is not in a git repository"))),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
+      (
+        Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-l", realFile),
+        Set(
+          FailedToValidateArgument(OptionName("l"), List(ErrorMessage(s"$realFile is not a directory"))),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")))))
   }
 
   def validArguments(tempDirectory: File) = validArgumentsTable(

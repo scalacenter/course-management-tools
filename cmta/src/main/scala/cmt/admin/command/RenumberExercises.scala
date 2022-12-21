@@ -8,6 +8,7 @@ import cmt.admin.cli.SharedOptions
 import cmt.core.execution.Executable
 import cmt.admin.cli.ArgParsers.{renumberOffsetArgParser, renumberStartArgParser, renumberStepArgParser}
 import cmt.admin.command.RenumberExercises
+import cmt.core.CmtCommand
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
@@ -109,7 +110,7 @@ object RenumberExercises:
     end rangeOverlapsWithOtherExercises
   end RenumberExercisesHelpers
 
-  val command = new Command[RenumberExercises.Options] {
+  val command = new CmtCommand[RenumberExercises.Options] {
     def run(options: RenumberExercises.Options, args: RemainingArgs): Unit =
       options.validated().flatMap(_.execute()).printResult()
   }

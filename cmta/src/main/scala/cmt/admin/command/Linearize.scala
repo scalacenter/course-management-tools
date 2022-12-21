@@ -6,6 +6,7 @@ import cmt.{CMTaConfig, CmtError, ProcessDSL, printResult, toConsoleGreen}
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory}
 import cmt.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
 import cmt.admin.cli.SharedOptions
+import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
@@ -91,7 +92,7 @@ object Linearize:
     end commitExercises
   end LinearizeHelpers
 
-  val command = new Command[Linearize.Options] {
+  val command = new CmtCommand[Linearize.Options] {
     def run(options: Linearize.Options, args: RemainingArgs): Unit =
       options.validated().flatMap(_.execute()).printResult()
   }

@@ -11,6 +11,7 @@ import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import cmt.admin.cli.ArgParsers.linearizeBaseDirectoryArgParser
+import cmt.core.CmtCommand
 
 object Delinearize:
 
@@ -126,7 +127,7 @@ object Delinearize:
     end checkoutAndCopy
   end DelinearizeHelpers
 
-  val command = new Command[Delinearize.Options] {
+  val command = new CmtCommand[Delinearize.Options] {
     def run(options: Delinearize.Options, args: RemainingArgs): Unit =
       options.validated().flatMap(_.execute()).printResult()
   }

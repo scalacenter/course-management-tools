@@ -150,8 +150,7 @@ def studentifyMainRepo(tmpDir: File, repoName: String, mainRepo: File): File =
     studentifyBaseDirectory = StudentifyBaseDirectory(studentifyBase),
     forceDelete = ForceDeleteDestinationDirectory(false),
     initGit = InitializeGitRepo(false),
-    shared = SharedOptions(mainRepository = MainRepository(mainRepo))
-  )
+    shared = SharedOptions(mainRepository = MainRepository(mainRepo)))
 //  val cmd = Studentify(
 //    MainRepository(mainRepo),
 //    new CMTaConfig(mainRepo, Some(mainRepo / "course-management.conf")),

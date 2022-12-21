@@ -11,6 +11,7 @@ import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import cmt.admin.command.RenumberExercises
 import cmt.admin.cli.ArgParsers.exerciseNumberArgParser
+import cmt.core.CmtCommand
 
 object DuplicateInsertBefore:
 
@@ -79,7 +80,7 @@ object DuplicateInsertBefore:
       }
   end given
 
-  val command = new Command[DuplicateInsertBefore.Options] {
+  val command = new CmtCommand[DuplicateInsertBefore.Options] {
     def run(options: DuplicateInsertBefore.Options, args: RemainingArgs): Unit =
       options.validated().flatMap(_.execute()).printResult()
   }

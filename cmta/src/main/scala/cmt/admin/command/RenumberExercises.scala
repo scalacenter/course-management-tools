@@ -82,8 +82,7 @@ object RenumberExercises:
                 if renumOffset > renumStartAt
                 then sbtio.move(moves.reverse)
                 else sbtio.move(moves)
-                Right(
-                  s"Renumbered exercises in ${mainRepository.value.getPath} from ${options.from} to ${options.to.value} by ${options.step.value}")
+                Right(successMessage(options))
 
           moveResult <- tryMove
         } yield moveResult

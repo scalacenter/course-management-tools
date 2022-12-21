@@ -24,7 +24,6 @@ import org.scalatest.matchers.*
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import com.typesafe.config.ConfigFactory
-import cmt.admin.command.execution.given
 
 import java.util.UUID
 
@@ -65,7 +64,7 @@ trait RenumberExercisesFixture:
 
 end RenumberExercisesFixture
 
-class RenumberExercisesSpec
+final class RenumberExercisesSpec
     extends AnyWordSpec
     with should.Matchers
     with BeforeAndAfterAll
@@ -88,7 +87,7 @@ class RenumberExercisesSpec
         val command =
           RenumberExercises.Options(from = None, to = RenumberOffset(20), step = RenumberStep(2), shared = shared)
         val result = command.execute()
-        result shouldBe Right(RenumberExercises.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage(command))
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -103,7 +102,7 @@ class RenumberExercisesSpec
         val command =
           RenumberExercises.Options(from = None, to = RenumberOffset(1), step = RenumberStep(1), shared = shared)
         val result = command.execute()
-        result shouldBe Right(RenumberExercises.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage(command))
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -121,7 +120,7 @@ class RenumberExercisesSpec
           step = RenumberStep(1),
           shared = shared)
         val result = command.execute()
-        result shouldBe Right(RenumberExercises.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage(command))
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -139,7 +138,7 @@ class RenumberExercisesSpec
           step = RenumberStep(1),
           shared = shared)
         val result = command.execute()
-        result shouldBe Right(RenumberExercises.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage(command))
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -154,7 +153,7 @@ class RenumberExercisesSpec
         val command =
           RenumberExercises.Options(from = None, to = RenumberOffset(995), step = RenumberStep(1), shared = shared)
         val result = command.execute()
-        result shouldBe Right(RenumberExercises.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage(command))
 
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
@@ -186,7 +185,7 @@ class RenumberExercisesSpec
           RenumberExercises.Options(from = None, to = RenumberOffset(992), step = RenumberStep(1), shared = shared)
         val result = command.execute()
 
-        result shouldBe Right(RenumberExercises.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage(command))
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
           "exercise_992_desc",
@@ -201,7 +200,7 @@ class RenumberExercisesSpec
           RenumberExercises.Options(from = None, to = RenumberOffset(995), step = RenumberStep(1), shared = shared)
         val result = command.execute()
 
-        result shouldBe Right(RenumberExercises.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage(command))
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
           "exercise_995_desc",
@@ -216,7 +215,7 @@ class RenumberExercisesSpec
           RenumberExercises.Options(from = None, to = RenumberOffset(1), step = RenumberStep(1), shared = shared)
         val result = command.execute()
 
-        result shouldBe Right(RenumberExercises.successMessage)
+        result shouldBe Right(RenumberExercises.successMessage(command))
         val renumberedExercises = getExercisePrefixAndExercises(mainRepo)(config).exercises
         val expectedExercises = Vector(
           "exercise_001_desc",

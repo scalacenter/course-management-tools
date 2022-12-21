@@ -15,7 +15,8 @@ package cmt.support
 
 import cmt.Helpers.*
 import cmt.admin.Domain.MainRepository
-import cmt.admin.cli.CliCommand.Studentify
+import cmt.admin.cli.SharedOptions
+import cmt.admin.command
 import cmt.client.Domain.{ForceMoveToExercise, StudentifiedRepo}
 import cmt.{CMTaConfig, CMTcConfig, CmtError, Helpers}
 import sbt.io.IO as sbtio
@@ -142,15 +143,21 @@ def createMainRepo(tmpDir: File, repoName: String, exercises: Exercises, testCon
 def studentifyMainRepo(tmpDir: File, repoName: String, mainRepo: File): File =
   import cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, StudentifyBaseDirectory}
   import cmt.admin.command.AdminCommand.Studentify
-  import cmt.admin.command.execution.given
+
   val studentifyBase = tmpDir / "stu"
   sbtio.createDirectory(studentifyBase)
-  val cmd = Studentify(
-    MainRepository(mainRepo),
-    new CMTaConfig(mainRepo, Some(mainRepo / "course-management.conf")),
-    StudentifyBaseDirectory(studentifyBase),
-    forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(false),
-    initializeAsGitRepo = InitializeGitRepo(false))
+  val cmd = command.Studentify.Options(
+    studentifyBaseDirectory = StudentifyBaseDirectory(studentifyBase),
+    forceDelete = ForceDeleteDestinationDirectory(false),
+    initGit = InitializeGitRepo(false),
+    shared = SharedOptions(mainRepository = MainRepository(mainRepo))
+  )
+//  val cmd = Studentify(
+//    MainRepository(mainRepo),
+//    new CMTaConfig(mainRepo, Some(mainRepo / "course-management.conf")),
+//    StudentifyBaseDirectory(studentifyBase),
+//    forceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(false),
+//    initializeAsGitRepo = InitializeGitRepo(false))
   cmd.execute()
   studentifyBase / repoName
 

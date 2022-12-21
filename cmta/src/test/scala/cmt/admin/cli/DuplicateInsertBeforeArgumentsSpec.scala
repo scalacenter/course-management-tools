@@ -38,39 +38,42 @@ final class DuplicateInsertBeforeArgumentsSpec
 
   val parser: Parser[DuplicateInsertBefore.Options] = Parser.derive
 
-  def invalidArguments(tempDirectory: File) = invalidArgumentsTable(
-    (
-      Seq.empty,
-      Set(
-        RequiredOptionIsMissing(OptionName("--exercise-number, -n")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
-    (
-      Seq("-m", nonExistentDirectory(tempDirectory)),
-      Set(
-        FailedToValidateArgument(
-          OptionName("m"),
-          List(
-            ErrorMessage(s"$tempDirectory/i/do/not/exist does not exist"),
-            ErrorMessage(s"$tempDirectory/i/do/not/exist is not a directory"),
-            ErrorMessage(s"$tempDirectory/i/do/not/exist is not in a git repository"))),
-        RequiredOptionIsMissing(OptionName("--exercise-number, -n")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
-    (
-      Seq("-m", realFile),
-      Set(
-        FailedToValidateArgument(
-          OptionName("m"),
-          List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
-        RequiredOptionIsMissing(OptionName("--exercise-number, -n")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
-    (
-      Seq("-m", tempDirectory.getAbsolutePath),
-      Set(
-        FailedToValidateArgument(
-          OptionName("m"),
-          List(ErrorMessage(s"${tempDirectory.getAbsolutePath} is not in a git repository"))),
-        RequiredOptionIsMissing(OptionName("--exercise-number, -n")),
-        RequiredOptionIsMissing(OptionName("--main-repository, -m")))))
+  def invalidArguments(tempDirectory: File) = {
+    val nonExistentFile = nonExistentDirectory(tempDirectory)
+    invalidArgumentsTable(
+      (
+        Seq.empty,
+        Set(
+          RequiredOptionIsMissing(OptionName("--exercise-number, -n")),
+          RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
+      (
+        Seq("-m", nonExistentDirectory(tempDirectory)),
+        Set(
+          FailedToValidateArgument(
+            OptionName("m"),
+            List(
+              ErrorMessage(s"$nonExistentFile does not exist"),
+              ErrorMessage(s"$nonExistentFile is not a directory"),
+              ErrorMessage(s"$nonExistentFile is not in a git repository"))),
+          RequiredOptionIsMissing(OptionName("--exercise-number, -n")),
+          RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
+      (
+        Seq("-m", realFile),
+        Set(
+          FailedToValidateArgument(
+            OptionName("m"),
+            List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
+          RequiredOptionIsMissing(OptionName("--exercise-number, -n")),
+          RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
+      (
+        Seq("-m", tempDirectory.getAbsolutePath),
+        Set(
+          FailedToValidateArgument(
+            OptionName("m"),
+            List(ErrorMessage(s"${tempDirectory.getAbsolutePath} is not in a git repository"))),
+          RequiredOptionIsMissing(OptionName("--exercise-number, -n")),
+          RequiredOptionIsMissing(OptionName("--main-repository, -m")))))
+  }
 
   def validArguments(tempDirectory: File) = validArgumentsTable(
     (

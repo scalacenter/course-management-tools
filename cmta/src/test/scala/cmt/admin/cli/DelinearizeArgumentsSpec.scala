@@ -14,6 +14,7 @@ package cmt.admin.cli
   */
 
 import caseapp.Parser
+import cmt.Helpers.adaptToOSSeparatorChar
 import cmt.{ErrorMessage, FailedToValidateArgument, Helpers, OptionName, RequiredOptionIsMissing}
 import cmt.admin.Domain.{LinearizeBaseDirectory, MainRepository}
 import cmt.admin.command.Delinearize
@@ -30,7 +31,9 @@ final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delineariz
 
   val parser: Parser[Delinearize.Options] = Parser.derive
 
-  def invalidArguments(tempDirectory: File) = invalidArgumentsTable(
+  def invalidArguments(tempDirectory: File) = {
+    val nonExistentFile = nonExistentDirectory(tempDirectory)
+    invalidArgumentsTable(
     (
       Seq.empty,
       Set(
@@ -42,9 +45,9 @@ final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delineariz
         FailedToValidateArgument(
           OptionName("m"),
           List(
-            ErrorMessage(s"$tempDirectory/i/do/not/exist does not exist"),
-            ErrorMessage(s"$tempDirectory/i/do/not/exist is not a directory"),
-            ErrorMessage(s"$tempDirectory/i/do/not/exist is not in a git repository"))),
+            ErrorMessage(s"$nonExistentFile does not exist"),
+            ErrorMessage(s"$nonExistentFile is not a directory"),
+            ErrorMessage(s"$nonExistentFile is not in a git repository"))),
         RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
         RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
     (
@@ -74,6 +77,7 @@ final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delineariz
       Set(
         FailedToValidateArgument(OptionName("l"), List(ErrorMessage(s"$realFile is not a directory"))),
         RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")))))
+  }
 
   def validArguments(tempDirectory: File) = validArgumentsTable(
     (

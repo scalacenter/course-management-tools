@@ -3,7 +3,7 @@ package cmt.admin.command
 import caseapp.core.Error
 import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Name, Recurse, RemainingArgs}
 import cmt.Helpers.*
-import cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, StudentifyBaseDirectory}
+import cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, MainRepository, StudentifyBaseDirectory}
 import cmt.core.execution.Executable
 import cmt.{CMTaConfig, CmtError, StudentifiedSkelFolders, printResult, toCmtError, toConsoleGreen}
 import sbt.io.IO as sbtio
@@ -54,53 +54,55 @@ object Studentify:
       def execute(): Either[CmtError, String] =
         import StudentifyHelpers.*
 
-        val mainRepository = options.shared.mainRepository
-        val config = new CMTaConfig(mainRepository.value, options.shared.maybeConfigFile.map(_.value))
+        resolveMainRepoPath(options.shared.mainRepository.value).flatMap { repository =>
+          val mainRepository = MainRepository(repository)
+          val config = new CMTaConfig(mainRepository.value, options.shared.maybeConfigFile.map(_.value))
 
-        def checkForOverlappingPathsInConfig(): Unit =
-          val (_, redundantPaths) =
-            extractUniquePaths(config.testCodeFolders.to(List) ++ config.readMeFiles.to(List))
-          if (redundantPaths.nonEmpty)
-            for (redundantPath <- redundantPaths)
-              println(cmt.toConsoleYellow(s"WARNING: Redundant path detected in CMT configuration: $redundantPath"))
+          def checkForOverlappingPathsInConfig(): Unit =
+            val (_, redundantPaths) =
+              extractUniquePaths(config.testCodeFolders.to(List) ++ config.readMeFiles.to(List))
+            if (redundantPaths.nonEmpty)
+              for (redundantPath <- redundantPaths)
+                println(cmt.toConsoleYellow(s"WARNING: Redundant path detected in CMT configuration: $redundantPath"))
 
-        checkForOverlappingPathsInConfig()
+          checkForOverlappingPathsInConfig()
 
-        for {
-          _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
+          for {
+            _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
 
-          _ = println(s"Studentifying ${toConsoleGreen(mainRepository.value.getPath)} to ${toConsoleGreen(
-              options.studentifyBaseDirectory.value.getPath)}")
+            _ = println(s"Studentifying ${toConsoleGreen(mainRepository.value.getPath)} to ${toConsoleGreen(
+                options.studentifyBaseDirectory.value.getPath)}")
 
-          mainRepoName = mainRepository.value.getName
-          tmpFolder = sbtio.createTemporaryDirectory
-          cleanedMainRepo = tmpFolder / mainRepoName
-          studentifiedRootFolder = options.studentifyBaseDirectory.value / mainRepoName
-          solutionsFolder = studentifiedRootFolder / config.studentifiedRepoSolutionsFolder
+            mainRepoName = mainRepository.value.getName
+            tmpFolder = sbtio.createTemporaryDirectory
+            cleanedMainRepo = tmpFolder / mainRepoName
+            studentifiedRootFolder = options.studentifyBaseDirectory.value / mainRepoName
+            solutionsFolder = studentifiedRootFolder / config.studentifiedRepoSolutionsFolder
 
-          _ = checkpreExistingAndCreateArtifactRepo(
-            options.studentifyBaseDirectory.value,
-            studentifiedRootFolder,
-            options.forceDelete.value)
+            _ = checkpreExistingAndCreateArtifactRepo(
+              options.studentifyBaseDirectory.value,
+              studentifiedRootFolder,
+              options.forceDelete.value)
 
-          _ = sbtio.createDirectory(options.studentifyBaseDirectory.value / config.studentifiedRepoSolutionsFolder)
+            _ = sbtio.createDirectory(options.studentifyBaseDirectory.value / config.studentifiedRepoSolutionsFolder)
 
-          _ <- copyCleanViaGit(mainRepository.value, tmpFolder, mainRepoName)
+            _ <- copyCleanViaGit(mainRepository.value, tmpFolder, mainRepoName)
 
-          ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(config)
+            ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(config)
 
-          _ = buildStudentifiedRepository(
-            cleanedMainRepo,
-            exercises,
-            studentifiedRootFolder,
-            solutionsFolder,
-            config,
-            options.initGit,
-            tmpFolder)
+            _ = buildStudentifiedRepository(
+              cleanedMainRepo,
+              exercises,
+              studentifiedRootFolder,
+              solutionsFolder,
+              config,
+              options.initGit,
+              tmpFolder)
 
-          successMessage <- Right(exercises.mkString("Processed exercises:\n  ", "\n  ", "\n"))
+            successMessage <- Right(exercises.mkString("Processed exercises:\n  ", "\n  ", "\n"))
 
-        } yield successMessage
+          } yield successMessage
+        }
       end execute
   end given
 

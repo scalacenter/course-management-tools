@@ -21,5 +21,8 @@ import cmt.core.execution.Executable
 given Executable[GotoFirstExercise] with
   extension (cmd: GotoFirstExercise)
     def execute(): Either[CmtError, String] =
-      GotoExercise(cmd.config, cmd.forceMoveToExercise, cmd.studentifiedRepo, ExerciseId(cmd.config.exercises.head))
-        .execute()
+      GotoExercise(
+        cmd.config,
+        cmd.forceMoveToExercise,
+        cmd.studentifiedRepo,
+        ExerciseId(cmd.config.exercises.head.toInt)).execute()

@@ -102,7 +102,7 @@ object ClientCliParser {
       .text("Go to a given exercise and fetch corresponding tests")
       .action((_, options) => options.copy(command = GotoExercise))
       .children(
-        arg[String]("<exercise ID>").action((exerciseId, options) => options.copy(exerciseId = ExerciseId(exerciseId))),
+        arg[Int]("<exercise ID>").action((exerciseId, options) => options.copy(exerciseId = ExerciseId(exerciseId))),
         arg[File]("<studentified directory>")
           .validate(_.existsAndIsADirectory)
           .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))),
@@ -161,7 +161,7 @@ object ClientCliParser {
       .text("Restore state of a previously save exercise state")
       .action((_, options) => options.copy(command = RestoreState))
       .children(
-        arg[String]("<exercise ID>").action((exerciseId, options) => options.copy(exerciseId = ExerciseId(exerciseId))),
+        arg[Int]("<exercise ID>").action((exerciseId, options) => options.copy(exerciseId = ExerciseId(exerciseId))),
         arg[File]("<studentified directory>")
           .validate(_.existsAndIsADirectory)
           .action((studentifiedRepo, options) => options.copy(studentifiedRepo = StudentifiedRepo(studentifiedRepo))))

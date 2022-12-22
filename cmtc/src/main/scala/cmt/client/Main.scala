@@ -13,39 +13,9 @@ package cmt.client
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.client.cli.{CliOptions, ClientCliParser}
-import cmt.client.command.ClientCommand.*
-import cmt.client.command.execution.given
-import cmt.version.BuildInfo
-import cmt.{CmtError, printErrorAndExit, printMessage, toConsoleRed, toExecuteCommandErrorMessage}
+import caseapp.core.app.{Command, CommandsEntryPoint}
+import cmt.client.command.{GotoExercise, ListExercises}
 
-object Main:
-
-  def main(args: Array[String]): Unit =
-    ClientCliParser.parse(args) match
-      case Right(options) => selectAndExecuteCommand(options).printResult()
-      case Left(error)    => printErrorAndExit(s"Error(s): ${error.toErrorString()}")
-
-  private def selectAndExecuteCommand(options: CliOptions): Either[CmtError, String] =
-    options.toCommand match
-      case cmd: GotoFirstExercise => cmd.execute()
-      case cmd: ListExercises     => cmd.execute()
-      case cmd: ListSavedStates   => cmd.execute()
-      case cmd: NextExercise      => cmd.execute()
-      case cmd: PreviousExercise  => cmd.execute()
-      case cmd: PullSolution      => cmd.execute()
-      case cmd: SaveState         => cmd.execute()
-      case cmd: GotoExercise      => cmd.execute()
-      case cmd: PullTemplate      => cmd.execute()
-      case cmd: RestoreState      => cmd.execute()
-      case Version                => Right(BuildInfo.toString)
-      case NoCommand              => Left("KABOOM!!".toExecuteCommandErrorMessage)
-
-  extension (result: Either[CmtError, String])
-    def printResult(): Unit =
-      result match
-        case Left(errorMessage) =>
-          System.err.println(toConsoleRed(s"Error: ${errorMessage.prettyPrint}"))
-          System.exit(1)
-        case Right(message) =>
-          printMessage(message)
+object Main extends CommandsEntryPoint:
+  override def progName = "cmtc"
+  override def commands = Seq(GotoExercise.command, ListExercises.command)

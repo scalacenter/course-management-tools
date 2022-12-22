@@ -36,14 +36,14 @@ given Executable[RestoreState] with
       else {
         deleteCurrentState(cmd.studentifiedRepo.value)(cmd.config)
 
-        Helpers.withZipFile(cmd.config.studentifiedSavedStatesFolder, cmd.exerciseId.value) { solution =>
-          val files = Helpers.fileList(solution / cmd.exerciseId.value)
+        Helpers.withZipFile(cmd.config.studentifiedSavedStatesFolder, cmd.exerciseId.value.toString) { solution =>
+          val files = Helpers.fileList(solution / cmd.exerciseId.value.toString)
           sbtio.copyDirectory(
-            cmd.config.studentifiedSavedStatesFolder / cmd.exerciseId.value,
+            cmd.config.studentifiedSavedStatesFolder / cmd.exerciseId.value.toString,
             cmd.config.activeExerciseFolder,
             preserveLastModified = true)
 
-          Helpers.writeStudentifiedCMTBookmark(cmd.config.bookmarkFile, cmd.exerciseId.value)
+          Helpers.writeStudentifiedCMTBookmark(cmd.config.bookmarkFile, cmd.exerciseId.value.toString)
           Right(toConsoleGreen(s"Restored state for ${cmd.exerciseId.value}"))
         }
       }

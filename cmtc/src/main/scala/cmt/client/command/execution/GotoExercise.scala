@@ -29,7 +29,7 @@ given Executable[GotoExercise] with
       val currentExerciseId = getCurrentExerciseId(cMTcConfig.bookmarkFile)
 
       val activeExerciseFolder = cMTcConfig.activeExerciseFolder
-      val toExerciseId = cmd.exerciseId.value
+      val toExerciseId = cmd.exerciseId.value.toString
 
       if (!cmd.config.exercises.contains(toExerciseId))
         Left(toConsoleGreen(s"No such exercise: ${cmd.exerciseId.value}").toExecuteCommandErrorMessage)

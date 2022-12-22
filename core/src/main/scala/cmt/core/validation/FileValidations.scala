@@ -17,6 +17,9 @@ object FileValidations:
     def validateIsDirectory: ValidatedNel[Error, File] =
       Either.cond(file.isDirectory, file, Error.Other(s"${file.getAbsolutePath} is not a directory")).toValidatedNel
 
+    def validateIsFile: ValidatedNel[Error, File] =
+      Either.cond(file.isFile, file, Error.Other(s"${file.getAbsolutePath} is not a file")).toValidatedNel
+
     def validateIsInAGitRepository: ValidatedNel[Error, File] =
       Helpers
         .resolveMainRepoPath(file)

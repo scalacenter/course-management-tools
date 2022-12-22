@@ -16,9 +16,9 @@ package cmt.client
 import sbt.io.syntax.{File, file}
 
 object Domain:
-  final case class ExerciseId(value: Int)
+  final case class ExerciseId(value: String)
   object ExerciseId:
-    val default: ExerciseId = ExerciseId(1)
+    val default: ExerciseId = ExerciseId("")
 
   final case class StudentifiedRepo(value: File)
   final case class ForceMoveToExercise(forceMove: Boolean)

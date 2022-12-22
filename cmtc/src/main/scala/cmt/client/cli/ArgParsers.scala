@@ -2,10 +2,11 @@ package cmt.client.cli
 
 import caseapp.core.Error
 import caseapp.core.argparser.{ArgParser, FlagArgParser, SimpleArgParser}
-import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
+import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo, TemplatePath}
 import sbt.io.syntax.{File, file}
 import cats.syntax.apply.*
 import cats.syntax.either.*
+import cmt.client.command.ClientCommand.PullTemplate
 import cmt.core.validation.FileValidations.*
 
 object ArgParsers {
@@ -25,11 +26,9 @@ object ArgParsers {
   implicit val forceMoveToExerciseArgParser: ArgParser[ForceMoveToExercise] =
     FlagArgParser.boolean.xmap[ForceMoveToExercise](_.forceMove, ForceMoveToExercise(_))
 
-  private val intGreaterThanZero: ArgParser[Int] =
-    SimpleArgParser.int.xmapError[Int](
-      identity,
-      int => if int < 0 then Error.Other(s"number must be 0 or greater, but received '$int'").asLeft else int.asRight)
-
   implicit val exerciseIdArgParser: ArgParser[ExerciseId] =
-    intGreaterThanZero.xmap[ExerciseId](_.value, ExerciseId(_))
+    SimpleArgParser.from[ExerciseId]("Exercise Id")(ExerciseId(_).asRight)
+
+  implicit val templatePathArgParser: ArgParser[TemplatePath] =
+    SimpleArgParser.from[TemplatePath]("template path")(TemplatePath(_).asRight)
 }

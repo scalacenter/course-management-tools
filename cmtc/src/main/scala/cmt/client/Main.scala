@@ -14,8 +14,30 @@ package cmt.client
   */
 
 import caseapp.core.app.{Command, CommandsEntryPoint}
-import cmt.client.command.{GotoExercise, ListExercises}
+import cmt.client.command.{
+  GotoExercise,
+  GotoFirstExercise,
+  ListExercises,
+  ListSavedStates,
+  NextExercise,
+  PreviousExercise,
+  PullSolution,
+  PullTemplate,
+  RestoreState,
+  SaveState
+}
 
 object Main extends CommandsEntryPoint:
   override def progName = "cmtc"
-  override def commands = Seq(GotoExercise.command, ListExercises.command)
+  override def commands =
+    Seq(
+      GotoExercise.command,
+      GotoFirstExercise.command,
+      ListExercises.command,
+      ListSavedStates.command,
+      NextExercise.command,
+      PreviousExercise.command,
+      PullSolution.command,
+      PullTemplate.command,
+      RestoreState.command,
+      SaveState.command)

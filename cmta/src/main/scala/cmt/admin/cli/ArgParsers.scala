@@ -44,11 +44,7 @@ object ArgParsers:
   implicit val configurationFileArgParser: ArgParser[ConfigurationFile] =
     fileArgParser.xmapError[ConfigurationFile](
       _.value,
-      file =>
-        (file.validateExists, file.validateIsDirectory)
-          .mapN((_, _) => ConfigurationFile(file))
-          .leftMap(_.flatten)
-          .toEither)
+      file => (file.validateExists).map(_ => ConfigurationFile(file)).leftMap(_.flatten).toEither)
 
   implicit val forceDeleteDestinationDirectoryArgParser: ArgParser[ForceDeleteDestinationDirectory] =
     FlagArgParser.boolean.xmap[ForceDeleteDestinationDirectory](_.value, ForceDeleteDestinationDirectory(_))

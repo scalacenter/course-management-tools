@@ -1,6 +1,6 @@
 package cmt.admin.command
 
-import caseapp.{Command, CommandName, HelpMessage, Recurse, RemainingArgs}
+import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
 import cmt.{CMTaConfig, CmtError, printResult}
 import cmt.Helpers.{ExercisesMetadata, extractExerciseNr, getExerciseMetadata, validatePrefixes}
 import cmt.admin.Domain.{RenumberOffset, RenumberStart, RenumberStep}
@@ -19,11 +19,21 @@ object RenumberExercises:
   def successMessage(options: Options): String =
     s"Renumbered exercises in ${options.shared.mainRepository.value.getPath} from ${options.from} to ${options.to.value} by ${options.step.value}"
 
+  @AppName("renumber-exercises")
   @CommandName("renumber-exercises")
-  @HelpMessage("renumbers the exercises in the main repository")
+  @HelpMessage("Renumbers the exercises in the main repository")
   final case class Options(
+      @ExtraName("f")
+      @ValueDescription("Renumbering starting position.")
+      @HelpMessage("The sequence number of the first exercise in the series to be renumbered")
       from: Option[RenumberStart] = None,
+      @ExtraName("t")
+      @ValueDescription("Renumbering destination position.")
+      @HelpMessage("The new sequence number of the first exercise in the renumbering process")
       to: RenumberOffset = RenumberOffset(1),
+      @ExtraName("s")
+      @ValueDescription("Renumbering step size.")
+      @HelpMessage("Renumbered exercises will be separated by this value")
       step: RenumberStep = RenumberStep(1),
       @Recurse shared: SharedOptions)
 

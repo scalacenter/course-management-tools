@@ -57,3 +57,20 @@ extension (self: caseapp.core.Error)
 
     extractOther(self)
   }
+
+extension (cmtError: CmtError)
+  def prettyPrint: String =
+    cmtError match {
+      case RequiredOptionIsMissing(OptionName(value)) =>
+        s"Missing option: $value"
+      case FailedToValidateArgument(option, reasons) =>
+        s"""Option ${option.value}:
+           |${reasons.mkString("   ", "\n   ", "\n")}""".stripMargin
+      case FailedToExecuteCommand(reason) =>
+        s"""Failed to execute command:
+           |  ${toConsoleYellow(reason.message)}
+           |""".stripMargin
+      case FailedToValidateCommandOptions(reasons) =>
+        s"""To be implemented:
+           |${reasons}""".stripMargin
+    }

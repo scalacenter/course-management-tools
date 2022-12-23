@@ -59,7 +59,7 @@ abstract class CommandLineArgumentsSpec[T]
   }
 
   private def assertFailureWithErrors(parser: Parser[T], args: Array[String], errors: Set[CmtError]) = {
-    val resultOr = parser.parse(args)
+    val resultOr = parser.parse(args.to(Seq))
     val error = assertLeft(resultOr)
 
     error match {
@@ -70,7 +70,7 @@ abstract class CommandLineArgumentsSpec[T]
   }
 
   private def assertSuccessWithResponse(parser: Parser[T], args: Array[String], expectedResult: T) = {
-    val resultOr = parser.parse(args).map { case (result, _) =>
+    val resultOr = parser.parse(args.to(Seq)).map { case (result, _) =>
       result
     }
     val result = assertRight(resultOr)

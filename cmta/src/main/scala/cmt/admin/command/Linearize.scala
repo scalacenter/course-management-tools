@@ -1,6 +1,6 @@
 package cmt.admin.command
 
-import caseapp.{Command, CommandName, ExtraName, Recurse, RemainingArgs}
+import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
 import cmt.Helpers.*
 import cmt.{CMTaConfig, CmtError, ProcessDSL, printResult, toConsoleGreen}
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory}
@@ -14,11 +14,16 @@ import sbt.io.syntax.*
 
 object Linearize:
 
+  @AppName("linearize")
   @CommandName("linearize")
+  @HelpMessage(
+    "'Linearizes' a 'main' repository in the target directory where the linearized repo has one commit per exercise")
   final case class Options(
       @ExtraName("l")
+      @ValueDescription("Folder in which the 'linearized' repo will be created")
       linearizeBaseDirectory: LinearizeBaseDirectory,
       @ExtraName("f")
+      @ValueDescription("Force-delete a pre-existing 'linearized' repo")
       forceDelete: ForceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(false),
       @Recurse shared: SharedOptions)
 

@@ -1,7 +1,7 @@
 package cmt.admin.command
 
 import cmt.*
-import caseapp.{Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
+import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
 import cmt.Helpers.{ExercisesMetadata, extractExerciseNr, getExerciseMetadata, validatePrefixes}
 import cmt.admin.Domain.{ExerciseNumber, LinearizeBaseDirectory, RenumberOffset, RenumberStart, RenumberStep}
 import cmt.admin.cli.SharedOptions
@@ -15,10 +15,12 @@ import cmt.core.CmtCommand
 
 object DuplicateInsertBefore:
 
+  @AppName("duplicate-insert-before")
   @CommandName("duplicate-insert-before")
-  @HelpMessage("creates a new exercise by copying an existing exercise")
+  @HelpMessage("Duplicates a given exercise in a 'main' repository shifting subsequent exercises if needed")
   final case class Options(
       @ExtraName("n")
+      @ValueDescription("Sequence number of the exercise to be duplicated")
       exerciseNumber: ExerciseNumber,
       @Recurse shared: SharedOptions)
 

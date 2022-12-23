@@ -1,7 +1,7 @@
 package cmt.admin.command
 
 import caseapp.core.Error
-import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Name, Recurse, RemainingArgs}
+import caseapp.{AppName, ValueDescription, Command, CommandName, ExtraName, HelpMessage, Name, Recurse, RemainingArgs}
 import cmt.Helpers.*
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, MainRepository, StudentifyBaseDirectory}
 import cmt.core.execution.Executable
@@ -25,16 +25,17 @@ object Studentify:
   @AppName("studentify")
   @CommandName("studentify")
   @HelpMessage(
-    "'studentifies' an existing repository - taking the 'master' repository and creating a CMT project in the target directory")
-  case class Options(
+    "'Studentifies' an existing repository - taking the 'main' repository and creating a CMT project in the target directory")
+  final case class Options(
       @ExtraName("s")
+      @ValueDescription("Folder in which the 'studentified' artifact will be created")
       studentifyBaseDirectory: StudentifyBaseDirectory,
-      @HelpMessage(
-        "if set to 'true' the destination directory in which the studentified project is created will be wiped before the new studentified project is created")
       @ExtraName("f")
+      @ValueDescription(
+        "if set to 'true' the destination directory in which the studentified project is created will be wiped before the new studentified project is created")
       forceDelete: ForceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(false),
-      @HelpMessage("if set to 'true' the destination directory will be created as a git repository")
       @ExtraName("g")
+      @ValueDescription("if set to 'true' the destination directory will be created as a git repository")
       initGit: InitializeGitRepo = InitializeGitRepo(false),
       @Recurse shared: SharedOptions)
 

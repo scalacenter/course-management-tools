@@ -5,8 +5,7 @@ import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, 
 import cmt.Helpers.withZipFile
 import cmt.client.Domain.TemplatePath
 import cmt.client.cli.SharedOptions
-import cmt.client.command.ClientCommand.PullTemplate
-import cmt.client.command.execution.getCurrentExerciseId
+import cmt.client.command.getCurrentExerciseId
 import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable

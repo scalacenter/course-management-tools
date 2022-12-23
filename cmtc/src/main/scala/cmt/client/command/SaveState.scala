@@ -3,8 +3,7 @@ package cmt.client.command
 import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
 import cmt.Helpers.zipAndDeleteOriginal
 import cmt.client.cli.SharedOptions
-import cmt.client.command.ClientCommand.SaveState
-import cmt.client.command.execution.{getCurrentExerciseId, getCurrentExerciseState}
+import cmt.client.command.{getCurrentExerciseId, getCurrentExerciseState}
 import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable

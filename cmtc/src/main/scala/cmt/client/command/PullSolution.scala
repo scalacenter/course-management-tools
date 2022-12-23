@@ -4,8 +4,7 @@ import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
 import cmt.Helpers.{fileList, withZipFile}
 import cmt.client.cli.SharedOptions
-import cmt.client.command.ClientCommand.PullSolution
-import cmt.client.command.execution.{deleteCurrentState, getCurrentExerciseId}
+import cmt.client.command.{deleteCurrentState, getCurrentExerciseId}
 import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable

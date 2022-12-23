@@ -4,8 +4,7 @@ import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
 import cmt.client.Domain.ExerciseId
 import cmt.client.cli.ArgParsers.exerciseIdArgParser
 import cmt.client.cli.SharedOptions
-import cmt.client.command.ClientCommand.RestoreState
-import cmt.client.command.execution.deleteCurrentState
+import cmt.client.command.deleteCurrentState
 import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable

@@ -6,7 +6,6 @@ import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo, Tem
 import sbt.io.syntax.{File, file}
 import cats.syntax.apply.*
 import cats.syntax.either.*
-import cmt.client.command.ClientCommand.PullTemplate
 import cmt.core.validation.FileValidations.*
 
 object ArgParsers {

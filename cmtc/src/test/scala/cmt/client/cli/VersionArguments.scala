@@ -13,7 +13,6 @@ package cmt.client.cli
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.client.cli.CliCommand.Version
 import cmt.support.CommandLineArguments
 import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 import org.scalatest.prop.Tables

@@ -3,7 +3,6 @@ package cmt.client.command
 import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
 import cmt.client.cli.SharedOptions
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
-import cmt.client.command.ClientCommand.ListSavedStates
 import cmt.core.CmtCommand
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio

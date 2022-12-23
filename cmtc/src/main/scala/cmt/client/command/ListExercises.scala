@@ -3,8 +3,7 @@ package cmt.client.command
 import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
 import cmt.client.cli.SharedOptions
-import cmt.client.command.ClientCommand.ListExercises
-import cmt.client.command.execution.{getCurrentExerciseId, starCurrentExercise}
+import cmt.client.command.{getCurrentExerciseId, starCurrentExercise}
 import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable

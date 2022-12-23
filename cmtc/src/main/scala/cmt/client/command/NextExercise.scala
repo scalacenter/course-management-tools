@@ -5,8 +5,7 @@ import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, 
 import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
 import cmt.client.Domain.ForceMoveToExercise
 import cmt.client.cli.SharedOptions
-import cmt.client.command.ClientCommand.NextExercise
-import cmt.client.command.execution.getCurrentExerciseId
+import cmt.client.command.getCurrentExerciseId
 import cmt.core.CmtCommand
 import cmt.core.validation.Validatable
 import sbt.io.syntax.*

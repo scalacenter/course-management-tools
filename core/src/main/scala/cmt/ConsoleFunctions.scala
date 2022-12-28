@@ -23,7 +23,7 @@ def toConsoleYellow(msg: String): String = Console.YELLOW + msg + Console.RESET
 def toConsoleCyan(msg: String): String = Console.CYAN + msg + Console.RESET
 
 def printErrorAndExit(message: String): Nothing =
-  System.err.println(s"${toConsoleRed(s"Error:")}\n$message")
+  System.err.println(message)
   sys.exit(1)
 
 def printMessage(msg: String): Unit =

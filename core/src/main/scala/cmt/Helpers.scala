@@ -61,7 +61,7 @@ object Helpers:
 
     workspaceIsUnclean match {
       case Right(cnt) if cnt > 0 =>
-        Left("main repository isn't clean. Commit changes and try again".toExecuteCommandErrorMessage)
+        Left("Main repository isn't clean. Commit changes and try again".toExecuteCommandErrorMessage)
       case Right(_)  => Right(())
       case Left(msg) => Left(msg)
     }

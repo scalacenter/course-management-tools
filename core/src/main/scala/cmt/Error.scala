@@ -8,11 +8,12 @@ sealed trait CmtError {
 
 final case class RequiredOptionIsMissing(option: OptionName) extends CmtError {
   override def toDisplayString: String =
-    s"missing required option ${option.value}"
+    s"${toConsoleRed("ERROR -")} ${toConsoleCyan(s"Missing required option ${option.value}")}"
 }
 final case class FailedToValidateArgument(option: OptionName, reasons: Seq[ErrorMessage]) extends CmtError {
   override def toDisplayString: String =
-    s"""Failed to validate arguments:${reasons.foreach(str => s"\n    $str")}"""
+    s"${toConsoleRed(s"ERROR - ${toConsoleCyan(s"Option ${option.value}")}:")} ${toConsoleYellow(
+        reasons.map(_.message).mkString("\n    ", "\n    ", "\n"))}"
 }
 object FailedToValidateArgument:
   def because(option: String, messages: String*): FailedToValidateArgument =
@@ -20,12 +21,13 @@ object FailedToValidateArgument:
 
 final case class FailedToValidateCommandOptions(reasons: List[ErrorMessage]) extends CmtError {
   override def toDisplayString: String =
-    s"""Failed to validate command options:${reasons.foreach(str => s"\n    $str")}"""
+    s"Failed to validate command options:${reasons.foreach(str => s"\n    $str")}"
 }
 
 final case class FailedToExecuteCommand(reason: ErrorMessage) extends CmtError {
   override def toDisplayString: String =
-    s"""Failed to execute command: ${reason.message}"""
+    s"""${toConsoleRed("ERROR -")} ${toConsoleCyan("Failed to execute command.")}
+       |  ${toConsoleYellow(reason.message)}""".stripMargin
 }
 
 case class OptionName(value: String)
@@ -58,19 +60,4 @@ extension (self: caseapp.core.Error)
     extractOther(self)
   }
 
-extension (cmtError: CmtError)
-  def prettyPrint: String =
-    cmtError match {
-      case RequiredOptionIsMissing(OptionName(value)) =>
-        s"Missing option: $value"
-      case FailedToValidateArgument(option, reasons) =>
-        s"""Option ${option.value}:
-           |${reasons.mkString("   ", "\n   ", "\n")}""".stripMargin
-      case FailedToExecuteCommand(reason) =>
-        s"""Failed to execute command:
-           |  ${toConsoleYellow(reason.message)}
-           |""".stripMargin
-      case FailedToValidateCommandOptions(reasons) =>
-        s"""To be implemented:
-           |${reasons}""".stripMargin
-    }
+extension (cmtError: CmtError) def prettyPrint: String = cmtError.toDisplayString

@@ -11,7 +11,6 @@ import cmt.{
   OptionName,
   FailedToValidateArgument,
   FailedToExecuteCommand,
-  FailedToValidateCommandOptions,
   prettyPrint,
   printErrorAndExit
 }

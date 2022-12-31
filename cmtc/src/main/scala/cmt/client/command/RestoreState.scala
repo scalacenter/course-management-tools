@@ -6,13 +6,13 @@ import cmt.client.Domain.{ExerciseId, TemplatePath}
 import cmt.client.cli.ArgParsers.exerciseIdArgParser
 import cmt.client.cli.SharedOptions
 import cmt.client.command.deleteCurrentState
-import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import cmt.*
+import cmt.core.cli.CmtCommand
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import cmt.core.enforceTrailingArgumentCount
+import cmt.core.cli.enforceTrailingArgumentCount
 
 object RestoreState:
 

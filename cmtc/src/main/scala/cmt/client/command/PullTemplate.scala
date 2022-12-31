@@ -6,14 +6,14 @@ import cmt.Helpers.withZipFile
 import cmt.client.Domain.{ExerciseId, TemplatePath}
 import cmt.client.cli.SharedOptions
 import cmt.client.command.getCurrentExerciseId
-import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import sbt.io.CopyOptions
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import cmt.client.cli.ArgParsers.templatePathArgParser
-import cmt.core.enforceTrailingArgumentCount
+import cmt.core.cli.CmtCommand
+import cmt.core.cli.enforceTrailingArgumentCount
 
 object PullTemplate:
 

@@ -5,11 +5,11 @@ import cmt.{CMTcConfig, CmtError, printResult}
 import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
 import cmt.client.cli.SharedOptions
 import cmt.client.command.GotoExercise
-import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import cmt.client.cli.ArgParsers.{forceMoveToExerciseArgParser, studentifiedRepoArgParser}
-import cmt.core.enforceNoTrailingArguments
+import cmt.core.cli.CmtCommand
+import cmt.core.cli.enforceNoTrailingArguments
 
 object GotoFirstExercise:
 

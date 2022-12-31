@@ -1,4 +1,4 @@
-package cmt.core
+package cmt.core.cli
 
 import caseapp.{Command, RemainingArgs}
 import caseapp.core.Error

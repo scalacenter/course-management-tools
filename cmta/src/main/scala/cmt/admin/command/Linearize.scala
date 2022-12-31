@@ -6,7 +6,7 @@ import cmt.{CMTaConfig, CmtError, ProcessDSL, printResult, toConsoleGreen}
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
 import cmt.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
 import cmt.admin.cli.SharedOptions
-import cmt.core.CmtCommand
+import cmt.core.cli.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio

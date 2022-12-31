@@ -26,7 +26,6 @@ import cmt.admin.command.{DuplicateInsertBefore, Studentify}
 import cmt.support.{CommandLineArguments, TestDirectories}
 import org.scalatest.prop.Tables
 import sbt.io.syntax.{File, file}
-import scopt.OEffect.ReportError
 import cmt.admin.cli.ArgParsers.*
 import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 

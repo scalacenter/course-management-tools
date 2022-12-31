@@ -2,11 +2,11 @@ package cmt.client.command
 
 import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.client.cli.SharedOptions
+import cmt.core.cli.CmtCommand
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
-import cmt.core.CmtCommand
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
-import cmt.core.enforceNoTrailingArguments
+import cmt.core.cli.enforceNoTrailingArguments
 
 object ListSavedStates:
 

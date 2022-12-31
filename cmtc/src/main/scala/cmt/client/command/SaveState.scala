@@ -4,13 +4,13 @@ import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.Helpers.zipAndDeleteOriginal
 import cmt.client.cli.SharedOptions
 import cmt.client.command.{getCurrentExerciseId, getCurrentExerciseState}
-import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import cmt.*
+import cmt.core.cli.CmtCommand
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import cmt.core.enforceNoTrailingArguments
+import cmt.core.cli.enforceNoTrailingArguments
 
 object SaveState:
 

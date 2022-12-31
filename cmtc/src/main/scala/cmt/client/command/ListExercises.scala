@@ -4,10 +4,10 @@ import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
 import cmt.client.cli.SharedOptions
 import cmt.client.command.{getCurrentExerciseId, starCurrentExercise}
-import cmt.core.CmtCommand
+import cmt.core.cli.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
-import cmt.core.enforceNoTrailingArguments
+import cmt.core.cli.enforceNoTrailingArguments
 
 object ListExercises:
 

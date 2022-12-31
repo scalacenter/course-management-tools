@@ -3,15 +3,15 @@ package cmt
 import cats.data.NonEmptyList
 
 sealed trait CmtError {
-  def toDisplayString: String
+  def prettyPrint: String
 }
 
 final case class RequiredOptionIsMissing(option: OptionName) extends CmtError {
-  override def toDisplayString: String =
+  override def prettyPrint: String =
     s"${toConsoleRed("ERROR -")} ${toConsoleCyan(s"Missing required option ${option.value}")}"
 }
 final case class FailedToValidateArgument(option: OptionName, reasons: Seq[ErrorMessage]) extends CmtError {
-  override def toDisplayString: String =
+  override def prettyPrint: String =
     s"${toConsoleRed(s"ERROR - ${toConsoleCyan(s"Option ${option.value}")}:")} ${toConsoleYellow(
         reasons.map(_.message).mkString("\n    ", "\n    ", "\n"))}"
 }
@@ -20,12 +20,12 @@ object FailedToValidateArgument:
     FailedToValidateArgument(OptionName(option), messages.map(ErrorMessage(_)))
 
 final case class FailedToValidateCommandOptions(reasons: List[ErrorMessage]) extends CmtError {
-  override def toDisplayString: String =
+  override def prettyPrint: String =
     s"Failed to validate command options:${reasons.foreach(str => s"\n    $str")}"
 }
 
 final case class FailedToExecuteCommand(reason: ErrorMessage) extends CmtError {
-  override def toDisplayString: String =
+  override def prettyPrint: String =
     s"""${toConsoleRed("ERROR -")} ${toConsoleCyan("Failed to execute command.")}
        |  ${toConsoleYellow(reason.message)}""".stripMargin
 }

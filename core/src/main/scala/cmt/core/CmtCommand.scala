@@ -18,6 +18,6 @@ abstract class CmtCommand[T](implicit parser: Parser[T], help: Help[T]) extends 
 
   override def error(message: Error): Nothing = {
     val error = message.toCmtError
-    printErrorAndExit(error.map(_.toDisplayString).mkString("\n"))
+    printErrorAndExit(error.map(_.prettyPrint).mkString("\n"))
   }
 }

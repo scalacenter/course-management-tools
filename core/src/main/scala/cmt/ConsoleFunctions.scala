@@ -36,6 +36,6 @@ extension (result: Either[CmtError, String])
   def printResult(): Unit =
     result match
       case Left(errorMessage) =>
-        printErrorAndExit(errorMessage.toDisplayString)
+        printErrorAndExit(errorMessage.prettyPrint)
       case Right(message) =>
         printMessage(message)

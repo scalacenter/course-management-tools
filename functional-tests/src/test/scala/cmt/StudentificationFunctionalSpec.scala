@@ -311,8 +311,7 @@ final class StudentificationFunctionalSpec
 
       When("moving to the second exercise and pulling the solution")
 
-      // TODO: Fix the failure in the test that occurs when `gotoExercise` is called below
-      gotoExercise(cMTcConfig, studentifiedRepoCodeFolder, "exercise_002_desc")
+      gotoExercise(cMTcConfig, studentifiedRepoFolder, "exercise_002_desc")
       pullSolution(cMTcConfig, studentifiedRepoFolder)
 
       Then("the current studentified repo should reflect that")

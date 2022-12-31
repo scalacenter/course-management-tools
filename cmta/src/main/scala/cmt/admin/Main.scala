@@ -13,42 +13,14 @@ package cmt.admin
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.admin.cli.{AdminCliParser, CliOptions}
-import cmt.admin.command.AdminCommand.*
-import cmt.admin.command.execution.given
-import cmt.version.BuildInfo
-import cmt.{
-  CmtError,
-  printErrorAndExit,
-  printMessage,
-  toConsoleRed,
-  FailedToExecuteCommand,
-  ErrorMessage,
-  toExecuteCommandErrorMessage
-}
+import caseapp.core.app.{Command, CommandsEntryPoint}
+import cmt.admin.command.{Delinearize, DuplicateInsertBefore, Linearize, RenumberExercises, Studentify}
 
-object Main:
-
-  def main(args: Array[String]): Unit =
-    AdminCliParser.parse(args) match
-      case Right(options) => selectAndExecuteCommand(options).printResult()
-      case Left(error)    => printErrorAndExit(s"Error(s): ${error.toErrorString()}")
-
-  private def selectAndExecuteCommand(options: CliOptions): Either[CmtError, String] =
-    options.toCommand match
-      case cmd: Studentify            => cmd.execute()
-      case cmd: RenumberExercises     => cmd.execute()
-      case cmd: DuplicateInsertBefore => cmd.execute()
-      case cmd: Linearize             => cmd.execute()
-      case cmd: Delinearize           => cmd.execute()
-      case Version                    => Right(BuildInfo.toString)
-      case NoCommand                  => Left("KABOOM!!".toExecuteCommandErrorMessage)
-
-  extension (result: Either[CmtError, String])
-    def printResult(): Unit =
-      result match
-        case Left(errorMessage) =>
-          System.err.println(toConsoleRed(s"Error: ${errorMessage.toDisplayString}"))
-          System.exit(1)
-        case Right(message) =>
-          printMessage(message)
+object Main extends CommandsEntryPoint:
+  override def progName = "cmta"
+  override def commands = Seq(
+    Delinearize.command,
+    DuplicateInsertBefore.command,
+    Linearize.command,
+    RenumberExercises.command,
+    Studentify.command)

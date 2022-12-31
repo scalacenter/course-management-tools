@@ -45,7 +45,7 @@ object Main:
     def printResult(): Unit =
       result match
         case Left(errorMessage) =>
-          System.err.println(toConsoleRed(s"Error: ${errorMessage.toDisplayString}"))
+          System.err.println(toConsoleRed(s"Error: ${errorMessage.prettyPrint}"))
           System.exit(1)
         case Right(message) =>
           printMessage(message)

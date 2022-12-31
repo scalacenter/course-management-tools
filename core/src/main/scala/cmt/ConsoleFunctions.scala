@@ -22,15 +22,20 @@ def toConsoleGreen(msg: String): String = Console.GREEN + msg + Console.RESET
 def toConsoleYellow(msg: String): String = Console.YELLOW + msg + Console.RESET
 def toConsoleCyan(msg: String): String = Console.CYAN + msg + Console.RESET
 
-def printError(msg: String): Unit =
-  System.err.println(toConsoleRed(msg))
-
-def printErrorAndExit(message: String): Unit =
-  System.err.println(toConsoleRed(message))
-  System.exit(1)
+def printErrorAndExit(message: String): Nothing =
+  System.err.println(message)
+  sys.exit(1)
 
 def printMessage(msg: String): Unit =
   println(toConsoleGreen(msg))
 
 def printNotification(msg: String): Unit =
   println(toConsoleGreen(msg))
+
+extension (result: Either[CmtError, String])
+  def printResult(): Unit =
+    result match
+      case Left(errorMessage) =>
+        printErrorAndExit(errorMessage.prettyPrint)
+      case Right(message) =>
+        printMessage(message)

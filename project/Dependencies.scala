@@ -7,6 +7,8 @@ object Version {
   val scopt = "4.1.0"
   val sbtio = "1.7.0"
   val typesafeConfig = "1.4.2"
+  val caseapp = "2.1.0-M21"
+  val cats = "2.8.0"
 }
 
 object Library {
@@ -16,12 +18,14 @@ object Library {
   val sbtio = "org.scala-sbt" %% "io" % Version.sbtio
   val typesafeConfig = "com.typesafe" % "config" % Version.typesafeConfig
   val commonsCodec = "commons-codec" % "commons-codec" % "1.15"
+  val caseapp = "com.github.alexarchambault" %% "case-app" % Version.caseapp
+  val cats = "org.typelevel" %% "cats-core" % Version.cats
 }
 
 object Dependencies {
 
   import Library._
 
-  val cmtDependencies = List(scopt, sbtio, typesafeConfig, scalaTest, scalaCheck, commonsCodec)
+  val cmtDependencies = List(scopt, sbtio, typesafeConfig, scalaTest, scalaCheck, commonsCodec, caseapp, cats)
 
 }

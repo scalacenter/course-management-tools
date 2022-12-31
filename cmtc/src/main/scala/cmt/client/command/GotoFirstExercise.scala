@@ -12,9 +12,7 @@ import cmt.client.cli.ArgParsers.{forceMoveToExerciseArgParser, studentifiedRepo
 
 object GotoFirstExercise:
 
-  final case class Options(
-      force: ForceMoveToExercise = ForceMoveToExercise(false),
-      @Recurse shared: SharedOptions)
+  final case class Options(force: ForceMoveToExercise = ForceMoveToExercise(false), @Recurse shared: SharedOptions)
 
   given Validatable[GotoFirstExercise.Options] with
     extension (options: GotoFirstExercise.Options)

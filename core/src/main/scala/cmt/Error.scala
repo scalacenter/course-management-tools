@@ -59,5 +59,3 @@ extension (self: caseapp.core.Error)
 
     extractOther(self)
   }
-
-extension (cmtError: CmtError) def prettyPrint: String = cmtError.toDisplayString

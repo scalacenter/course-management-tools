@@ -48,7 +48,8 @@ object GotoExercise:
 
           (options.force, currentExerciseId) match {
             case (_, `toExerciseId`) =>
-              Right(s"${toConsoleYellow("WARNING:")} ${toConsoleGreen(s"You're already at exercise ${toConsoleYellow(toExerciseId)}")}")
+              Right(s"${toConsoleYellow("WARNING:")} ${toConsoleGreen(
+                  s"You're already at exercise ${toConsoleYellow(toExerciseId)}")}")
 
             case (ForceMoveToExercise(true), _) =>
               pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, config)

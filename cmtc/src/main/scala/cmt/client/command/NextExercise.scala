@@ -41,7 +41,8 @@ object NextExercise:
 
       (currentExerciseId, cmd.force) match {
         case (LastExerciseId, _) =>
-          Right(s"${toConsoleYellow("WARNING:")} ${toConsoleGreen(s"You're already at the last exercise: ${toConsoleYellow(currentExerciseId)}")}")
+          Right(s"${toConsoleYellow("WARNING:")} ${toConsoleGreen(
+              s"You're already at the last exercise: ${toConsoleYellow(currentExerciseId)}")}")
 
         case (_, ForceMoveToExercise(true)) =>
           pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, cMTcConfig)

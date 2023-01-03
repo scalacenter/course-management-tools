@@ -50,7 +50,7 @@ class CMTcConfig(studentifiedRepo: File):
 
   private val firstExercise = exercises.head
   private val lastExercise = exercises.last
-  
+
   val nextExercise: Map[String, String] = ((lastExercise -> lastExercise) +: exercises.zip(exercises.tail)).to(Map)
 
   val previousExercise: Map[String, String] =

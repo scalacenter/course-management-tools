@@ -17,8 +17,8 @@ object ArgParsers {
     fileArgParser.xmapError[StudentifiedRepo](
       _.value,
       file =>
-        (file.validateExists, file.validateIsDirectory, file.validateIsInAGitRepository)
-          .mapN((_, _, _) => StudentifiedRepo(file))
+        (file.validateExists, file.validateIsDirectory)
+          .mapN((_, _) => StudentifiedRepo(file))
           .leftMap(_.flatten)
           .toEither)
 

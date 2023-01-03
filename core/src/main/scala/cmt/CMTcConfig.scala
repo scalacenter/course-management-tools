@@ -47,6 +47,7 @@ class CMTcConfig(studentifiedRepo: File):
 
   val studentifiedSavedStatesFolder: File =
     solutionsFolder / cmtSettings.getString("studentified-saved-states-folder")
+  
   val nextExercise: Map[String, String] = exercises.zip(exercises.tail).to(Map)
 
   val previousExercise: Map[String, String] =

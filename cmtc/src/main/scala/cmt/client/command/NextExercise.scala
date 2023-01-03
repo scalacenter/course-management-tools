@@ -28,6 +28,7 @@ object NextExercise:
     def execute(): Either[CmtError, String] = {
       import cmt.client.Domain.ForceMoveToExercise
       val cMTcConfig = new CMTcConfig(cmd.shared.studentifiedRepo.value)
+
       val currentExerciseId = getCurrentExerciseId(cMTcConfig.bookmarkFile)
       val LastExerciseId = cMTcConfig.exercises.last
 

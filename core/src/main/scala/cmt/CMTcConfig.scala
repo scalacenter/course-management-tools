@@ -47,11 +47,14 @@ class CMTcConfig(studentifiedRepo: File):
 
   val studentifiedSavedStatesFolder: File =
     solutionsFolder / cmtSettings.getString("studentified-saved-states-folder")
+
+  private val firstExercise = exercises.head
+  private val lastExercise = exercises.last
   
-  val nextExercise: Map[String, String] = exercises.zip(exercises.tail).to(Map)
+  val nextExercise: Map[String, String] = ((lastExercise -> lastExercise) +: exercises.zip(exercises.tail)).to(Map)
 
   val previousExercise: Map[String, String] =
-    exercises.tail.zip(exercises).to(Map)
+    ((firstExercise -> firstExercise) +: exercises.tail.zip(exercises)).to(Map)
 
   private val testCodeMetaDataFile = studentifiedRepo / cmtSettings.getString("test-code-size-and-checksums")
 

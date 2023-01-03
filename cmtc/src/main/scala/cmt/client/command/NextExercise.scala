@@ -1,6 +1,6 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
 import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
 import cmt.client.Domain.ForceMoveToExercise
@@ -15,6 +15,7 @@ object NextExercise:
 
   @AppName("next-exercise")
   @CommandName("next-exercise")
+  @HelpMessage("Move to the next exercise. Pull in tests and readme files for that exercise")
   final case class Options(force: ForceMoveToExercise = ForceMoveToExercise(false), @Recurse shared: SharedOptions)
 
   given Validatable[NextExercise.Options] with

@@ -1,6 +1,6 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
 import cmt.Helpers.{fileList, withZipFile}
 import cmt.client.cli.SharedOptions
@@ -15,6 +15,7 @@ object PullSolution:
 
   @AppName("pull-solution")
   @CommandName("pull-solution")
+  @HelpMessage("Pull in all code for the active exercise. All local changes are discarded")
   final case class Options(@Recurse shared: SharedOptions)
 
   given Validatable[PullSolution.Options] with

@@ -1,6 +1,6 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, ExtraName, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
 import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
 import cmt.client.Domain.{ExerciseId, ForceMoveToExercise}
@@ -16,6 +16,7 @@ object GotoExercise:
 
   @AppName("goto-exercise")
   @CommandName("goto-exercise")
+  @HelpMessage("Move to a given exercise. Pull in tests and readme files for that exercise")
   final case class Options(
       @ExtraName("e")
       exercise: ExerciseId,

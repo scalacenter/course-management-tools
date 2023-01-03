@@ -1,6 +1,6 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.Helpers.zipAndDeleteOriginal
 import cmt.client.cli.SharedOptions
 import cmt.client.command.{getCurrentExerciseId, getCurrentExerciseState}
@@ -15,6 +15,7 @@ object SaveState:
 
   @AppName("save-state")
   @CommandName("save-state")
+  @HelpMessage("Save the state of the active exercise")
   final case class Options(@Recurse shared: SharedOptions)
 
   given Validatable[SaveState.Options] with

@@ -1,6 +1,6 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult}
 import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
 import cmt.client.cli.SharedOptions
@@ -14,6 +14,7 @@ object GotoFirstExercise:
 
   @AppName("goto-first-exercise")
   @CommandName("goto-first-exercise")
+  @HelpMessage("Move to the first exercise. Pull in tests and readme files for that exercise")
   final case class Options(force: ForceMoveToExercise = ForceMoveToExercise(false), @Recurse shared: SharedOptions)
 
   given Validatable[GotoFirstExercise.Options] with

@@ -1,6 +1,6 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.client.Domain.ExerciseId
 import cmt.client.cli.ArgParsers.exerciseIdArgParser
 import cmt.client.cli.SharedOptions
@@ -16,6 +16,7 @@ object RestoreState:
 
   @AppName("restore-state")
   @CommandName("restore-state")
+  @HelpMessage("Restore a previously saved exercise state")
   final case class Options(exercise: ExerciseId, @Recurse shared: SharedOptions)
 
   given Validatable[RestoreState.Options] with

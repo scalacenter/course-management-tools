@@ -1,6 +1,6 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.client.cli.SharedOptions
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
 import cmt.core.CmtCommand
@@ -11,6 +11,7 @@ object ListSavedStates:
 
   @AppName("list-saved-states")
   @CommandName("list-saved-states")
+  @HelpMessage("List all saved exercise states, if any.")
   final case class Options(@Recurse shared: SharedOptions)
 
   given Validatable[ListSavedStates.Options] with

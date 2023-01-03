@@ -1,6 +1,6 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
 import cmt.client.cli.SharedOptions
 import cmt.client.command.{getCurrentExerciseId, starCurrentExercise}
@@ -12,6 +12,7 @@ object ListExercises:
 
   @AppName("list-exercises")
   @CommandName("list-exercises")
+  @HelpMessage("List all exercises and their IDs in the repo. Mark the active exercise with a star")
   final case class Options(@Recurse shared: SharedOptions)
 
   given Validatable[ListExercises.Options] with

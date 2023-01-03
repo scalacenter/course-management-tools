@@ -1,6 +1,6 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
 import cmt.Helpers.withZipFile
 import cmt.client.Domain.TemplatePath
@@ -18,6 +18,7 @@ object PullTemplate:
 
   @AppName("pull-template")
   @CommandName("pull-template")
+  @HelpMessage("Selectively pull in a given file or folder for the active exercise")
   final case class Options(template: TemplatePath, @Recurse shared: SharedOptions)
 
   given Validatable[PullTemplate.Options] with

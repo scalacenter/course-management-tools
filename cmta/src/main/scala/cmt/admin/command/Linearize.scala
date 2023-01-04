@@ -3,7 +3,7 @@ package cmt.admin.command
 import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
 import cmt.Helpers.*
 import cmt.{CMTaConfig, CmtError, ProcessDSL, printResult, toConsoleGreen}
-import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory}
+import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
 import cmt.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
 import cmt.admin.cli.SharedOptions
 import cmt.core.CmtCommand
@@ -38,36 +38,38 @@ object Linearize:
       def execute(): Either[CmtError, String] = {
         import LinearizeHelpers.*
 
-        val mainRepository = options.shared.mainRepository
-        val config = new CMTaConfig(mainRepository.value, options.shared.maybeConfigFile.map(_.value))
+        resolveMainRepoPath(options.shared.mainRepository.value).flatMap { repository =>
+          val mainRepository = MainRepository(repository)
+          val config = new CMTaConfig(mainRepository.value, options.shared.maybeConfigFile.map(_.value))
 
-        for {
-          _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
+          for {
+            _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
 
-          mainRepoName = mainRepository.value.getName
-          tmpFolder = sbtio.createTemporaryDirectory
-          cleanedMainRepo = tmpFolder / mainRepository.value.getName
-          ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(config)
-          linearizedRootFolder = options.linearizeBaseDirectory.value / mainRepoName
+            mainRepoName = mainRepository.value.getName
+            tmpFolder = sbtio.createTemporaryDirectory
+            cleanedMainRepo = tmpFolder / mainRepository.value.getName
+            ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(config)
+            linearizedRootFolder = options.linearizeBaseDirectory.value / mainRepoName
 
-          _ = println(s"Linearizing ${toConsoleGreen(mainRepository.value.getPath)} to ${toConsoleGreen(
-              options.linearizeBaseDirectory.value.getPath)}")
+            _ = println(
+              s"Linearizing ${toConsoleGreen(mainRepoName)} to ${toConsoleGreen(options.linearizeBaseDirectory.value.getPath)}")
 
-          _ <- copyCleanViaGit(mainRepository.value, tmpFolder, mainRepoName)
+            _ <- checkpreExistingAndCreateArtifactRepo(
+              options.linearizeBaseDirectory.value,
+              linearizedRootFolder,
+              options.forceDelete.value)
 
-          _ = checkpreExistingAndCreateArtifactRepo(
-            options.linearizeBaseDirectory.value,
-            linearizedRootFolder,
-            options.forceDelete.value)
+            _ <- copyCleanViaGit(mainRepository.value, tmpFolder, mainRepoName)
 
-          _ <- initializeGitRepo(linearizedRootFolder)
+            _ <- initializeGitRepo(linearizedRootFolder)
 
-          _ <- commitExercises(cleanedMainRepo, exercises, linearizedRootFolder, config)
+            _ <- commitExercises(cleanedMainRepo, exercises, linearizedRootFolder, config)
 
-          _ = sbtio.delete(tmpFolder)
-          successMessage <- Right(s"Successfully linearized ${mainRepository.value.getPath}")
+            _ = sbtio.delete(tmpFolder)
+            successMessage <- Right(s"Successfully linearized ${mainRepository.value.getPath}")
 
-        } yield successMessage
+          } yield successMessage
+        }
       }
   end given
 

@@ -13,7 +13,10 @@ package cmt.client
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
+import cmt.{CmtError, FailedToValidateArgument, OptionName}
 import sbt.io.syntax.{File, file}
+
+import scala.util.{Success, Try}
 
 object Domain:
   final case class ExerciseId(value: String)
@@ -29,9 +32,20 @@ object Domain:
   object TemplatePath:
     val default: TemplatePath = TemplatePath("")
 
-  final case class GithubCourseRef(value: String) {
-    val (organisation, project) = {
-      val split = value.split("/")
-      (split(0), split(1))
+  abstract case class GithubCourseRef private (organisation: String, project: String) {
+    def asString(): String = s"$organisation/$project"
+  }
+  object GithubCourseRef {
+    def fromString(value: String): Either[CmtError, GithubCourseRef] = {
+      Try {
+        val (organisation, project) = {
+          val split = value.split("/")
+          (split(0), split(1))
+        }
+      } {
+        case Success((organisation, project)) => Right(new GithubCourseRef(organisation, project) {})
+        case Failure(error) => Left(FailedToValidateArgument.because("course", error.tost))
+      }
+
     }
   }

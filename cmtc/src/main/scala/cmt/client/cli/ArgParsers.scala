@@ -1,6 +1,7 @@
 package cmt.client.cli
 
 import caseapp.core.Error
+import caseapp.core.Error.Other
 import caseapp.core.argparser.{ArgParser, FlagArgParser, SimpleArgParser}
 import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, GithubCourseRef, StudentifiedRepo, TemplatePath}
 import sbt.io.syntax.{File, file}
@@ -32,5 +33,5 @@ object ArgParsers {
     SimpleArgParser.from[TemplatePath]("template path")(TemplatePath(_).asRight)
 
   implicit val githubCourseRefArgParser: ArgParser[GithubCourseRef] =
-    SimpleArgParser.from[GithubCourseRef]("github course ref")(GithubCourseRef(_).asRight)
+    SimpleArgParser.string.xmapError[GithubCourseRef](_.asString(), str => GithubCourseRef.fromString(str).leftMap(error => Error.Other(error.prettyPrint)))
 }

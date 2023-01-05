@@ -208,7 +208,7 @@ def pullSolution(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, S
 def gotoExercise(config: CMTcConfig, studentifiedRepo: File, exercise: String): Either[CmtError, String] =
   GotoExercise
     .Options(
-      exercise = ExerciseId(exercise),
+      exercise = Some(ExerciseId(exercise)),
       force = ForceMoveToExercise(false),
       shared = ClientOptions(StudentifiedRepo(studentifiedRepo)))
     .execute()
@@ -226,14 +226,14 @@ def saveState(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, Stri
 def restoreState(config: CMTcConfig, studentifiedRepo: File, exercise: String): Either[CmtError, String] =
   RestoreState
     .Options(
-      exercise = ExerciseId(exercise),
+      exercise = Some(ExerciseId(exercise)),
       shared = ClientOptions(studentifiedRepo = StudentifiedRepo(studentifiedRepo)))
     .execute()
 
 def pullTemplate(config: CMTcConfig, studentifiedRepo: File, templatePath: String): Either[CmtError, String] =
   PullTemplate
     .Options(
-      template = TemplatePath(Helpers.adaptToOSSeparatorChar(templatePath)),
+      template = Some(TemplatePath(Helpers.adaptToOSSeparatorChar(templatePath))),
       shared = ClientOptions(studentifiedRepo = StudentifiedRepo(studentifiedRepo)))
     .execute()
 

@@ -19,7 +19,7 @@ object GotoExercise:
   @HelpMessage("Move to a given exercise. Pull in tests and readme files for that exercise")
   final case class Options(
       @ExtraName("e")
-      exercise: ExerciseId,
+      exercise: Option[ExerciseId] = None,
       @ExtraName("f")
       force: ForceMoveToExercise = ForceMoveToExercise(false),
       @Recurse shared: SharedOptions)
@@ -38,46 +38,54 @@ object GotoExercise:
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
 
         val activeExerciseFolder = config.activeExerciseFolder
-        val toExerciseId = options.exercise.value.toString
 
-        if (!config.exercises.contains(toExerciseId))
-          Left(toConsoleGreen(s"No such exercise: ${options.exercise.value}").toExecuteCommandErrorMessage)
-        else
-          val (currentTestCodeFiles, filesToBeDeleted, filesToBeCopied) =
-            getFilesToCopyAndDelete(currentExerciseId, toExerciseId, config)
+        options.exercise
+          .map { exercise =>
+            val toExerciseId = exercise.value
 
-          (options.force, currentExerciseId) match {
-            case (_, `toExerciseId`) =>
-              Right(s"${toConsoleYellow("WARNING:")} ${toConsoleGreen(
-                  s"You're already at exercise ${toConsoleYellow(toExerciseId)}")}")
+            if (!config.exercises.contains(toExerciseId))
+              Left(toConsoleGreen(s"No such exercise: ${toExerciseId}").toExecuteCommandErrorMessage)
+            else
+              val (currentTestCodeFiles, filesToBeDeleted, filesToBeCopied) =
+                getFilesToCopyAndDelete(currentExerciseId, toExerciseId, config)
 
-            case (ForceMoveToExercise(true), _) =>
-              pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, config)
+              (options.force, currentExerciseId) match {
+                case (_, `toExerciseId`) =>
+                  Right(s"${toConsoleYellow("WARNING:")} ${toConsoleGreen(
+                    s"You're already at exercise ${toConsoleYellow(toExerciseId)}")}")
 
-            case _ =>
-              val existingTestCodeFiles =
-                currentTestCodeFiles.filter(file => (activeExerciseFolder / file).exists())
+                case (ForceMoveToExercise(true), _) =>
+                  pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, config)
 
-              val modifiedTestCodeFiles = existingTestCodeFiles.filter(
-                exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, config))
+                case _ =>
+                  val existingTestCodeFiles =
+                    currentTestCodeFiles.filter(file => (activeExerciseFolder / file).exists())
 
-              if (modifiedTestCodeFiles.nonEmpty)
-                Left(s"""goto-exercise cancelled.
-                        |
-                        |${toConsoleYellow("You have modified the following file(s):")}
-                        |${toConsoleGreen(modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n"))}
-                        |""".stripMargin.toExecuteCommandErrorMessage)
-              else
-                pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, config)
+                  val modifiedTestCodeFiles = existingTestCodeFiles.filter(
+                    exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, config))
+
+                  if (modifiedTestCodeFiles.nonEmpty)
+                    Left(s"""goto-exercise cancelled.
+                            |
+                            |${toConsoleYellow("You have modified the following file(s):")}
+                            |${toConsoleGreen(modifiedTestCodeFiles.mkString("\n   ", "\n   ", "\n"))}
+                            |""".stripMargin.toExecuteCommandErrorMessage)
+                  else
+                    pullTestCode(toExerciseId, activeExerciseFolder, filesToBeDeleted, filesToBeCopied, config)
+              }
           }
+          .getOrElse(Left("Exercise ID not specified".toExecuteCommandErrorMessage))
       }
 
   val command = new CmtCommand[GotoExercise.Options] {
 
-    def run(options: GotoExercise.Options, args: RemainingArgs): Unit = {
-      enforceNoTrailingArguments(args)
-      options.validated().flatMap(_.execute()).printResult()
-    }
+    def run(options: GotoExercise.Options, args: RemainingArgs): Unit =
+      args.remaining.headOption
+        .map(exerciseId => options.copy(exercise = Some(ExerciseId(exerciseId))))
+        .getOrElse(options)
+        .validated()
+        .flatMap(_.execute())
+        .printResult()
   }
 
 end GotoExercise

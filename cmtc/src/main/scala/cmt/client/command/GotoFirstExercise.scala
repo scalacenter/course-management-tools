@@ -29,7 +29,7 @@ object GotoFirstExercise:
       def execute(): Either[CmtError, String] = {
         val config = new CMTcConfig(options.shared.studentifiedRepo.value)
         GotoExercise
-          .Options(exercise = ExerciseId(config.exercises.head), force = options.force, shared = options.shared)
+          .Options(exercise = Some(ExerciseId(config.exercises.head)), force = options.force, shared = options.shared)
           .execute()
       }
 

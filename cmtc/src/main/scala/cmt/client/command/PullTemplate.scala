@@ -1,9 +1,9 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
 import cmt.Helpers.withZipFile
-import cmt.client.Domain.TemplatePath
+import cmt.client.Domain.{ExerciseId, TemplatePath}
 import cmt.client.cli.SharedOptions
 import cmt.client.command.getCurrentExerciseId
 import cmt.core.CmtCommand
@@ -19,7 +19,10 @@ object PullTemplate:
   @AppName("pull-template")
   @CommandName("pull-template")
   @HelpMessage("Selectively pull in a given file or folder for the active exercise")
-  final case class Options(template: TemplatePath, @Recurse shared: SharedOptions)
+  final case class Options(
+      @ExtraName("t")
+      template: Option[TemplatePath] = None,
+      @Recurse shared: SharedOptions)
 
   given Validatable[PullTemplate.Options] with
     extension (options: PullTemplate.Options)
@@ -29,37 +32,44 @@ object PullTemplate:
   end given
 
   given Executable[PullTemplate.Options] with
-    extension (cmd: PullTemplate.Options)
+    extension (options: PullTemplate.Options)
       def execute(): Either[CmtError, String] = {
-        val config = new CMTcConfig(cmd.shared.studentifiedRepo.value)
+        val config = new CMTcConfig(options.shared.studentifiedRepo.value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
 
-        withZipFile(config.solutionsFolder, currentExerciseId) { solution =>
-          val fullTemplatePath = solution / cmd.template.value
-          (fullTemplatePath.exists, fullTemplatePath.isDirectory) match
-            case (false, _) =>
-              Left(s"No such template: ${cmd.template.value}".toExecuteCommandErrorMessage)
-            case (true, false) =>
-              sbtio.copyFile(
-                fullTemplatePath,
-                config.activeExerciseFolder / cmd.template.value,
-                CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
-              Right(toConsoleGreen(s"Pulled template file: ") + toConsoleYellow(cmd.template.value))
-            case (true, true) =>
-              sbtio.copyDirectory(
-                fullTemplatePath,
-                config.activeExerciseFolder / cmd.template.value,
-                CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
-              Right(toConsoleGreen(s"Pulled template folder: ") + toConsoleYellow(cmd.template.value))
-        }
+        options.template
+          .map { template =>
+            withZipFile(config.solutionsFolder, currentExerciseId) { solution =>
+              val fullTemplatePath = solution / template.value
+              (fullTemplatePath.exists, fullTemplatePath.isDirectory) match
+                case (false, _) =>
+                  Left(s"No such template: ${template.value}".toExecuteCommandErrorMessage)
+                case (true, false) =>
+                  sbtio.copyFile(
+                    fullTemplatePath,
+                    config.activeExerciseFolder / template.value,
+                    CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
+                  Right(toConsoleGreen(s"Pulled template file: ") + toConsoleYellow(template.value))
+                case (true, true) =>
+                  sbtio.copyDirectory(
+                    fullTemplatePath,
+                    config.activeExerciseFolder / template.value,
+                    CopyOptions(overwrite = true, preserveLastModified = true, preserveExecutable = true))
+                  Right(toConsoleGreen(s"Pulled template folder: ") + toConsoleYellow(template.value))
+            }
+          }
+          .getOrElse(Left("Template name not supplied".toExecuteCommandErrorMessage))
       }
 
   val command = new CmtCommand[PullTemplate.Options] {
 
-    def run(options: PullTemplate.Options, args: RemainingArgs): Unit = {
-      enforceNoTrailingArguments(args)
-      options.validated().flatMap(_.execute()).printResult()
-    }
+    def run(options: PullTemplate.Options, args: RemainingArgs): Unit =
+      args.remaining.headOption
+        .map(template => options.copy(template = Some(TemplatePath(template))))
+        .getOrElse(options)
+        .validated()
+        .flatMap(_.execute())
+        .printResult()
   }
 
 end PullTemplate

@@ -45,8 +45,10 @@ object PullSolution:
 
   val command = new CmtCommand[PullSolution.Options] {
 
-    def run(options: PullSolution.Options, args: RemainingArgs): Unit =
+    def run(options: PullSolution.Options, args: RemainingArgs): Unit = {
+      enforceNoTrailingArguments(args)
       options.validated().flatMap(_.execute()).printResult()
+    }
   }
 
 end PullSolution

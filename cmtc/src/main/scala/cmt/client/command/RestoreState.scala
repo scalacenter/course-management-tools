@@ -51,7 +51,9 @@ object RestoreState:
 
   val command = new CmtCommand[RestoreState.Options] {
 
-    def run(options: RestoreState.Options, args: RemainingArgs): Unit =
+    def run(options: RestoreState.Options, args: RemainingArgs): Unit = {
+      enforceNoTrailingArguments(args)
       options.validated().flatMap(_.execute()).printResult()
+    }
   }
 end RestoreState

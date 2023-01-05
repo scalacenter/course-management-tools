@@ -40,8 +40,10 @@ object ListExercises:
 
   val command = new CmtCommand[ListExercises.Options] {
 
-    def run(options: ListExercises.Options, args: RemainingArgs): Unit =
+    def run(options: ListExercises.Options, args: RemainingArgs): Unit = {
+      enforceNoTrailingArguments(args)
       options.validated().flatMap(_.execute()).printResult()
+    }
   }
 
 end ListExercises

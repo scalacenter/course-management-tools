@@ -76,7 +76,9 @@ object NextExercise:
 
   val command = new CmtCommand[NextExercise.Options] {
 
-    def run(options: NextExercise.Options, args: RemainingArgs): Unit =
+    def run(options: NextExercise.Options, args: RemainingArgs): Unit = {
+      enforceNoTrailingArguments(args)
       options.validated().flatMap(_.execute()).printResult()
+    }
   }
 end NextExercise

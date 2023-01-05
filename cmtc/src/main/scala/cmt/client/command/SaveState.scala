@@ -54,7 +54,9 @@ object SaveState:
 
   val command = new CmtCommand[SaveState.Options] {
 
-    def run(options: SaveState.Options, args: RemainingArgs): Unit =
+    def run(options: SaveState.Options, args: RemainingArgs): Unit = {
+      enforceNoTrailingArguments(args)
       options.validated().flatMap(_.execute()).printResult()
+    }
   }
 end SaveState

@@ -4,8 +4,9 @@ import cmt.client.Configuration.CmtHome
 import cmt.{CmtError, printErrorAndExit, printMessage, toConsoleGreen}
 import cmt.client.Domain.StudentifiedRepo
 import com.typesafe.config.{Config, ConfigFactory}
-import sbt.io.IO.write
+import sbt.io.IO.*
 import sbt.io.syntax.*
+import cmt.Helpers.{adaptToNixSeparatorChar, adaptToOSSeparatorChar}
 
 import scala.jdk.CollectionConverters.*
 
@@ -56,13 +57,13 @@ object Configuration:
     */
   def load(homeDirectory: Option[File] = None): Either[CmtError, Configuration] = {
     val cmtHomePath = homeDirectory
-      .map(home => s"$home/$CmtHomeDirectoryName")
+      .map(home => adaptToOSSeparatorChar(s"$home/$CmtHomeDirectoryName"))
       .orElse(System.getenv().asScala.get(CmtHomeEnvKey))
       .getOrElse(DefaultCmtHome)
     val cmtHome = CmtHome(file(cmtHomePath))
 
     val cmtCourseDirectoryPath = homeDirectory
-      .map(home => s"$home/Courses")
+      .map(home => adaptToOSSeparatorChar(s"$home/Courses"))
       .orElse(System.getenv().asScala.get(CmtCoursesHomeEnvKey))
       .getOrElse(DefaultCmtCoursesHome)
     val cmtCoursesHome = CmtCoursesHome(file(cmtCourseDirectoryPath))
@@ -78,8 +79,9 @@ object Configuration:
   private def readFromConfigFile(cmtHome: CmtHome): Configuration = {
     val configFile = globalConfigFile(cmtHome)
     val config = configFile.config()
-    val coursesDirectory = CoursesDirectory(file(config.getString("cmtc.courses-directory")))
-    val currentCourse = CurrentCourse(StudentifiedRepo(file(config.getString("cmtc.current-course"))))
+    val coursesDirectory = CoursesDirectory(file(adaptToOSSeparatorChar(config.getString("cmtc.courses-directory"))))
+    val currentCourse = CurrentCourse(
+      StudentifiedRepo(file(adaptToOSSeparatorChar(config.getString("cmtc.current-course")))))
     Configuration(cmtHome, coursesDirectory, currentCourse)
   }
 
@@ -109,8 +111,8 @@ object Configuration:
         s"global configuration file is missing from '${configFile.value.getAbsolutePath}' creating it with default values")
       writeGlobalConfig(
         configFile,
-        _.replaceAll(CoursesDirectoryToken, s""""${cmtCoursesHome.value}"""")
-          .replaceAll(CurrentCourseToken, s""""${System.getProperty("user.dir")}""""))
+        _.replaceAll(CoursesDirectoryToken, s""""${adaptToNixSeparatorChar(cmtCoursesHome.value.getAbsolutePath)}"""")
+          .replaceAll(CurrentCourseToken, s""""${adaptToNixSeparatorChar(System.getProperty("user.dir"))}""""))
     }
   }
 

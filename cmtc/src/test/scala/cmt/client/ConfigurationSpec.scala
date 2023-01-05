@@ -2,6 +2,7 @@ package cmt.client
 
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import cmt.Helpers.adaptToOSSeparatorChar
 import cmt.client.Configuration.CmtHome
 import cmt.client.Domain.StudentifiedRepo
 import org.scalatest.BeforeAndAfterEach
@@ -29,12 +30,11 @@ final class ConfigurationSpec extends AnyWordSpecLike with Matchers with BeforeA
 
   "load" should {
     "create the default configuration in the appropriate home directory" in {
-      println(tempDirectory)
-      val userHome = file(System.getProperty("user.home"))
       val expectedConfiguration = Configuration(
         CmtHome(tempDirectory / ".cmt"),
         CoursesDirectory(tempDirectory / "Courses"),
         CurrentCourse(StudentifiedRepo(file(System.getProperty("user.dir")))))
+
       val receivedConfiguration = assertRight(Configuration.load(Some(tempDirectory)))
 
       receivedConfiguration shouldBe expectedConfiguration

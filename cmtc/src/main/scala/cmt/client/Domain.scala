@@ -28,3 +28,10 @@ object Domain:
   final case class TemplatePath(value: String)
   object TemplatePath:
     val default: TemplatePath = TemplatePath("")
+
+  final case class GithubCourseRef(value: String) {
+    val (organisation, project) = {
+      val split = value.split("/")
+      (split(0), split(1))
+    }
+  }

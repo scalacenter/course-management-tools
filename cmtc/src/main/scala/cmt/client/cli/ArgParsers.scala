@@ -2,7 +2,7 @@ package cmt.client.cli
 
 import caseapp.core.Error
 import caseapp.core.argparser.{ArgParser, FlagArgParser, SimpleArgParser}
-import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo, TemplatePath}
+import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, GithubCourseRef, StudentifiedRepo, TemplatePath}
 import sbt.io.syntax.{File, file}
 import cats.syntax.apply.*
 import cats.syntax.either.*
@@ -30,4 +30,7 @@ object ArgParsers {
 
   implicit val templatePathArgParser: ArgParser[TemplatePath] =
     SimpleArgParser.from[TemplatePath]("template path")(TemplatePath(_).asRight)
+
+  implicit val githubCourseRefArgParser: ArgParser[GithubCourseRef] =
+    SimpleArgParser.from[GithubCourseRef]("github course ref")(GithubCourseRef(_).asRight)
 }

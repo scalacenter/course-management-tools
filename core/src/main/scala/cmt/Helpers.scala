@@ -69,20 +69,23 @@ object Helpers:
   def checkpreExistingAndCreateArtifactRepo(
       artifactBaseDirectory: File,
       artifactRootFolder: File,
-      forceDeleteDestinationDirectory: Boolean): Unit =
+      forceDeleteDestinationDirectory: Boolean): Either[CmtError, String] =
     (artifactRootFolder.exists, forceDeleteDestinationDirectory) match
       case (true, true) =>
         if artifactBaseDirectory.canWrite then
           sbtio.delete(artifactRootFolder)
           sbtio.createDirectory(artifactRootFolder)
-        else printErrorAndExit(s"${artifactBaseDirectory.getPath} isn't writeable")
+          Right("Created artifact folder")
+        else Left(FailedToExecuteCommand(ErrorMessage(s"${artifactBaseDirectory.getPath} isn't writeable")))
 
       case (true, false) =>
-        printErrorAndExit(s"$artifactRootFolder exists already")
+        Left(FailedToExecuteCommand(ErrorMessage(s"$artifactRootFolder exists already")))
 
       case (false, _) =>
-        if artifactBaseDirectory.canWrite then sbtio.createDirectory(artifactRootFolder)
-        else printErrorAndExit(s"${artifactBaseDirectory.getPath} isn't writeable")
+        if artifactBaseDirectory.canWrite then
+          sbtio.createDirectory(artifactRootFolder)
+          Right("Created artifact folder")
+        else Left(FailedToExecuteCommand(ErrorMessage(s"${artifactBaseDirectory.getPath} isn't writeable")))
   end checkpreExistingAndCreateArtifactRepo
 
   def addFirstExercise(cleanedMainRepo: File, firstExercise: String, studentifiedRootFolder: File)(

@@ -71,16 +71,16 @@ object Studentify:
           for {
             _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
 
-            _ = println(s"Studentifying ${toConsoleGreen(mainRepository.value.getPath)} to ${toConsoleGreen(
-                options.studentifyBaseDirectory.value.getPath)}")
-
             mainRepoName = mainRepository.value.getName
             tmpFolder = sbtio.createTemporaryDirectory
             cleanedMainRepo = tmpFolder / mainRepoName
             studentifiedRootFolder = options.studentifyBaseDirectory.value / mainRepoName
             solutionsFolder = studentifiedRootFolder / config.studentifiedRepoSolutionsFolder
 
-            _ = checkpreExistingAndCreateArtifactRepo(
+            _ = println(
+              s"Studentifying ${toConsoleGreen(mainRepoName)} to ${toConsoleGreen(options.studentifyBaseDirectory.value.getPath)}")
+
+            _ <- checkpreExistingAndCreateArtifactRepo(
               options.studentifyBaseDirectory.value,
               studentifiedRootFolder,
               options.forceDelete.value)

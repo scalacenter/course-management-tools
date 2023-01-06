@@ -34,7 +34,7 @@ object Install:
         printMessage(s"Installing course '${cmd.course}' into '${configuration.coursesDirectory}'")
         val workingDir = configuration.coursesDirectory.value / cmd.course.organisation / cmd.course.project
         sbtio.createDirectory(workingDir)
-        val cloneCommand = s"git clone git@github.com:${cmd.course.value}.git".toProcessCmd(workingDir)
+        val cloneCommand = s"git clone git@github.com:${cmd.course.asString()}.git".toProcessCmd(workingDir)
         cloneCommand.runAndReadOutput()
       }
     end extension

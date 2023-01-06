@@ -16,7 +16,7 @@ package cmt.client
 import cmt.{CmtError, FailedToValidateArgument, OptionName}
 import sbt.io.syntax.{File, file}
 
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 
 object Domain:
   final case class ExerciseId(value: String)
@@ -38,13 +38,11 @@ object Domain:
   object GithubCourseRef {
     def fromString(value: String): Either[CmtError, GithubCourseRef] = {
       Try {
-        val (organisation, project) = {
-          val split = value.split("/")
-          (split(0), split(1))
-        }
-      } {
+        val split = value.split("/")
+        (split(0), split(1))
+      } match {
         case Success((organisation, project)) => Right(new GithubCourseRef(organisation, project) {})
-        case Failure(error)                   => Left(FailedToValidateArgument.because("course", error.tost))
+        case Failure(error)                   => Left(FailedToValidateArgument.because("course", error.getMessage))
       }
 
     }

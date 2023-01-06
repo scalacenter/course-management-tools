@@ -46,7 +46,7 @@ class CMTcConfig(studentifiedRepo: File):
   val solutionsFolder: File = studentifiedRepo / cmtSettings.getString("studentified-repo-solutions-folder")
 
   val studentifiedSavedStatesFolder: File =
-    solutionsFolder / cmtSettings.getString("studentified-saved-states-folder")
+    studentifiedRepo / cmtSettings.getString("studentified-saved-states-folder")
 
   private val firstExercise = exercises.head
   private val lastExercise = exercises.last

@@ -44,7 +44,7 @@ object Domain:
         }
       } {
         case Success((organisation, project)) => Right(new GithubCourseRef(organisation, project) {})
-        case Failure(error) => Left(FailedToValidateArgument.because("course", error.tost))
+        case Failure(error)                   => Left(FailedToValidateArgument.because("course", error.tost))
       }
 
     }

@@ -33,5 +33,7 @@ object ArgParsers {
     SimpleArgParser.from[TemplatePath]("template path")(TemplatePath(_).asRight)
 
   implicit val githubCourseRefArgParser: ArgParser[GithubCourseRef] =
-    SimpleArgParser.string.xmapError[GithubCourseRef](_.asString(), str => GithubCourseRef.fromString(str).leftMap(error => Error.Other(error.prettyPrint)))
+    SimpleArgParser.string.xmapError[GithubCourseRef](
+      _.asString(),
+      str => GithubCourseRef.fromString(str).leftMap(error => Error.Other(error.prettyPrint)))
 }

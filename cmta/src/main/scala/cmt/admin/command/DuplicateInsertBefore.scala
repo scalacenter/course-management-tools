@@ -11,7 +11,7 @@ import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import cmt.admin.command.RenumberExercises
 import cmt.admin.cli.ArgParsers.exerciseNumberArgParser
-import cmt.core.CmtCommand
+import cmt.core.cli.CmtCommand
 
 object DuplicateInsertBefore:
 

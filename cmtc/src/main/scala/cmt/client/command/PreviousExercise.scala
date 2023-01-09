@@ -6,11 +6,11 @@ import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTe
 import cmt.client.Domain.ForceMoveToExercise
 import cmt.client.cli.SharedOptions
 import cmt.client.command.getCurrentExerciseId
-import cmt.core.CmtCommand
 import cmt.core.validation.Validatable
 import sbt.io.syntax.*
 import cmt.client.cli.ArgParsers.forceMoveToExerciseArgParser
-import cmt.core.enforceNoTrailingArguments
+import cmt.core.cli.CmtCommand
+import cmt.core.cli.enforceNoTrailingArguments
 
 object PreviousExercise:
 

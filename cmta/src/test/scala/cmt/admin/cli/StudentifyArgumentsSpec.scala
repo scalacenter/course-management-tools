@@ -23,7 +23,6 @@ import cmt.support.{CommandLineArguments, TestDirectories}
 import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 import org.scalatest.prop.Tables
 import sbt.io.syntax.{File, file}
-import scopt.OEffect.ReportError
 import org.scalatest.matchers.should.Matchers
 
 final class StudentifyArgumentsSpec extends CommandLineArgumentsSpec[Studentify.Options] with TestDirectories {

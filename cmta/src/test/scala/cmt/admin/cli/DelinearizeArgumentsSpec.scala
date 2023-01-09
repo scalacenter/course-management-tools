@@ -22,7 +22,6 @@ import cmt.support.{CommandLineArguments, TestDirectories}
 import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 import org.scalatest.prop.Tables
 import sbt.io.syntax.{File, file}
-import scopt.OEffect.ReportError
 import cmt.admin.cli.ArgParsers.*
 
 final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delinearize.Options] with TestDirectories {

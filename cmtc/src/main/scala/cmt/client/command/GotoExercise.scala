@@ -10,8 +10,8 @@ import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import sbt.io.syntax.*
 import cmt.client.cli.ArgParsers.{exerciseIdArgParser, forceMoveToExerciseArgParser}
-import cmt.core.CmtCommand
-import cmt.core.enforceTrailingArgumentCount
+import cmt.core.cli.CmtCommand
+import cmt.core.cli.enforceTrailingArgumentCount
 
 object GotoExercise:
 

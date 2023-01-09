@@ -1,7 +1,7 @@
 package cmt.admin.command
 
 import caseapp.core.Error
-import caseapp.{AppName, ValueDescription, Command, CommandName, ExtraName, HelpMessage, Name, Recurse, RemainingArgs}
+import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Name, Recurse, RemainingArgs, ValueDescription}
 import cmt.Helpers.*
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, MainRepository, StudentifyBaseDirectory}
 import cmt.core.execution.Executable
@@ -16,7 +16,7 @@ import cmt.admin.cli.ArgParsers.{
   initializeGitRepoArgParser,
   studentifyBaseDirectoryArgParser
 }
-import cmt.core.CmtCommand
+import cmt.core.cli.CmtCommand
 import cmt.toCmtError
 import cmt.toExecuteCommandErrorMessage
 

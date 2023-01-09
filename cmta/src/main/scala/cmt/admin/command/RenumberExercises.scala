@@ -8,7 +8,7 @@ import cmt.admin.cli.SharedOptions
 import cmt.core.execution.Executable
 import cmt.admin.cli.ArgParsers.{renumberOffsetArgParser, renumberStartArgParser, renumberStepArgParser}
 import cmt.admin.command.RenumberExercises
-import cmt.core.CmtCommand
+import cmt.core.cli.CmtCommand
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*

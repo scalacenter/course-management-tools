@@ -13,8 +13,6 @@ package cmt.support
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import scopt.OEffect.ReportError
-
 trait EitherSupport {
 
   def assertRight[E, T](either: Either[E, T]): T =

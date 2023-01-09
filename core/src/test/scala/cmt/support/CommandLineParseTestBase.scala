@@ -16,7 +16,6 @@ package cmt.support
 import caseapp.Parser
 import caseapp.core.Error
 import caseapp.core.Error.SeveralErrors
-import cmt.core.cli.CmdLineParseError
 import cmt.support.EitherSupport
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers

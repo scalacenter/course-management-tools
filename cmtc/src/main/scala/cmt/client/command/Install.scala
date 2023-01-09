@@ -12,6 +12,7 @@ import cats.syntax.either.*
 import sbt.io.syntax.*
 import sbt.io.IO as sbtio
 import cmt.ProcessDSL.{ProcessCmd, runAndReadOutput, toProcessCmd}
+import cmt.core.cli.enforceNoTrailingArguments
 
 object Install:
 
@@ -42,9 +43,11 @@ object Install:
 
   val command = new CmtcCommand[Install.Options] {
 
-    def run(options: Install.Options, args: RemainingArgs): Unit = {
-      options.validated().flatMap(_.execute(configuration)).printResult()
-    }
+    def run(options: Install.Options, args: RemainingArgs): Unit =
+      args
+        .enforceNoTrailingArguments()
+        .flatMap(_ => options.validated().flatMap(_.execute(configuration)))
+        .printResult()
   }
 
 end Install

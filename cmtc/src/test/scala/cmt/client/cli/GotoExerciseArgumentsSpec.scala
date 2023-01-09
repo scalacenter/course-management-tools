@@ -13,15 +13,33 @@ package cmt.client.cli
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
+import caseapp.Parser
+import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
+import cmt.client.command.GotoExercise
 import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 import cmt.support.{CommandLineArguments, TestDirectories}
 import sbt.io.syntax.File
+import cmt.client.cli.ArgParsers.*
 
-object GotoExercise /*extends CommandLineArguments[CliOptions] with TestDirectories {
+final class GotoExerciseArgumentsSpec extends CommandLineArgumentsSpec[GotoExercise.Options] with TestDirectories {
 
   val identifier = "goto-exercise"
 
+  val parser: Parser[GotoExercise.Options] = Parser.derive
+
   def invalidArguments(tempDirectory: File) = invalidArgumentsTable()
 
-  def validArguments(tempDirectory: File) = validArgumentsTable()
-}*/
+  def validArguments(tempDirectory: File) = validArgumentsTable(
+    (
+      Seq("-s", baseDirectoryGitRoot.getAbsolutePath, "-e", "99"),
+      GotoExercise.Options(
+        exercise = Some(ExerciseId("99")),
+        force = ForceMoveToExercise(false),
+        shared = SharedOptions(studentifiedRepo = StudentifiedRepo(baseDirectoryGitRoot)))),
+    (
+      Seq("-s", baseDirectoryGitRoot.getAbsolutePath, "99"),
+      GotoExercise.Options(
+        exercise = None,
+        force = ForceMoveToExercise(false),
+        shared = SharedOptions(studentifiedRepo = StudentifiedRepo(baseDirectoryGitRoot)))))
+}

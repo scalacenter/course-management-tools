@@ -6,6 +6,26 @@ sealed trait CmtError {
   def prettyPrint: String
 }
 
+final case class UnexpectedTrailingArguments(trailingArguments: List[String]) extends CmtError {
+  override def prettyPrint: String =
+    s"${toConsoleRed("ERROR -")} ${toConsoleCyan(s"Unexpected trailing arguments [${trailingArguments.mkString(",")}]")}"
+}
+
+final case class UnexpectedUnparsedArguments(unparsedArguments: List[String]) extends CmtError {
+  override def prettyPrint: String =
+    s"${toConsoleRed("ERROR -")} ${toConsoleCyan(s"Unexpected unparsed arguments [-- ${unparsedArguments.mkString(",")}]")}"
+}
+
+final case class MissingTrailingArguments(expectedCount: Int, actualCount: Int) extends CmtError {
+  override def prettyPrint: String =
+    s"${toConsoleRed("ERROR -")} ${toConsoleCyan(s"expected $expectedCount trailing arguments but found $actualCount")}"
+}
+
+final case class NoTrailingArguments(expectedCount: Int) extends CmtError {
+  override def prettyPrint: String =
+    s"${toConsoleRed("ERROR -")} ${toConsoleCyan(s"expected $expectedCount trailing arguments but none were found")}"
+}
+
 final case class RequiredOptionIsMissing(option: OptionName) extends CmtError {
   override def prettyPrint: String =
     s"${toConsoleRed("ERROR -")} ${toConsoleCyan(s"Missing required option ${option.value}")}"

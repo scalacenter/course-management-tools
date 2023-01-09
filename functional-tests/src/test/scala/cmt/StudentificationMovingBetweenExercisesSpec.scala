@@ -19,7 +19,6 @@ import java.util.UUID
 import java.nio.charset.StandardCharsets
 import cmt.admin.Domain.MainRepository
 import cmt.client.Domain.StudentifiedRepo
-import cmt.client.cli.CliCommand.PullTemplate
 import cmt.support.{ExerciseMetadata, SourcesStruct}
 import org.scalatest.{BeforeAndAfterAll, GivenWhenThen}
 import org.scalatest.featurespec.AnyFeatureSpecLike

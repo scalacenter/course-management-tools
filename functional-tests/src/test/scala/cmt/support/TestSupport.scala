@@ -16,8 +16,19 @@ package cmt.support
 import cmt.Helpers.*
 import cmt.admin.Domain.MainRepository
 import cmt.admin.cli.SharedOptions
+import cmt.client.cli.SharedOptions as ClientOptions
 import cmt.admin.command
-import cmt.client.Domain.{ForceMoveToExercise, StudentifiedRepo}
+import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo, TemplatePath}
+import cmt.client.command.{
+  GotoExercise,
+  GotoFirstExercise,
+  NextExercise,
+  PreviousExercise,
+  PullSolution,
+  PullTemplate,
+  RestoreState,
+  SaveState
+}
 import cmt.{CMTaConfig, CMTcConfig, CmtError, Helpers}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
@@ -164,57 +175,66 @@ def extractCodeFromRepo(codeFolder: File): SourceFiles =
   SourceFiles(filesAndChecksums.to(Map))
 
 def gotoNextExercise(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
-  import cmt.client.command.ClientCommand.NextExercise
-  import cmt.client.command.execution.given
-  NextExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo)).execute()
+  NextExercise
+    .Options(
+      force = ForceMoveToExercise(false),
+      shared = ClientOptions(studentifiedRepo = StudentifiedRepo(studentifiedRepo)))
+    .execute()
 
 def gotoNextExerciseForced(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
-  import cmt.client.command.ClientCommand.NextExercise
-  import cmt.client.command.execution.given
-  NextExercise(config, ForceMoveToExercise(true), StudentifiedRepo(studentifiedRepo)).execute()
+  NextExercise
+    .Options(
+      force = ForceMoveToExercise(true),
+      shared = ClientOptions(studentifiedRepo = StudentifiedRepo(studentifiedRepo)))
+    .execute()
 
 def gotoPreviousExercise(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
-  import cmt.client.command.ClientCommand.PreviousExercise
-  import cmt.client.command.execution.given
-  PreviousExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo)).execute()
+  PreviousExercise
+    .Options(
+      force = ForceMoveToExercise(false),
+      shared = ClientOptions(studentifiedRepo = StudentifiedRepo(studentifiedRepo)))
+    .execute()
 
 def gotoPreviousExerciseForced(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
-  import cmt.client.command.ClientCommand.PreviousExercise
-  import cmt.client.command.execution.given
-  PreviousExercise(config, ForceMoveToExercise(true), StudentifiedRepo(studentifiedRepo)).execute()
+  PreviousExercise
+    .Options(
+      force = ForceMoveToExercise(true),
+      shared = ClientOptions(studentifiedRepo = StudentifiedRepo(studentifiedRepo)))
+    .execute()
 
 def pullSolution(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
-  import cmt.client.command.ClientCommand.PullSolution
-  import cmt.client.command.execution.given
-  PullSolution(config, StudentifiedRepo(studentifiedRepo)).execute()
+  PullSolution.Options(shared = ClientOptions(StudentifiedRepo(studentifiedRepo))).execute()
 
 def gotoExercise(config: CMTcConfig, studentifiedRepo: File, exercise: String): Either[CmtError, String] =
-  import cmt.client.Domain.ExerciseId
-  import cmt.client.command.ClientCommand.GotoExercise
-  import cmt.client.command.execution.given
-  GotoExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
+  GotoExercise
+    .Options(
+      exercise = Some(ExerciseId(exercise)),
+      force = ForceMoveToExercise(false),
+      shared = ClientOptions(StudentifiedRepo(studentifiedRepo)))
+    .execute()
 
 def gotoFirstExercise(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
-  import cmt.client.command.ClientCommand.GotoFirstExercise
-  import cmt.client.command.execution.given
-  GotoFirstExercise(config, ForceMoveToExercise(false), StudentifiedRepo(studentifiedRepo)).execute()
+  GotoFirstExercise
+    .Options(
+      force = ForceMoveToExercise(false),
+      shared = ClientOptions(studentifiedRepo = StudentifiedRepo(studentifiedRepo)))
+    .execute()
 
 def saveState(config: CMTcConfig, studentifiedRepo: File): Either[CmtError, String] =
-  import cmt.client.command.ClientCommand.SaveState
-  import cmt.client.command.execution.given
-  SaveState(config, StudentifiedRepo(studentifiedRepo)).execute()
+  SaveState.Options(shared = ClientOptions(studentifiedRepo = StudentifiedRepo(studentifiedRepo))).execute()
 
 def restoreState(config: CMTcConfig, studentifiedRepo: File, exercise: String): Either[CmtError, String] =
-  import cmt.client.Domain.ExerciseId
-  import cmt.client.command.ClientCommand.RestoreState
-  import cmt.client.command.execution.given
-  RestoreState(config, StudentifiedRepo(studentifiedRepo), ExerciseId(exercise)).execute()
+  RestoreState
+    .Options(
+      exercise = Some(ExerciseId(exercise)),
+      shared = ClientOptions(studentifiedRepo = StudentifiedRepo(studentifiedRepo)))
+    .execute()
 
 def pullTemplate(config: CMTcConfig, studentifiedRepo: File, templatePath: String): Either[CmtError, String] =
-  import cmt.client.Domain.TemplatePath
-  import cmt.client.command.ClientCommand.PullTemplate
-  import cmt.client.command.execution.given
-  PullTemplate(config, StudentifiedRepo(studentifiedRepo), TemplatePath(Helpers.adaptToOSSeparatorChar(templatePath)))
+  PullTemplate
+    .Options(
+      template = Some(TemplatePath(Helpers.adaptToOSSeparatorChar(templatePath))),
+      shared = ClientOptions(studentifiedRepo = StudentifiedRepo(studentifiedRepo)))
     .execute()
 
 def addFileToStudentifiedRepo(studentifiedRepo: File, filePath: String): SourceFiles =

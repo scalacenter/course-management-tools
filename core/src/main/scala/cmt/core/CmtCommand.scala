@@ -1,18 +1,37 @@
 package cmt.core
 
-import caseapp.Command
+import caseapp.{Command, RemainingArgs}
 import caseapp.core.Error
 import caseapp.core.help.Help
 import caseapp.core.parser.Parser
 import cmt.{
   CmtError,
-  toCmtError,
-  RequiredOptionIsMissing,
-  OptionName,
-  FailedToValidateArgument,
   FailedToExecuteCommand,
-  printErrorAndExit
+  FailedToValidateArgument,
+  MissingTrailingArguments,
+  NoTrailingArguments,
+  OptionName,
+  RequiredOptionIsMissing,
+  UnexpectedTrailingArguments,
+  UnexpectedUnparsedArguments,
+  printErrorAndExit,
+  toCmtError
 }
+
+extension (self: RemainingArgs)
+  def enforceNoTrailingArguments(): Either[CmtError, RemainingArgs] =
+    enforceTrailingArgumentCount(expectedCount = 0)
+
+  def enforceTrailingArgumentCount(expectedCount: Int): Either[CmtError, RemainingArgs] = {
+    (self.unparsed.toList, self.remaining.toList) match {
+      case (Nil, Nil) if expectedCount != 0 => Left(NoTrailingArguments(expectedCount))
+      case (Nil, remaining) if remaining.size < expectedCount =>
+        Left(MissingTrailingArguments(expectedCount, remaining.size))
+      case (Nil, remaining) if remaining.size > expectedCount => Left(UnexpectedTrailingArguments(remaining))
+      case (Nil, _)                                           => Right(self)
+      case (unparsed, _)                                      => Left(UnexpectedUnparsedArguments(unparsed))
+    }
+  }
 
 abstract class CmtCommand[T](implicit parser: Parser[T], help: Help[T]) extends Command[T] {
 

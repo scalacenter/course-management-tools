@@ -16,7 +16,6 @@ package cmt
 import cmt.Helpers.{dumpStringToFile, fileList}
 import cmt.admin.Domain.MainRepository
 import cmt.client.Domain.StudentifiedRepo
-import cmt.client.cli.CliCommand.PullTemplate
 import cmt.support.*
 import cmt.toExecuteCommandErrorMessage
 import org.scalatest.featurespec.AnyFeatureSpecLike
@@ -312,7 +311,7 @@ final class StudentificationFunctionalSpec
 
       When("moving to the second exercise and pulling the solution")
 
-      gotoExercise(cMTcConfig, studentifiedRepoCodeFolder, "exercise_002_desc")
+      gotoExercise(cMTcConfig, studentifiedRepoFolder, "exercise_002_desc")
       pullSolution(cMTcConfig, studentifiedRepoFolder)
 
       Then("the current studentified repo should reflect that")

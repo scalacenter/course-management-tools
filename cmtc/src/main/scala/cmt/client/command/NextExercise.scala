@@ -10,6 +10,7 @@ import cmt.core.CmtCommand
 import cmt.core.validation.Validatable
 import sbt.io.syntax.*
 import cmt.client.cli.ArgParsers.forceMoveToExerciseArgParser
+import cmt.core.enforceNoTrailingArguments
 
 object NextExercise:
 
@@ -76,9 +77,7 @@ object NextExercise:
 
   val command = new CmtCommand[NextExercise.Options] {
 
-    def run(options: NextExercise.Options, args: RemainingArgs): Unit = {
-      enforceNoTrailingArguments(args)
-      options.validated().flatMap(_.execute()).printResult()
-    }
+    def run(options: NextExercise.Options, args: RemainingArgs): Unit =
+      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute())).printResult()
   }
 end NextExercise

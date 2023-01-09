@@ -10,6 +10,7 @@ import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+import cmt.core.enforceNoTrailingArguments
 
 object PullSolution:
 
@@ -45,10 +46,8 @@ object PullSolution:
 
   val command = new CmtCommand[PullSolution.Options] {
 
-    def run(options: PullSolution.Options, args: RemainingArgs): Unit = {
-      enforceNoTrailingArguments(args)
-      options.validated().flatMap(_.execute()).printResult()
-    }
+    def run(options: PullSolution.Options, args: RemainingArgs): Unit =
+      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute())).printResult()
   }
 
 end PullSolution

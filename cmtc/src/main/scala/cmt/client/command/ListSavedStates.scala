@@ -6,6 +6,7 @@ import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
 import cmt.core.CmtCommand
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
+import cmt.core.enforceNoTrailingArguments
 
 object ListSavedStates:
 
@@ -41,10 +42,8 @@ object ListSavedStates:
 
   val command = new CmtCommand[ListSavedStates.Options] {
 
-    def run(options: ListSavedStates.Options, args: RemainingArgs): Unit = {
-      enforceNoTrailingArguments(args)
-      options.validated().flatMap(_.execute()).printResult()
-    }
+    def run(options: ListSavedStates.Options, args: RemainingArgs): Unit =
+      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute())).printResult()
   }
 
 end ListSavedStates

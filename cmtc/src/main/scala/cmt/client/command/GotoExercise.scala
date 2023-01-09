@@ -6,11 +6,12 @@ import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTe
 import cmt.client.Domain.{ExerciseId, ForceMoveToExercise}
 import cmt.client.cli.SharedOptions
 import cmt.client.command.getCurrentExerciseId
-import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import sbt.io.syntax.*
 import cmt.client.cli.ArgParsers.{exerciseIdArgParser, forceMoveToExerciseArgParser}
+import cmt.core.CmtCommand
+import cmt.core.enforceTrailingArgumentCount
 
 object GotoExercise:
 
@@ -80,11 +81,14 @@ object GotoExercise:
   val command = new CmtCommand[GotoExercise.Options] {
 
     def run(options: GotoExercise.Options, args: RemainingArgs): Unit =
-      args.remaining.headOption
-        .map(exerciseId => options.copy(exercise = Some(ExerciseId(exerciseId))))
-        .getOrElse(options)
-        .validated()
-        .flatMap(_.execute())
+      args
+        .enforceTrailingArgumentCount(expectedCount = 1)
+        .flatMap(
+          _.remaining.headOption
+            .map(exerciseId => options.copy(exercise = Some(ExerciseId(exerciseId))))
+            .getOrElse(options)
+            .validated()
+            .flatMap(_.execute()))
         .printResult()
   }
 

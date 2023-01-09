@@ -12,6 +12,7 @@ import cmt.core.validation.Validatable
 import cmt.*
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+import cmt.core.enforceTrailingArgumentCount
 
 object RestoreState:
 
@@ -61,11 +62,14 @@ object RestoreState:
   val command = new CmtCommand[RestoreState.Options] {
 
     def run(options: RestoreState.Options, args: RemainingArgs): Unit =
-      args.remaining.headOption
-        .map(exercise => options.copy(exercise = Some(ExerciseId(exercise))))
-        .getOrElse(options)
-        .validated()
-        .flatMap(_.execute())
+      args
+        .enforceTrailingArgumentCount(expectedCount = 1)
+        .flatMap(
+          _.remaining.headOption
+            .map(exercise => options.copy(exercise = Some(ExerciseId(exercise))))
+            .getOrElse(options)
+            .validated()
+            .flatMap(_.execute()))
         .printResult()
   }
 end RestoreState

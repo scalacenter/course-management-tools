@@ -9,6 +9,7 @@ import cmt.core.CmtCommand
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import cmt.client.cli.ArgParsers.{forceMoveToExerciseArgParser, studentifiedRepoArgParser}
+import cmt.core.enforceNoTrailingArguments
 
 object GotoFirstExercise:
 
@@ -35,10 +36,8 @@ object GotoFirstExercise:
 
   val command = new CmtCommand[GotoFirstExercise.Options] {
 
-    def run(options: GotoFirstExercise.Options, args: RemainingArgs): Unit = {
-      enforceNoTrailingArguments(args)
-      options.validated().flatMap(_.execute()).printResult()
-    }
+    def run(options: GotoFirstExercise.Options, args: RemainingArgs): Unit =
+      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute())).printResult()
   }
 
 end GotoFirstExercise

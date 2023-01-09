@@ -8,18 +8,32 @@ import cmt.{
   CmtError,
   FailedToExecuteCommand,
   FailedToValidateArgument,
+  MissingTrailingArguments,
+  NoTrailingArguments,
   OptionName,
   RequiredOptionIsMissing,
+  UnexpectedTrailingArguments,
+  UnexpectedUnparsedArguments,
   printErrorAndExit,
   toCmtError
 }
 
-abstract class CmtCommand[T](implicit parser: Parser[T], help: Help[T]) extends Command[T] {
+extension (self: RemainingArgs)
+  def enforceNoTrailingArguments(): Either[CmtError, RemainingArgs] =
+    enforceTrailingArgumentCount(expectedCount = 0)
 
-  protected def enforceNoTrailingArguments(args: RemainingArgs): Unit =
-    if (args.remaining.nonEmpty || args.unparsed.nonEmpty)
-      printErrorAndExit(
-        s"""unrecognised trailing arguments '${args.remaining.mkString(",")} -- ${args.unparsed.mkString(",")}'""")
+  def enforceTrailingArgumentCount(expectedCount: Int): Either[CmtError, RemainingArgs] = {
+    (self.unparsed.toList, self.remaining.toList) match {
+      case (Nil, Nil) if expectedCount != 0 => Left(NoTrailingArguments(expectedCount))
+      case (Nil, remaining) if remaining.size < expectedCount =>
+        Left(MissingTrailingArguments(expectedCount, remaining.size))
+      case (Nil, remaining) if remaining.size > expectedCount => Left(UnexpectedTrailingArguments(remaining))
+      case (Nil, _)                                           => Right(self)
+      case (unparsed, _)                                      => Left(UnexpectedUnparsedArguments(unparsed))
+    }
+  }
+
+abstract class CmtCommand[T](implicit parser: Parser[T], help: Help[T]) extends Command[T] {
 
   override def error(message: Error): Nothing = {
     val error = message.toCmtError

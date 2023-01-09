@@ -13,6 +13,7 @@ import sbt.io.CopyOptions
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import cmt.client.cli.ArgParsers.templatePathArgParser
+import cmt.core.enforceTrailingArgumentCount
 
 object PullTemplate:
 
@@ -64,11 +65,14 @@ object PullTemplate:
   val command = new CmtCommand[PullTemplate.Options] {
 
     def run(options: PullTemplate.Options, args: RemainingArgs): Unit =
-      args.remaining.headOption
-        .map(template => options.copy(template = Some(TemplatePath(template))))
-        .getOrElse(options)
-        .validated()
-        .flatMap(_.execute())
+      args
+        .enforceTrailingArgumentCount(expectedCount = 1)
+        .flatMap(
+          _.remaining.headOption
+            .map(template => options.copy(template = Some(TemplatePath(template))))
+            .getOrElse(options)
+            .validated()
+            .flatMap(_.execute()))
         .printResult()
   }
 

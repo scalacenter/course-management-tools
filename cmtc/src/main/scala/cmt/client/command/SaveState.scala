@@ -10,6 +10,7 @@ import cmt.core.validation.Validatable
 import cmt.*
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+import cmt.core.enforceNoTrailingArguments
 
 object SaveState:
 
@@ -54,9 +55,7 @@ object SaveState:
 
   val command = new CmtCommand[SaveState.Options] {
 
-    def run(options: SaveState.Options, args: RemainingArgs): Unit = {
-      enforceNoTrailingArguments(args)
-      options.validated().flatMap(_.execute()).printResult()
-    }
+    def run(options: SaveState.Options, args: RemainingArgs): Unit =
+      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute())).printResult()
   }
 end SaveState

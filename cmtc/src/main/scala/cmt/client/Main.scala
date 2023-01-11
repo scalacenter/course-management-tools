@@ -24,7 +24,8 @@ import cmt.client.command.{
   PullSolution,
   PullTemplate,
   RestoreState,
-  SaveState
+  SaveState,
+  SetCurrentCourse
 }
 
 object Main extends CommandsEntryPoint:
@@ -40,4 +41,5 @@ object Main extends CommandsEntryPoint:
       PullSolution.command,
       PullTemplate.command,
       RestoreState.command,
-      SaveState.command)
+      SaveState.command,
+      SetCurrentCourse.command)

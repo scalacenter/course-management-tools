@@ -43,8 +43,8 @@ object ListSavedStates:
         Right(toConsoleGreen(s"No saved states found\n"))
       else
         Right(
-        toConsoleGreen(s"Saved states available for exercises:\n") + toConsoleYellow(
-          s"${savedStates.mkString("\n   ", "\n   ", "\n")}"))
+          toConsoleGreen(s"Saved states available for exercises:\n") + toConsoleYellow(
+            s"${savedStates.mkString("\n   ", "\n   ", "\n")}"))
     }
 
   val command = new CmtcCommand[ListSavedStates.Options] {

@@ -1,8 +1,9 @@
 package cmt.client.command
 
 import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
+import cmt.client.Configuration
 import cmt.client.cli.SharedOptions
-import cmt.core.cli.CmtCommand
+import cmt.client.cli.CmtcCommand
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
@@ -23,8 +24,8 @@ object ListSavedStates:
   end given
 
   extension (options: ListSavedStates.Options)
-    def execute(): Either[CmtError, String] = {
-      val config = new CMTcConfig(options.shared.studentifiedRepo.value)
+    def execute(configuration: Configuration): Either[CmtError, String] = {
+      val config = new CMTcConfig(options.shared.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
       val MatchDotzip = ".zip".r
       val savedStates =
         sbtio
@@ -40,10 +41,10 @@ object ListSavedStates:
           s"${savedStates.mkString("\n   ", "\n   ", "\n")}"))
     }
 
-  val command = new CmtCommand[ListSavedStates.Options] {
+  val command = new CmtcCommand[ListSavedStates.Options] {
 
     def run(options: ListSavedStates.Options, args: RemainingArgs): Unit =
-      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute())).printResult()
+      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute(configuration))).printResult()
   }
 
 end ListSavedStates

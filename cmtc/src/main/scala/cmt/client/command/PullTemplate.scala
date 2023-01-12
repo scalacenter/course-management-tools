@@ -3,16 +3,17 @@ package cmt.client.command
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
 import cmt.Helpers.withZipFile
+import cmt.client.Configuration
 import cmt.client.Domain.{ExerciseId, TemplatePath}
 import cmt.client.cli.SharedOptions
 import cmt.client.command.getCurrentExerciseId
-import cmt.core.execution.Executable
+import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import sbt.io.CopyOptions
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import cmt.client.cli.ArgParsers.templatePathArgParser
-import cmt.core.cli.CmtCommand
+import cmt.client.cli.CmtcCommand
 import cmt.core.cli.enforceTrailingArgumentCount
 
 object PullTemplate:
@@ -34,8 +35,8 @@ object PullTemplate:
 
   given Executable[PullTemplate.Options] with
     extension (options: PullTemplate.Options)
-      def execute(): Either[CmtError, String] = {
-        val config = new CMTcConfig(options.shared.studentifiedRepo.value)
+      def execute(configuration: Configuration): Either[CmtError, String] = {
+        val config = new CMTcConfig(options.shared.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
 
         options.template
@@ -62,7 +63,7 @@ object PullTemplate:
           .getOrElse(Left("Template name not supplied".toExecuteCommandErrorMessage))
       }
 
-  val command = new CmtCommand[PullTemplate.Options] {
+  val command = new CmtcCommand[PullTemplate.Options] {
 
     def run(options: PullTemplate.Options, args: RemainingArgs): Unit =
       args
@@ -72,7 +73,7 @@ object PullTemplate:
             .map(template => options.copy(template = Some(TemplatePath(template))))
             .getOrElse(options)
             .validated()
-            .flatMap(_.execute()))
+            .flatMap(_.execute(configuration)))
         .printResult()
   }
 

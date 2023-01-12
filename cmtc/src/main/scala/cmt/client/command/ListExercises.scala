@@ -1,11 +1,12 @@
 package cmt.client.command
 
 import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
+import cmt.client.Configuration
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
 import cmt.client.cli.SharedOptions
 import cmt.client.command.{getCurrentExerciseId, starCurrentExercise}
-import cmt.core.cli.CmtCommand
-import cmt.core.execution.Executable
+import cmt.client.cli.CmtcCommand
+import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.core.cli.enforceNoTrailingArguments
 
@@ -24,9 +25,9 @@ object ListExercises:
   end given
 
   given Executable[ListExercises.Options] with
-    extension (cmd: ListExercises.Options)
-      def execute(): Either[CmtError, String] = {
-        val config = new CMTcConfig(cmd.shared.studentifiedRepo.value)
+    extension (options: ListExercises.Options)
+      def execute(configuration: Configuration): Either[CmtError, String] = {
+        val config = new CMTcConfig(options.shared.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
 
         val messages = config.exercises.zipWithIndex
@@ -39,10 +40,10 @@ object ListExercises:
     end extension
   end given
 
-  val command = new CmtCommand[ListExercises.Options] {
+  val command = new CmtcCommand[ListExercises.Options] {
 
     def run(options: ListExercises.Options, args: RemainingArgs): Unit =
-      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute())).printResult()
+      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute(configuration))).printResult()
   }
 
 end ListExercises

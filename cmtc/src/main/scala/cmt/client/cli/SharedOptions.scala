@@ -7,7 +7,7 @@ import cmt.client.cli.ArgParsers.studentifiedRepoArgParser
 
 final case class SharedOptions(
     @ExtraName("s")
-    studentifiedRepo: StudentifiedRepo)
+    studentifiedRepo: Option[StudentifiedRepo] = None)
 
 object SharedOptions {
   implicit val parser: Parser[SharedOptions] = Parser.derive

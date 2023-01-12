@@ -3,10 +3,11 @@ package cmt.client.command
 import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
 import cmt.Helpers.{fileList, withZipFile}
+import cmt.client.Configuration
 import cmt.client.cli.SharedOptions
 import cmt.client.command.{deleteCurrentState, getCurrentExerciseId}
-import cmt.core.cli.CmtCommand
-import cmt.core.execution.Executable
+import cmt.client.cli.CmtcCommand
+import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
@@ -27,12 +28,13 @@ object PullSolution:
   end given
 
   given Executable[PullSolution.Options] with
-    extension (cmd: PullSolution.Options)
-      def execute(): Either[CmtError, String] = {
-        val config = new CMTcConfig(cmd.shared.studentifiedRepo.value)
+    extension (options: PullSolution.Options)
+      def execute(configuration: Configuration): Either[CmtError, String] = {
+        val studentifiedRepo = options.shared.studentifiedRepo.getOrElse(configuration.currentCourse.value)
+        val config = new CMTcConfig(studentifiedRepo.value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
 
-        deleteCurrentState(cmd.shared.studentifiedRepo.value)(config)
+        deleteCurrentState(studentifiedRepo.value)(config)
 
         withZipFile(config.solutionsFolder, currentExerciseId) { solution =>
           val files = fileList(solution / currentExerciseId)
@@ -44,10 +46,10 @@ object PullSolution:
         }
       }
 
-  val command = new CmtCommand[PullSolution.Options] {
+  val command = new CmtcCommand[PullSolution.Options] {
 
     def run(options: PullSolution.Options, args: RemainingArgs): Unit =
-      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute())).printResult()
+      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute(configuration))).printResult()
   }
 
 end PullSolution

@@ -35,11 +35,11 @@ final class GotoExerciseArgumentsSpec extends CommandLineArgumentsSpec[GotoExerc
       GotoExercise.Options(
         exercise = Some(ExerciseId("99")),
         force = ForceMoveToExercise(false),
-        shared = SharedOptions(studentifiedRepo = StudentifiedRepo(baseDirectoryGitRoot)))),
+        shared = SharedOptions(studentifiedRepo = Some(StudentifiedRepo(baseDirectoryGitRoot))))),
     (
       Seq("-s", baseDirectoryGitRoot.getAbsolutePath, "99"),
       GotoExercise.Options(
         exercise = None,
         force = ForceMoveToExercise(false),
-        shared = SharedOptions(studentifiedRepo = StudentifiedRepo(baseDirectoryGitRoot)))))
+        shared = SharedOptions(studentifiedRepo = Some(StudentifiedRepo(baseDirectoryGitRoot))))))
 }

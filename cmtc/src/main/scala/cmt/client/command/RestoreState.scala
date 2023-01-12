@@ -6,10 +6,11 @@ import cmt.client.Domain.{ExerciseId, TemplatePath}
 import cmt.client.cli.ArgParsers.exerciseIdArgParser
 import cmt.client.cli.SharedOptions
 import cmt.client.command.deleteCurrentState
-import cmt.core.execution.Executable
+import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.*
-import cmt.core.cli.CmtCommand
+import cmt.client.Configuration
+import cmt.client.cli.CmtcCommand
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import cmt.core.cli.enforceTrailingArgumentCount
@@ -33,8 +34,9 @@ object RestoreState:
 
   given Executable[RestoreState.Options] with
     extension (options: RestoreState.Options)
-      def execute(): Either[CmtError, String] = {
-        val config = new CMTcConfig(options.shared.studentifiedRepo.value)
+      def execute(configuration: Configuration): Either[CmtError, String] = {
+        val studentifiedRepo = options.shared.studentifiedRepo.getOrElse(configuration.currentCourse.value)
+        val config = new CMTcConfig(studentifiedRepo.value)
 
         options.exercise
           .map { exercise =>
@@ -42,7 +44,7 @@ object RestoreState:
             if !savedState.exists
             then Left(s"No such saved state: ${exercise.value}".toExecuteCommandErrorMessage)
             else {
-              deleteCurrentState(options.shared.studentifiedRepo.value)(config)
+              deleteCurrentState(studentifiedRepo.value)(config)
 
               Helpers.withZipFile(config.studentifiedSavedStatesFolder, exercise.value) { solution =>
                 val files = Helpers.fileList(solution / exercise.value)
@@ -59,7 +61,7 @@ object RestoreState:
           .getOrElse(Left("Exercise ID not specified".toExecuteCommandErrorMessage))
       }
 
-  val command = new CmtCommand[RestoreState.Options] {
+  val command = new CmtcCommand[RestoreState.Options] {
 
     def run(options: RestoreState.Options, args: RemainingArgs): Unit =
       args
@@ -69,7 +71,7 @@ object RestoreState:
             .map(exercise => options.copy(exercise = Some(ExerciseId(exercise))))
             .getOrElse(options)
             .validated()
-            .flatMap(_.execute()))
+            .flatMap(_.execute(configuration)))
         .printResult()
   }
 end RestoreState

@@ -1,7 +1,13 @@
 package cmt.client
 
-import cmt.client.Configuration.CmtHome
-import cmt.{CmtError, printErrorAndExit, printMessage, toConsoleGreen}
+import cmt.client.Configuration.{
+  CmtHome,
+  CoursesDirectoryToken,
+  CurrentCourseToken,
+  globalConfigFile,
+  writeGlobalConfig
+}
+import cmt.{CmtError, FailedToWriteGlobalConfiguration, printErrorAndExit, printMessage, toConsoleGreen}
 import cmt.client.Domain.StudentifiedRepo
 import com.typesafe.config.{Config, ConfigFactory}
 import sbt.io.IO.*
@@ -9,8 +15,27 @@ import sbt.io.syntax.*
 import cmt.Helpers.{adaptToNixSeparatorChar, adaptToOSSeparatorChar}
 
 import scala.jdk.CollectionConverters.*
+import scala.util.{Failure, Success, Try}
 
-final case class Configuration(homeDirectory: CmtHome, coursesDirectory: CoursesDirectory, currentCourse: CurrentCourse)
+final case class Configuration(
+    homeDirectory: CmtHome,
+    coursesDirectory: CoursesDirectory,
+    currentCourse: CurrentCourse) {
+  def flush(): Either[CmtError, Unit] = {
+    val configFile = globalConfigFile(homeDirectory)
+
+    Try(
+      writeGlobalConfig(
+        configFile,
+        _.replaceAll(CoursesDirectoryToken, s""""${adaptToNixSeparatorChar(coursesDirectory.value.getAbsolutePath)}"""")
+          .replaceAll(
+            CurrentCourseToken,
+            s""""${adaptToNixSeparatorChar(currentCourse.value.value.getAbsolutePath)}""""))) match {
+      case Success(_)         => Right(())
+      case Failure(exception) => Left(FailedToWriteGlobalConfiguration(exception))
+    }
+  }
+}
 final case class CoursesDirectory(value: File)
 final case class CurrentCourse(value: StudentifiedRepo)
 
@@ -109,10 +134,13 @@ object Configuration:
     if (!configFile.value.exists()) {
       printMessage(
         s"global configuration file is missing from '${configFile.value.getAbsolutePath}' creating it with default values")
-      writeGlobalConfig(
-        configFile,
-        _.replaceAll(CoursesDirectoryToken, s""""${adaptToNixSeparatorChar(cmtCoursesHome.value.getAbsolutePath)}"""")
-          .replaceAll(CurrentCourseToken, s""""${adaptToNixSeparatorChar(System.getProperty("user.dir"))}""""))
+      val currentCourse = CurrentCourse(StudentifiedRepo(file(System.getProperty("user.dir"))))
+      val configuration = Configuration(cmtHome, CoursesDirectory(cmtCoursesHome.value), currentCourse)
+      configuration.flush()
+//      writeGlobalConfig(
+//        configFile,
+//        _.replaceAll(CoursesDirectoryToken, s""""${adaptToNixSeparatorChar(cmtCoursesHome.value.getAbsolutePath)}"""")
+//          .replaceAll(CurrentCourseToken, s""""${adaptToNixSeparatorChar(System.getProperty("user.dir"))}""""))
     }
   }
 

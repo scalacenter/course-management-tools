@@ -6,6 +6,11 @@ sealed trait CmtError {
   def prettyPrint: String
 }
 
+final case class FailedToWriteGlobalConfiguration(cause: Throwable) extends CmtError {
+  override def prettyPrint: String =
+    s"${toConsoleRed("ERROR -")} ${toConsoleCyan(s"Failed to write global configuration [$cause]")}"
+}
+
 final case class UnexpectedTrailingArguments(trailingArguments: List[String]) extends CmtError {
   override def prettyPrint: String =
     s"${toConsoleRed("ERROR -")} ${toConsoleCyan(s"Unexpected trailing arguments [${trailingArguments.mkString(",")}]")}"

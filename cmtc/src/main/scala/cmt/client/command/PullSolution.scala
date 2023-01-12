@@ -1,7 +1,7 @@
 package cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
+import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
 import cmt.Helpers.{fileList, withZipFile}
 import cmt.client.Configuration
 import cmt.client.Domain.StudentifiedRepo
@@ -45,7 +45,7 @@ object PullSolution:
             config.solutionsFolder / currentExerciseId,
             config.activeExerciseFolder,
             preserveLastModified = true)
-          Right(toConsoleGreen(s"Pulled solution for $currentExerciseId"))
+          Right(toConsoleGreen(s"Pulled solution for ${toConsoleYellow(currentExerciseId)}"))
         }
       }
 

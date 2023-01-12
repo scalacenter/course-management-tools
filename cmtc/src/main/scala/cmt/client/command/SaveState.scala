@@ -55,7 +55,7 @@ object SaveState:
           zipToFolder = savedStatesFolder,
           exercise = currentExerciseId)
 
-        Right(toConsoleGreen(s"Saved state for $currentExerciseId"))
+        Right(toConsoleGreen(s"Saved state for ${toConsoleYellow(currentExerciseId)}"))
       }
 
   val command = new CmtcCommand[SaveState.Options] {

@@ -3,14 +3,14 @@ package cmt.client.command
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
 import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
-import cmt.client.Domain.{ExerciseId, ForceMoveToExercise}
-import cmt.client.cli.SharedOptions
+import cmt.client.Configuration
+import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
 import cmt.client.command.getCurrentExerciseId
-import cmt.core.execution.Executable
+import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import sbt.io.syntax.*
-import cmt.client.cli.ArgParsers.{exerciseIdArgParser, forceMoveToExerciseArgParser}
-import cmt.core.cli.CmtCommand
+import cmt.client.cli.ArgParsers.{exerciseIdArgParser, forceMoveToExerciseArgParser, studentifiedRepoArgParser}
+import cmt.client.cli.CmtcCommand
 import cmt.core.cli.enforceTrailingArgumentCount
 
 object GotoExercise:
@@ -23,7 +23,8 @@ object GotoExercise:
       exercise: Option[ExerciseId] = None,
       @ExtraName("f")
       force: ForceMoveToExercise = ForceMoveToExercise(false),
-      @Recurse shared: SharedOptions)
+      @ExtraName("s")
+      studentifiedRepo: Option[StudentifiedRepo] = None)
 
   given Validatable[GotoExercise.Options] with
     extension (options: GotoExercise.Options)
@@ -34,8 +35,8 @@ object GotoExercise:
 
   given Executable[GotoExercise.Options] with
     extension (options: GotoExercise.Options)
-      def execute(): Either[CmtError, String] = {
-        val config = new CMTcConfig(options.shared.studentifiedRepo.value)
+      def execute(configuration: Configuration): Either[CmtError, String] = {
+        val config = new CMTcConfig(options.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
 
         val activeExerciseFolder = config.activeExerciseFolder
@@ -78,7 +79,7 @@ object GotoExercise:
           .getOrElse(Left("Exercise ID not specified".toExecuteCommandErrorMessage))
       }
 
-  val command = new CmtCommand[GotoExercise.Options] {
+  val command = new CmtcCommand[GotoExercise.Options] {
 
     def run(options: GotoExercise.Options, args: RemainingArgs): Unit =
       args
@@ -88,7 +89,7 @@ object GotoExercise:
             .map(exerciseId => options.copy(exercise = Some(ExerciseId(exerciseId))))
             .getOrElse(options)
             .validated()
-            .flatMap(_.execute()))
+            .flatMap(_.execute(configuration)))
         .printResult()
   }
 

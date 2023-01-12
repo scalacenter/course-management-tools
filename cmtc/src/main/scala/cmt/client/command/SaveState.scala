@@ -1,23 +1,27 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.Helpers.zipAndDeleteOriginal
-import cmt.client.cli.SharedOptions
 import cmt.client.command.{getCurrentExerciseId, getCurrentExerciseState}
-import cmt.core.execution.Executable
+import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.*
-import cmt.core.cli.CmtCommand
+import cmt.client.Configuration
+import cmt.client.Domain.StudentifiedRepo
+import cmt.client.cli.CmtcCommand
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import cmt.core.cli.enforceNoTrailingArguments
+import cmt.client.cli.ArgParsers.studentifiedRepoArgParser
 
 object SaveState:
 
   @AppName("save-state")
   @CommandName("save-state")
   @HelpMessage("Save the state of the active exercise")
-  final case class Options(@Recurse shared: SharedOptions)
+  final case class Options(
+      @ExtraName("s")
+      studentifiedRepo: Option[StudentifiedRepo] = None)
 
   given Validatable[SaveState.Options] with
     extension (options: SaveState.Options)
@@ -27,14 +31,15 @@ object SaveState:
   end given
 
   given Executable[SaveState.Options] with
-    extension (cmd: SaveState.Options)
-      def execute(): Either[CmtError, String] = {
-        val config = new CMTcConfig(cmd.shared.studentifiedRepo.value)
+    extension (options: SaveState.Options)
+      def execute(configuration: Configuration): Either[CmtError, String] = {
+        val studentifiedRepo = options.studentifiedRepo.getOrElse(configuration.currentCourse.value)
+        val config = new CMTcConfig(studentifiedRepo.value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
         val savedStatesFolder = config.studentifiedSavedStatesFolder
 
         sbtio.delete(savedStatesFolder / currentExerciseId)
-        val filesInScope = getCurrentExerciseState(cmd.shared.studentifiedRepo.value)(config)
+        val filesInScope = getCurrentExerciseState(studentifiedRepo.value)(config)
 
         for {
           file <- filesInScope
@@ -53,9 +58,12 @@ object SaveState:
         Right(toConsoleGreen(s"Saved state for $currentExerciseId"))
       }
 
-  val command = new CmtCommand[SaveState.Options] {
+  val command = new CmtcCommand[SaveState.Options] {
 
     def run(options: SaveState.Options, args: RemainingArgs): Unit =
-      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute())).printResult()
+      args
+        .enforceNoTrailingArguments()
+        .flatMap(_ => options.validated().flatMap(_.execute(configuration)))
+        .printResult()
   }
 end SaveState

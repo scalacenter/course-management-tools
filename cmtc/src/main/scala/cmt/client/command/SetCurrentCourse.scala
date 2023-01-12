@@ -19,7 +19,7 @@ object SetCurrentCourse:
   @CommandName("set-current-course")
   @HelpMessage("Sets the current course to point to a directory")
   final case class Options(
-      @ExtraName("d")
+      @ExtraName("s")
       directory: StudentifiedRepo)
 
   given Validatable[SetCurrentCourse.Options] with

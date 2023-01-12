@@ -4,13 +4,12 @@ import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, Remaining
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
 import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
 import cmt.client.Configuration
-import cmt.client.Domain.{ExerciseId, ForceMoveToExercise}
-import cmt.client.cli.SharedOptions
+import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
 import cmt.client.command.getCurrentExerciseId
 import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import sbt.io.syntax.*
-import cmt.client.cli.ArgParsers.{exerciseIdArgParser, forceMoveToExerciseArgParser}
+import cmt.client.cli.ArgParsers.{exerciseIdArgParser, forceMoveToExerciseArgParser, studentifiedRepoArgParser}
 import cmt.client.cli.CmtcCommand
 import cmt.core.cli.enforceTrailingArgumentCount
 
@@ -24,7 +23,8 @@ object GotoExercise:
       exercise: Option[ExerciseId] = None,
       @ExtraName("f")
       force: ForceMoveToExercise = ForceMoveToExercise(false),
-      @Recurse shared: SharedOptions)
+      @ExtraName("s")
+      studentifiedRepo: Option[StudentifiedRepo] = None)
 
   given Validatable[GotoExercise.Options] with
     extension (options: GotoExercise.Options)
@@ -36,7 +36,7 @@ object GotoExercise:
   given Executable[GotoExercise.Options] with
     extension (options: GotoExercise.Options)
       def execute(configuration: Configuration): Either[CmtError, String] = {
-        val config = new CMTcConfig(options.shared.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
+        val config = new CMTcConfig(options.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
 
         val activeExerciseFolder = config.activeExerciseFolder

@@ -1,18 +1,17 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
 import cmt.Helpers.withZipFile
 import cmt.client.Configuration
-import cmt.client.Domain.{ExerciseId, TemplatePath}
-import cmt.client.cli.SharedOptions
+import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
 import cmt.client.command.getCurrentExerciseId
 import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import sbt.io.CopyOptions
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import cmt.client.cli.ArgParsers.templatePathArgParser
+import cmt.client.cli.ArgParsers.{templatePathArgParser, studentifiedRepoArgParser}
 import cmt.client.cli.CmtcCommand
 import cmt.core.cli.enforceTrailingArgumentCount
 
@@ -24,7 +23,8 @@ object PullTemplate:
   final case class Options(
       @ExtraName("t")
       template: Option[TemplatePath] = None,
-      @Recurse shared: SharedOptions)
+      @ExtraName("s")
+      studentifiedRepo: Option[StudentifiedRepo] = None)
 
   given Validatable[PullTemplate.Options] with
     extension (options: PullTemplate.Options)
@@ -36,7 +36,7 @@ object PullTemplate:
   given Executable[PullTemplate.Options] with
     extension (options: PullTemplate.Options)
       def execute(configuration: Configuration): Either[CmtError, String] = {
-        val config = new CMTcConfig(options.shared.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
+        val config = new CMTcConfig(options.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
 
         options.template

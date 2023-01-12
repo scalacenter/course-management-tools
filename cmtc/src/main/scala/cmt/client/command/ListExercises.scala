@@ -1,21 +1,24 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.client.Configuration
+import cmt.client.Domain.StudentifiedRepo
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
-import cmt.client.cli.SharedOptions
 import cmt.client.command.{getCurrentExerciseId, starCurrentExercise}
 import cmt.client.cli.CmtcCommand
 import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.core.cli.enforceNoTrailingArguments
+import cmt.client.cli.ArgParsers.studentifiedRepoArgParser
 
 object ListExercises:
 
   @AppName("list-exercises")
   @CommandName("list-exercises")
   @HelpMessage("List all exercises and their IDs in the repo. Mark the active exercise with a star")
-  final case class Options(@Recurse shared: SharedOptions)
+  final case class Options(
+      @ExtraName("s")
+      studentifiedRepo: Option[StudentifiedRepo] = None)
 
   given Validatable[ListExercises.Options] with
     extension (options: ListExercises.Options)
@@ -27,7 +30,7 @@ object ListExercises:
   given Executable[ListExercises.Options] with
     extension (options: ListExercises.Options)
       def execute(configuration: Configuration): Either[CmtError, String] = {
-        val config = new CMTcConfig(options.shared.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
+        val config = new CMTcConfig(options.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
 
         val messages = config.exercises.zipWithIndex
@@ -43,7 +46,10 @@ object ListExercises:
   val command = new CmtcCommand[ListExercises.Options] {
 
     def run(options: ListExercises.Options, args: RemainingArgs): Unit =
-      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute(configuration))).printResult()
+      args
+        .enforceNoTrailingArguments()
+        .flatMap(_ => options.validated().flatMap(_.execute(configuration)))
+        .printResult()
   }
 
 end ListExercises

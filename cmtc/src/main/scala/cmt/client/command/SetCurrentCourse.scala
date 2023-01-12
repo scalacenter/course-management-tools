@@ -5,7 +5,6 @@ import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, 
 import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
 import cmt.client.{Configuration, CurrentCourse}
 import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
-import cmt.client.cli.SharedOptions
 import cmt.client.cli.CmtcCommand
 import cmt.client.command.Executable
 import cmt.core.validation.Validatable

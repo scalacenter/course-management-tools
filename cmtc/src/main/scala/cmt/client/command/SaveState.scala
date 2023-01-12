@@ -1,24 +1,27 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, HelpMessage, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.Helpers.zipAndDeleteOriginal
-import cmt.client.cli.SharedOptions
 import cmt.client.command.{getCurrentExerciseId, getCurrentExerciseState}
 import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.*
 import cmt.client.Configuration
+import cmt.client.Domain.StudentifiedRepo
 import cmt.client.cli.CmtcCommand
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import cmt.core.cli.enforceNoTrailingArguments
+import cmt.client.cli.ArgParsers.studentifiedRepoArgParser
 
 object SaveState:
 
   @AppName("save-state")
   @CommandName("save-state")
   @HelpMessage("Save the state of the active exercise")
-  final case class Options(@Recurse shared: SharedOptions)
+  final case class Options(
+      @ExtraName("s")
+      studentifiedRepo: Option[StudentifiedRepo] = None)
 
   given Validatable[SaveState.Options] with
     extension (options: SaveState.Options)
@@ -30,7 +33,7 @@ object SaveState:
   given Executable[SaveState.Options] with
     extension (options: SaveState.Options)
       def execute(configuration: Configuration): Either[CmtError, String] = {
-        val studentifiedRepo = options.shared.studentifiedRepo.getOrElse(configuration.currentCourse.value)
+        val studentifiedRepo = options.studentifiedRepo.getOrElse(configuration.currentCourse.value)
         val config = new CMTcConfig(studentifiedRepo.value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
         val savedStatesFolder = config.studentifiedSavedStatesFolder
@@ -58,6 +61,9 @@ object SaveState:
   val command = new CmtcCommand[SaveState.Options] {
 
     def run(options: SaveState.Options, args: RemainingArgs): Unit =
-      args.enforceNoTrailingArguments().flatMap(_ => options.validated().flatMap(_.execute(configuration))).printResult()
+      args
+        .enforceNoTrailingArguments()
+        .flatMap(_ => options.validated().flatMap(_.execute(configuration)))
+        .printResult()
   }
 end SaveState

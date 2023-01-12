@@ -1,10 +1,8 @@
 package cmt.client.command
 
-import cmt.client.Domain.ExerciseId
-import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
-import cmt.client.Domain.{ExerciseId, TemplatePath}
-import cmt.client.cli.ArgParsers.exerciseIdArgParser
-import cmt.client.cli.SharedOptions
+import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
+import cmt.client.cli.ArgParsers.{exerciseIdArgParser, studentifiedRepoArgParser}
 import cmt.client.command.deleteCurrentState
 import cmt.client.command.Executable
 import cmt.core.validation.Validatable
@@ -23,7 +21,8 @@ object RestoreState:
   final case class Options(
       @ExtraName("e")
       exercise: Option[ExerciseId] = None,
-      @Recurse shared: SharedOptions)
+      @ExtraName("s")
+      studentifiedRepo: Option[StudentifiedRepo] = None)
 
   given Validatable[RestoreState.Options] with
     extension (options: RestoreState.Options)
@@ -35,7 +34,7 @@ object RestoreState:
   given Executable[RestoreState.Options] with
     extension (options: RestoreState.Options)
       def execute(configuration: Configuration): Either[CmtError, String] = {
-        val studentifiedRepo = options.shared.studentifiedRepo.getOrElse(configuration.currentCourse.value)
+        val studentifiedRepo = options.studentifiedRepo.getOrElse(configuration.currentCourse.value)
         val config = new CMTcConfig(studentifiedRepo.value)
 
         options.exercise

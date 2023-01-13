@@ -39,9 +39,12 @@ object ListSavedStates:
           .map(item => MatchDotzip.replaceAllIn(item, ""))
           .filter(config.exercises.contains(_))
 
-      Right(
-        toConsoleGreen(s"Saved states available for exercises:\n") + toConsoleYellow(
-          s"${savedStates.mkString("\n   ", "\n   ", "\n")}"))
+      if (savedStates.isEmpty)
+        Right(toConsoleGreen(s"No saved states found\n"))
+      else
+        Right(
+          toConsoleGreen(s"Saved states available for exercises:\n") + toConsoleYellow(
+            s"${savedStates.mkString("\n   ", "\n   ", "\n")}"))
     }
 
   val command = new CmtcCommand[ListSavedStates.Options] {

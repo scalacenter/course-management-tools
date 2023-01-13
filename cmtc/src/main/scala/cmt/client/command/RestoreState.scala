@@ -53,7 +53,7 @@ object RestoreState:
                   preserveLastModified = true)
 
                 Helpers.writeStudentifiedCMTBookmark(config.bookmarkFile, exercise.value)
-                Right(toConsoleGreen(s"Restored state for ${exercise.value}"))
+                Right(toConsoleGreen(s"Restored state for ${toConsoleYellow(exercise.value)}"))
               }
             }
           }

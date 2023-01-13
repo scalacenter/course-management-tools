@@ -60,7 +60,7 @@ object PullTemplate:
                   Right(toConsoleGreen(s"Pulled template folder: ") + toConsoleYellow(template.value))
             }
           }
-          .getOrElse(Left("Template name not supplied".toExecuteCommandErrorMessage))
+          .getOrElse(Left("No template name supplied".toExecuteCommandErrorMessage))
       }
 
   val command = new CmtcCommand[PullTemplate.Options] {

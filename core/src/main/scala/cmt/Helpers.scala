@@ -336,6 +336,7 @@ object Helpers:
       currentTestCodeFiles,
       readmefilesToBeDeleted ++ testCodeFilesToBeDeleted,
       readmeFilesToBeCopied ++ testCodeFilesToBeCopied)
+
   def pullTestCode(
       toExerciseId: String,
       activeExerciseFolder: File,
@@ -412,5 +413,38 @@ object Helpers:
       .render(ConfigRenderOptions.concise().setJson(false).setFormatted(true))
     val metadataConfig = s"$cfgTestCode\n\n$cfgReadmeFiles"
     dumpStringToFile(metadataConfig, studentifiedRootFolder / cmtaConfig.testCodeSizeAndChecksums)
+  end writeTestReadmeCodeMetadata
+
+  def writeCodeMetadata(
+      cleanedMainRepo: File,
+      exercises: Vector[String],
+      studentifiedRootFolder: File,
+      cmtaConfig: CMTaConfig): Unit =
+
+    val testCodeFolders = cmtaConfig.testCodeFolders.to(List)
+
+    import scala.jdk.CollectionConverters.*
+
+    val codeFilesInExercises = (for {
+      exercise <- exercises
+      allFiles =
+        fileList(cleanedMainRepo / cmtaConfig.mainRepoExerciseFolder / exercise)
+          .map(f => (sbtio.relativizeFile(cleanedMainRepo / cmtaConfig.mainRepoExerciseFolder / exercise, f), f))
+          .collect { case (Some(s), f) =>
+            Map(
+              s""""${adaptToNixSeparatorChar(s.getPath)}"""" -> Map(
+                "size" -> fileSize(f),
+                "sha256" -> fileSha256Hex(f)).asJava).asJava
+          }
+
+    } yield exercise -> allFiles.asJava).to(Map)
+
+    val cfgCode = ConfigFactory
+      .parseMap(Map("code-metadata" -> codeFilesInExercises.asJava).asJava)
+      .root()
+      .render(ConfigRenderOptions.concise().setJson(false).setFormatted(true))
+    val metadataConfig = s"$cfgCode\n"
+    dumpStringToFile(metadataConfig, studentifiedRootFolder / cmtaConfig.codeSizeAndChecksums)
+  end writeCodeMetadata
 
 end Helpers

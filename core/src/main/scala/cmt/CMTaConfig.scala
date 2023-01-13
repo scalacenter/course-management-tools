@@ -58,6 +58,7 @@ class CMTaConfig(mainRepo: File, configFileOpt: Option[File]):
   val studentifiedRepoBookmarkFile = s"$cmtMetadataRootFolder/.bookmark"
   val cmtStudentifiedConfigFile = s"$cmtMetadataRootFolder/.cmt-config"
   val testCodeSizeAndChecksums = s"$cmtMetadataRootFolder/.cmt-test-size-checksums"
+  val codeSizeAndChecksums = s"$cmtMetadataRootFolder/.cmt-code-size-checksums"
 
   val mainRepoExerciseFolder = config.getString("cmt.main-repo-exercise-folder")
   val testCodeFolders = config.getStringList("cmt.test-code-folders").asScala

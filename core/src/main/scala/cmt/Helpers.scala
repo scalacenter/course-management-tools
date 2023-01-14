@@ -171,6 +171,7 @@ object Helpers:
       "studentified-saved-states-folder" -> config.studentifiedSavedStatesFolder,
       "studentified-repo-bookmark-file" -> config.studentifiedRepoBookmarkFile,
       "test-code-size-and-checksums" -> config.testCodeSizeAndChecksums,
+      "code-size-and-checksums" -> config.codeSizeAndChecksums,
       "active-exercise-folder" -> config.studentifiedRepoActiveExerciseFolder,
       "test-code-folders" -> config.testCodeFolders.asJava,
       "read-me-files" -> config.readMeFiles.asJava,
@@ -244,15 +245,25 @@ object Helpers:
     val initBranch = UUID.randomUUID.toString
     val tmpRemoteBranch = s"CMT-${UUID.randomUUID.toString}"
     val bareRepoFolder = tmpDir / s"${repoName}.git"
+    // @formatter:off
     val script = List(
-      (s"${tmpDir.getPath}", List(s"git init --bare ${repoName}.git")),
+      (s"${tmpDir.getPath}",
+        List(s"git init --bare ${repoName}.git")
+      ),
       (
         s"${mainRepo.getPath}",
         List(
           s"git remote add ${tmpRemoteBranch} ${tmpDir.getPath}/${repoName}.git",
-          s"git push ${tmpRemoteBranch} HEAD:refs/heads/${initBranch}")),
-      (s"${tmpDir.getPath}", List(s"git clone -b ${initBranch} ${tmpDir.getPath}/${repoName}.git")),
-      (s"${mainRepo.getPath}", List(s"git remote remove ${tmpRemoteBranch}")))
+          s"git push ${tmpRemoteBranch} HEAD:refs/heads/${initBranch}")
+      ),
+      (s"${tmpDir.getPath}",
+        List(s"git clone -b ${initBranch} ${tmpDir.getPath}/${repoName}.git")
+      ),
+      (s"${mainRepo.getPath}",
+        List(s"git remote remove ${tmpRemoteBranch}")
+      )
+    )
+    // @formatter:on
     val commands = for {
       (workingDir, commands) <- script
       command <- commands

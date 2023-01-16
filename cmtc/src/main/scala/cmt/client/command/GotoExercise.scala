@@ -64,7 +64,7 @@ object GotoExercise:
                     currentTestCodeFiles.filter(file => (activeExerciseFolder / file).exists())
 
                   val modifiedTestCodeFiles = existingTestCodeFiles.filter(
-                    exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, config))
+                    exerciseFileHasBeenModified(activeExerciseFolder, _, config.testCodeMetaData(currentExerciseId)))
 
                   if (modifiedTestCodeFiles.nonEmpty)
                     Left(s"""goto-exercise cancelled.

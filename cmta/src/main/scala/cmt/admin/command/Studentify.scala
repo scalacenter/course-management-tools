@@ -120,6 +120,7 @@ object Studentify:
       addFirstExercise(cleanedMainRepo, exercises.head, studentifiedRootFolder)(config)
 
       writeTestReadmeCodeMetadata(cleanedMainRepo, exercises, studentifiedRootFolder, config)
+      writeCodeMetadata(cleanedMainRepo, exercises, studentifiedRootFolder, config)
 
       hideExercises(cleanedMainRepo, solutionsFolder, exercises)(config)
 

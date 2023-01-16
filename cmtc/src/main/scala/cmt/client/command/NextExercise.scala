@@ -56,7 +56,7 @@ object NextExercise:
             currentTestCodeFiles.filter(file => (activeExerciseFolder / file).exists())
 
           val modifiedTestCodeFiles = existingTestCodeFiles.filter(
-            exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, cMTcConfig))
+            exerciseFileHasBeenModified(activeExerciseFolder, _, cMTcConfig.testCodeMetaData(currentExerciseId)))
 
           if (modifiedTestCodeFiles.nonEmpty)
             // TODO: need to add a suggested fix when this case triggers:

@@ -2,7 +2,7 @@ package cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
-import cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
+import cmt.Helpers.{getFilesToCopyAndDelete, pullTestCode}
 import cmt.client.{Configuration, CurrentCourse}
 import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
 import cmt.client.cli.CmtcCommand

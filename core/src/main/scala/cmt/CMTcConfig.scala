@@ -56,20 +56,31 @@ class CMTcConfig(studentifiedRepo: File):
   val previousExercise: Map[String, String] =
     ((firstExercise -> firstExercise) +: exercises.tail.zip(exercises)).to(Map)
 
+  private val codeMetaDataFile = studentifiedRepo / cmtSettings.getString("code-size-and-checksums")
+
+  private val codemetadataConfig = ConfigFactory.parseFile(codeMetaDataFile)
+
+  val codeMetaData = exercises
+    .map { exercise =>
+      val x = codemetadataConfig.getConfig("code-metadata").getObjectList(exercise)
+      exercise -> exMetadata(x)
+    }
+    .to(Map)
+
   private val testCodeMetaDataFile = studentifiedRepo / cmtSettings.getString("test-code-size-and-checksums")
 
-  private val metadataConfig = ConfigFactory.parseFile(testCodeMetaDataFile)
+  private val testCodemetadataConfig = ConfigFactory.parseFile(testCodeMetaDataFile)
 
   val testCodeMetaData = exercises
     .map { exercise =>
-      val x = metadataConfig.getConfig("testcode-metadata").getObjectList(exercise)
+      val x = testCodemetadataConfig.getConfig("testcode-metadata").getObjectList(exercise)
       exercise -> exMetadata(x)
     }
     .to(Map)
 
   val readmeFilesMetaData = exercises
     .map { exercise =>
-      val x = metadataConfig.getConfig("readmefiles-metadata").getObjectList(exercise)
+      val x = testCodemetadataConfig.getConfig("readmefiles-metadata").getObjectList(exercise)
       exercise -> exMetadata(x)
     }
     .to(Map)

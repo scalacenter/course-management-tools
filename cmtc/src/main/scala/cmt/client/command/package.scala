@@ -8,12 +8,13 @@ import java.nio.charset.StandardCharsets
 
 package object command:
 
+  final case class ExerciseFiles(filesAbsolute: Seq[File], filesRelative: Seq[File])
   private final case class PathARO(absolutePath: File, maybeRelativePath: Option[File])
 
   private final case class PathAR(absolutePath: File, relativePath: File)
 
-  def getCurrentExerciseState(studentifiedRepo: File)(config: CMTcConfig): Seq[File] =
-    Helpers
+  def getCurrentExerciseStateExceptDontTouch(studentifiedRepo: File)(config: CMTcConfig): ExerciseFiles =
+    val currentStateFilesExceptDontTouchAbsolute = Helpers
       .fileList(config.activeExerciseFolder)
       .map(fileAbsolute => PathARO(fileAbsolute, fileAbsolute.relativeTo(studentifiedRepo)))
       .collect { case PathARO(fileAbsolute, Some(fileRelative)) =>
@@ -22,10 +23,17 @@ package object command:
       .filterNot { case PathAR(_, fileRelative) =>
         config.dontTouch.exists(lead => fileRelative.getPath.startsWith(lead))
       }
-      .map { _.absolutePath }
+      .map { x => x.absolutePath }
+    val currentStateFilesExceptDontTouchRelative =
+      currentStateFilesExceptDontTouchAbsolute.map(_.relativeTo(config.activeExerciseFolder)).collect { case Some(x) =>
+        x
+      }
+    ExerciseFiles(
+      filesAbsolute = currentStateFilesExceptDontTouchAbsolute,
+      filesRelative = currentStateFilesExceptDontTouchRelative)
 
   def deleteCurrentState(studentifiedRepo: File)(config: CMTcConfig): Unit =
-    val filesToBeDeleted: Seq[File] = getCurrentExerciseState(studentifiedRepo)(config)
+    val ExerciseFiles(filesToBeDeleted, _) = getCurrentExerciseStateExceptDontTouch(studentifiedRepo)(config)
     sbtio.deleteFilesEmptyDirs(filesToBeDeleted)
 
   def getCurrentExerciseId(bookmarkFile: File): String =

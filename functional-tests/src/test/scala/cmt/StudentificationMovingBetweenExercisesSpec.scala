@@ -107,7 +107,6 @@ final class StudentificationMovingBetweenExercisesFunctionalSpec
   val tmpDir: File = sbtio.createTemporaryDirectory
 
   override def afterAll(): Unit =
-    println("deleting temp directory")
     sbtio.delete(tmpDir)
 
   info("As a user")

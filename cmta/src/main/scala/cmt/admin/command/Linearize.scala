@@ -87,7 +87,6 @@ object Linearize:
         case exercise +: remainingExercises =>
           val from = cleanedMainRepo / config.mainRepoExerciseFolder / exercise
           val linearizedCodeFolder = linearizedRootFolder / config.linearizedRepoActiveExerciseFolder
-          println(s"Copying from $from to $linearizedCodeFolder")
           sbtio.delete(linearizedCodeFolder)
           sbtio.createDirectory(linearizedCodeFolder)
           sbtio.copyDirectory(from, linearizedCodeFolder, preserveLastModified = true)

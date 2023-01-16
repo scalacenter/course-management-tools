@@ -2,7 +2,7 @@ package cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.Helpers.zipAndDeleteOriginal
-import cmt.client.command.{getCurrentExerciseId, getCurrentExerciseState}
+import cmt.client.command.{getCurrentExerciseId, getCurrentExerciseStateExceptDontTouch}
 import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.*
@@ -39,7 +39,7 @@ object SaveState:
         val savedStatesFolder = config.studentifiedSavedStatesFolder
 
         sbtio.delete(savedStatesFolder / currentExerciseId)
-        val filesInScope = getCurrentExerciseState(studentifiedRepo.value)(config)
+        val ExerciseFiles(filesInScope, _) = getCurrentExerciseStateExceptDontTouch(studentifiedRepo.value)(config)
 
         for {
           file <- filesInScope

@@ -2,7 +2,7 @@ package cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
-import cmt.Helpers.{fileList, withZipFile}
+import cmt.Helpers.{adaptToNixSeparatorChar, adaptToOSSeparatorChar, exerciseFileHasBeenModified, fileList, withZipFile}
 import cmt.client.Configuration
 import cmt.client.Domain.StudentifiedRepo
 import cmt.client.command.{deleteCurrentState, getCurrentExerciseId}
@@ -37,14 +37,22 @@ object PullSolution:
         val config = new CMTcConfig(studentifiedRepo.value)
         val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
 
-        deleteCurrentState(studentifiedRepo.value)(config)
+        val ExerciseFiles(_, currentFiles) = getCurrentExerciseStateExceptDontTouch(studentifiedRepo.value)(config)
+
+        val currentFilesSet = currentFiles.map(f => adaptToNixSeparatorChar(f.getPath)).to(Set)
+        val solutionFilesSet = config.codeMetaData(currentExerciseId).keys.to(Set)
+
+        val filesToDelete = currentFilesSet &~ solutionFilesSet
+        val filesToOverwrite = (currentFilesSet & solutionFilesSet).filter(f =>
+          exerciseFileHasBeenModified(config.activeExerciseFolder, f, config.codeMetaData(currentExerciseId)))
+        val filesToCopyFromSolution = solutionFilesSet &~ currentFilesSet
 
         withZipFile(config.solutionsFolder, currentExerciseId) { solution =>
-          val files = fileList(solution / currentExerciseId)
-          sbtio.copyDirectory(
-            config.solutionsFolder / currentExerciseId,
-            config.activeExerciseFolder,
-            preserveLastModified = true)
+          sbtio.deleteFilesEmptyDirs(filesToDelete.map(f => config.activeExerciseFolder / f))
+          for {
+            f <- filesToOverwrite ++ filesToCopyFromSolution
+          } sbtio.copyFile(solution / f, config.activeExerciseFolder / f)
+
           Right(toConsoleGreen(s"Pulled solution for ${toConsoleYellow(currentExerciseId)}"))
         }
       }

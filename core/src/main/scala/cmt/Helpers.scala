@@ -321,13 +321,10 @@ object Helpers:
 
   def exerciseFileHasBeenModified(
       activeExerciseFolder: File,
-      exerciseId: String,
       file: String,
-      config: CMTcConfig): Boolean =
-    fileSize(activeExerciseFolder / file) !=
-      config.testCodeMetaData(exerciseId)(file).size ||
-      fileSha256Hex(activeExerciseFolder / file) !=
-      config.testCodeMetaData(exerciseId)(file).sha256
+      fileMetadata: Map[String, FileMetadata]): Boolean =
+    fileSize(activeExerciseFolder / file) != fileMetadata(file).size || fileSha256Hex(
+      activeExerciseFolder / file) != fileMetadata(file).sha256
 
   def getFilesToCopyAndDelete(
       currentExerciseId: String,

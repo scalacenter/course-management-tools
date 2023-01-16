@@ -55,7 +55,7 @@ object PreviousExercise:
             currentTestCodeFiles.filter(file => (activeExerciseFolder / file).exists())
 
           val modifiedTestCodeFiles = existingTestCodeFiles.filter(
-            exerciseFileHasBeenModified(activeExerciseFolder, currentExerciseId, _, cMTcConfig))
+            exerciseFileHasBeenModified(activeExerciseFolder, _, cMTcConfig.testCodeMetaData(currentExerciseId)))
 
           if (modifiedTestCodeFiles.nonEmpty)
             Left(s"""previous-exercise cancelled.

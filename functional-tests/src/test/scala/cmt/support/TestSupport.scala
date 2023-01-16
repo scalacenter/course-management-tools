@@ -148,7 +148,6 @@ def createMainRepo(tmpDir: File, repoName: String, exercises: Exercises, testCon
   val mainRepo = tmpDir / repoName
   sbtio.touch(mainRepo / "course-management.conf")
   Helpers.dumpStringToFile(testConfig, mainRepo / "course-management.conf")
-  println(s"Mainrepo = $mainRepo")
   exercises.createRepo(mainRepo, "code")
   mainRepo
 

@@ -2,7 +2,14 @@ package cmt.admin.command
 
 import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
 import cmt.{CMTaConfig, CmtError, printResult}
-import cmt.Helpers.{ExercisesMetadata, commitToGit, extractExerciseNr, getExerciseMetadata, validatePrefixes}
+import cmt.Helpers.{
+  ExercisesMetadata,
+  commitToGit,
+  exitIfGitIndexOrWorkspaceIsntClean,
+  extractExerciseNr,
+  getExerciseMetadata,
+  validatePrefixes
+}
 import cmt.admin.Domain.{RenumberOffset, RenumberStart, RenumberStep}
 import cmt.admin.cli.SharedOptions
 import cmt.core.execution.Executable
@@ -53,6 +60,8 @@ object RenumberExercises:
         val config = new CMTaConfig(mainRepository.value, options.shared.maybeConfigFile.map(_.value))
 
         for {
+          _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
+
           ExercisesMetadata(exercisePrefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(
             config)
 
@@ -98,7 +107,7 @@ object RenumberExercises:
 
           moveResult <- tryMove
           _ <- commitToGit(
-            s"Committed Exercise Renumbering - start=$renumberStartAt, offset=$renumberOffset, step=$RenumberStep",
+            s"Checkpoint result of running 'ctma renumber-exercises -f $renumberStartAt -t $renumberOffset -s ${options.step.value}'",
             mainRepository.value)
         } yield moveResult
       }

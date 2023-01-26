@@ -2,7 +2,14 @@ package cmt.admin.command
 
 import cmt.*
 import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
-import cmt.Helpers.{ExercisesMetadata, commitToGit, extractExerciseNr, getExerciseMetadata, validatePrefixes}
+import cmt.Helpers.{
+  ExercisesMetadata,
+  commitToGit,
+  exitIfGitIndexOrWorkspaceIsntClean,
+  extractExerciseNr,
+  getExerciseMetadata,
+  validatePrefixes
+}
 import cmt.admin.Domain.{ExerciseNumber, LinearizeBaseDirectory, RenumberOffset, RenumberStart, RenumberStep}
 import cmt.admin.cli.SharedOptions
 import cmt.core.execution.Executable
@@ -38,6 +45,7 @@ object DuplicateInsertBefore:
         val config = new CMTaConfig(mainRepository.value, options.shared.maybeConfigFile.map(_.value))
 
         for {
+          _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
           ExercisesMetadata(exercisePrefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(
             config)
 
@@ -73,7 +81,7 @@ object DuplicateInsertBefore:
                     mainRepoExerciseFolder / s"${renumberExercise(exercisesAfterInsert.head, exercisePrefix, options.exerciseNumber.value - 1)}_copy"
                   sbtio.copyDirectory(duplicateFrom, duplicateTo)
                 commitToGit(
-                  s"Committed Duplicated & Inserted Exercise number ${options.exerciseNumber.value}",
+                  s"Checkpoint result of running 'ctma duplicate-insert-before -n ${options.exerciseNumber.value}'",
                   mainRepository.value).flatMap(_ =>
                   Right(s"Duplicated and inserted exercise ${options.exerciseNumber.value}"))
               else

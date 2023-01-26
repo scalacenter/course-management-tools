@@ -24,6 +24,7 @@ import org.scalatest.matchers.*
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import com.typesafe.config.ConfigFactory
+import Helpers.{commitToGit, initializeGitRepo, setGitConfig}
 
 import java.util.UUID
 
@@ -82,6 +83,9 @@ final class RenumberExercisesSpec
       val exerciseNames =
         Vector("exercise_001_desc", "exercise_002_desc", "exercise_003_desc", "exercise_004_desc", "exercise_005_desc")
       val exercises = createExercises(codeFolder, exerciseNames)
+      initializeGitRepo(mainRepo)
+      setGitConfig(mainRepo)
+      commitToGit("Initial commit", mainRepo)
 
       "succeed if exercises are moved to a new offset and renumber step values" in {
         val command =
@@ -283,6 +287,9 @@ final class RenumberExercisesSpec
 
       val exerciseNames = Vector.from(0 to 999).map(i => f"exercise_$i%03d_desc")
       val exercises = createExercises(codeFolder, exerciseNames)
+      initializeGitRepo(mainRepo)
+      setGitConfig(mainRepo)
+      commitToGit("Initial commit", mainRepo)
 
       "fail when trying to shift all exercises one position downwards and leave the exercise name unchanged" in {
         val result = RenumberExercises

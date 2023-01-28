@@ -12,7 +12,7 @@ object ArgParsers {
   private val fileArgParser: ArgParser[File] =
     SimpleArgParser.from[File]("file")(file(_).asRight)
 
-  implicit val studentifiedRepoArgParser: ArgParser[StudentifiedRepo] =
+  given studentifiedRepoArgParser: ArgParser[StudentifiedRepo] =
     fileArgParser.xmapError[StudentifiedRepo](
       _.value,
       file =>
@@ -21,12 +21,12 @@ object ArgParsers {
           .leftMap(_.flatten)
           .toEither)
 
-  implicit val forceMoveToExerciseArgParser: ArgParser[ForceMoveToExercise] =
+  given forceMoveToExerciseArgParser: ArgParser[ForceMoveToExercise] =
     FlagArgParser.boolean.xmap[ForceMoveToExercise](_.forceMove, ForceMoveToExercise(_))
 
-  implicit val exerciseIdArgParser: ArgParser[ExerciseId] =
+  given exerciseIdArgParser: ArgParser[ExerciseId] =
     SimpleArgParser.from[ExerciseId]("Exercise Id")(ExerciseId(_).asRight)
 
-  implicit val templatePathArgParser: ArgParser[TemplatePath] =
+  given templatePathArgParser: ArgParser[TemplatePath] =
     SimpleArgParser.from[TemplatePath]("template path")(TemplatePath(_).asRight)
 }

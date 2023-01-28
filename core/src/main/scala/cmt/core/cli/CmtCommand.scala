@@ -29,7 +29,7 @@ extension (self: RemainingArgs)
     }
   }
 
-abstract class CmtCommand[T](implicit parser: Parser[T], help: Help[T]) extends Command[T] {
+abstract class CmtCommand[T](using parser: Parser[T], help: Help[T]) extends Command[T] {
 
   override def error(message: Error): Nothing = {
     val error = message.toCmtError

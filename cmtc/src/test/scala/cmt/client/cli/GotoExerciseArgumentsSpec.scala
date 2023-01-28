@@ -18,7 +18,7 @@ import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
 import cmt.client.command.GotoExercise
 import cmt.support.TestDirectories
 import sbt.io.syntax.File
-import cmt.client.cli.ArgParsers.*
+import cmt.client.cli.ArgParsers.given
 
 final class GotoExerciseArgumentsSpec extends CommandLineArgumentsSpec[GotoExercise.Options] with TestDirectories {
 

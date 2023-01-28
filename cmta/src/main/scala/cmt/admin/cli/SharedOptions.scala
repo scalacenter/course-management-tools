@@ -16,6 +16,6 @@ final case class SharedOptions(
     maybeConfigFile: Option[ConfigurationFile] = None)
 
 object SharedOptions {
-  implicit val parser: Parser[SharedOptions] = Parser.derive
-  implicit val help: Help[SharedOptions] = Help.derive
+  given parser: Parser[SharedOptions] = Parser.derive
+  given help: Help[SharedOptions] = Help.derive
 }

@@ -7,7 +7,7 @@ import cmt.client.Configuration
 import cmt.core.cli.CmtCommand
 import cats.syntax.either.*
 
-abstract class CmtcCommand[T](implicit parser: Parser[T], help: Help[T]) extends CmtCommand[T] {
+abstract class CmtcCommand[T](using parser: Parser[T], help: Help[T]) extends CmtCommand[T] {
 
   protected val configuration = Configuration
     .load()

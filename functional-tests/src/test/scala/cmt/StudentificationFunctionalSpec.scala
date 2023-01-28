@@ -13,9 +13,6 @@ package cmt
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.Helpers.{dumpStringToFile, fileList}
-import cmt.admin.Domain.MainRepository
-import cmt.client.Domain.StudentifiedRepo
 import cmt.support.*
 import cmt.toExecuteCommandErrorMessage
 import org.scalatest.featurespec.AnyFeatureSpecLike
@@ -23,9 +20,6 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.{BeforeAndAfterAll, GivenWhenThen}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-
-import java.nio.charset.StandardCharsets
-import java.util.UUID
 
 trait StudentifiedRepoFixture {
 

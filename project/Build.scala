@@ -6,7 +6,12 @@ import sbtbuildinfo.BuildInfoKeys._
 object Build {
 
   object CompileOptions {
-    val compileOptions = Seq("-source:future", "-deprecation")
+    val compileOptions =
+      Seq(
+        "-source:future",
+        "-deprecation",
+//        "-Wunused:locals,privates,implicits,imports",   // New linter features available as of 3.0.0
+      )
   }
 
   lazy val commonSettings = Seq(

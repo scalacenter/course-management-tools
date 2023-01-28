@@ -1,6 +1,6 @@
 package cmt.admin.command
 
-import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
 import cmt.*
 import cmt.Helpers.*
 import cmt.ProcessDSL.toProcessCmd

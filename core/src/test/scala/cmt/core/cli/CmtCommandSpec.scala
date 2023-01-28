@@ -1,6 +1,6 @@
 package cmt.core.cli
 
-import caseapp.core.{Indexed, RemainingArgs}
+//import caseapp.core.{Indexed, RemainingArgs}
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.matchers.should.Matchers
 

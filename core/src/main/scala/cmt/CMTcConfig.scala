@@ -13,12 +13,10 @@ package cmt
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import com.typesafe.config.{Config, ConfigFactory, ConfigValue}
+import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.jdk.CollectionConverters.*
-import java.nio.charset.StandardCharsets
 
 class CMTcConfig(studentifiedRepo: File):
   import Helpers.adaptToOSSeparatorChar

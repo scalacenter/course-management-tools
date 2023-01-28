@@ -4,9 +4,8 @@ import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
 import cmt.Helpers.withZipFile
 import cmt.client.Configuration
-import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
+import cmt.client.Domain.{StudentifiedRepo, TemplatePath}
 import cmt.client.command.getCurrentExerciseId
-import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import sbt.io.CopyOptions
 import sbt.io.IO as sbtio

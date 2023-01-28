@@ -30,7 +30,7 @@ import cmt.client.command.{
   RestoreState,
   SaveState
 }
-import cmt.{CMTaConfig, CMTcConfig, CmtError, Helpers}
+import cmt.{CMTcConfig, CmtError, Helpers}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 

@@ -14,14 +14,13 @@ package cmt.admin.cli
   */
 
 import caseapp.Parser
-import cmt.{ErrorMessage, FailedToValidateArgument, Helpers, OptionName, RequiredOptionIsMissing}
+import cmt.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
 import cmt.admin.command.Linearize
 import cmt.support.{CommandLineArguments, TestDirectories}
 import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
-import org.scalatest.prop.Tables
 import sbt.io.syntax.{File, file}
-import cmt.admin.cli.ArgParsers.*
+import cmt.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
 
 final class LinearizeArgumentsSpec extends CommandLineArgumentsSpec[Linearize.Options] with TestDirectories {
 

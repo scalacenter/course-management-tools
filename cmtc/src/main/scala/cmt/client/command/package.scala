@@ -41,7 +41,7 @@ package object command:
 
   def copyTestCodeAndReadMeFiles(solution: File, prevOrNextExercise: String)(config: CMTcConfig): Unit =
 
-    val (pathsToCopy, redundantPaths) =
+    val (pathsToCopy, _) =
       Helpers.extractUniquePaths(config.testCodeFolders.to(List) ++ config.readMeFiles.to(List))
 
     for {

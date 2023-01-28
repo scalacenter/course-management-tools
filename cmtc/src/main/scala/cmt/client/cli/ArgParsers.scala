@@ -1,6 +1,5 @@
 package cmt.client.cli
 
-import caseapp.core.Error
 import caseapp.core.argparser.{ArgParser, FlagArgParser, SimpleArgParser}
 import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo, TemplatePath}
 import sbt.io.syntax.{File, file}

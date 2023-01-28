@@ -16,8 +16,7 @@ package cmt.client.cli
 import caseapp.Parser
 import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
 import cmt.client.command.GotoExercise
-import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
-import cmt.support.{CommandLineArguments, TestDirectories}
+import cmt.support.TestDirectories
 import sbt.io.syntax.File
 import cmt.client.cli.ArgParsers.*
 

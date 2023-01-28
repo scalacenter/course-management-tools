@@ -6,12 +6,8 @@ import caseapp.core.help.Help
 import caseapp.core.parser.Parser
 import cmt.{
   CmtError,
-  FailedToExecuteCommand,
-  FailedToValidateArgument,
   MissingTrailingArguments,
   NoTrailingArguments,
-  OptionName,
-  RequiredOptionIsMissing,
   UnexpectedTrailingArguments,
   UnexpectedUnparsedArguments,
   printErrorAndExit,

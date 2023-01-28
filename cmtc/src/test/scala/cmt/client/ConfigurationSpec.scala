@@ -1,8 +1,5 @@
 package cmt.client
 
-import java.lang.reflect.Field
-import java.lang.reflect.Method
-import cmt.Helpers.adaptToOSSeparatorChar
 import cmt.client.Configuration.CmtHome
 import cmt.client.Domain.StudentifiedRepo
 import org.scalatest.BeforeAndAfterEach
@@ -11,7 +8,6 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import cmt.support.EitherSupport
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import scala.jdk.CollectionConverters.*
 import scala.compiletime.uninitialized
 
 final class ConfigurationSpec extends AnyWordSpecLike with Matchers with BeforeAndAfterEach with EitherSupport {

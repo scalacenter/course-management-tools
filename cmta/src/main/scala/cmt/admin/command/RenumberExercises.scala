@@ -1,20 +1,12 @@
 package cmt.admin.command
 
-import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
 import cmt.{CMTaConfig, CmtError, printResult}
-import cmt.Helpers.{
-  ExercisesMetadata,
-  commitToGit,
-  exitIfGitIndexOrWorkspaceIsntClean,
-  extractExerciseNr,
-  getExerciseMetadata,
-  validatePrefixes
-}
+import cmt.Helpers.{ExercisesMetadata, getExerciseMetadata, commitToGit, exitIfGitIndexOrWorkspaceIsntClean}
 import cmt.admin.Domain.{RenumberOffset, RenumberStart, RenumberStep}
 import cmt.admin.cli.SharedOptions
 import cmt.core.execution.Executable
 import cmt.admin.cli.ArgParsers.{renumberOffsetArgParser, renumberStartArgParser, renumberStepArgParser}
-import cmt.admin.command.RenumberExercises
 import cmt.core.cli.CmtCommand
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio

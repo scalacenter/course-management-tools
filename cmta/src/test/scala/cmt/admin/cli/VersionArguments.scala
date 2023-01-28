@@ -13,10 +13,10 @@ package cmt.admin.cli
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.support.{CommandLineArguments, TestDirectories}
-import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
-import org.scalatest.prop.Tables
-import sbt.io.syntax.File
+//import cmt.support.{CommandLineArguments, TestDirectories}
+//import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
+//import org.scalatest.prop.Tables
+//import sbt.io.syntax.File
 
 object VersionArguments
 //  extends CommandLineArguments[CliOptions] with Tables with TestDirectories {

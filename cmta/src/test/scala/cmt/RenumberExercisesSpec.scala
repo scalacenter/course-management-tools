@@ -23,7 +23,6 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.*
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import com.typesafe.config.ConfigFactory
 import Helpers.{commitToGit, initializeGitRepo, setGitConfig}
 
 import java.util.UUID
@@ -82,7 +81,8 @@ final class RenumberExercisesSpec
 
       val exerciseNames =
         Vector("exercise_001_desc", "exercise_002_desc", "exercise_003_desc", "exercise_004_desc", "exercise_005_desc")
-      val exercises = createExercises(codeFolder, exerciseNames)
+
+      createExercises(codeFolder, exerciseNames)
       initializeGitRepo(mainRepo)
       setGitConfig(mainRepo)
       commitToGit("Initial commit", mainRepo)

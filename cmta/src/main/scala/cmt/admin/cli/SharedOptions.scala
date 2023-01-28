@@ -1,7 +1,6 @@
 package cmt.admin.cli
 
 import caseapp.{ExtraName, Help, HelpMessage, Parser, ValueDescription}
-import cmt.CMTaConfig
 import cmt.admin.Domain.{ConfigurationFile, MainRepository}
 import cmt.admin.cli.ArgParsers.{configurationFileArgParser, mainRepositoryArgParser}
 

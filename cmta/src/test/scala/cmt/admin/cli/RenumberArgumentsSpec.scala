@@ -14,21 +14,12 @@ package cmt.admin.cli
   */
 
 import caseapp.Parser
-import cmt.{ErrorMessage, FailedToValidateArgument, Helpers, OptionName, RequiredOptionIsMissing}
-import cmt.admin.Domain.{
-  ForceDeleteDestinationDirectory,
-  LinearizeBaseDirectory,
-  MainRepository,
-  RenumberOffset,
-  RenumberStart,
-  RenumberStep
-}
-import cmt.admin.command.{Linearize, RenumberExercises}
-import cmt.support.{CommandLineArguments, TestDirectories}
-import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
-import org.scalatest.prop.Tables
+import cmt.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
+import cmt.admin.Domain.{MainRepository, RenumberOffset, RenumberStart, RenumberStep}
+import cmt.admin.command.RenumberExercises
+import cmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
-import cmt.admin.cli.ArgParsers.*
+import cmt.admin.cli.ArgParsers.{renumberStepArgParser, renumberOffsetArgParser, renumberStartArgParser}
 
 final class RenumberArgumentsSpec extends CommandLineArgumentsSpec[RenumberExercises.Options] with TestDirectories {
 

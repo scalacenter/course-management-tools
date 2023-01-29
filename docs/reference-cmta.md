@@ -9,20 +9,19 @@ sidebar_label: cmta
 
 The available commands and their function is as follows:
 
-- [`studentify`](#cmta-studentify): generate a studentified artifact
-- [`linearize  `](#cmta-linearize): generate a linearized artifact
-- [`delinearize`](#cmta-delinearize): reflect the changes made in a linearized artifact back into the corresponding main repository
-- [`renum      `](#cmta-renum): renumber exercises in a main repository
-- [`dib        `](#cmta-dib): duplicate a selected exercise in a main repository and insert it before that exercise
+- [`studentify             `](#cmta-studentify): generate a studentified artifact
+- [`linearize              `](#cmta-linearize): generate a linearized artifact
+- [`delinearize            `](#cmta-delinearize): reflect the changes made in a linearized artifact back into the corresponding main repository
+- [`renumber-exercises     `](#cmta-renumber-exercises): renumber exercises in a main repository
+- [`duplicate-insert-before`](#cmta-duplicate-insert-before): duplicate a selected exercise in a main repository and insert it before that exercise
 
 The remainder of this section describes these commands in further detail.
-
 
 ### cmta studentify
 
 #### Synopsys
 
-`   cmta studentify [-fg] <Main repo> <studentified repo parent folder>`
+`   cmta studentify [-fgh] -m <Main repo> -s <studentified repo parent folder> [-c <config-file>]`
 
 #### Description
 
@@ -46,11 +45,15 @@ The following options are available:
           and then use `git diff` to explore any changed test code.
 </pre>
 
+&nbsp;&nbsp;&nbsp;&nbsp;**-c**: Specify an alternative CMT configuration file.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
 ### cmta linearize
 
 #### Synopsys
 
-`   cmta linearize [-f] <Main repo> <linearized repo parent folder>`
+`   cmta linearize [-fh] -m <Main repo> -l <linearized repo parent folder> [-c <config-file>]`
 
 #### Description
 
@@ -68,6 +71,10 @@ The following options are available:
 
 &nbsp;&nbsp;&nbsp;&nbsp;**-f**: Force-delete a pre-existing studentified artifact.
 
+&nbsp;&nbsp;&nbsp;&nbsp;**-c**: Specify an alternative CMT configuration file.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
 > Note: `cmta linearize` will generate an error is the CMT main repository's git workspace isn't clean.
 > So, commit any unsaved work before trying to linearize a repository.
 
@@ -79,7 +86,7 @@ The following options are available:
 
 #### Synopsys
 
-`   cmta delinearize <Main repo> <linearized repo parent folder>`
+`   cmta delinearize [-h] -m <Main repo> -l <linearized repo parent folder> [-c <config-file>]`
 
 #### Description
 
@@ -87,33 +94,45 @@ Apply the state of a linearized repository to its corresponding main repository.
 its task, the delinearization command will check that the linearized repository and the main
 repository "match", i.e. they should have the same number of exercises, with matching exercise names.
 
-### cmta dib
+The following options are available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-c**: Specify an alternative CMT configuration file.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
+### cmta duplicate-insert-before
 
 #### Synopsys
 
-`   cmta dib -n <exercise number N> <Main repo>`
+`   cmta duplicate-insert-before [-h] -n <exercise number N> -m <Main repo> [-c <config-file>]`
 
 #### Description
 
-> Note: **_dib_** is an acronym for **_d_**uplicate [and] **_i_**nsert **_b_**efore.
 
-The exercise number (N), passed in via the -n parameter, will be duplicated and inserted as a new exercise
-before the exercise with that number.
+The exercise number (N), passed in via the -n parameter, will be duplicated and
+inserted as a new exercise before the exercise with that number.
 
 It there is a gap before the original exercise in the exercise
-series, the duplicated exercise will have sequence number N - 1. Otherwise, room will be made for the
-duplicated exercise by shifting exercises around. Note that if the exercises after the insertion point
-have one or more gaps in the numbering, those gaps will be removed and the exercises will be renumbered as a
-continuous series.
+series, the duplicated exercise will have sequence number N - 1.
+Otherwise, room will be made for the duplicated exercise by shifting
+exercises around. Note that if the exercises after the insertion point
+have one or more gaps in the numbering, those gaps will be removed and
+the exercises will be renumbered as a continuous series.
 
-In general, the description of the new, duplicated exercise will be what it was followed
-by __copy_.
+In general, the description of the new, duplicated exercise will be what
+it was followed by __copy_.
 
-### cmta renum
+The following option are available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-c**: Specify an alternative CMT configuration file.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
+### cmta renumber-exercises
 
 #### Synopsys
 
-`   cmta renum [--from <value>,--to <value>,--step <value>] <Main repo>`
+`   cmta renumber-exercises [-f <value>,-t <value>, -s <value>, -h] -m <Main repo> [-c <config-file>]`
 
 #### Description
 
@@ -126,22 +145,26 @@ numbers are incremented between consecutive exercises.
 
 The following options are available:
 
-&nbsp;&nbsp;&nbsp;&nbsp;**--from**: number of the exercise at which the renumbering needs to be started.
+&nbsp;&nbsp;&nbsp;&nbsp;**-f**: number of the exercise at which the renumbering needs to be started.
 <pre>
           This option enables partial renumbering of the exercise set. The value passed as an
           argument to this option is the number of the exercise at which the renumbering should
           start. All subsequent exercises, if any, will be renumbered.
 </pre>
 
-&nbsp;&nbsp;&nbsp;&nbsp;**--to**: move the exercise pointed-to by **--from** to this **--to** offset.
+&nbsp;&nbsp;&nbsp;&nbsp;**-t**: move the exercise pointed-to by **--from** to this **--to** offset.
 <pre>
           This option allows moving a subset of the exercises to a new point (offset). As such, it
           can created gaps in the exercise numbering.
 </pre>
 
-&nbsp;&nbsp;&nbsp;&nbsp;**--step**: defines the increment between subsequent, renumbered exercises.
+&nbsp;&nbsp;&nbsp;&nbsp;**-s**: defines the increment between subsequent, renumbered exercises.
 <pre>.
           By default, this value is 1, so renumbered exercises will have numbers that are contiguous.
           Using a value different than 1 will introduce gaps in the numbering between consecutive
           exercises
 </pre>
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-c**: Specify an alternative CMT configuration file.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.

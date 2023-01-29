@@ -16,27 +16,27 @@ sixteen exercises. Let's have a look at what is in the master repo.
 $ cd lunatech-beginner-quarkus-course-v2
 
 $ ls
-code                   course-management.conf
+README.md              code                   course-management.conf slides
 
 $ ls -l code
-$ ls -l
 total 0
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_001_initial_state
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_002_a_qute_hello_world
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_003_qute_products
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_004_even_qute_products
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_005_products_from_the_database
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_006_CDI_and_ArC
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_007_Convert_endpoints_to_JSON
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_008_Adding_REST_data_Panache
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_009_Hook_up_the_React_app
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_010_Validation_and_PUT
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_011_Going_Reactive
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_012_Reactive_search_endpoint
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_013_Listen_and_Notify
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_014_Internal_Channels
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_015_Connecting_to_Kafka
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_016_Dead_Letter_Queue_and_Stream_filtering
+drwxr-xr-x  11 ericloots  staff  352 16 Jun  2022 exercise_000_initial_state
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_001_create_a_greeting_service
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_002_a_qute_hello_world
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_003_qute_products
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_004_even_qute_products
+drwxr-xr-x  11 ericloots  staff  352 15 Jun  2022 exercise_005_products_from_the_database
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_006_CDI_and_ArC
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_007_Convert_endpoints_to_JSON
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_008_Adding_REST_data_Panache
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_009_Hook_up_the_React_app
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_010_Validation_and_PUT
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_011_Going_Reactive
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_012_Reactive_search_endpoint
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_013_Listen_and_Notify
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_014_Internal_Channels
+drwxr-xr-x  11 ericloots  staff  352 15 Jun  2022 exercise_015_Connecting_to_Kafka
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_016_Dead_Letter_Queue_and_Stream_filtering
 ```
 
 As explained in the [CMT approach](getting_started.md#the-cmt-approach) section,
@@ -50,6 +50,7 @@ $ cat course-management.conf
 cmt {
   test-code-folders = [
     "src/test"
+    "src/main/resources/META-INF/resources"
   ]
 
   read-me-files = [
@@ -74,16 +75,20 @@ Let's have a look at each of these settings.
 
 ### Setting `test` folders
 
-The first setting we find in the configuration file is `cmt.test-code-folders`. This setting is
-a list that, in the case of `lunatech-beginner-quarkus-course-v2`, contains a single item `src/test`.
+The first setting we find in the configuration file is `cmt.test-code-folders`. This setting
+is a list that, in the case of `lunatech-beginner-quarkus-course-v2`, contains two items,
+`src/test` and `src/main/resources/META-INF/resources`.
 
 When a student moves between different exercises, CMT will pull in any code residing in the
-folder(s) contained in this setting while leaving any other code unchanged.
+folder(s) contained in this setting while leaving any other code unchanged. Before pulling
+any file, a check is made to ensure that the student hasn't modified any of the files. If
+that is the case, the command is aborted showing an appropriate error message.
 
 ### Setting `README` files
 
-The setting `cmt.read-me-file` is a list of files or folders (in this example a single file name
-`README.md`) that are assumed to provide exercise specific information (such as exercise instructions).
+The setting `cmt.read-me-file` is a list of files or folders (in this example a single file
+name `README.md`) that are assumed to provide exercise specific information (such as exercise
+instructions).
 
 As with the `test` setting, this file or files are pulled in when moving between exercises.
 
@@ -113,13 +118,14 @@ by running the `cmta studentify` command:
 
 ```bash
 $ cd lunatech-beginner-quarkus-course-v2 ; ls
-code                   course-management.conf
+README.md              code                   course-management.conf slides
 
-$ cmta studentify -f . ~/tmp/stu
+$ cmta studentify -f -m . -s ~/tmp/stu
 Studentifying /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2 to /Users/ericloots/tmp/stu
 <elided>
 Processed exercises:
-  exercise_001_initial_state
+  exercise_000_initial_state
+  exercise_001_create_a_greeting_service
   exercise_002_a_qute_hello_world
   exercise_003_qute_products
   exercise_004_even_qute_products
@@ -143,9 +149,7 @@ $ ls ~/tmp/stu/lunatech-beginner-quarkus-course-v2
 code
 
 $ ls ~/tmp/stu/lunatech-beginner-quarkus-course-v2/code
-EXERCISES.md       docker-compose.yml mvnw               pom.xml
-README.md          materials          mvnw.cmd           src
-
+README.md mvnw      mvnw.cmd  pom.xml   src
 ```
 
 As one can see, `cmta studentify` has created a folder `lunatech-beginner-quarkus-course-v2`
@@ -206,7 +210,7 @@ a CMT main repository:
 $ cd lunatech-beginner-quarkus-course-v2; ls
 README.md              code                   course-management.conf slides
 
-$ cmta linearize . ~/tmp/lin
+$ cmta linearize -f -m . -l ~/tmp/lin
 Linearizing /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2 to /Users/ericloots/tmp/lin
 <elided>
 Successfully linearized /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2
@@ -221,22 +225,23 @@ We can verify a couple of things on the _linearized_ repo.
 $ cd ~/tmp/lin/lunatech-beginner-quarkus-course-v2
 
 $ git log --oneline
-9aed004 (HEAD -> main) exercise_016_Dead_Letter_Queue_and_Stream_filtering
-2259623 exercise_015_Connecting_to_Kafka
-af38c66 exercise_014_Internal_Channels
-05afccd exercise_013_Listen_and_Notify
-9129021 exercise_012_Reactive_search_endpoint
-229338a exercise_011_Going_Reactive
-af2d53b exercise_010_Validation_and_PUT
-76ee852 exercise_009_Hook_up_the_React_app
-5ce44e9 exercise_008_Adding_REST_data_Panache
-0544507 exercise_007_Convert_endpoints_to_JSON
-537d732 exercise_006_CDI_and_ArC
-15193f7 exercise_005_products_from_the_database
-4087296 exercise_004_even_qute_products
-a291630 exercise_003_qute_products
-b51a7a9 exercise_002_a_qute_hello_world
-6288f05 exercise_001_initial_state
+1367c1f (HEAD -> main) exercise_016_Dead_Letter_Queue_and_Stream_filtering
+95dd180 exercise_015_Connecting_to_Kafka
+fbec662 exercise_014_Internal_Channels
+70f08b3 exercise_013_Listen_and_Notify
+15bf03e exercise_012_Reactive_search_endpoint
+5cc0865 exercise_011_Going_Reactive
+806da65 exercise_010_Validation_and_PUT
+1807b2e exercise_009_Hook_up_the_React_app
+f684856 exercise_008_Adding_REST_data_Panache
+9a6f4bb exercise_007_Convert_endpoints_to_JSON
+9d15333 exercise_006_CDI_and_ArC
+3f79667 exercise_005_products_from_the_database
+0646a82 exercise_004_even_qute_products
+040114e exercise_003_qute_products
+88b8472 exercise_002_a_qute_hello_world
+b470f36 exercise_001_create_a_greeting_service
+289718a exercise_000_initial_state
 ```
 
 We can observe that the last commit (HEAD) corresponds to the last exercise
@@ -305,6 +310,11 @@ When making large changes, it is recommended to split these in a series
 of smaller steps. This may simplify the process of merge conflict resolution
 if these arise during the completion of the interactive rebasing process.
 
+> Note: In each step of the execution of the interactive rebasing process,
+> after merge conflicts have been resolved, the state of the linearized
+> repo is fully functional, i.e. one can run the code, run tests, and have
+> the project loaded in an IDE.
+
 Note that during the interactive rebasing process, the code can be loaded in
 an IDE to assist in the rebasing process and to test the changes.
 
@@ -343,7 +353,7 @@ Between iterations, we can also do the following:
 - "checkpoint" what we already have on the CMT master repository by committing
   it. This doesn't hurt and if needed this can be undone easily. After a number
   of smaller changes were successfully committed to the CMT main repo, these
-  commits can be squashed to reduce the clutter.
+  commits can be squashed as desired.
 - run the tests on all exercises. As the tooling is oblivious to the build tool
   and the testing tools used in the exercises, there's no pre-baked solution
   to automate this process.  Imagine that a CMT project uses Maven as build tool.
@@ -358,8 +368,9 @@ Between iterations, we can also do the following:
 `cmta` is your friend for these kind of tasks. See the following
 sections in the reference chapter:
 
-- [inserting an exercise](reference-cmta.md#cmta-dib)
-- [renumbering exercises](reference-cmta.md#cmta-renum)
+- [inserting an exercise](reference-cmta.md#cmta-duplicate-insert-before)
+- [renumbering exercises](reference-cmta.md#cmta-renumber-exercises)
 
 Finally, deleting an exercise is as simple as deleting the corresponding exercise
-folder.
+folder, optionally followed by an exercise renumbering step to eliminate
+the gap in the exercise numbers.

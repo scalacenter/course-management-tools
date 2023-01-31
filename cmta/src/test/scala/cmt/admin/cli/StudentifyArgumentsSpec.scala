@@ -14,16 +14,16 @@ package cmt.admin.cli
   */
 
 import caseapp.Parser
-import caseapp.core.Error.{CannotBeDisabled, Other, ParsingArgument, RequiredOptionNotSpecified, SeveralErrors}
-import cmt.{ErrorMessage, FailedToValidateArgument, Helpers, OptionName, RequiredOptionIsMissing}
+import cmt.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
 import cmt.admin.command.Studentify
-import cmt.admin.cli.ArgParsers.*
+import cmt.admin.cli.ArgParsers.{
+  initializeGitRepoArgParser,
+  forceDeleteDestinationDirectoryArgParser,
+  studentifyBaseDirectoryArgParser
+}
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, MainRepository, StudentifyBaseDirectory}
 import cmt.support.{CommandLineArguments, TestDirectories}
-import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
-import org.scalatest.prop.Tables
 import sbt.io.syntax.{File, file}
-import org.scalatest.matchers.should.Matchers
 
 final class StudentifyArgumentsSpec extends CommandLineArgumentsSpec[Studentify.Options] with TestDirectories {
 

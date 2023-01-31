@@ -7,7 +7,7 @@ import cmt.client.Configuration.{
   globalConfigFile,
   writeGlobalConfig
 }
-import cmt.{CmtError, FailedToWriteGlobalConfiguration, printErrorAndExit, printMessage, toConsoleGreen}
+import cmt.{CmtError, FailedToWriteGlobalConfiguration, printMessage}
 import cmt.client.Domain.StudentifiedRepo
 import com.typesafe.config.{Config, ConfigFactory}
 import sbt.io.IO.*

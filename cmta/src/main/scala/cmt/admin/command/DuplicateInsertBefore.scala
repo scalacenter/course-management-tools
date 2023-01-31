@@ -1,22 +1,14 @@
 package cmt.admin.command
 
 import cmt.*
-import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
-import cmt.Helpers.{
-  ExercisesMetadata,
-  commitToGit,
-  exitIfGitIndexOrWorkspaceIsntClean,
-  extractExerciseNr,
-  getExerciseMetadata,
-  validatePrefixes
-}
-import cmt.admin.Domain.{ExerciseNumber, LinearizeBaseDirectory, RenumberOffset, RenumberStart, RenumberStep}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
+import cmt.Helpers.{ExercisesMetadata, getExerciseMetadata, commitToGit, exitIfGitIndexOrWorkspaceIsntClean}
+import cmt.admin.Domain.{ExerciseNumber, RenumberOffset, RenumberStart, RenumberStep}
 import cmt.admin.cli.SharedOptions
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import cmt.admin.command.RenumberExercises
 import cmt.admin.cli.ArgParsers.exerciseNumberArgParser
 import cmt.core.cli.CmtCommand
 
@@ -57,7 +49,7 @@ object DuplicateInsertBefore:
             else
               val splitIndex = exerciseNumbers.indexOf(options.exerciseNumber.value)
               val (exercisesNumsBeforeInsert, exercisesNumsAfterInsert) = exerciseNumbers.splitAt(splitIndex)
-              val (exercisesBeforeInsert, exercisesAfterInsert) = exercises.splitAt(splitIndex)
+              val (_, exercisesAfterInsert) = exercises.splitAt(splitIndex)
               if options.exerciseNumber.value + exercisesNumsAfterInsert.size <= 999 then
                 if options.exerciseNumber.value == 0 || exercisesNumsBeforeInsert.nonEmpty && exercisesNumsBeforeInsert.last == options.exerciseNumber.value - 1
                 then

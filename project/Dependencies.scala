@@ -1,7 +1,8 @@
 import sbt._
 
 object Version {
-  val scalaVersion = "3.2.0"
+//  val scalaVersion = "3.3.0-RC2"
+  val scalaVersion = "3.2.2"
   val scalaTest = "3.2.14"
   val scalaCheck = "3.2.9.0"
   val sbtio = "1.7.0"

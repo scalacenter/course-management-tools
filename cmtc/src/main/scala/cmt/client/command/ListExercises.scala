@@ -6,7 +6,6 @@ import cmt.client.Domain.StudentifiedRepo
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
 import cmt.client.command.{getCurrentExerciseId, starCurrentExercise}
 import cmt.client.cli.CmtcCommand
-import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.core.cli.enforceNoTrailingArguments
 import cmt.client.cli.ArgParsers.studentifiedRepoArgParser

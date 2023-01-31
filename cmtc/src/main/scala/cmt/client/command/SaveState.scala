@@ -3,7 +3,6 @@ package cmt.client.command
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.Helpers.zipAndDeleteOriginal
 import cmt.client.command.{getCurrentExerciseId, getCurrentExerciseStateExceptDontTouch}
-import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.*
 import cmt.client.Configuration

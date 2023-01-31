@@ -13,12 +13,6 @@ package cmt
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.Helpers.dumpStringToFile
-
-import java.util.UUID
-import java.nio.charset.StandardCharsets
-import cmt.admin.Domain.MainRepository
-import cmt.client.Domain.StudentifiedRepo
 import cmt.support.{ExerciseMetadata, SourcesStruct}
 import org.scalatest.{BeforeAndAfterAll, GivenWhenThen}
 import org.scalatest.featurespec.AnyFeatureSpecLike

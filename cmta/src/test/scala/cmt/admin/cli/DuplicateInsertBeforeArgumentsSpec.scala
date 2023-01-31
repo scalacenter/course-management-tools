@@ -14,20 +14,12 @@ package cmt.admin.cli
   */
 
 import caseapp.Parser
-import cmt.{ErrorMessage, FailedToValidateArgument, Helpers, OptionName, RequiredOptionIsMissing}
-import cmt.admin.Domain.{
-  ExerciseNumber,
-  ForceDeleteDestinationDirectory,
-  InitializeGitRepo,
-  MainRepository,
-  StudentifyBaseDirectory
-}
-import cmt.admin.command.{DuplicateInsertBefore, Studentify}
-import cmt.support.{CommandLineArguments, TestDirectories}
-import org.scalatest.prop.Tables
+import cmt.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
+import cmt.admin.Domain.{ExerciseNumber, MainRepository}
+import cmt.admin.command.DuplicateInsertBefore
+import cmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
-import cmt.admin.cli.ArgParsers.*
-import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
+import cmt.admin.cli.ArgParsers.exerciseNumberArgParser
 
 final class DuplicateInsertBeforeArgumentsSpec
     extends CommandLineArgumentsSpec[DuplicateInsertBefore.Options]

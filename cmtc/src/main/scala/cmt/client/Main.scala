@@ -13,7 +13,7 @@ package cmt.client
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import caseapp.core.app.{Command, CommandsEntryPoint}
+import caseapp.core.app.CommandsEntryPoint
 import cmt.client.command.{
   GotoExercise,
   GotoFirstExercise,

@@ -1,8 +1,8 @@
 package cmt.admin.command
 
-import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
 import cmt.Helpers.*
-import cmt.{CMTaConfig, CmtError, ProcessDSL, printResult, toConsoleGreen}
+import cmt.{CMTaConfig, CmtError, printResult, toConsoleGreen}
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
 import cmt.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
 import cmt.admin.cli.SharedOptions

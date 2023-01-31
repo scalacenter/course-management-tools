@@ -1,12 +1,10 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
-import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
-import cmt.Helpers.{getFilesToCopyAndDelete, pullTestCode}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
+import cmt.{CmtError, printResult}
 import cmt.client.{Configuration, CurrentCourse}
-import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
+import cmt.client.Domain.StudentifiedRepo
 import cmt.client.cli.CmtcCommand
-import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.core.cli.enforceNoTrailingArguments
 import sbt.io.syntax.*

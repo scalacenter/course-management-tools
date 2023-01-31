@@ -309,7 +309,7 @@ object Helpers:
 
   import org.apache.commons.codec.binary.Hex
 
-  import java.nio.file.{Files, Path}
+  import java.nio.file.Files
   import java.security.MessageDigest
   def fileSize(f: File): Long =
     Files.size(f.toPath)
@@ -428,8 +428,6 @@ object Helpers:
       exercises: Vector[String],
       studentifiedRootFolder: File,
       cmtaConfig: CMTaConfig): Unit =
-
-    val testCodeFolders = cmtaConfig.testCodeFolders.to(List)
 
     import scala.jdk.CollectionConverters.*
 

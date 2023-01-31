@@ -13,9 +13,9 @@ package cmt.client.cli
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
-import cmt.support.{CommandLineArguments, TestDirectories}
-import sbt.io.syntax.File
+//import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
+//import cmt.support.{CommandLineArguments, TestDirectories}
+//import sbt.io.syntax.File
 
 object PullSolutionSpec /*extends CommandLineArguments[CliOptions] with TestDirectories {
 

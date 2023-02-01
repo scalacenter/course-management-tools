@@ -21,7 +21,7 @@ The remainder of this section describes these commands in further detail.
 
 #### Synopsys
 
-`   cmta studentify [-fgh] -m <Main repo> -s <studentified repo parent folder> [-c <config-file>]`
+`   cmta studentify [-fgh] -m <Main repo> -d <studentified repo parent folder> [-c <config-file>]`
 
 #### Description
 
@@ -53,7 +53,7 @@ The following options are available:
 
 #### Synopsys
 
-`   cmta linearize [-fh] -m <Main repo> -l <linearized repo parent folder> [-c <config-file>]`
+`   cmta linearize [-fh] -m <Main repo> -d <linearized repo parent folder> [-c <config-file>]`
 
 #### Description
 
@@ -86,7 +86,7 @@ The following options are available:
 
 #### Synopsys
 
-`   cmta delinearize [-h] -m <Main repo> -l <linearized repo parent folder> [-c <config-file>]`
+`   cmta delinearize [-h] -m <Main repo> -d <linearized repo folder> [-c <config-file>]`
 
 #### Description
 

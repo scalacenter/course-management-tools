@@ -120,7 +120,7 @@ by running the `cmta studentify` command:
 $ cd lunatech-beginner-quarkus-course-v2 ; ls
 README.md              code                   course-management.conf slides
 
-$ cmta studentify -f -m . -s ~/tmp/stu
+$ cmta studentify -f -m . -d ~/tmp/stu
 Studentifying /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2 to /Users/ericloots/tmp/stu
 <elided>
 Processed exercises:
@@ -210,7 +210,7 @@ a CMT main repository:
 $ cd lunatech-beginner-quarkus-course-v2; ls
 README.md              code                   course-management.conf slides
 
-$ cmta linearize -f -m . -l ~/tmp/lin
+$ cmta linearize -f -m . -d ~/tmp/lin
 Linearizing /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2 to /Users/ericloots/tmp/lin
 <elided>
 Successfully linearized /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2
@@ -331,7 +331,7 @@ the _delinearization_:
 $ cd lunatech-beginner-quarkus-course-v2; ls
 README.md              code                   course-management.conf slides
 
-$ cmta delinearize . ~/tmp/lin
+$ cmta delinearize -m . -d ~/tmp/lin/lunatech-beginner-quarkus-course-v2
 De-linearizing /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2 to /Users/ericloots/tmp/lin
 <elided>
 Successfully delinearised /Users/ericloots/tmp/lin

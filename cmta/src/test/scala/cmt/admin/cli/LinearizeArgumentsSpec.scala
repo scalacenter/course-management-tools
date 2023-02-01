@@ -34,7 +34,7 @@ final class LinearizeArgumentsSpec extends CommandLineArgumentsSpec[Linearize.Op
       (
         Seq.empty,
         Set(
-          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
         Seq("-m", nonExistentDirectory(tempDirectory)),
@@ -45,7 +45,7 @@ final class LinearizeArgumentsSpec extends CommandLineArgumentsSpec[Linearize.Op
               ErrorMessage(s"$nonExistentFile does not exist"),
               ErrorMessage(s"$nonExistentFile is not a directory"),
               ErrorMessage(s"$nonExistentFile is not in a git repository"))),
-          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
         Seq("-m", realFile),
@@ -53,7 +53,7 @@ final class LinearizeArgumentsSpec extends CommandLineArgumentsSpec[Linearize.Op
           FailedToValidateArgument(
             OptionName("m"),
             List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
-          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
         Seq("-m", tempDirectory.getAbsolutePath),
@@ -61,25 +61,25 @@ final class LinearizeArgumentsSpec extends CommandLineArgumentsSpec[Linearize.Op
           FailedToValidateArgument(
             OptionName("m"),
             List(ErrorMessage(s"${tempDirectory.getAbsolutePath} is not in a git repository"))),
-          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))))
   }
 
   def validArguments(tempDirectory: File) = validArgumentsTable(
     (
-      Seq("-m", firstRealDirectory, "-l", secondRealDirectory),
+      Seq("-m", firstRealDirectory, "-d", secondRealDirectory),
       Linearize.Options(
         linearizeBaseDirectory = LinearizeBaseDirectory(file(secondRealDirectory)),
         forceDelete = ForceDeleteDestinationDirectory(false),
         shared = SharedOptions(MainRepository(file(firstRealDirectory)), maybeConfigFile = None))),
     (
-      Seq("-m", firstRealDirectory, "-l", secondRealDirectory, "--force-delete"),
+      Seq("-m", firstRealDirectory, "-d", secondRealDirectory, "--force-delete"),
       Linearize.Options(
         linearizeBaseDirectory = LinearizeBaseDirectory(file(secondRealDirectory)),
         forceDelete = ForceDeleteDestinationDirectory(true),
         shared = SharedOptions(MainRepository(file(firstRealDirectory)), maybeConfigFile = None))),
     (
-      Seq("-m", firstRealDirectory, "-l", secondRealDirectory, "-f"),
+      Seq("-m", firstRealDirectory, "-d", secondRealDirectory, "-f"),
       Linearize.Options(
         linearizeBaseDirectory = LinearizeBaseDirectory(file(secondRealDirectory)),
         forceDelete = ForceDeleteDestinationDirectory(true),

@@ -194,7 +194,7 @@ implement them. There are two approaches to applying changes:
   repository and that's where `cmta linearize` and `cmta delinearize`
   come in.
 
-A _linearized_ repo is a git repository in which each exercise in the CMT main
+A _linearized_ repo is a **_git_** repository in which each exercise in the CMT main
 repo repository is "mapped" to a commit. We will use the same main repository
 `lunatech-beginner-quarkus-course-v2` as before to illustrate the
 _linearize_/_delinearize_ workflow.

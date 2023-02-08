@@ -5,7 +5,7 @@ sidebar_label: cmta
 ---
 ## Command Summary
 
-`cmta` takes a command as the first parameters and it operates on a CMT main repository.
+`cmta` takes a command as the first parameters and it operates on a CMT main [**_git_**] repository. 
 
 The available commands and their function is as follows:
 
@@ -16,6 +16,10 @@ The available commands and their function is as follows:
 - [`duplicate-insert-before`](#cmta-duplicate-insert-before): duplicate a selected exercise in a main repository and insert it before that exercise
 
 The remainder of this section describes these commands in further detail.
+
+> Note that all `cmta` commands require the CMT main repository to be clean
+> from a **_git_** repository perspective which means that there should be no files
+> in the repository's **_git_** workspace or index.
 
 ### cmta studentify
 
@@ -31,14 +35,14 @@ exercise. It can be distributed to users, in general people following a course, 
 navigate between exercises, "pull" an exercise solution, save the current state of their work for a given
 exercise with the possibility to restore it at a later time.
 
-> Note: `cmta studentify` will generate an error is the CMT main repository's git workspace isn't clean.
+> Note: `cmta studentify` will generate an error is the CMT main repository's **_git_** workspace isn't clean.
 > So, commit any unsaved work before trying to studentify a repository.
 
 The following options are available:
 
 &nbsp;&nbsp;&nbsp;&nbsp;**-f**: Force-delete a pre-existing studentified artifact.
 
-&nbsp;&nbsp;&nbsp;&nbsp;**-g**: Initialise the studentified artifact as a git repository.
+&nbsp;&nbsp;&nbsp;&nbsp;**-g**: Initialise the studentified artifact as a **_git_** repository.
 <pre>
           This option can be useful in some use cases. For example, students may
           commit specific exercise state in git, then move to the next exercise
@@ -57,7 +61,7 @@ The following options are available:
 
 #### Description
 
-Generate a linearized artifact from a CMT main repository. The former is a git repository in which
+Generate a linearized artifact from a CMT main repository. The former is a **_git_** repository in which
 each commit corresponds to the state of an exercise of the main repository. The first (oldest) commit
 in the repo corresponds to the first exercise in the main repository. The commit message for each
 commit is a single line with the name of the exercise in it.
@@ -75,7 +79,7 @@ The following options are available:
 
 &nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
 
-> Note: `cmta linearize` will generate an error is the CMT main repository's git workspace isn't clean.
+> Note: `cmta linearize` will generate an error is the CMT main repository's **_git_** workspace isn't clean.
 > So, commit any unsaved work before trying to linearize a repository.
 
 > Warning: It is important to leave the commit messages in the linearized repository as-is. Also

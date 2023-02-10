@@ -19,7 +19,7 @@ object Linearize:
   @HelpMessage(
     "'Linearizes' a 'main' repository in the target directory where the linearized repo has one commit per exercise")
   final case class Options(
-      @ExtraName("l")
+      @ExtraName("d")
       @ValueDescription("Folder in which the 'linearized' repo will be created")
       linearizeBaseDirectory: LinearizeBaseDirectory,
       @ExtraName("f")

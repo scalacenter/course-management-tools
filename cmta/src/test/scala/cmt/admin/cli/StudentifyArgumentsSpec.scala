@@ -37,10 +37,10 @@ final class StudentifyArgumentsSpec extends CommandLineArgumentsSpec[Studentify.
       (
         Seq.empty,
         Set(
-          RequiredOptionIsMissing(OptionName("--studentify-base-directory, -s")),
+          RequiredOptionIsMissing(OptionName("--studentify-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
-        Seq("-m", nonExistentDirectory(tempDirectory), "-s", nonExistentDirectory(tempDirectory)),
+        Seq("-m", nonExistentDirectory(tempDirectory), "-d", nonExistentDirectory(tempDirectory)),
         Set(
           FailedToValidateArgument(
             OptionName("m"),
@@ -49,27 +49,27 @@ final class StudentifyArgumentsSpec extends CommandLineArgumentsSpec[Studentify.
               ErrorMessage(s"$nonExistentFile is not a directory"),
               ErrorMessage(s"$nonExistentFile is not in a git repository"))),
           FailedToValidateArgument(
-            OptionName("s"),
+            OptionName("d"),
             List(
               ErrorMessage(s"$nonExistentFile does not exist"),
               ErrorMessage(s"$nonExistentFile is not a directory"))),
-          RequiredOptionIsMissing(OptionName("--studentify-base-directory, -s")),
+          RequiredOptionIsMissing(OptionName("--studentify-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
-        Seq("-m", realFile, "-s", nonExistentDirectory(tempDirectory)),
+        Seq("-m", realFile, "-d", nonExistentDirectory(tempDirectory)),
         Set(
           FailedToValidateArgument(
             OptionName("m"),
             List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
           FailedToValidateArgument(
-            OptionName("s"),
+            OptionName("d"),
             List(
               ErrorMessage(s"$nonExistentFile does not exist"),
               ErrorMessage(s"$nonExistentFile is not a directory"))),
-          RequiredOptionIsMissing(OptionName("--studentify-base-directory, -s")),
+          RequiredOptionIsMissing(OptionName("--studentify-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
-        Seq("-m", tempDirectory.getAbsolutePath, "-s", secondRealDirectory),
+        Seq("-m", tempDirectory.getAbsolutePath, "-d", secondRealDirectory),
         Set(
           FailedToValidateArgument(
             OptionName("m"),
@@ -79,49 +79,49 @@ final class StudentifyArgumentsSpec extends CommandLineArgumentsSpec[Studentify.
 
   def validArguments(tempDirectory: File) = validArgumentsTable(
     (
-      Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-s", secondRealDirectory),
+      Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-d", secondRealDirectory),
       Studentify.Options(
         studentifyBaseDirectory = StudentifyBaseDirectory(file(secondRealDirectory)),
         forceDelete = ForceDeleteDestinationDirectory(false),
         initGit = InitializeGitRepo(false),
         shared = SharedOptions(MainRepository(baseDirectoryGitRoot), maybeConfigFile = None))),
     (
-      Seq("-m", firstRealDirectory, "-s", secondRealDirectory, "--force-delete"),
+      Seq("-m", firstRealDirectory, "-d", secondRealDirectory, "--force-delete"),
       Studentify.Options(
         studentifyBaseDirectory = StudentifyBaseDirectory(file(secondRealDirectory)),
         forceDelete = ForceDeleteDestinationDirectory(true),
         initGit = InitializeGitRepo(false),
         shared = SharedOptions(MainRepository(file(firstRealDirectory)), maybeConfigFile = None))),
     (
-      Seq("-m", firstRealDirectory, "-s", secondRealDirectory, "-f"),
+      Seq("-m", firstRealDirectory, "-d", secondRealDirectory, "-f"),
       Studentify.Options(
         studentifyBaseDirectory = StudentifyBaseDirectory(file(secondRealDirectory)),
         forceDelete = ForceDeleteDestinationDirectory(true),
         initGit = InitializeGitRepo(false),
         shared = SharedOptions(MainRepository(file(firstRealDirectory)), maybeConfigFile = None))),
     (
-      Seq("-m", firstRealDirectory, "-s", secondRealDirectory, "--init-git"),
+      Seq("-m", firstRealDirectory, "-d", secondRealDirectory, "--init-git"),
       Studentify.Options(
         studentifyBaseDirectory = StudentifyBaseDirectory(file(secondRealDirectory)),
         forceDelete = ForceDeleteDestinationDirectory(false),
         initGit = InitializeGitRepo(true),
         shared = SharedOptions(MainRepository(file(firstRealDirectory)), maybeConfigFile = None))),
     (
-      Seq("-m", firstRealDirectory, "-s", secondRealDirectory, "-g"),
+      Seq("-m", firstRealDirectory, "-d", secondRealDirectory, "-g"),
       Studentify.Options(
         studentifyBaseDirectory = StudentifyBaseDirectory(file(secondRealDirectory)),
         forceDelete = ForceDeleteDestinationDirectory(false),
         initGit = InitializeGitRepo(true),
         shared = SharedOptions(MainRepository(file(firstRealDirectory)), maybeConfigFile = None))),
     (
-      Seq("-m", firstRealDirectory, "-s", secondRealDirectory, "--force-delete", "--init-git"),
+      Seq("-m", firstRealDirectory, "-d", secondRealDirectory, "--force-delete", "--init-git"),
       Studentify.Options(
         studentifyBaseDirectory = StudentifyBaseDirectory(file(secondRealDirectory)),
         forceDelete = ForceDeleteDestinationDirectory(true),
         initGit = InitializeGitRepo(true),
         shared = SharedOptions(MainRepository(file(firstRealDirectory)), maybeConfigFile = None))),
     (
-      Seq("-m", firstRealDirectory, "-s", secondRealDirectory, "-f", "-g"),
+      Seq("-m", firstRealDirectory, "-d", secondRealDirectory, "-f", "-g"),
       Studentify.Options(
         studentifyBaseDirectory = StudentifyBaseDirectory(file(secondRealDirectory)),
         forceDelete = ForceDeleteDestinationDirectory(true),

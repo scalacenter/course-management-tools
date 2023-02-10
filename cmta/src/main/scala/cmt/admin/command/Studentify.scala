@@ -25,7 +25,7 @@ object Studentify:
   @HelpMessage(
     "'Studentifies' an existing repository - taking the 'main' repository and creating a CMT project in the target directory")
   final case class Options(
-      @ExtraName("s")
+      @ExtraName("d")
       @ValueDescription("Folder in which the 'studentified' artifact will be created")
       studentifyBaseDirectory: StudentifyBaseDirectory,
       @ExtraName("f")

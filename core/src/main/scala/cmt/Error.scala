@@ -1,7 +1,5 @@
 package cmt
 
-import cats.data.NonEmptyList
-
 sealed trait CmtError {
   def prettyPrint: String
 }

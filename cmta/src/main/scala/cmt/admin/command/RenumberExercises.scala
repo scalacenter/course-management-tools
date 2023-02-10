@@ -1,13 +1,12 @@
 package cmt.admin.command
 
-import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
 import cmt.{CMTaConfig, CmtError, printResult}
-import cmt.Helpers.{ExercisesMetadata, extractExerciseNr, getExerciseMetadata, validatePrefixes}
+import cmt.Helpers.{ExercisesMetadata, getExerciseMetadata, commitToGit, exitIfGitIndexOrWorkspaceIsntClean}
 import cmt.admin.Domain.{RenumberOffset, RenumberStart, RenumberStep}
 import cmt.admin.cli.SharedOptions
 import cmt.core.execution.Executable
 import cmt.admin.cli.ArgParsers.{renumberOffsetArgParser, renumberStartArgParser, renumberStepArgParser}
-import cmt.admin.command.RenumberExercises
 import cmt.core.cli.CmtCommand
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
@@ -17,7 +16,8 @@ import cmt.toExecuteCommandErrorMessage
 object RenumberExercises:
 
   def successMessage(options: Options): String =
-    s"Renumbered exercises in ${options.shared.mainRepository.value.getPath} from ${options.from} to ${options.to.value} by ${options.step.value}"
+    val fromAsString = if (options.from.isEmpty) "" else s" from ${options.from.get.value}"
+    s"Renumbered exercises in ${options.shared.mainRepository.value.getPath}${fromAsString} to ${options.to.value} by ${options.step.value}"
 
   @AppName("renumber-exercises")
   @CommandName("renumber-exercises")
@@ -52,27 +52,29 @@ object RenumberExercises:
         val config = new CMTaConfig(mainRepository.value, options.shared.maybeConfigFile.map(_.value))
 
         for {
+          _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
+
           ExercisesMetadata(exercisePrefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(
             config)
 
           mainRepoExerciseFolder = mainRepository.value / config.mainRepoExerciseFolder
 
-          renumStartAt <- resolveStartAt(options.from.map(_.value), exerciseNumbers)
+          renumberStartAt <- resolveStartAt(options.from.map(_.value), exerciseNumbers)
 
-          splitIndex = exerciseNumbers.indexOf(renumStartAt)
+          splitIndex = exerciseNumbers.indexOf(renumberStartAt)
           (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) = exerciseNumbers.splitAt(splitIndex)
           (_, exercisesAfterSplit) = exercises.splitAt(splitIndex)
 
-          renumOffset = options.to.value
+          renumberOffset = options.to.value
           tryMove = (exerciseNumsBeforeSplit, exerciseNumsAfterSplit) match
-            case (Vector(), Vector(`renumOffset`, _)) =>
+            case (Vector(), Vector(`renumberOffset`, _)) =>
               Left("Renumber: nothing to renumber".toExecuteCommandErrorMessage)
-            case (before, _) if rangeOverlapsWithOtherExercises(before, renumOffset) =>
+            case (before, _) if rangeOverlapsWithOtherExercises(before, renumberOffset) =>
               Left("Moved exercise range overlaps with other exercises".toExecuteCommandErrorMessage)
             case (_, _)
                 if exceedsAvailableSpace(
                   exercisesAfterSplit,
-                  renumOffset = renumOffset,
+                  renumOffset = renumberOffset,
                   renumStep = options.step.value) =>
               Left(
                 s"Cannot renumber exercises as it would exceed the available exercise number space".toExecuteCommandErrorMessage)
@@ -80,7 +82,7 @@ object RenumberExercises:
               val moves =
                 for {
                   (exercise, index) <- exercisesAfterSplit.zipWithIndex
-                  newNumber = renumOffset + index * options.step.value
+                  newNumber = renumberOffset + index * options.step.value
                   oldExerciseFolder = mainRepoExerciseFolder / exercise
                   newExerciseFolder =
                     mainRepoExerciseFolder / renumberExercise(exercise, exercisePrefix, newNumber)
@@ -90,12 +92,15 @@ object RenumberExercises:
               if moves.isEmpty
               then Left("Renumber: nothing to renumber".toExecuteCommandErrorMessage)
               else
-                if renumOffset > renumStartAt
+                if renumberOffset > renumberStartAt
                 then sbtio.move(moves.reverse)
                 else sbtio.move(moves)
                 Right(successMessage(options))
 
           moveResult <- tryMove
+          _ <- commitToGit(
+            s"Checkpoint result of running 'ctma renumber-exercises -f $renumberStartAt -t $renumberOffset -s ${options.step.value}'",
+            mainRepository.value)
         } yield moveResult
       }
   end given

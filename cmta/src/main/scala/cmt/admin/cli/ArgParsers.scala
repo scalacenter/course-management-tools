@@ -14,7 +14,7 @@ object ArgParsers:
   private val fileArgParser: ArgParser[File] =
     SimpleArgParser.from[File]("file")(file(_).asRight)
 
-  implicit val mainRepositoryArgParser: ArgParser[MainRepository] =
+  given mainRepositoryArgParser: ArgParser[MainRepository] =
     fileArgParser.xmapError[MainRepository](
       _.value,
       file =>
@@ -23,7 +23,7 @@ object ArgParsers:
           .leftMap(_.flatten)
           .toEither)
 
-  implicit val studentifyBaseDirectoryArgParser: ArgParser[StudentifyBaseDirectory] =
+  given studentifyBaseDirectoryArgParser: ArgParser[StudentifyBaseDirectory] =
     fileArgParser.xmapError[StudentifyBaseDirectory](
       _.value,
       file =>
@@ -32,7 +32,7 @@ object ArgParsers:
           .leftMap(_.flatten)
           .toEither)
 
-  implicit val linearizeBaseDirectoryArgParser: ArgParser[LinearizeBaseDirectory] =
+  given linearizeBaseDirectoryArgParser: ArgParser[LinearizeBaseDirectory] =
     fileArgParser.xmapError[LinearizeBaseDirectory](
       _.value,
       file =>
@@ -41,15 +41,15 @@ object ArgParsers:
           .leftMap(_.flatten)
           .toEither)
 
-  implicit val configurationFileArgParser: ArgParser[ConfigurationFile] =
+  given configurationFileArgParser: ArgParser[ConfigurationFile] =
     fileArgParser.xmapError[ConfigurationFile](
       _.value,
       file => (file.validateExists).map(_ => ConfigurationFile(file)).leftMap(_.flatten).toEither)
 
-  implicit val forceDeleteDestinationDirectoryArgParser: ArgParser[ForceDeleteDestinationDirectory] =
+  given forceDeleteDestinationDirectoryArgParser: ArgParser[ForceDeleteDestinationDirectory] =
     FlagArgParser.boolean.xmap[ForceDeleteDestinationDirectory](_.value, ForceDeleteDestinationDirectory(_))
 
-  implicit val initializeGitRepoArgParser: ArgParser[InitializeGitRepo] =
+  given initializeGitRepoArgParser: ArgParser[InitializeGitRepo] =
     FlagArgParser.boolean.xmap[InitializeGitRepo](_.value, InitializeGitRepo(_))
 
   private val intGreaterThanZero: ArgParser[Int] =
@@ -57,16 +57,16 @@ object ArgParsers:
       identity,
       int => if int < 0 then Error.Other(s"number must be 0 or greater, but received '$int'").asLeft else int.asRight)
 
-  implicit val exerciseNumberArgParser: ArgParser[ExerciseNumber] =
+  given exerciseNumberArgParser: ArgParser[ExerciseNumber] =
     intGreaterThanZero.xmap[ExerciseNumber](_.value, ExerciseNumber(_))
 
-  implicit val renumberStartArgParser: ArgParser[RenumberStart] =
+  given renumberStartArgParser: ArgParser[RenumberStart] =
     intGreaterThanZero.xmap[RenumberStart](_.value, RenumberStart(_))
 
-  implicit val renumberStepArgParser: ArgParser[RenumberStep] =
+  given renumberStepArgParser: ArgParser[RenumberStep] =
     intGreaterThanZero.xmap[RenumberStep](_.value, RenumberStep(_))
 
-  implicit val renumberOffsetArgParser: ArgParser[RenumberOffset] =
+  given renumberOffsetArgParser: ArgParser[RenumberOffset] =
     intGreaterThanZero.xmap[RenumberOffset](_.value, RenumberOffset(_))
 
 end ArgParsers

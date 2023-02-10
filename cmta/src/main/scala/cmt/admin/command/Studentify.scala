@@ -1,11 +1,10 @@
 package cmt.admin.command
 
-import caseapp.core.Error
-import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Name, Recurse, RemainingArgs, ValueDescription}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Name, Recurse, RemainingArgs, ValueDescription}
 import cmt.Helpers.*
 import cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, MainRepository, StudentifyBaseDirectory}
 import cmt.core.execution.Executable
-import cmt.{CMTaConfig, CmtError, StudentifiedSkelFolders, printResult, toCmtError, toConsoleGreen}
+import cmt.{CMTaConfig, CmtError, printResult, toConsoleGreen}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import cmt.admin.*
@@ -17,7 +16,6 @@ import cmt.admin.cli.ArgParsers.{
   studentifyBaseDirectoryArgParser
 }
 import cmt.core.cli.CmtCommand
-import cmt.toCmtError
 import cmt.toExecuteCommandErrorMessage
 
 object Studentify:
@@ -27,7 +25,7 @@ object Studentify:
   @HelpMessage(
     "'Studentifies' an existing repository - taking the 'main' repository and creating a CMT project in the target directory")
   final case class Options(
-      @ExtraName("s")
+      @ExtraName("d")
       @ValueDescription("Folder in which the 'studentified' artifact will be created")
       studentifyBaseDirectory: StudentifyBaseDirectory,
       @ExtraName("f")
@@ -143,7 +141,7 @@ object Studentify:
     end buildStudentifiedRepository
   end StudentifyHelpers
 
-  val command = new CmtCommand[Studentify.Options] {
+  val command: CmtCommand[Studentify.Options] = new CmtCommand[Studentify.Options] {
 
     def run(options: Studentify.Options, args: RemainingArgs): Unit =
       options.validated().flatMap(_.execute()).printResult()

@@ -1,8 +1,7 @@
 package cmt.client.command
 
-import cmt.client.Configuration.CmtHome
 import cmt.client.Domain.StudentifiedRepo
-import cmt.client.{Configuration, CoursesDirectory, CurrentCourse}
+import cmt.client.{Configuration, CurrentCourse}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -31,11 +30,6 @@ final class SetCurrentCourseSpec extends AnyWordSpecLike with Matchers with Befo
     "given a studentified directory" should {
 
       "write the global configuration with the updated `current-course` value" in {
-        val expectedConfiguration = Configuration(
-          CmtHome(tempDirectory / ".cmt"),
-          CoursesDirectory(tempDirectory / "Courses"),
-          CurrentCourse(StudentifiedRepo(file(System.getProperty("user.dir")))))
-
         val receivedConfiguration = assertRight(Configuration.load(Some(tempDirectory)))
 
         val expectedDirectory = tempDirectory / "i-am-the-current-course-directory"

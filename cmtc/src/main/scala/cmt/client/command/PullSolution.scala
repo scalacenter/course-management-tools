@@ -2,12 +2,11 @@ package cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
-import cmt.Helpers.{adaptToNixSeparatorChar, adaptToOSSeparatorChar, exerciseFileHasBeenModified, fileList, withZipFile}
+import cmt.Helpers.{adaptToNixSeparatorChar, exerciseFileHasBeenModified, withZipFile}
 import cmt.client.Configuration
 import cmt.client.Domain.StudentifiedRepo
-import cmt.client.command.{deleteCurrentState, getCurrentExerciseId}
+import cmt.client.command.getCurrentExerciseId
 import cmt.client.cli.CmtcCommand
-import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*

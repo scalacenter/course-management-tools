@@ -1,15 +1,14 @@
 package cmt.admin.command
 
 import cmt.*
-import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
-import cmt.Helpers.{ExercisesMetadata, extractExerciseNr, getExerciseMetadata, validatePrefixes}
-import cmt.admin.Domain.{ExerciseNumber, LinearizeBaseDirectory, RenumberOffset, RenumberStart, RenumberStep}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
+import cmt.Helpers.{ExercisesMetadata, getExerciseMetadata, commitToGit, exitIfGitIndexOrWorkspaceIsntClean}
+import cmt.admin.Domain.{ExerciseNumber, RenumberOffset, RenumberStart, RenumberStep}
 import cmt.admin.cli.SharedOptions
 import cmt.core.execution.Executable
 import cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import cmt.admin.command.RenumberExercises
 import cmt.admin.cli.ArgParsers.exerciseNumberArgParser
 import cmt.core.cli.CmtCommand
 
@@ -38,6 +37,7 @@ object DuplicateInsertBefore:
         val config = new CMTaConfig(mainRepository.value, options.shared.maybeConfigFile.map(_.value))
 
         for {
+          _ <- exitIfGitIndexOrWorkspaceIsntClean(mainRepository.value)
           ExercisesMetadata(exercisePrefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(
             config)
 
@@ -49,7 +49,7 @@ object DuplicateInsertBefore:
             else
               val splitIndex = exerciseNumbers.indexOf(options.exerciseNumber.value)
               val (exercisesNumsBeforeInsert, exercisesNumsAfterInsert) = exerciseNumbers.splitAt(splitIndex)
-              val (exercisesBeforeInsert, exercisesAfterInsert) = exercises.splitAt(splitIndex)
+              val (_, exercisesAfterInsert) = exercises.splitAt(splitIndex)
               if options.exerciseNumber.value + exercisesNumsAfterInsert.size <= 999 then
                 if options.exerciseNumber.value == 0 || exercisesNumsBeforeInsert.nonEmpty && exercisesNumsBeforeInsert.last == options.exerciseNumber.value - 1
                 then
@@ -67,13 +67,15 @@ object DuplicateInsertBefore:
                       options.exerciseNumber.value + 1)
                   val duplicateTo = mainRepoExerciseFolder / s"${exercisesAfterInsert.head}_copy"
                   sbtio.copyDirectory(duplicateFrom, duplicateTo)
-                  Right(s"Duplicated and inserted exercise ${options.exerciseNumber.value}")
                 else
                   val duplicateFrom = mainRepoExerciseFolder / exercisesAfterInsert.head
                   val duplicateTo =
                     mainRepoExerciseFolder / s"${renumberExercise(exercisesAfterInsert.head, exercisePrefix, options.exerciseNumber.value - 1)}_copy"
                   sbtio.copyDirectory(duplicateFrom, duplicateTo)
-                  Right(s"Duplicated and inserted exercise ${options.exerciseNumber.value}")
+                commitToGit(
+                  s"Checkpoint result of running 'ctma duplicate-insert-before -n ${options.exerciseNumber.value}'",
+                  mainRepository.value).flatMap(_ =>
+                  Right(s"Duplicated and inserted exercise ${options.exerciseNumber.value}"))
               else
                 Left(
                   "Cannot duplicate and insert an exercise as it would exceed the available exercise number space".toExecuteCommandErrorMessage)

@@ -14,7 +14,6 @@ trait ExtractUniquePathsFixture {
 
 final class ExtractUniquePathsSpec extends AnyWordSpec with Matchers with ExtractUniquePathsFixture {
 
-  import scala.util.Random
   import cmt.Helpers.extractUniquePaths
 
   "extractUniquePaths" when {

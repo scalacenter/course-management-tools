@@ -1,7 +1,6 @@
 package cmt.admin.cli
 
 import caseapp.{ExtraName, Help, HelpMessage, Parser, ValueDescription}
-import cmt.CMTaConfig
 import cmt.admin.Domain.{ConfigurationFile, MainRepository}
 import cmt.admin.cli.ArgParsers.{configurationFileArgParser, mainRepositoryArgParser}
 
@@ -17,6 +16,6 @@ final case class SharedOptions(
     maybeConfigFile: Option[ConfigurationFile] = None)
 
 object SharedOptions {
-  implicit val parser: Parser[SharedOptions] = Parser.derive
-  implicit val help: Help[SharedOptions] = Help.derive
+  given parser: Parser[SharedOptions] = Parser.derive
+  given help: Help[SharedOptions] = Help.derive
 }

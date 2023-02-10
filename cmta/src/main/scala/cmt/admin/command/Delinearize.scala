@@ -1,6 +1,6 @@
 package cmt.admin.command
 
-import caseapp.{AppName, Command, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
 import cmt.*
 import cmt.Helpers.*
 import cmt.ProcessDSL.toProcessCmd
@@ -19,7 +19,7 @@ object Delinearize:
   @CommandName("delinearize")
   @HelpMessage("'Delinearizes' an existing master repository")
   final case class Options(
-      @ExtraName("l")
+      @ExtraName("d")
       @ValueDescription("Folder which contains a 'linearized' repo of the main repo")
       linearizeBaseDirectory: LinearizeBaseDirectory,
       @Recurse shared: SharedOptions)

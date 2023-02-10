@@ -1,11 +1,9 @@
 package cmt.client.command
 
-import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.client.Configuration
 import cmt.{CMTcConfig, CmtError, printResult}
 import cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
-import cmt.client.command.GotoExercise
-import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.client.cli.ArgParsers.{forceMoveToExerciseArgParser, studentifiedRepoArgParser}
 import cmt.client.cli.CmtcCommand

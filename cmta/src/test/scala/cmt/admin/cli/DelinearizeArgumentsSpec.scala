@@ -14,15 +14,12 @@ package cmt.admin.cli
   */
 
 import caseapp.Parser
-import cmt.Helpers.adaptToOSSeparatorChar
-import cmt.{ErrorMessage, FailedToValidateArgument, Helpers, OptionName, RequiredOptionIsMissing}
+import cmt.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
 import cmt.admin.Domain.{LinearizeBaseDirectory, MainRepository}
 import cmt.admin.command.Delinearize
-import cmt.support.{CommandLineArguments, TestDirectories}
-import cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
-import org.scalatest.prop.Tables
+import cmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
-import cmt.admin.cli.ArgParsers.*
+import cmt.admin.cli.ArgParsers.linearizeBaseDirectoryArgParser
 
 final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delinearize.Options] with TestDirectories {
 
@@ -36,7 +33,7 @@ final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delineariz
       (
         Seq.empty,
         Set(
-          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
         Seq("-m", nonExistentDirectory(tempDirectory)),
@@ -47,7 +44,7 @@ final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delineariz
               ErrorMessage(s"$nonExistentFile does not exist"),
               ErrorMessage(s"$nonExistentFile is not a directory"),
               ErrorMessage(s"$nonExistentFile is not in a git repository"))),
-          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
         Seq("-m", realFile),
@@ -55,7 +52,7 @@ final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delineariz
           FailedToValidateArgument(
             OptionName("m"),
             List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
-          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
         Seq("-m", realFile),
@@ -63,24 +60,24 @@ final class DelinearizeArgumentsSpec extends CommandLineArgumentsSpec[Delineariz
           FailedToValidateArgument(
             OptionName("m"),
             List(ErrorMessage(s"$realFile is not a directory"), ErrorMessage(s"$realFile is not in a git repository"))),
-          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
         Seq("-m", tempDirectory.getAbsolutePath),
         Set(
           FailedToValidateArgument(OptionName("m"), List(ErrorMessage(s"$tempDirectory is not in a git repository"))),
-          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -d")),
           RequiredOptionIsMissing(OptionName("--main-repository, -m")))),
       (
-        Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-l", realFile),
+        Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-d", realFile),
         Set(
-          FailedToValidateArgument(OptionName("l"), List(ErrorMessage(s"$realFile is not a directory"))),
-          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -l")))))
+          FailedToValidateArgument(OptionName("d"), List(ErrorMessage(s"$realFile is not a directory"))),
+          RequiredOptionIsMissing(OptionName("--linearize-base-directory, -d")))))
   }
 
   def validArguments(tempDirectory: File) = validArgumentsTable(
     (
-      Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-l", secondRealDirectory),
+      Seq("-m", baseDirectoryGitRoot.getAbsolutePath, "-d", secondRealDirectory),
       Delinearize.Options(
         linearizeBaseDirectory = LinearizeBaseDirectory(file(secondRealDirectory)),
         shared = SharedOptions(MainRepository(baseDirectoryGitRoot), maybeConfigFile = None))))

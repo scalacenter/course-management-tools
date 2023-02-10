@@ -1,10 +1,9 @@
 package cmt.client.command
 
-import cmt.client.Domain.{ExerciseId, StudentifiedRepo, TemplatePath}
+import cmt.client.Domain.{ExerciseId, StudentifiedRepo}
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cmt.client.cli.ArgParsers.{exerciseIdArgParser, studentifiedRepoArgParser}
 import cmt.client.command.deleteCurrentState
-import cmt.client.command.Executable
 import cmt.core.validation.Validatable
 import cmt.*
 import cmt.client.Configuration
@@ -46,7 +45,6 @@ object RestoreState:
               deleteCurrentState(studentifiedRepo.value)(config)
 
               Helpers.withZipFile(config.studentifiedSavedStatesFolder, exercise.value) { solution =>
-                val files = Helpers.fileList(solution / exercise.value)
                 sbtio.copyDirectory(
                   config.studentifiedSavedStatesFolder / exercise.value,
                   config.activeExerciseFolder,

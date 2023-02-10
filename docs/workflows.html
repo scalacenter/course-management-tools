@@ -62,27 +62,27 @@ sixteen exercises. Let's have a look at what is in the master repo.</p>
 <pre><code class="hljs css language-bash">$ <span class="hljs-built_in">cd</span> lunatech-beginner-quarkus-course-v2
 
 $ ls
-code                   course-management.conf
+README.md              code                   course-management.conf slides
 
 $ ls -l code
-$ ls -l
 total 0
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_001_initial_state
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_002_a_qute_hello_world
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_003_qute_products
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_004_even_qute_products
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_005_products_from_the_database
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_006_CDI_and_ArC
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_007_Convert_endpoints_to_JSON
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_008_Adding_REST_data_Panache
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_009_Hook_up_the_React_app
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_010_Validation_and_PUT
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_011_Going_Reactive
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_012_Reactive_search_endpoint
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_013_Listen_and_Notify
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_014_Internal_Channels
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_015_Connecting_to_Kafka
-drwxr-xr-x  11 ericloots  staff  352 May  4 19:41 exercise_016_Dead_Letter_Queue_and_Stream_filtering
+drwxr-xr-x  11 ericloots  staff  352 16 Jun  2022 exercise_000_initial_state
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_001_create_a_greeting_service
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_002_a_qute_hello_world
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_003_qute_products
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_004_even_qute_products
+drwxr-xr-x  11 ericloots  staff  352 15 Jun  2022 exercise_005_products_from_the_database
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_006_CDI_and_ArC
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_007_Convert_endpoints_to_JSON
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_008_Adding_REST_data_Panache
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_009_Hook_up_the_React_app
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_010_Validation_and_PUT
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_011_Going_Reactive
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_012_Reactive_search_endpoint
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_013_Listen_and_Notify
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_014_Internal_Channels
+drwxr-xr-x  11 ericloots  staff  352 15 Jun  2022 exercise_015_Connecting_to_Kafka
+drwxr-xr-x  10 ericloots  staff  320 15 Jun  2022 exercise_016_Dead_Letter_Queue_and_Stream_filtering
 </code></pre>
 <p>As explained in the <a href="/course-management-tools/docs/getting_started#the-cmt-approach">CMT approach</a> section,
 CMT doesn't care about what build tool, if any, is used in the different exercises.
@@ -93,6 +93,7 @@ repo looks as follows:</p>
 cmt {
   <span class="hljs-built_in">test</span>-code-folders = [
     <span class="hljs-string">"src/test"</span>
+    <span class="hljs-string">"src/main/resources/META-INF/resources"</span>
   ]
 
   <span class="hljs-built_in">read</span>-me-files = [
@@ -115,13 +116,17 @@ main repo.</p>
 </blockquote>
 <p>Let's have a look at each of these settings.</p>
 <h3><a class="anchor" aria-hidden="true" id="setting-test-folders"></a><a href="#setting-test-folders" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Setting <code>test</code> folders</h3>
-<p>The first setting we find in the configuration file is <code>cmt.test-code-folders</code>. This setting is
-a list that, in the case of <code>lunatech-beginner-quarkus-course-v2</code>, contains a single item <code>src/test</code>.</p>
+<p>The first setting we find in the configuration file is <code>cmt.test-code-folders</code>. This setting
+is a list that, in the case of <code>lunatech-beginner-quarkus-course-v2</code>, contains two items,
+<code>src/test</code> and <code>src/main/resources/META-INF/resources</code>.</p>
 <p>When a student moves between different exercises, CMT will pull in any code residing in the
-folder(s) contained in this setting while leaving any other code unchanged.</p>
+folder(s) contained in this setting while leaving any other code unchanged. Before pulling
+any file, a check is made to ensure that the student hasn't modified any of the files. If
+that is the case, the command is aborted showing an appropriate error message.</p>
 <h3><a class="anchor" aria-hidden="true" id="setting-readme-files"></a><a href="#setting-readme-files" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Setting <code>README</code> files</h3>
-<p>The setting <code>cmt.read-me-file</code> is a list of files or folders (in this example a single file name
-<code>README.md</code>) that are assumed to provide exercise specific information (such as exercise instructions).</p>
+<p>The setting <code>cmt.read-me-file</code> is a list of files or folders (in this example a single file
+name <code>README.md</code>) that are assumed to provide exercise specific information (such as exercise
+instructions).</p>
 <p>As with the <code>test</code> setting, this file or files are pulled in when moving between exercises.</p>
 <h3><a class="anchor" aria-hidden="true" id="setting-files-and-folders-that-shouldnt-be-touched"></a><a href="#setting-files-and-folders-that-shouldnt-be-touched" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Setting files and folders that shouldn't be touched</h3>
 <p>When a student executes one of the <code>cmtc</code> commands, for example to move to the next exercise or to
@@ -141,13 +146,14 @@ the <a href="https://www.jetbrains.com/idea/"><em>IntelliJ IDE</em></a> we end u
 <p>A <em>studentified</em> artifact can be generated from a CMT main repository
 by running the <code>cmta studentify</code> command:</p>
 <pre><code class="hljs css language-bash">$ <span class="hljs-built_in">cd</span> lunatech-beginner-quarkus-course-v2 ; ls
-code                   course-management.conf
+README.md              code                   course-management.conf slides
 
-$ cmta studentify -f . ~/tmp/stu
+$ cmta studentify -f -m . -d ~/tmp/stu
 Studentifying /Users/ericloots/Trainingen/LBT/lunatech-beginner-quarkus-course-v2 to /Users/ericloots/tmp/stu
 &lt;elided&gt;
 Processed exercises:
-  exercise_001_initial_state
+  exercise_000_initial_state
+  exercise_001_create_a_greeting_service
   exercise_002_a_qute_hello_world
   exercise_003_qute_products
   exercise_004_even_qute_products
@@ -171,9 +177,7 @@ $ ls ~/tmp/stu/lunatech-beginner-quarkus-course-v2
 code
 
 $ ls ~/tmp/stu/lunatech-beginner-quarkus-course-v2/code
-EXERCISES.md       docker-compose.yml mvnw               pom.xml
-README.md          materials          mvnw.cmd           src
-
+README.md mvnw      mvnw.cmd  pom.xml   src
 </code></pre>
 <p>As one can see, <code>cmta studentify</code> has created a folder <code>lunatech-beginner-quarkus-course-v2</code>
 that contains a  sub-folder <code>code</code> that contains the code for the first exercise.</p>
@@ -210,7 +214,7 @@ Obviously, there's no easy way to do this directly on the CMT main
 repository and that's where <code>cmta linearize</code> and <code>cmta delinearize</code>
 come in.</li>
 </ul>
-<p>A <em>linearized</em> repo is a git repository in which each exercise in the CMT main
+<p>A <em>linearized</em> repo is a <strong><em>git</em></strong> repository in which each exercise in the CMT main
 repo repository is &quot;mapped&quot; to a commit. We will use the same main repository
 <code>lunatech-beginner-quarkus-course-v2</code> as before to illustrate the
 <em>linearize</em>/<em>delinearize</em> workflow.</p>
@@ -221,7 +225,7 @@ a CMT main repository:</p>
 <pre><code class="hljs">$ cd lunatech-beginner-quarkus-course-v2; ls
 README.md              code                   course-management.conf slides
 
-$ cmta linearize . <span class="hljs-regexp">~/tmp/</span>lin
+$ cmta linearize -f -m . -d <span class="hljs-regexp">~/tmp/</span>lin
 Linearizing <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/Trainingen/</span>LBT<span class="hljs-regexp">/lunatech-beginner-quarkus-course-v2 to /</span>Users<span class="hljs-regexp">/ericloots/</span>tmp/lin
 &lt;elided&gt;
 Successfully linearized <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/Trainingen/</span>LBT/lunatech-beginner-quarkus-course-v2
@@ -232,22 +236,23 @@ in a subfolder of <code>/Users/ericloots/tmp/lin</code> named <code>lunatech-beg
 <pre><code class="hljs"><span class="hljs-meta">$</span> <span class="hljs-string">cd ~/tmp/lin/lunatech-beginner-quarkus-course-v2</span>
 
 <span class="hljs-meta">$</span> <span class="hljs-string">git log --oneline</span>
-<span class="hljs-attr">9aed004</span> <span class="hljs-string">(HEAD -&gt; main) exercise_016_Dead_Letter_Queue_and_Stream_filtering</span>
-<span class="hljs-attr">2259623</span> <span class="hljs-string">exercise_015_Connecting_to_Kafka</span>
-<span class="hljs-attr">af38c66</span> <span class="hljs-string">exercise_014_Internal_Channels</span>
-<span class="hljs-attr">05afccd</span> <span class="hljs-string">exercise_013_Listen_and_Notify</span>
-<span class="hljs-attr">9129021</span> <span class="hljs-string">exercise_012_Reactive_search_endpoint</span>
-<span class="hljs-attr">229338a</span> <span class="hljs-string">exercise_011_Going_Reactive</span>
-<span class="hljs-attr">af2d53b</span> <span class="hljs-string">exercise_010_Validation_and_PUT</span>
-<span class="hljs-attr">76ee852</span> <span class="hljs-string">exercise_009_Hook_up_the_React_app</span>
-<span class="hljs-attr">5ce44e9</span> <span class="hljs-string">exercise_008_Adding_REST_data_Panache</span>
-<span class="hljs-attr">0544507</span> <span class="hljs-string">exercise_007_Convert_endpoints_to_JSON</span>
-<span class="hljs-attr">537d732</span> <span class="hljs-string">exercise_006_CDI_and_ArC</span>
-<span class="hljs-attr">15193f7</span> <span class="hljs-string">exercise_005_products_from_the_database</span>
-<span class="hljs-attr">4087296</span> <span class="hljs-string">exercise_004_even_qute_products</span>
-<span class="hljs-attr">a291630</span> <span class="hljs-string">exercise_003_qute_products</span>
-<span class="hljs-attr">b51a7a9</span> <span class="hljs-string">exercise_002_a_qute_hello_world</span>
-<span class="hljs-attr">6288f05</span> <span class="hljs-string">exercise_001_initial_state</span>
+<span class="hljs-attr">1367c1f</span> <span class="hljs-string">(HEAD -&gt; main) exercise_016_Dead_Letter_Queue_and_Stream_filtering</span>
+<span class="hljs-attr">95dd180</span> <span class="hljs-string">exercise_015_Connecting_to_Kafka</span>
+<span class="hljs-attr">fbec662</span> <span class="hljs-string">exercise_014_Internal_Channels</span>
+<span class="hljs-attr">70f08b3</span> <span class="hljs-string">exercise_013_Listen_and_Notify</span>
+<span class="hljs-attr">15bf03e</span> <span class="hljs-string">exercise_012_Reactive_search_endpoint</span>
+<span class="hljs-attr">5cc0865</span> <span class="hljs-string">exercise_011_Going_Reactive</span>
+<span class="hljs-attr">806da65</span> <span class="hljs-string">exercise_010_Validation_and_PUT</span>
+<span class="hljs-attr">1807b2e</span> <span class="hljs-string">exercise_009_Hook_up_the_React_app</span>
+<span class="hljs-attr">f684856</span> <span class="hljs-string">exercise_008_Adding_REST_data_Panache</span>
+<span class="hljs-attr">9a6f4bb</span> <span class="hljs-string">exercise_007_Convert_endpoints_to_JSON</span>
+<span class="hljs-attr">9d15333</span> <span class="hljs-string">exercise_006_CDI_and_ArC</span>
+<span class="hljs-attr">3f79667</span> <span class="hljs-string">exercise_005_products_from_the_database</span>
+<span class="hljs-attr">0646a82</span> <span class="hljs-string">exercise_004_even_qute_products</span>
+<span class="hljs-attr">040114e</span> <span class="hljs-string">exercise_003_qute_products</span>
+<span class="hljs-attr">88b8472</span> <span class="hljs-string">exercise_002_a_qute_hello_world</span>
+<span class="hljs-attr">b470f36</span> <span class="hljs-string">exercise_001_create_a_greeting_service</span>
+<span class="hljs-attr">289718a</span> <span class="hljs-string">exercise_000_initial_state</span>
 </code></pre>
 <p>We can observe that the last commit (HEAD) corresponds to the last exercise
 on the main repository.</p>
@@ -304,6 +309,12 @@ diagram.</p>
 <p>When making large changes, it is recommended to split these in a series
 of smaller steps. This may simplify the process of merge conflict resolution
 if these arise during the completion of the interactive rebasing process.</p>
+<blockquote>
+<p>Note: In each step of the execution of the interactive rebasing process,
+after merge conflicts have been resolved, the state of the linearized
+repo is fully functional, i.e. one can run the code, run tests, and have
+the project loaded in an IDE.</p>
+</blockquote>
 <p>Note that during the interactive rebasing process, the code can be loaded in
 an IDE to assist in the rebasing process and to test the changes.</p>
 <p>Once the refactoring of the code in the <em>linearized</em> repository is complete,
@@ -315,7 +326,7 @@ the <em>delinearization</em>:</p>
 <pre><code class="hljs">$ cd lunatech-beginner-quarkus-course-v2; ls
 README.md              code                   course-management.conf slides
 
-$ cmta delinearize . <span class="hljs-regexp">~/tmp/</span>lin
+$ cmta delinearize -m . -d <span class="hljs-regexp">~/tmp/</span>lin/lunatech-beginner-quarkus-course-v2
 De-linearizing <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/Trainingen/</span>LBT<span class="hljs-regexp">/lunatech-beginner-quarkus-course-v2 to /</span>Users<span class="hljs-regexp">/ericloots/</span>tmp/lin
 &lt;elided&gt;
 Successfully delinearised <span class="hljs-regexp">/Users/</span>ericloots<span class="hljs-regexp">/tmp/</span>lin
@@ -333,7 +344,7 @@ as many times as needed.</p>
 <li>&quot;checkpoint&quot; what we already have on the CMT master repository by committing
 it. This doesn't hurt and if needed this can be undone easily. After a number
 of smaller changes were successfully committed to the CMT main repo, these
-commits can be squashed to reduce the clutter.</li>
+commits can be squashed as desired.</li>
 <li>run the tests on all exercises. As the tooling is oblivious to the build tool
 and the testing tools used in the exercises, there's no pre-baked solution
 to automate this process.  Imagine that a CMT project uses Maven as build tool.
@@ -347,12 +358,13 @@ has been automated by integrating it in the <a href="https://github.com/lunatech
 <p><code>cmta</code> is your friend for these kind of tasks. See the following
 sections in the reference chapter:</p>
 <ul>
-<li><a href="/course-management-tools/docs/reference-cmta#cmta-dib">inserting an exercise</a></li>
-<li><a href="/course-management-tools/docs/reference-cmta#cmta-renum">renumbering exercises</a></li>
+<li><a href="/course-management-tools/docs/reference-cmta#cmta-duplicate-insert-before">inserting an exercise</a></li>
+<li><a href="/course-management-tools/docs/reference-cmta#cmta-renumber-exercises">renumbering exercises</a></li>
 </ul>
 <p>Finally, deleting an exercise is as simple as deleting the corresponding exercise
-folder.</p>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/course-management-tools/docs/getting_started"><span class="arrow-prev">← </span><span>Introduction</span></a><a class="docs-next button" href="/course-management-tools/docs/install"><span>Installation</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#introduction">Introduction</a><ul class="toc-headings"><li><a href="#setting-test-folders">Setting <code>test</code> folders</a></li><li><a href="#setting-readme-files">Setting <code>README</code> files</a></li><li><a href="#setting-files-and-folders-that-shouldnt-be-touched">Setting files and folders that shouldn't be touched</a></li></ul></li><li><a href="#studentifying-a-cmt-main-repository">Studentifying a CMT main repository</a></li><li><a href="#evolving-the-content-of-a-cmt-main-repository">Evolving the content of a CMT main repository</a></li><li><a href="#inserting-deleting-and-renumbering-exercises">Inserting, deleting, and renumbering exercises</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/course-management-tools/" class="nav-home"><img src="/course-management-tools/img/favicon.ico" alt="Course Management Tools" width="66" height="58"/></a><div><h5>Docs</h5><a href="/course-management-tools/docs/install">Getting Started</a><a href="/course-management-tools/docs/reference-intro">Reference</a></div><div><h5>Community</h5><a href="https://github.com/eloots/course-management-tools/issues" target="_blank">Open an issue or ask questions</a></div><div><h5>More</h5><a href="/course-management-tools/blog">Blog</a><a href="https://github.com/eloots/course-management-tools" target="_blank">GitHub</a><a class="github-button" href="https://github.com/eloots/course-management-tools" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div><div><img style="float:left;margin:5px" src="/course-management-tools/img/jetbrains.svg" alt="Course Management Tools" width="66" height="58"/><div><a href="https://www.jetbrains.com/?from=course-management-tools" target="_blank">JetBrains supports this project by providing core project contributors with a set of best-in-class developer tools free of charge.</a></div></div></section><section class="copyright">Copyright © 2022 Course Management Tools</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+folder, optionally followed by an exercise renumbering step to eliminate
+the gap in the exercise numbers.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/course-management-tools/docs/getting_started"><span class="arrow-prev">← </span><span>Introduction</span></a><a class="docs-next button" href="/course-management-tools/docs/install"><span>Installation</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#introduction">Introduction</a><ul class="toc-headings"><li><a href="#setting-test-folders">Setting <code>test</code> folders</a></li><li><a href="#setting-readme-files">Setting <code>README</code> files</a></li><li><a href="#setting-files-and-folders-that-shouldnt-be-touched">Setting files and folders that shouldn't be touched</a></li></ul></li><li><a href="#studentifying-a-cmt-main-repository">Studentifying a CMT main repository</a></li><li><a href="#evolving-the-content-of-a-cmt-main-repository">Evolving the content of a CMT main repository</a></li><li><a href="#inserting-deleting-and-renumbering-exercises">Inserting, deleting, and renumbering exercises</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/course-management-tools/" class="nav-home"><img src="/course-management-tools/img/favicon.ico" alt="Course Management Tools" width="66" height="58"/></a><div><h5>Docs</h5><a href="/course-management-tools/docs/install">Getting Started</a><a href="/course-management-tools/docs/reference-intro">Reference</a></div><div><h5>Community</h5><a href="https://github.com/eloots/course-management-tools/issues" target="_blank">Open an issue or ask questions</a></div><div><h5>More</h5><a href="/course-management-tools/blog">Blog</a><a href="https://github.com/eloots/course-management-tools" target="_blank">GitHub</a><a class="github-button" href="https://github.com/eloots/course-management-tools" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div><div><img style="float:left;margin:5px" src="/course-management-tools/img/jetbrains.svg" alt="Course Management Tools" width="66" height="58"/><div><a href="https://www.jetbrains.com/?from=course-management-tools" target="_blank">JetBrains supports this project by providing core project contributors with a set of best-in-class developer tools free of charge.</a></div></div></section><section class="copyright">Copyright © 2023 Course Management Tools</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;

@@ -9,8 +9,15 @@ sidebar_label: cmtc
 `cmtc` takes a command as the first parameters and it operates on a studentified
 CMT main repository.
 
+As the `cmtc` command operates on a studentified repository, this repository can
+be passed via the `-s` option. As this becomes rather laborious after a while,
+it can be set as a default for subsequent invocations of `cmtc` with the
+`cmtc set-current-course` command. Note that this will 'persist' this setting
+in the users home folder in the following location: `~/.cmt/cmt.conf`.
+
 The available commands and their function is as follows:
 
+- [`set-current-course`](#cmtc-set-current-course): set the location of the current course
 - [`list-exercises`](#cmtc-list-exercises): list exercises
 - [`next-exercise`](#cmtc-next-exercise): go to the exercise after the current one
 - [`previous-exercise`](#cmtc-previous-exercise): go to the exercise before the current one
@@ -24,11 +31,26 @@ The available commands and their function is as follows:
 
 The remainder of this section describes these commands in further detail.
 
+### cmtc set-current-course
+
+#### Synopsys
+
+`cmtc set-current-course [-h] -s <studentified repo parent folder>`
+
+#### Description
+
+Set the location of the current course making it the default for subsequent
+invocations of other `cmtc` commands.
+
+The following option is available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
 ### cmtc list-exercises
 
 #### Synopsys
 
-`cmtc list-exercises <studentified repo parent folder>`
+`cmtc list-exercises [-h] -s <studentified repo parent folder>`
 
 #### Description
 
@@ -59,11 +81,15 @@ This output shows that there are 16 exercises in the repo. It also show their
 corresponding exercise IDs. We also see that the current active exercise is
 `exercise_003_qute_products`.
 
+The following option is available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
 ### cmtc next-exercise
 
 #### Synopsys
 
-`cmtc next-exercise <studentified repo parent folder>`
+`cmtc next-exercise [-hf] -s <studentified repo parent folder>`
 
 #### Description
 
@@ -76,15 +102,24 @@ After finishing an exercise successfully (by making all tests pass), the student
 the `cmtc next-exercise` command, which pulls in the instructions and tests for the next
 exercise and the exercise solving process can continue.
 
-> Warning: this command will overwrite any modification that a student has made to tests.
+> Note: this command will check if any modifications have been made to test code files.
+> If changes are detected, the execution of the command is aborted and an error message
+> is printed that lists the modified files. The student can then decided to either force
+> the move using the `-f` option, or to move the changed file(s) to a new location.
 > Any custom tests have to be saved in a location that is not part of the configured
 > set of test code folders (see setting [`cmt.test-code-folders`](reference-config.md#test-code-folders))
+
+The following options are available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-f**: Force moving to the next exercise.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
 
 ### cmtc previous-exercise
 
 #### Synopsys
 
-`cmtc previous-exercise <studentified repo parent folder>`
+`cmtc previous-exercise [-hf] -s <studentified repo parent folder>`
 
 #### Description
 
@@ -93,11 +128,22 @@ previous exercise. Which files are pulled in is defined in settings
 [`cmt.test-code-folders`](reference-config.md#test-code-folders) and
 [`cmt.read-me-files`](reference-config.md#read-me-files). All other files are left as-is.
 
+> Note: this command will check if any modifications have been made to test code files.
+> If changes are detected, the execution of the command is aborted and an error message
+> is printed that lists the modified files. The student can then decided to either force
+> the move using the `-f` option, or to move the changed file(s) to a new location.
+
+The following options are available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-f**: Force moving to the previous exercise.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
 ### cmtc pull-solution
 
 #### Synopsys
 
-`cmtc pull-solution <studentified repo parent folder>`
+`cmtc pull-solution [-h] -s <studentified repo parent folder>`
 
 #### Description
 
@@ -109,13 +155,17 @@ They can do so by executing the `cmtc save-state` command before executing `cmtc
 Any saved state can be restored later by means of the `cmtc restore-state` command.
 
 `cmtc pull-solution` will pull _all_ files for the current exercise. As a result, all code present
-in the source code folder will be overwritten. 
+in the source code folder will be overwritten.
+
+The following option is available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
 
 ### cmtc pull-template
 
 #### Synopsys
 
-`cmtc pull-template <template file or folder> <studentified repo parent folder>`
+`cmtc pull-template [-h] -t <template file or folder> -s <studentified repo parent folder>`
 
 #### Description
 
@@ -129,11 +179,15 @@ in the context of what the course aims to teach.
 If the template is a single file, that file will be pulled from the reference solution.
 If the template is a folder, the folder and its content will be pulled recursively.
 
+The following option is available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
 ### cmtc goto-exercise
 
 #### Synopsys
 
-`cmtc goto-exercise <exercise-id> <studentified repo parent folder>`
+`cmtc goto-exercise [-hf] -e <exercise-id> -s <studentified repo parent folder>`
 
 #### Description
 
@@ -145,11 +199,22 @@ generate [compilation] errors. Hence, in a typical scenario, running this comman
 usually followed by running the `cmtc pull-solution` command to reset the state of the
 exercise to reference solution.
 
+> Note: this command will check if any modifications have been made to test code files.
+> If changes are detected, the execution of the command is aborted and an error message
+> is printed that lists the modified files. The student can then decided to either force
+> the move using the `-f` option, or to move the changed file(s) to a new location.
+
+The following options are available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-f**: Force moving to the specified exercise.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
 ### cmtc goto-first-exercise
 
 #### Synopsys
 
-`cmtc goto-first-exercise <studentified repo parent folder>`
+`cmtc goto-first-exercise [-hf] -s <studentified repo parent folder>`
 
 #### Description
 
@@ -160,11 +225,22 @@ current code and the pulled-in tests are uncorrelated and running the tests will
 generate [compilation] errors. As with the `cmtc goto-exercise` command, running this command
 will usually be followed by running a `cmtc pull-solution` command.
 
+> Note: this command will check if any modifications have been made to test code files.
+> If changes are detected, the execution of the command is aborted and an error message
+> is printed that lists the modified files. The student can then decided to either force
+> the move using the `-f` option, or to move the changed file(s) to a new location.
+
+The following options are available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-f**: Force moving to the specified exercise.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
 ### cmtc save-state
 
 #### Synopsys
 
-`cmtc save-state <studentified repo parent folder>`
+`cmtc save-state [-h] -s <studentified repo parent folder>`
 
 #### Description
 
@@ -174,11 +250,15 @@ the use-case for this command, read the section of [`cmtc pull-solution`](#cmtc-
 > Note: only _one_ state can be saved for a given exercise: if the command is executed it will
 > overwrite a previously saved state for that exercise
 
+The following option is available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
 ### cmtc list-saved-states
 
 #### Synopsys
 
-`cmtc list-saved-states <studentified repo parent folder>`
+`cmtc list-saved-states [-h] -s <studentified repo parent folder>`
 
 #### Description
 
@@ -194,13 +274,21 @@ Saved states available for exercises:
 
 The exercise IDs can be used when one wants to restore a particular exercise's state.
 
+The following option is available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
 ### cmtc restore-state
 
 #### Synopsys
 
-`cmtc restore-state <exercise-id> <studentified repo parent folder>`
+`cmtc restore-state [-h] -e <exercise-id> -s <studentified repo parent folder>`
 
 #### Description
 
 Restore the state of a previously saved exercise. For more info on
 the use-case for this command, read the section of [`cmtc pull-solution`](#cmtc-pull-solution).
+
+The following option is available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.

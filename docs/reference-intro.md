@@ -28,8 +28,8 @@ Note that, in general, a _linearized_ repository is an artifact that
 can effectively be considered to be a scratch pad and as such, it is
 discarded after having served its purpose.
 
-[`cmtc`](reference-cmtc.md), the CMT client command, operates on a
-studentified repository. It is used to "manipulate" the state of the
-latter. Examples of this are navigating between exercises, pulling one
+[`cmtc`](reference-cmtc.md), the CMT client command, mainly used by students,
+operates on a studentified repository. It is used to "manipulate" the state
+of the latter. Examples of this are navigating between exercises, pulling one
 or more files from an exercise solution into the current exercise workpace,
 etc.

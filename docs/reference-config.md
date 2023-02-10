@@ -34,21 +34,6 @@ an underscore, a 3 digit exercise sequence numner, an underscore, and an exercis
 description. The exercise prefix and the exercise description should not contain white
 space characters.
 
-### studentified-repo-solutions-folder
-
-Default value = `.cmt`
-
-`studentified-repo-solutions-folder` is the path of the folder in the studentified artifact
-in which the "solution" for all exercises is stored.
-
-### studentified-saved-states-folder
-
-Default value = `.savedStates`
-
-`studentified-saved-states-folder` is the path of the folder, relative to the
-`studentified-repo-solutions-folder` folder in which saved states for exercises
-are saved.
-
 ### studentified-repo-active-exercise-folder
 
 Default value = `code`
@@ -63,12 +48,6 @@ Default value: is the value of the `studentified-repo-active-exercise-folder` se
 
 This setting is similar to the `studentified-repo-active-exercise-folder` setting, but it
 applies to the _linearized_ CMT artifact
-
-### config-file-default-name
-
-Default value = `course-management.conf`
-
-The file name of the CMT configuration file. It is recommended to leave this value as-is.
 
 ### test-code-folders
 
@@ -88,13 +67,6 @@ Default value = ` [ "README.md" ]`
 
 A list of files or folders that contain exercise specific "Read me" information, such
 as exercise instructions, reading materials, images, etc.
-
-> NOTE: even though settings `test-code-folders` and `read-me-files` are different,
-> settings, the files and folders they refer to are handled in exactly the same way:
-> they are automatically pulled in when moving between exercises. As such, one could
-> do with just putting all test code folders (or files) and readme files (or folders)
-> in one of the two settings. The reason for splitting them across two settings is 
-> to arrange them according to their utilisation.
 
 ### cmt-studentified-dont-touch
 

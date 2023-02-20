@@ -2,9 +2,9 @@
 
 ![CI](https://github.com/eloots/course-management-tools/workflows/CI/badge.svg)
 <a href="https://github.com/eloots/course-management-tools/releases/latest">
-![Latest](https://img.shields.io/github/v/release/eloots/course-management-tools?label=latest%20version)
+![Latest](https://img.shields.io/github/v/release/lunatech-labs/course-management-tools?label=latest%20version)
 </a>
 
 ## Documentation
 
-See the website: https://eloots.github.io/course-management-tools/
+See the website: https://lunatech-labs.github.io/course-management-tools/

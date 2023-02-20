@@ -36,5 +36,5 @@ jobs:
 
       - name: Publish docs to Github Pages 🚀
         env:
-          GITHUB_DEPLOY_KEY: ${{secrets.GIT_DEPLOY_KEY}}
+          GIT_DEPLOY_KEY: ${{secrets.GIT_DEPLOY_KEY}}
         run: sbt "docs/docusaurusPublishGhpages"

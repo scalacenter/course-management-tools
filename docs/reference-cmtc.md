@@ -9,8 +9,8 @@ sidebar_label: cmtc
 `cmtc` takes a command as the first parameters and it operates on a studentified
 CMT main repository.
 
-As the `cmtc` command operates on a studentified repository, this repository can
-be passed via the `-s` option. As this becomes rather laborious after a while,
+As the `cmtc` command operates on a studentified repository, this repository can be
+passed via the `-s` option. As this becomes rather laborious after a while,
 it can be set as a default for subsequent invocations of `cmtc` with the
 `cmtc set-current-course` command. Note that this will 'persist' this setting
 in the users home folder in the following location: `~/.cmt/cmt.conf`.

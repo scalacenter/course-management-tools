@@ -8,7 +8,8 @@ sidebar_label: Introduction
 
 ![The premise](https://i.imgur.com/52a0JhX.png)
 
-The Course Management Tools (CMT) simplify the process of setting up and maintaining programming exercises for training courses.
+The Course Management Tools (CMT) simplify the process of setting up
+and maintaining programming exercises for training courses.
 
 It starts from the premise that a complex problem can be broken down into smaller pieces that can be digested easily and learned by an individual. For a given domain, a course may build a service in small steps in a series of exercises where each exercise builds on the content of the exercise preceding it.
 

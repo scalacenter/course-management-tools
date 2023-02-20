@@ -7,6 +7,9 @@ on:
       - "website/**"
       - "images/**"
 
+permissions:
+  pages: write
+
 jobs:
   publish-docs:
     runs-on: ubuntu-latest

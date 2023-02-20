@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 11
         uses: actions/setup-java@v3
@@ -29,7 +31,10 @@ jobs:
         with:
           node-version: '12'
 
+      - uses: olafurpg/setup-scala@v13
+      - uses: olafurpg/setup-gpg@v3
+
       - name: Publish docs to Github Pages 🚀
+        run: sbt '++2.12.17 docs/docusaurusPublishGhpages'
         env:
-          GIT_DEPLOY_KEY: ${{secrets.GIT_DEPLOY_KEY}}
-        run: sbt "docs/docusaurusPublishGhpages"
+          GIT_DEPLOY_KEY: ${{ secrets.GIT_DEPLOY_KEY }}

@@ -18,6 +18,7 @@ object NextExercise:
   @CommandName("next-exercise")
   @HelpMessage("Move to the next exercise. Pull in tests and readme files for that exercise")
   final case class Options(
+      @ExtraName("f")
       force: ForceMoveToExercise = ForceMoveToExercise(false),
       @ExtraName("s")
       studentifiedRepo: Option[StudentifiedRepo] = None)

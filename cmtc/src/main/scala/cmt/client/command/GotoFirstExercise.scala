@@ -15,6 +15,7 @@ object GotoFirstExercise:
   @CommandName("goto-first-exercise")
   @HelpMessage("Move to the first exercise. Pull in tests and readme files for that exercise")
   final case class Options(
+      @ExtraName("f")
       force: ForceMoveToExercise = ForceMoveToExercise(false),
       @ExtraName("s")
       studentifiedRepo: Option[StudentifiedRepo] = None)

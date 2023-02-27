@@ -9,6 +9,7 @@ object Version {
   val typesafeConfig = "1.4.2"
   val caseapp = "2.1.0-M21"
   val cats = "2.8.0"
+  val devDirs = "26"
 }
 
 object Library {
@@ -19,12 +20,13 @@ object Library {
   val commonsCodec = "commons-codec" % "commons-codec" % "1.15"
   val caseapp = "com.github.alexarchambault" %% "case-app" % Version.caseapp
   val cats = "org.typelevel" %% "cats-core" % Version.cats
+  val devDirs = ("dev.dirs" % "directories" % Version.devDirs).withJavadoc()
 }
 
 object Dependencies {
 
   import Library._
 
-  val cmtDependencies = List(sbtio, typesafeConfig, scalaTest, scalaCheck, commonsCodec, caseapp, cats)
+  val cmtDependencies = List(sbtio, typesafeConfig, scalaTest, scalaCheck, commonsCodec, caseapp, cats, devDirs).map(_.withSources())
 
 }

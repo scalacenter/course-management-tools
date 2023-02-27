@@ -1,7 +1,7 @@
 package cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import cmt.client.Configuration
+import cmt.client.{Configuration, listExercises}
 import cmt.client.Domain.StudentifiedRepo
 import cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen}
 import cmt.client.command.{getCurrentExerciseId, starCurrentExercise}
@@ -30,14 +30,7 @@ object ListExercises:
     extension (options: ListExercises.Options)
       def execute(configuration: Configuration): Either[CmtError, String] = {
         val config = new CMTcConfig(options.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
-        val currentExerciseId = getCurrentExerciseId(config.bookmarkFile)
-
-        val messages = config.exercises.zipWithIndex
-          .map { case (exName, index) =>
-            toConsoleGreen(f"${index + 1}%3d. ${starCurrentExercise(currentExerciseId, exName)}  $exName")
-          }
-          .mkString("\n")
-        Right(messages)
+        Right(listExercises(config))
       }
     end extension
   end given

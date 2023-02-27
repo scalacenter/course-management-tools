@@ -17,6 +17,8 @@ import cmt.Helpers.{adaptToNixSeparatorChar, adaptToOSSeparatorChar}
 import scala.jdk.CollectionConverters.*
 import scala.util.{Failure, Success, Try}
 
+import dev.dirs.ProjectDirectories
+
 final case class Configuration(
     homeDirectory: CmtHome,
     coursesDirectory: CoursesDirectory,
@@ -49,16 +51,15 @@ object Configuration:
   }
   final case class CmtCoursesHome(value: File)
 
-  val UserHomeDir = System.getProperty("user.home")
-  val CmtHomeDirectoryName = ".cmt"
+  private val projectDirectories = ProjectDirectories.from("com", "lunatech", "cmt")
+  val UserConfigDir = projectDirectories.configDir
   val CmtGlobalConfigName = "cmt.conf"
-  val DefaultCmtHome = s"$UserHomeDir/$CmtHomeDirectoryName"
   val CoursesDirectoryToken = "COURSES_DIRECTORY"
   val CurrentCourseToken = "CURRENT_COURSE"
   val DefaultConfigFileName = "config.default.conf"
   val CmtHomeEnvKey = "CMT_HOME"
 
-  val DefaultCmtCoursesHome = s"$UserHomeDir/Courses"
+  val DefaultCmtCoursesHome = s"${projectDirectories.cacheDir}/Courses"
   val CmtCoursesHomeEnvKey = "CMT_COURSES_HOME"
 
   private def globalConfigFile(cmtHome: CmtHome): CmtGlobalConfigFile =
@@ -82,9 +83,9 @@ object Configuration:
     */
   def load(homeDirectory: Option[File] = None): Either[CmtError, Configuration] = {
     val cmtHomePath = homeDirectory
-      .map(home => adaptToOSSeparatorChar(s"$home/$CmtHomeDirectoryName"))
+      .map(home => adaptToOSSeparatorChar(UserConfigDir))
       .orElse(System.getenv().asScala.get(CmtHomeEnvKey))
-      .getOrElse(DefaultCmtHome)
+      .getOrElse(UserConfigDir)
     val cmtHome = CmtHome(file(cmtHomePath))
 
     val cmtCourseDirectoryPath = homeDirectory
@@ -137,10 +138,6 @@ object Configuration:
       val currentCourse = CurrentCourse(StudentifiedRepo(file(System.getProperty("user.dir"))))
       val configuration = Configuration(cmtHome, CoursesDirectory(cmtCoursesHome.value), currentCourse)
       configuration.flush()
-//      writeGlobalConfig(
-//        configFile,
-//        _.replaceAll(CoursesDirectoryToken, s""""${adaptToNixSeparatorChar(cmtCoursesHome.value.getAbsolutePath)}"""")
-//          .replaceAll(CurrentCourseToken, s""""${adaptToNixSeparatorChar(System.getProperty("user.dir"))}""""))
     }
   }
 

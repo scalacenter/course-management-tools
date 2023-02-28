@@ -81,7 +81,6 @@ object Configuration:
     * @return
     */
   def load(): Either[CmtError, Configuration] = {
-    val homeDirectory: Option[File] = None
     val cmtHomePath = System.getenv().asScala.getOrElse(CmtHomeEnvKey, UserConfigDir)
     val cmtHome = CmtHome(file(cmtHomePath))
 

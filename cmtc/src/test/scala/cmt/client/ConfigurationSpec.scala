@@ -49,7 +49,9 @@ final class ConfigurationSpec extends AnyWordSpecLike with Matchers with BeforeA
       val projectDirectories = ProjectDirectories.from("com", "lunatech", "cmt")
       val configDir = file(projectDirectories.configDir)
       val cacheDir = file(projectDirectories.cacheDir)
+      println(s"configDir = $configDir")
       println(s"cacheDir = $cacheDir")
+      println(s"CoursesDirectory = ${cacheDir / "Courses"}")
       val expectedConfiguration = Configuration(
         CmtHome(configDir),
         CoursesDirectory(cacheDir / "Courses"),

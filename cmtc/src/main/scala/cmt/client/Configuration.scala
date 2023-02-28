@@ -56,7 +56,6 @@ object Configuration:
   val CmtGlobalConfigName = "cmt.conf"
   val CoursesDirectoryToken = "COURSES_DIRECTORY"
   val CurrentCourseToken = "CURRENT_COURSE"
-  val DefaultConfigFileName = "config.default.conf"
   val CmtHomeEnvKey = "CMT_HOME"
 
   val DefaultCmtCoursesHome = s"${projectDirectories.cacheDir}/Courses"
@@ -81,17 +80,12 @@ object Configuration:
     * located at `$HOME/Courses` but this can also be overridden with an environment variable `CMT_COURSE_HOME`
     * @return
     */
-  def load(homeDirectory: Option[File] = None): Either[CmtError, Configuration] = {
-    val cmtHomePath = homeDirectory
-      .map(home => adaptToOSSeparatorChar(UserConfigDir))
-      .orElse(System.getenv().asScala.get(CmtHomeEnvKey))
-      .getOrElse(UserConfigDir)
+  def load(): Either[CmtError, Configuration] = {
+    val homeDirectory: Option[File] = None
+    val cmtHomePath = System.getenv().asScala.getOrElse(CmtHomeEnvKey, UserConfigDir)
     val cmtHome = CmtHome(file(cmtHomePath))
 
-    val cmtCourseDirectoryPath = homeDirectory
-      .map(home => adaptToOSSeparatorChar(s"$home/Courses"))
-      .orElse(System.getenv().asScala.get(CmtCoursesHomeEnvKey))
-      .getOrElse(DefaultCmtCoursesHome)
+    val cmtCourseDirectoryPath = System.getenv().asScala.getOrElse(CmtCoursesHomeEnvKey, DefaultCmtCoursesHome)
     val cmtCoursesHome = CmtCoursesHome(file(cmtCourseDirectoryPath))
 
     load(cmtHome, cmtCoursesHome)
@@ -111,35 +105,33 @@ object Configuration:
     Configuration(cmtHome, coursesDirectory, currentCourse)
   }
 
-  private def createIfNotExists(cmtHome: CmtHome, cmtCoursesHome: CmtCoursesHome): Unit = {
+  private def createIfNotExists(cmtHome: CmtHome, cmtCoursesHome: CmtCoursesHome): Unit =
     createCourseHomeIfNotExists(cmtCoursesHome)
     createCmtHomeIfNotExists(cmtHome)
     createDefaultConfigIfNotExists(cmtHome, cmtCoursesHome)
-  }
 
   private def createCourseHomeIfNotExists(cmtCoursesHome: CmtCoursesHome): Unit =
     if (!cmtCoursesHome.value.exists()) {
       printMessage(
         s"the CMT_COURSES_HOME directory at '${cmtCoursesHome.value.getAbsolutePath}' does not exist, creating it")
-      cmtCoursesHome.value.mkdir()
+      sbt.io.IO.createDirectory(cmtCoursesHome.value)
     }
 
   private def createCmtHomeIfNotExists(cmtHome: CmtHome): Unit =
     if (!cmtHome.value.exists()) {
       printMessage(s"the CMT_HOME directory at '${cmtHome.value.getAbsolutePath}' does not exist, creating it")
-      cmtHome.value.mkdir()
+      sbt.io.IO.createDirectory(cmtHome.value)
     }
 
-  private def createDefaultConfigIfNotExists(cmtHome: CmtHome, cmtCoursesHome: CmtCoursesHome): Unit = {
+  private def createDefaultConfigIfNotExists(cmtHome: CmtHome, cmtCoursesHome: CmtCoursesHome): Unit =
     val configFile = globalConfigFile(cmtHome)
     if (!configFile.value.exists()) {
       printMessage(
         s"global configuration file is missing from '${configFile.value.getAbsolutePath}' creating it with default values")
-      val currentCourse = CurrentCourse(StudentifiedRepo(file(System.getProperty("user.dir"))))
+      val currentCourse = CurrentCourse(StudentifiedRepo(cmtCoursesHome.value))
       val configuration = Configuration(cmtHome, CoursesDirectory(cmtCoursesHome.value), currentCourse)
       configuration.flush()
     }
-  }
 
   private def writeGlobalConfig(cmtGlobalConfigFile: CmtGlobalConfigFile, replaceTokens: String => String): Unit = {
     val configStrToWrite = replaceTokens(configStringTemplate)

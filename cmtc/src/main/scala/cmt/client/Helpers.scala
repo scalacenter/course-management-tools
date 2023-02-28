@@ -6,7 +6,7 @@ import sbt.io.syntax.*
 extension (f: File)
   // Gets the parent folder of this folder but return this
   // folder if it's a root folder
-  private def getParentSafe: File =
+  def getParentOrSelf: File =
     val pf = f.getParentFile()
     if (pf == null) f else pf
 
@@ -28,7 +28,7 @@ def findStudentRepoRoot(path: File): Either[CmtError, File] =
   def findStudentRepoRootRecurse(path: File): Option[File] =
     if (path.isDirectory() && isStudentifiedRepo(path)) Some(path)
     else
-      val pf = path.getParentSafe
+      val pf = path.getParentOrSelf
       if (path == pf)
         None
       else

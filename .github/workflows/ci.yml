@@ -94,10 +94,9 @@ jobs:
             ${{ runner.os }}-
 
       - name: Run tests
-        shell: cmd
+        shell: pwsh
         run: |
-          cd CMT &&
-          sbt test
+          cd CMT; sbt test
 
   create-release:
     runs-on: ubuntu-latest

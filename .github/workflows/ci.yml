@@ -94,7 +94,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Run tests
-        shell: pwsh
+        shell: cmd
         run: |
           cd CMT &&
           sbt test

@@ -23,6 +23,7 @@ lazy val cmtc = project
   .enablePlugins(NativeImagePlugin)
   .dependsOn(core, core % "test->test")
   .settings(commonSettings: _*)
+  .settings(libraryDependencies ++= Dependencies.cmtcDependencies)
   .settings(Compile / mainClass := Some("cmt.client.Main"))
   .settings(buildInfoKeys := buildKeysWithName("Course Management Tools (Client)"))
 

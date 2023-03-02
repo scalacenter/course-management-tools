@@ -15,7 +15,7 @@ object Build {
   }
 
   lazy val commonSettings = Seq(
-    organization := "com.github.eloots",
+    organization := "com.github.lunatech-labs",
     version := "2.0.0-SNAPSHOT",
     scalaVersion := Version.scalaVersion,
     scalacOptions ++= CompileOptions.compileOptions,

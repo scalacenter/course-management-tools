@@ -1,14 +1,14 @@
 package cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import cmt.{CmtError, printResult}
-import cmt.client.{Configuration, CurrentCourse}
 import cmt.client.Domain.StudentifiedRepo
-import cmt.client.cli.CmtcCommand
-import cmt.core.validation.Validatable
-import cmt.core.cli.enforceNoTrailingArguments
-import sbt.io.syntax.*
 import cmt.client.cli.ArgParsers.studentifiedRepoArgParser
+import cmt.client.cli.CmtcCommand
+import cmt.client.{Configuration, CurrentCourse, findStudentRepoRoot, listExercises}
+import cmt.core.cli.enforceNoTrailingArguments
+import cmt.core.validation.Validatable
+import cmt.{CMTcConfig, CmtError, printResult}
+import sbt.io.syntax.*
 
 object SetCurrentCourse:
 
@@ -29,10 +29,17 @@ object SetCurrentCourse:
   given Executable[SetCurrentCourse.Options] with
     extension (options: SetCurrentCourse.Options)
       def execute(configuration: Configuration): Either[CmtError, String] =
-        configuration
-          .copy(currentCourse = CurrentCourse(options.directory))
-          .flush()
-          .map(_ => s"Current course set to '${options.directory.value.getAbsolutePath}'")
+        for {
+          studentRepoRoot <- findStudentRepoRoot(options.directory.value)
+          formattedExerciseList = listExercises(new CMTcConfig(studentRepoRoot))
+          currentCourse <- configuration
+            .copy(currentCourse = CurrentCourse(StudentifiedRepo(studentRepoRoot)))
+            .flush()
+            .map(_ => s"""Current course set to '${studentRepoRoot.getAbsolutePath}'
+                 |
+                 |Exercises in repository:
+                 |$formattedExerciseList""".stripMargin)
+        } yield currentCourse
 
   val command = new CmtcCommand[SetCurrentCourse.Options] {
 

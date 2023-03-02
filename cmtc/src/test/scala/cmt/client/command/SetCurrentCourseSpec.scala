@@ -85,12 +85,6 @@ final class SetCurrentCourseSpec
   val configFile: File = file(Configuration.UserConfigDir) / Configuration.CmtGlobalConfigName
   var savedCmtConfig: Option[String] =
     if (configFile.isFile)
-      val l = sbtio.readLines(configFile, StandardCharsets.UTF_8).mkString("\n")
-      println(s"""
-           |
-           |Config:
-           |$l
-           |""".stripMargin)
       Some(sbtio.readLines(configFile, StandardCharsets.UTF_8).mkString("\n"))
     else None
 

@@ -20,12 +20,6 @@ final class ConfigurationSpec extends AnyWordSpecLike with Matchers with BeforeA
   val configFile = file(Configuration.UserConfigDir) / Configuration.CmtGlobalConfigName
   var savedCmtConfig: Option[String] =
     if (configFile.isFile)
-      val l = sbtio.readLines(configFile, StandardCharsets.UTF_8).mkString("\n")
-      println(s"""
-           |
-           |Config:
-           |$l
-           |""".stripMargin)
       Some(sbtio.readLines(configFile, StandardCharsets.UTF_8).mkString("\n"))
     else None
 
@@ -33,7 +27,6 @@ final class ConfigurationSpec extends AnyWordSpecLike with Matchers with BeforeA
     super.beforeEach()
     tempDirectory = sbtio.createTemporaryDirectory
     sbt.io.IO.delete(configFile)
-    println(s"tempDirectory = $tempDirectory")
   }
 
   override def afterEach(): Unit = {
@@ -49,9 +42,6 @@ final class ConfigurationSpec extends AnyWordSpecLike with Matchers with BeforeA
       val projectDirectories = ProjectDirectories.from("com", "lunatech", "cmt")
       val configDir = file(projectDirectories.configDir)
       val cacheDir = file(projectDirectories.cacheDir)
-      println(s"configDir = $configDir")
-      println(s"cacheDir = $cacheDir")
-      println(s"CoursesDirectory = ${cacheDir / "Courses"}")
       val expectedConfiguration = Configuration(
         CmtHome(configDir),
         CoursesDirectory(cacheDir / "Courses"),

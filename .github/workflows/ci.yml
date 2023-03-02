@@ -156,7 +156,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_DEPLOY_KEY: ${{ secrets.GIT_DEPLOY_KEY }}
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
@@ -166,7 +166,7 @@ jobs:
       - name: Upload assets to Github release
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_DEPLOY_KEY: ${{ secrets.GIT_DEPLOY_KEY }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./course-management-tools.zip

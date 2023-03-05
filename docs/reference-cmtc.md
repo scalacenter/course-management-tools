@@ -40,7 +40,31 @@ The remainder of this section describes these commands in further detail.
 #### Description
 
 Set the location of the current course making it the default for subsequent
-invocations of other `cmtc` commands.
+invocations of other `cmtc` commands. For example:
+
+```bash
+$ cmtc set-current-course -s ~/tmp/stu/lunatech-beginner-quarkus-course-v2
+Current course set to '/Users/ericloots/tmp/stu/lunatech-beginner-quarkus-course-v2'
+
+Exercises in repository:
+  1.  *   exercise_000_initial_state
+  2.      exercise_001_create_a_greeting_service
+  3.      exercise_002_a_qute_hello_world
+  4.      exercise_003_qute_products
+  5.      exercise_004_even_qute_products
+  6.      exercise_005_products_from_the_database
+  7.      exercise_006_CDI_and_ArC
+  8.      exercise_007_Convert_endpoints_to_JSON
+  9.      exercise_008_Adding_REST_data_Panache
+ 10.      exercise_009_Hook_up_the_React_app
+ 11.      exercise_010_Validation_and_PUT
+ 12.      exercise_011_Going_Reactive
+ 13.      exercise_012_Reactive_search_endpoint
+ 14.      exercise_013_Listen_and_Notify
+ 15.      exercise_014_Internal_Channels
+ 16.      exercise_015_Connecting_to_Kafka
+ 17.      exercise_016_Dead_Letter_Queue_and_Stream_filtering
+```
 
 The following option is available:
 
@@ -55,10 +79,11 @@ The following option is available:
 #### Description
 
 Generate a list of all exercises in the exercise series. A `*` is used to indicate
-the exercise that is currently active. For example:
+the exercise that is currently active. For example (assuming the current course
+has been set via `cmtc set-current-course -s ...`):
 
 ```bash
-$ cmtc list-exercises ~/tmp/stu/lunatech-beginner-quarkus-course-v2
+$ cmtc list-exercises
   1.      exercise_001_initial_state
   2.      exercise_002_a_qute_hello_world
   3.  *   exercise_003_qute_products
@@ -262,10 +287,11 @@ The following option is available:
 
 #### Description
 
-Print a list of exercise IDs for all saved states. For example:
+Print a list of exercise IDs for all saved states. For example (assuming the current course
+has been set via `cmtc set-current-course -s ...`):
 
 ```bash
-$ cmtc list-saved-states .
+$ cmtc list-saved-states
 Saved states available for exercises:
 
    exercise_003_qute_products

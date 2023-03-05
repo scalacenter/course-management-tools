@@ -7,4 +7,4 @@
 
 ## Documentation
 
-See the website: https://lunatech-labs.github.io/course-management-tools/
+See the website: http://cmt.lunatech.com

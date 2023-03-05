@@ -82,7 +82,29 @@ in the users home folder in the following location: <code>~/.cmt/cmt.conf</code>
 <p><code>cmtc set-current-course [-h] -s &lt;studentified repo parent folder&gt;</code></p>
 <h4><a class="anchor" aria-hidden="true" id="description"></a><a href="#description" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Description</h4>
 <p>Set the location of the current course making it the default for subsequent
-invocations of other <code>cmtc</code> commands.</p>
+invocations of other <code>cmtc</code> commands. For example:</p>
+<pre><code class="hljs css language-bash">$ cmtc <span class="hljs-built_in">set</span>-current-course -s ~/tmp/stu/lunatech-beginner-quarkus-course-v2
+Current course <span class="hljs-built_in">set</span> to <span class="hljs-string">'/Users/ericloots/tmp/stu/lunatech-beginner-quarkus-course-v2'</span>
+
+Exercises <span class="hljs-keyword">in</span> repository:
+  1.  *   exercise_000_initial_state
+  2.      exercise_001_create_a_greeting_service
+  3.      exercise_002_a_qute_hello_world
+  4.      exercise_003_qute_products
+  5.      exercise_004_even_qute_products
+  6.      exercise_005_products_from_the_database
+  7.      exercise_006_CDI_and_ArC
+  8.      exercise_007_Convert_endpoints_to_JSON
+  9.      exercise_008_Adding_REST_data_Panache
+ 10.      exercise_009_Hook_up_the_React_app
+ 11.      exercise_010_Validation_and_PUT
+ 12.      exercise_011_Going_Reactive
+ 13.      exercise_012_Reactive_search_endpoint
+ 14.      exercise_013_Listen_and_Notify
+ 15.      exercise_014_Internal_Channels
+ 16.      exercise_015_Connecting_to_Kafka
+ 17.      exercise_016_Dead_Letter_Queue_and_Stream_filtering
+</code></pre>
 <p>The following option is available:</p>
 <p>    <strong>-h</strong>: Print command-specific help.</p>
 <h3><a class="anchor" aria-hidden="true" id="cmtc-list-exercises"></a><a href="#cmtc-list-exercises" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>cmtc list-exercises</h3>
@@ -90,8 +112,9 @@ invocations of other <code>cmtc</code> commands.</p>
 <p><code>cmtc list-exercises [-h] -s &lt;studentified repo parent folder&gt;</code></p>
 <h4><a class="anchor" aria-hidden="true" id="description-1"></a><a href="#description-1" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Description</h4>
 <p>Generate a list of all exercises in the exercise series. A <code>*</code> is used to indicate
-the exercise that is currently active. For example:</p>
-<pre><code class="hljs css language-bash">$ cmtc list-exercises ~/tmp/stu/lunatech-beginner-quarkus-course-v2
+the exercise that is currently active. For example (assuming the current course
+has been set via <code>cmtc set-current-course -s ...</code>):</p>
+<pre><code class="hljs css language-bash">$ cmtc list-exercises
   1.      exercise_001_initial_state
   2.      exercise_002_a_qute_hello_world
   3.  *   exercise_003_qute_products
@@ -236,8 +259,9 @@ overwrite a previously saved state for that exercise</p>
 <h4><a class="anchor" aria-hidden="true" id="synopsys-9"></a><a href="#synopsys-9" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Synopsys</h4>
 <p><code>cmtc list-saved-states [-h] -s &lt;studentified repo parent folder&gt;</code></p>
 <h4><a class="anchor" aria-hidden="true" id="description-9"></a><a href="#description-9" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Description</h4>
-<p>Print a list of exercise IDs for all saved states. For example:</p>
-<pre><code class="hljs css language-bash">$ cmtc list-saved-states .
+<p>Print a list of exercise IDs for all saved states. For example (assuming the current course
+has been set via <code>cmtc set-current-course -s ...</code>):</p>
+<pre><code class="hljs css language-bash">$ cmtc list-saved-states
 Saved states available <span class="hljs-keyword">for</span> exercises:
 
    exercise_003_qute_products

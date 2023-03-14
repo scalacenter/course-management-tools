@@ -22,7 +22,7 @@ class CMTcConfig(studentifiedRepo: File):
   import Helpers.adaptToOSSeparatorChar
 
   private val cmtConfigFile = studentifiedRepo / ".cmt/.cmt-config"
-  if !cmtConfigFile.exists then printErrorAndExit("Missing CMT configuration file, have you set your current course?")
+  if !cmtConfigFile.exists then printErrorAndExit("Course not set. Please use cmtc set-current-course command to set one.")
 
   val cmtSettings: Config = ConfigFactory.parseFile(cmtConfigFile)
 

@@ -11,7 +11,7 @@ object Version:
   @AppName("version")
   @CommandName("version")
   @HelpMessage(
-    "'Studentifies' an existing repository - taking the 'main' repository and creating a CMT project in the target directory")
+    "Print version info")
   final case class Options()
 
   given Validatable[Version.Options] with

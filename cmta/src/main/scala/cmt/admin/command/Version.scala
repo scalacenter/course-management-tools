@@ -10,8 +10,7 @@ import cmt.version.BuildInfo
 object Version:
   @AppName("version")
   @CommandName("version")
-  @HelpMessage(
-    "Print version info")
+  @HelpMessage("Print version info")
   final case class Options()
 
   given Validatable[Version.Options] with

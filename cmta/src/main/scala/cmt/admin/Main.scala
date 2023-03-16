@@ -14,7 +14,7 @@ package cmt.admin
   */
 
 import caseapp.core.app.{CommandsEntryPoint}
-import cmt.admin.command.{Delinearize, DuplicateInsertBefore, Linearize, RenumberExercises, Studentify}
+import cmt.admin.command.{Delinearize, DuplicateInsertBefore, Linearize, RenumberExercises, Studentify, Version}
 
 object Main extends CommandsEntryPoint:
   override def progName = "cmta"
@@ -23,4 +23,5 @@ object Main extends CommandsEntryPoint:
     DuplicateInsertBefore.command,
     Linearize.command,
     RenumberExercises.command,
-    Studentify.command)
+    Studentify.command,
+    Version.command)

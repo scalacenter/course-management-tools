@@ -15,6 +15,7 @@ import cmt.admin.cli.ArgParsers.{
   initializeGitRepoArgParser,
   studentifyBaseDirectoryArgParser
 }
+import cmt.core.GeneratorInfo
 import cmt.core.cli.CmtCommand
 import cmt.toExecuteCommandErrorMessage
 
@@ -122,7 +123,11 @@ object Studentify:
 
       hideExercises(cleanedMainRepo, solutionsFolder, exercises)(config)
 
-      writeStudentifiedCMTConfig(studentifiedRootFolder / config.cmtStudentifiedConfigFile, exercises)(config)
+      import cmt.version.BuildInfo
+      val generatorInfo = GeneratorInfo(BuildInfo.name, BuildInfo.version)
+      writeStudentifiedCMTConfig(studentifiedRootFolder / config.cmtStudentifiedConfigFile, exercises)(
+        config,
+        generatorInfo)
       writeStudentifiedCMTBookmark(studentifiedRootFolder / config.studentifiedRepoBookmarkFile, exercises.head)
 
       val successMessage = exercises.mkString("Processed exercises:\n  ", "\n  ", "\n")

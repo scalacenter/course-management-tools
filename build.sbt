@@ -15,7 +15,7 @@ lazy val cmta = project
   .dependsOn(core, core % "test->test")
   .settings(commonSettings: _*)
   .settings(Compile / mainClass := Some("cmt.admin.Main"))
-  .settings(buildInfoKeys := buildKeysWithName("Course Management Tools (Admin)"))
+  .settings(buildInfoKeys := buildKeysWithName("cmta:Course Management Tools (Admin)"))
 
 lazy val cmtc = project
   .in(file("cmtc"))

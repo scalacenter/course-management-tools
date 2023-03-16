@@ -14,6 +14,7 @@ package cmt
   */
 
 import cmt.ProcessDSL.ProcessCmd
+import cmt.core.GeneratorInfo
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
@@ -165,8 +166,13 @@ object Helpers:
     import java.nio.file.Files
     Files.write(file.toPath, string.getBytes(StandardCharsets.UTF_8))
 
-  def writeStudentifiedCMTConfig(configFile: File, exercises: Seq[String])(config: CMTaConfig): Unit =
+  def writeStudentifiedCMTConfig(configFile: File, exercises: Seq[String])(
+      config: CMTaConfig,
+      generatorInfo: GeneratorInfo): Unit =
     val configMap = Map(
+      "generator-info" -> Map(
+        "generator-name" -> generatorInfo.generatorName,
+        "generator-version" -> generatorInfo.generatorVersion).asJava,
       "studentified-repo-solutions-folder" -> config.studentifiedRepoSolutionsFolder,
       "studentified-saved-states-folder" -> config.studentifiedSavedStatesFolder,
       "studentified-repo-bookmark-file" -> config.studentifiedRepoBookmarkFile,

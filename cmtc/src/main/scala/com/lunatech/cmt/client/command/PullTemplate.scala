@@ -1,7 +1,14 @@
 package com.lunatech.cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import com.lunatech.cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
+import com.lunatech.cmt.{
+  CMTcConfig,
+  CmtError,
+  printResult,
+  toConsoleGreen,
+  toConsoleYellow,
+  toExecuteCommandErrorMessage
+}
 import com.lunatech.cmt.Helpers.withZipFile
 import com.lunatech.cmt.client.Configuration
 import com.lunatech.cmt.client.Domain.{StudentifiedRepo, TemplatePath}

@@ -2,7 +2,12 @@ package com.lunatech.cmt.admin.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Name, Recurse, RemainingArgs, ValueDescription}
 import com.lunatech.cmt.Helpers.*
-import com.lunatech.cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, MainRepository, StudentifyBaseDirectory}
+import com.lunatech.cmt.admin.Domain.{
+  ForceDeleteDestinationDirectory,
+  InitializeGitRepo,
+  MainRepository,
+  StudentifyBaseDirectory
+}
 import com.lunatech.cmt.core.execution.Executable
 import com.lunatech.cmt.{CMTaConfig, CmtError, printResult, toConsoleGreen}
 import sbt.io.IO as sbtio
@@ -63,7 +68,9 @@ object Studentify:
               extractUniquePaths(config.testCodeFolders.to(List) ++ config.readMeFiles.to(List))
             if (redundantPaths.nonEmpty)
               for (redundantPath <- redundantPaths)
-                println(com.lunatech.cmt.toConsoleYellow(s"WARNING: Redundant path detected in CMT configuration: $redundantPath"))
+                println(
+                  com.lunatech.cmt
+                    .toConsoleYellow(s"WARNING: Redundant path detected in CMT configuration: $redundantPath"))
 
           checkForOverlappingPathsInConfig()
 

@@ -1,14 +1,25 @@
 package com.lunatech.cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import com.lunatech.cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
+import com.lunatech.cmt.{
+  CMTcConfig,
+  CmtError,
+  printResult,
+  toConsoleGreen,
+  toConsoleYellow,
+  toExecuteCommandErrorMessage
+}
 import com.lunatech.cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
 import com.lunatech.cmt.client.Configuration
 import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
 import com.lunatech.cmt.client.command.getCurrentExerciseId
 import com.lunatech.cmt.core.validation.Validatable
 import sbt.io.syntax.*
-import com.lunatech.cmt.client.cli.ArgParsers.{exerciseIdArgParser, forceMoveToExerciseArgParser, studentifiedRepoArgParser}
+import com.lunatech.cmt.client.cli.ArgParsers.{
+  exerciseIdArgParser,
+  forceMoveToExerciseArgParser,
+  studentifiedRepoArgParser
+}
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.core.cli.enforceTrailingArgumentCount
 

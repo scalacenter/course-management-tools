@@ -21,7 +21,12 @@ import com.lunatech.cmt.admin.cli.ArgParsers.{
   forceDeleteDestinationDirectoryArgParser,
   studentifyBaseDirectoryArgParser
 }
-import com.lunatech.cmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, MainRepository, StudentifyBaseDirectory}
+import com.lunatech.cmt.admin.Domain.{
+  ForceDeleteDestinationDirectory,
+  InitializeGitRepo,
+  MainRepository,
+  StudentifyBaseDirectory
+}
 import com.lunatech.cmt.support.{CommandLineArguments, TestDirectories}
 import sbt.io.syntax.{File, file}
 

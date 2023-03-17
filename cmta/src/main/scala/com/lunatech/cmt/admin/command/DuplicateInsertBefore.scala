@@ -2,7 +2,12 @@ package com.lunatech.cmt.admin.command
 
 import com.lunatech.cmt.*
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
-import com.lunatech.cmt.Helpers.{ExercisesMetadata, getExerciseMetadata, commitToGit, exitIfGitIndexOrWorkspaceIsntClean}
+import com.lunatech.cmt.Helpers.{
+  ExercisesMetadata,
+  getExerciseMetadata,
+  commitToGit,
+  exitIfGitIndexOrWorkspaceIsntClean
+}
 import com.lunatech.cmt.admin.Domain.{ExerciseNumber, RenumberOffset, RenumberStart, RenumberStep}
 import com.lunatech.cmt.admin.cli.SharedOptions
 import com.lunatech.cmt.core.execution.Executable

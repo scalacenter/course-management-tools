@@ -14,7 +14,14 @@ package com.lunatech.cmt.admin
   */
 
 import caseapp.core.app.{CommandsEntryPoint}
-import com.lunatech.cmt.admin.command.{Delinearize, DuplicateInsertBefore, Linearize, RenumberExercises, Studentify, Version}
+import com.lunatech.cmt.admin.command.{
+  Delinearize,
+  DuplicateInsertBefore,
+  Linearize,
+  RenumberExercises,
+  Studentify,
+  Version
+}
 
 object Main extends CommandsEntryPoint:
   override def progName = "cmta"

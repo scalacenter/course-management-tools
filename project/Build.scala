@@ -19,7 +19,7 @@ object Build {
     version := "2.0.0-SNAPSHOT",
     scalaVersion := Version.scalaVersion,
     scalacOptions ++= CompileOptions.compileOptions,
-    buildInfoPackage := "cmt.version",
+    buildInfoPackage := "com.lunatech.cmt.version",
     Test / parallelExecution := false,
     Test / logBuffered := false,
     // ThisBuild / parallelExecution := false,

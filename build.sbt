@@ -30,6 +30,7 @@ lazy val cmtc = project
 lazy val `functional-tests` = project.in(file("functional-tests"))
   .dependsOn(cmta, cmtc)
   .settings(commonSettings: _*)
+  .settings(publish / skip := true)
 
 lazy val docs = project
   .in(file("course-management-tools-docs"))

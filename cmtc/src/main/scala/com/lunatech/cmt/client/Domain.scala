@@ -35,8 +35,6 @@ object Domain:
     final case class LocalDirectory(value: File) extends InstallationSource
     final case class ZipFile(value: File) extends InstallationSource
     final case class GithubProject(organisation: String, project: String) extends InstallationSource
-
-    def fromString(str: String): Validatable[InstallationSource] = ???
   end InstallationSource
 
 end Domain

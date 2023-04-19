@@ -35,7 +35,7 @@ object ArgParsers {
 
   given installationSourceArgParser: ArgParser[InstallationSource] = {
 
-    val githubProjectRegex = "(.*)\\/(.*)".r
+    val githubProjectRegex = "([A-Za-z0-9-_]*)\\/([A-Za-z0-9-_]*)".r
 
     def toString(installationSource: InstallationSource): String =
       installationSource match {
@@ -69,11 +69,11 @@ object ArgParsers {
       //    no
       //    - error - i don't know what to do
       (maybeFile.exists(), maybeFile.isDirectory, str.endsWith(".zip"), maybeGithub) match {
-        case (true, true, _, _) => LocalDirectory(maybeFile).asRight
-        case (true, false, true, _) => ZipFile(maybeFile).asRight
-        case (true, false, false, _) => Other(s"'$str' is a file but not a zip file - i'm afraid I don't know how to install a course from this file").asLeft
+        case (true, true, _, _)                 => LocalDirectory(maybeFile).asRight
+        case (true, false, true, _)             => ZipFile(maybeFile).asRight
+        case (true, false, false, _)            => Other(s"'$str' is a file but not a zip file - i'm afraid I don't know how to install a course from this file").asLeft
         case (false, _, _, Some(githubProject)) => githubProject.asRight
-        case (_, _, _, _) => Other(s"'$str' is not a local directory or zip file and it doesn't appear to be a Github project either. I'm afraid I don't know how to deal with this.").asLeft
+        case (_, _, _, _)                       => Other(s"'$str' is not a local directory or zip file and it doesn't appear to be a Github project either. I'm afraid I don't know how to deal with this.").asLeft
       }
     }
 

@@ -1,7 +1,7 @@
 package com.lunatech.cmt.client.cli
 
 import caseapp.core.argparser.{ArgParser, FlagArgParser, SimpleArgParser}
-import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo, TemplatePath}
+import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise, InstallationSource, StudentifiedRepo, TemplatePath}
 import sbt.io.syntax.{File, file}
 import cats.syntax.apply.*
 import cats.syntax.either.*
@@ -29,4 +29,6 @@ object ArgParsers {
 
   given templatePathArgParser: ArgParser[TemplatePath] =
     SimpleArgParser.from[TemplatePath]("template path")(TemplatePath(_).asRight)
+
+  given installationSourceArgParser: ArgParser[InstallationSource] = ???
 }

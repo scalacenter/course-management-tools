@@ -14,19 +14,7 @@ package com.lunatech.cmt.client
   */
 
 import caseapp.core.app.CommandsEntryPoint
-import com.lunatech.cmt.client.command.{
-  GotoExercise,
-  GotoFirstExercise,
-  ListExercises,
-  ListSavedStates,
-  NextExercise,
-  PreviousExercise,
-  PullSolution,
-  PullTemplate,
-  RestoreState,
-  SaveState,
-  SetCurrentCourse
-}
+import com.lunatech.cmt.client.command.{GotoExercise, GotoFirstExercise, Install, ListExercises, ListSavedStates, NextExercise, PreviousExercise, PullSolution, PullTemplate, RestoreState, SaveState, SetCurrentCourse}
 
 object Main extends CommandsEntryPoint:
   override def progName = "cmtc"
@@ -34,6 +22,7 @@ object Main extends CommandsEntryPoint:
     Seq(
       GotoExercise.command,
       GotoFirstExercise.command,
+      Install.command,
       ListExercises.command,
       ListSavedStates.command,
       NextExercise.command,

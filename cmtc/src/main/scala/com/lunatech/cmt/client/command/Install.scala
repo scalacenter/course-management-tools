@@ -1,6 +1,6 @@
 package com.lunatech.cmt.client.command
 
-import caseapp.{AppName, CommandName, ExtraName, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
 import com.lunatech.cmt.client.{Configuration, CoursesDirectory}
 import com.lunatech.cmt.client.Domain.{InstallationSource, StudentifiedRepo}
 import com.lunatech.cmt.{CMTcConfig, CmtError, ProcessDSL, printErrorAndExit, printMessage, printResult}
@@ -19,6 +19,7 @@ object Install:
 
   @AppName("install")
   @CommandName("install")
+  @HelpMessage("Install a course - from either a local directory, a zip file on the local file system or a Github project")
   final case class Options(
     @ExtraName("s")
     source: InstallationSource

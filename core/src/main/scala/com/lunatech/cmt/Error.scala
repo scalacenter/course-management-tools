@@ -38,6 +38,10 @@ final case class FailedToValidateArgument(option: OptionName, reasons: Seq[Error
     s"${toConsoleRed(s"ERROR - ${toConsoleCyan(s"Option ${option.value}")}:")} ${toConsoleYellow(
         reasons.map(_.message).mkString("\n    ", "\n    ", "\n"))}"
 }
+final case class GenericError(message: String) extends CmtError {
+  override def prettyPrint: String =
+    toConsoleRed(s"ERROR - $message")
+}
 object FailedToValidateArgument:
   def because(option: String, messages: String*): FailedToValidateArgument =
     FailedToValidateArgument(OptionName(option), messages.map(ErrorMessage(_)))

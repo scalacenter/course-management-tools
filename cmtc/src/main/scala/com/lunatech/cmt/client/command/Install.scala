@@ -3,7 +3,7 @@ package com.lunatech.cmt.client.command
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
 import com.lunatech.cmt.client.{Configuration, CoursesDirectory}
 import com.lunatech.cmt.client.Domain.{InstallationSource, StudentifiedRepo}
-import com.lunatech.cmt.{CMTcConfig, CmtError, ProcessDSL, printErrorAndExit, printMessage, printResult}
+import com.lunatech.cmt.{CMTcConfig, CmtError, GenericError, ProcessDSL, printErrorAndExit, printMessage, printResult}
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.client.command.Executable
 import com.lunatech.cmt.core.validation.Validatable
@@ -38,14 +38,22 @@ object Install:
         cmd.source match {
           case localDirectory: LocalDirectory => installFromLocalDirectory(localDirectory)
           case zipFile: ZipFile => installFromZipFile(zipFile)
-          case githubProject: GithubProject => installFromGithubProject(githubProject)
+          case githubProject: GithubProject => installFromGithubProject(githubProject, configuration)
         }
 
-      private def installFromLocalDirectory(localDirectory: LocalDirectory): Either[CmtError, String] = ???
+      private def installFromLocalDirectory(localDirectory: LocalDirectory): Either[CmtError, String] =
+        Left(GenericError(s"unable to install course from local directory at '${localDirectory.value.getCanonicalPath}' - installing from a local directory is not supported... yet"))
 
-      private def installFromZipFile(zipFile: ZipFile): Either[CmtError, String] = ???
+      private def installFromZipFile(zipFile: ZipFile): Either[CmtError, String] =
+        Left(GenericError(s"unable to install course from zip file at '${zipFile.value.getCanonicalPath}' - installing from a zip file is not supported... yet"))
 
-      private def installFromGithubProject(githubProject: GithubProject): Either[CmtError, String] = ???
+      private def installFromGithubProject(githubProject: GithubProject, configuration: Configuration): Either[CmtError, String] = {
+        printMessage(s"Installing course '${githubProject.displayName}' into '${configuration.coursesDirectory}'")
+        val workingDir = configuration.coursesDirectory.value / githubProject.organisation / githubProject.project
+        sbtio.createDirectory(workingDir)
+        val cloneCommand = s"git clone git@github.com:${githubProject.displayName}.git".toProcessCmd(workingDir)
+        cloneCommand.runAndReadOutput()
+      }
       
     end extension
   end given

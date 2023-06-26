@@ -69,7 +69,7 @@ object Configuration:
   val DefaultCmtCoursesHome = s"${projectDirectories.cacheDir}/Courses"
   val CmtCoursesHomeEnvKey = "CMT_COURSES_HOME"
 
-  val DefaultGithubApiToken = "Z2l0aHViX3BhdF8xMUFIS0w3Q1kwVGphVjVQY3RZcVpjX2ZzNDRIUldIZ3Q1MWcwb0ZZdTJHQzdqVWhFWnFWRFM4Rm5PWENqejdib2Q0RkdNM1VXWk9vR21LMFJE"
+  val DefaultGithubApiToken = "Z2l0aHViX3BhdF8xMUFIS0w3Q1kwRVdtUVpPcnV3aG5LX1RpVGk4OVdPaHlDTkdqNmFibXdxN3dBWmV4b1k0NFRkb3E4UFpWOWRoQjVLQ1pPQ1dQR1J2WEFsdFBn"
 
   private def globalConfigFile(cmtHome: CmtHome): CmtGlobalConfigFile =
     CmtGlobalConfigFile(cmtHome.value / CmtGlobalConfigName)

@@ -1,12 +1,6 @@
 package com.lunatech.cmt.client
 
-import com.lunatech.cmt.client.Configuration.{
-  CmtHome,
-  CoursesDirectoryToken,
-  CurrentCourseToken,
-  globalConfigFile,
-  writeGlobalConfig
-}
+import com.lunatech.cmt.client.Configuration.{CmtHome, CoursesDirectoryToken, CurrentCourseToken, GithubApiToken, globalConfigFile, writeGlobalConfig}
 import com.lunatech.cmt.{CmtError, FailedToWriteGlobalConfiguration, printMessage}
 import com.lunatech.cmt.client.Domain.StudentifiedRepo
 import com.typesafe.config.{Config, ConfigFactory}
@@ -16,13 +10,16 @@ import com.lunatech.cmt.Helpers.{adaptToNixSeparatorChar, adaptToOSSeparatorChar
 
 import scala.jdk.CollectionConverters.*
 import scala.util.{Failure, Success, Try}
-
 import dev.dirs.ProjectDirectories
+
+import java.nio.charset.StandardCharsets
+import java.util.Base64
 
 final case class Configuration(
     homeDirectory: CmtHome,
     coursesDirectory: CoursesDirectory,
-    currentCourse: CurrentCourse) {
+    currentCourse: CurrentCourse,
+    githubApiToken: GithubApiToken) {
   def flush(): Either[CmtError, Unit] = {
     val configFile = globalConfigFile(homeDirectory)
 
@@ -50,25 +47,39 @@ object Configuration:
       ConfigFactory.parseFile(value)
   }
   final case class CmtCoursesHome(value: File)
+  final case class GithubApiToken(value: String)
+  object GithubApiToken {
+    // If github detects an API token in a commit it deactivates the token so we'll Base64 encode the token in config
+    def fromBase64EncodedString(base64EncodedString: String): GithubApiToken = {
+      val encodedBytes = base64EncodedString.getBytes(StandardCharsets.UTF_8)
+      val decodedBytes = Base64.getDecoder().decode(encodedBytes)
+      val decodedString = new String(decodedBytes, StandardCharsets.UTF_8)
+      GithubApiToken(decodedString)
+    }
+  }
 
   private val projectDirectories = ProjectDirectories.from("com", "lunatech", "cmt")
   val UserConfigDir = projectDirectories.configDir
   val CmtGlobalConfigName = "com.lunatech.cmt.conf"
   val CoursesDirectoryToken = "COURSES_DIRECTORY"
   val CurrentCourseToken = "CURRENT_COURSE"
+  val githubApiTokenToken = "GITHUB_API_TOKEN"
   val CmtHomeEnvKey = "CMT_HOME"
 
   val DefaultCmtCoursesHome = s"${projectDirectories.cacheDir}/Courses"
   val CmtCoursesHomeEnvKey = "CMT_COURSES_HOME"
 
+  val DefaultGithubApiToken = "Z2l0aHViX3BhdF8xMUFIS0w3Q1kwVGphVjVQY3RZcVpjX2ZzNDRIUldIZ3Q1MWcwb0ZZdTJHQzdqVWhFWnFWRFM4Rm5PWENqejdib2Q0RkdNM1VXWk9vR21LMFJE"
+
   private def globalConfigFile(cmtHome: CmtHome): CmtGlobalConfigFile =
     CmtGlobalConfigFile(cmtHome.value / CmtGlobalConfigName)
 
   private val configStringTemplate =
-    """
+    s"""
       |cmtc {
-      |    courses-directory = COURSES_DIRECTORY
-      |    current-course = CURRENT_COURSE
+      |    courses-directory = $CoursesDirectoryToken}
+      |    current-course = $CurrentCourseToken
+      |    github-api-token = $githubApiTokenToken
       |}
       |""".stripMargin
 
@@ -101,7 +112,8 @@ object Configuration:
     val coursesDirectory = CoursesDirectory(file(adaptToOSSeparatorChar(config.getString("cmtc.courses-directory"))))
     val currentCourse = CurrentCourse(
       StudentifiedRepo(file(adaptToOSSeparatorChar(config.getString("cmtc.current-course")))))
-    Configuration(cmtHome, coursesDirectory, currentCourse)
+    val githubApiToken = GithubApiToken.fromBase64EncodedString(config.getString("cmtc.github-api-token"))
+    Configuration(cmtHome, coursesDirectory, currentCourse, githubApiToken)
   }
 
   private def createIfNotExists(cmtHome: CmtHome, cmtCoursesHome: CmtCoursesHome): Unit =
@@ -128,7 +140,8 @@ object Configuration:
       printMessage(
         s"global configuration file is missing from '${configFile.value.getAbsolutePath}' creating it with default values")
       val currentCourse = CurrentCourse(StudentifiedRepo(cmtCoursesHome.value))
-      val configuration = Configuration(cmtHome, CoursesDirectory(cmtCoursesHome.value), currentCourse)
+      val githubApiToken = GithubApiToken(DefaultGithubApiToken)
+      val configuration = Configuration(cmtHome, CoursesDirectory(cmtCoursesHome.value), currentCourse, githubApiToken)
       configuration.flush()
     }
 

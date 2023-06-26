@@ -8,12 +8,21 @@ import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.client.command.Executable
 import com.lunatech.cmt.core.validation.Validatable
 import com.lunatech.cmt.client.cli.ArgParsers.{installationSourceArgParser, studentifiedRepoArgParser}
+import cats.effect.unsafe.implicits.global
 import cats.syntax.either.*
 import sbt.io.syntax.*
 import sbt.io.IO as sbtio
 import com.lunatech.cmt.ProcessDSL.{ProcessCmd, runAndReadOutput, toProcessCmd}
 import com.lunatech.cmt.client.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
+import org.http4s.client.Client
+import org.http4s.client.JavaNetClientBuilder
+import cats.effect.IO
+import com.lunatech.cmt.client.Configuration.GithubApiToken
+import github4s.Github
+
+import scala.concurrent.Await
+import scala.concurrent.duration.*
 
 object Install:
 
@@ -48,11 +57,22 @@ object Install:
         Left(GenericError(s"unable to install course from zip file at '${zipFile.value.getCanonicalPath}' - installing from a zip file is not supported... yet"))
 
       private def installFromGithubProject(githubProject: GithubProject, configuration: Configuration): Either[CmtError, String] = {
-        printMessage(s"Installing course '${githubProject.displayName}' into '${configuration.coursesDirectory}'")
-        val workingDir = configuration.coursesDirectory.value / githubProject.organisation / githubProject.project
-        sbtio.createDirectory(workingDir)
-        val cloneCommand = s"git clone git@github.com:${githubProject.displayName}.git".toProcessCmd(workingDir)
-        cloneCommand.runAndReadOutput()
+        val github = createGithubClient(configuration.githubApiToken)
+        val latestRelease = github.repos.latestRelease(githubProject.organisation, githubProject.project).unsafeToFuture()
+        Await.result(latestRelease, 10.seconds)
+        println(latestRelease)
+        Right("Yep, all done")
+//        printMessage(s"Installing course '${githubProject.displayName}' into '${configuration.coursesDirectory}'")
+//        val workingDir = configuration.coursesDirectory.value / githubProject.organisation / githubProject.project
+//        sbtio.createDirectory(workingDir)
+//        val cloneCommand = s"git clone git@github.com:${githubProject.displayName}.git".toProcessCmd(workingDir)
+//        cloneCommand.runAndReadOutput()
+      }
+
+      private def createGithubClient(githubApiToken: GithubApiToken): Github[IO] = {
+        val accessToken = Some(githubApiToken.value)
+        val httpClient: Client[IO] = JavaNetClientBuilder[IO].create
+        Github[IO](httpClient, accessToken)
       }
       
     end extension

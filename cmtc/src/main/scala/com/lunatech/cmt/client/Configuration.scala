@@ -1,6 +1,6 @@
 package com.lunatech.cmt.client
 
-import com.lunatech.cmt.client.Configuration.{CmtHome, CoursesDirectoryToken, CurrentCourseToken, GithubApiToken, globalConfigFile, writeGlobalConfig}
+import com.lunatech.cmt.client.Configuration.{CmtHome, CoursesDirectoryToken, CurrentCourseToken, DefaultGithubApiToken, GithubApiToken, GithubApiTokenToken, globalConfigFile, writeGlobalConfig}
 import com.lunatech.cmt.{CmtError, FailedToWriteGlobalConfiguration, printMessage}
 import com.lunatech.cmt.client.Domain.StudentifiedRepo
 import com.typesafe.config.{Config, ConfigFactory}
@@ -29,7 +29,8 @@ final case class Configuration(
         _.replaceAll(CoursesDirectoryToken, s""""${adaptToNixSeparatorChar(coursesDirectory.value.getAbsolutePath)}"""")
           .replaceAll(
             CurrentCourseToken,
-            s""""${adaptToNixSeparatorChar(currentCourse.value.value.getAbsolutePath)}""""))) match {
+            s""""${adaptToNixSeparatorChar(currentCourse.value.value.getAbsolutePath)}"""")
+          .replaceAll(GithubApiTokenToken, s""""${GithubApiToken.fromBase64EncodedString(DefaultGithubApiToken).value}""""))) match {
       case Success(_)         => Right(())
       case Failure(exception) => Left(FailedToWriteGlobalConfiguration(exception))
     }
@@ -63,7 +64,7 @@ object Configuration:
   val CmtGlobalConfigName = "com.lunatech.cmt.conf"
   val CoursesDirectoryToken = "COURSES_DIRECTORY"
   val CurrentCourseToken = "CURRENT_COURSE"
-  val githubApiTokenToken = "GITHUB_API_TOKEN"
+  val GithubApiTokenToken = "GITHUB_API_TOKEN"
   val CmtHomeEnvKey = "CMT_HOME"
 
   val DefaultCmtCoursesHome = s"${projectDirectories.cacheDir}/Courses"
@@ -77,9 +78,9 @@ object Configuration:
   private val configStringTemplate =
     s"""
       |cmtc {
-      |    courses-directory = $CoursesDirectoryToken}
+      |    courses-directory = $CoursesDirectoryToken
       |    current-course = $CurrentCourseToken
-      |    github-api-token = $githubApiTokenToken
+      |    github-api-token = $GithubApiTokenToken
       |}
       |""".stripMargin
 
@@ -112,7 +113,7 @@ object Configuration:
     val coursesDirectory = CoursesDirectory(file(adaptToOSSeparatorChar(config.getString("cmtc.courses-directory"))))
     val currentCourse = CurrentCourse(
       StudentifiedRepo(file(adaptToOSSeparatorChar(config.getString("cmtc.current-course")))))
-    val githubApiToken = GithubApiToken.fromBase64EncodedString(config.getString("cmtc.github-api-token"))
+    val githubApiToken = GithubApiToken(config.getString("cmtc.github-api-token"))
     Configuration(cmtHome, coursesDirectory, currentCourse, githubApiToken)
   }
 

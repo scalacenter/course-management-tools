@@ -1,6 +1,6 @@
 package com.lunatech.cmt.client
 
-import com.lunatech.cmt.client.Configuration.CmtHome
+import com.lunatech.cmt.client.Configuration.{CmtHome, GithubApiToken}
 import com.lunatech.cmt.client.Domain.StudentifiedRepo
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
@@ -45,7 +45,8 @@ final class ConfigurationSpec extends AnyWordSpecLike with Matchers with BeforeA
       val expectedConfiguration = Configuration(
         CmtHome(configDir),
         CoursesDirectory(cacheDir / "Courses"),
-        CurrentCourse(StudentifiedRepo(cacheDir / "Courses")))
+        CurrentCourse(StudentifiedRepo(cacheDir / "Courses")),
+        GithubApiToken("test"))
 
       val receivedConfiguration = assertRight(Configuration.load())
 

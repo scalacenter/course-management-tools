@@ -218,4 +218,5 @@ private def createConfiguration(studentifiedRepoDirectory: File): Configuration 
   Configuration(
     CmtHome(file(".")),
     CoursesDirectory(file(".")),
-    CurrentCourse(StudentifiedRepo(studentifiedRepoDirectory)))
+    CurrentCourse(StudentifiedRepo(studentifiedRepoDirectory)),
+    Configuration.DefaultGithubApiToken)

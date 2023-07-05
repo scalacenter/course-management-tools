@@ -17,14 +17,7 @@ final class InstallArgumentsSpec extends CommandLineArgumentsSpec[Install.Option
   def invalidArguments(tempDirectory: File) = invalidArgumentsTable()
 
   def validArguments(tempDirectory: File) = validArgumentsTable(
-    (
-      Seq("-s", baseDirectory.getAbsolutePath),
-      Install.Options(LocalDirectory(baseDirectory))),
-    (
-      Seq("-s", zippedCourse),
-      Install.Options(ZipFile(file(zippedCourse)))),
-    (
-      Seq("-s", "bleep/bloop"),
-      Install.Options(GithubProject(organisation = "bleep", project = "bloop")))
-  )
+    (Seq("-s", baseDirectory.getAbsolutePath), Install.Options(LocalDirectory(baseDirectory))),
+    (Seq("-s", zippedCourse), Install.Options(ZipFile(file(zippedCourse)))),
+    (Seq("-s", "bleep/bloop"), Install.Options(GithubProject(organisation = "bleep", project = "bloop"))))
 }

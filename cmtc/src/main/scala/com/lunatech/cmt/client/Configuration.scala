@@ -1,6 +1,15 @@
 package com.lunatech.cmt.client
 
-import com.lunatech.cmt.client.Configuration.{CmtHome, CoursesDirectoryToken, CurrentCourseToken, DefaultGithubApiToken, GithubApiToken, GithubApiTokenToken, globalConfigFile, writeGlobalConfig}
+import com.lunatech.cmt.client.Configuration.{
+  CmtHome,
+  CoursesDirectoryToken,
+  CurrentCourseToken,
+  DefaultGithubApiToken,
+  GithubApiToken,
+  GithubApiTokenToken,
+  globalConfigFile,
+  writeGlobalConfig
+}
 import com.lunatech.cmt.{CmtError, FailedToWriteGlobalConfiguration, printMessage}
 import com.lunatech.cmt.client.Domain.StudentifiedRepo
 import com.typesafe.config.{Config, ConfigFactory}
@@ -30,7 +39,9 @@ final case class Configuration(
           .replaceAll(
             CurrentCourseToken,
             s""""${adaptToNixSeparatorChar(currentCourse.value.value.getAbsolutePath)}"""")
-          .replaceAll(GithubApiTokenToken, s""""${GithubApiToken.fromBase64EncodedString(DefaultGithubApiToken).value}""""))) match {
+          .replaceAll(
+            GithubApiTokenToken,
+            s""""${GithubApiToken.fromBase64EncodedString(DefaultGithubApiToken).value}""""))) match {
       case Success(_)         => Right(())
       case Failure(exception) => Left(FailedToWriteGlobalConfiguration(exception))
     }
@@ -70,7 +81,8 @@ object Configuration:
   val DefaultCmtCoursesHome = s"${projectDirectories.cacheDir}/Courses"
   val CmtCoursesHomeEnvKey = "CMT_COURSES_HOME"
 
-  val DefaultGithubApiToken = "Z2l0aHViX3BhdF8xMUFIS0w3Q1kwRVdtUVpPcnV3aG5LX1RpVGk4OVdPaHlDTkdqNmFibXdxN3dBWmV4b1k0NFRkb3E4UFpWOWRoQjVLQ1pPQ1dQR1J2WEFsdFBn"
+  val DefaultGithubApiToken =
+    "Z2l0aHViX3BhdF8xMUFIS0w3Q1kwRVdtUVpPcnV3aG5LX1RpVGk4OVdPaHlDTkdqNmFibXdxN3dBWmV4b1k0NFRkb3E4UFpWOWRoQjVLQ1pPQ1dQR1J2WEFsdFBn"
 
   private def globalConfigFile(cmtHome: CmtHome): CmtGlobalConfigFile =
     CmtGlobalConfigFile(cmtHome.value / CmtGlobalConfigName)

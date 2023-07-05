@@ -3,7 +3,13 @@ package com.lunatech.cmt.client.cli
 import caseapp.core.Error
 import caseapp.core.Error.Other
 import caseapp.core.argparser.{ArgParser, FlagArgParser, SimpleArgParser}
-import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise, InstallationSource, StudentifiedRepo, TemplatePath}
+import com.lunatech.cmt.client.Domain.{
+  ExerciseId,
+  ForceMoveToExercise,
+  InstallationSource,
+  StudentifiedRepo,
+  TemplatePath
+}
 import sbt.io.syntax.{File, file}
 import cats.syntax.apply.*
 import cats.syntax.either.*
@@ -39,8 +45,8 @@ object ArgParsers {
 
     def toString(installationSource: InstallationSource): String =
       installationSource match {
-        case LocalDirectory(value) => value.getAbsolutePath()
-        case ZipFile(value) => value.getAbsolutePath()
+        case LocalDirectory(value)                => value.getAbsolutePath()
+        case ZipFile(value)                       => value.getAbsolutePath()
         case GithubProject(organisation, project) => s"$organisation/$project"
       }
 
@@ -48,7 +54,7 @@ object ArgParsers {
       val maybeFile = file(str)
       val maybeGithub = str match {
         case githubProjectRegex(organisation, project) => Some(GithubProject(organisation, project))
-        case _ => None
+        case _                                         => None
       }
 
       // is it a file? does it exist?
@@ -69,11 +75,15 @@ object ArgParsers {
       //    no
       //    - error - i don't know what to do
       (maybeFile.exists(), maybeFile.isDirectory, str.endsWith(".zip"), maybeGithub) match {
-        case (true, true, _, _)                 => LocalDirectory(maybeFile).asRight
-        case (true, false, true, _)             => ZipFile(maybeFile).asRight
-        case (true, false, false, _)            => Other(s"'$str' is a file but not a zip file - i'm afraid I don't know how to install a course from this file").asLeft
+        case (true, true, _, _)     => LocalDirectory(maybeFile).asRight
+        case (true, false, true, _) => ZipFile(maybeFile).asRight
+        case (true, false, false, _) =>
+          Other(
+            s"'$str' is a file but not a zip file - i'm afraid I don't know how to install a course from this file").asLeft
         case (false, _, _, Some(githubProject)) => githubProject.asRight
-        case (_, _, _, _)                       => Other(s"'$str' is not a local directory or zip file and it doesn't appear to be a Github project either. I'm afraid I don't know how to deal with this.").asLeft
+        case (_, _, _, _) =>
+          Other(
+            s"'$str' is not a local directory or zip file and it doesn't appear to be a Github project either. I'm afraid I don't know how to deal with this.").asLeft
       }
     }
 

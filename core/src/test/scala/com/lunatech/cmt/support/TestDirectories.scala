@@ -27,5 +27,6 @@ trait TestDirectories {
   val firstRealDirectory = adaptToOSSeparatorChar(s"$baseDirectory/cmta/src/test/resources/i-am-a-directory")
   val secondRealDirectory = adaptToOSSeparatorChar(s"$baseDirectory/cmta/src/test/resources/i-am-another-directory")
   val realFile = adaptToOSSeparatorChar(s"$baseDirectory/cmta/src/test/resources/i-am-a-file.txt")
-  val zippedCourse = adaptToOSSeparatorChar(s"$baseDirectoryGitRoot/functional-tests/src/test/resources/simple-repo.zip")
+  val zippedCourse = adaptToOSSeparatorChar(
+    s"$baseDirectoryGitRoot/functional-tests/src/test/resources/simple-repo.zip")
 }

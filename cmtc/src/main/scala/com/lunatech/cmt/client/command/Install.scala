@@ -87,7 +87,7 @@ object Install:
 
       private def installFromGithubProject(
           githubProject: GithubProject,
-          configuration: Configuration): Either[CmtError, String] =
+          configuration: Configuration): Either[CmtError, String] = {
         implicit val httpClient: Client[IO] = JavaNetClientBuilder[IO].create
         val github = Github[IO](httpClient, Some(configuration.githubApiToken.value))
         val latestRelease =
@@ -100,12 +100,19 @@ object Install:
           case Right(None) =>
             s"failed to retrieve latest release of ${githubProject.displayName}".toExecuteCommandErrorMessage.asLeft
           case Right(Some(release)) =>
-            getStudentAssetUrl(githubProject, release)
-              .map(downloadStudentAsset(_, githubProject, release.tag_name, configuration))
-              .flatMap(installFromZipFile(_, configuration, deleteZipAfterInstall = true))
-              .map(_ =>
-                s"${githubProject.project} (${release.tag_name}) successfully installed to ${configuration.coursesDirectory.value}/${githubProject.project}")
+            downloadAndInstallStudentifiedRepo(githubProject, release, configuration)
         }
+      }
+
+      private def downloadAndInstallStudentifiedRepo(
+          githubProject: GithubProject,
+          release: Release,
+          configuration: Configuration)(implicit client: Client[IO]): Either[CmtError, String] =
+        for {
+          studentAssetUrl <- getStudentAssetUrl(githubProject, release)
+          downloadedZipFile <- downloadStudentAsset(studentAssetUrl, githubProject, release.tag_name, configuration)
+          _ <- installFromZipFile(downloadedZipFile, configuration, deleteZipAfterInstall = true)
+        } yield s"${githubProject.project} (${release.tag_name}) successfully installed to ${configuration.coursesDirectory.value}/${githubProject.project}"
 
       private def getStudentAssetUrl(githubProject: GithubProject, release: Release)(implicit
           httpClient: Client[IO]): Either[CmtError, String] = {
@@ -125,11 +132,11 @@ object Install:
           url: String,
           githubProject: GithubProject,
           tagName: String,
-          configuration: Configuration)(implicit client: Client[IO]): ZipFile = {
+          configuration: Configuration)(implicit client: Client[IO]): Either[CmtError, ZipFile] = {
         val zipFile = ZipFile(
           file(s"${configuration.coursesDirectory.value.getAbsolutePath}/${githubProject.project}.zip"))
         downloadFile(url, zipFile)
-        zipFile
+        zipFile.asRight
       }
 
       private def downloadFile(fileUri: String, destination: ZipFile)(implicit client: Client[IO]): Unit =

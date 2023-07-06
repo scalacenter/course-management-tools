@@ -110,9 +110,18 @@ object Install:
           configuration: Configuration)(implicit client: Client[IO]): Either[CmtError, String] =
         for {
           studentAssetUrl <- getStudentAssetUrl(githubProject, release)
+          _ = printMessage(s"downloading studentified course from '$studentAssetUrl' to courses directory")
           downloadedZipFile <- downloadStudentAsset(studentAssetUrl, githubProject, release.tag_name, configuration)
           _ <- installFromZipFile(downloadedZipFile, configuration, deleteZipAfterInstall = true)
+          _ <- setCurrentCourse(githubProject, configuration)
         } yield s"${githubProject.project} (${release.tag_name}) successfully installed to ${configuration.coursesDirectory.value}/${githubProject.project}"
+
+
+      private def setCurrentCourse(githubProject: GithubProject, configuration: Configuration): Either[CmtError, String] = {
+        val courseDirectory = configuration.coursesDirectory.value / githubProject.project
+        val studentifiedRepo = StudentifiedRepo(courseDirectory)
+        SetCurrentCourse.Options(studentifiedRepo).execute(configuration)
+      }
 
       private def getStudentAssetUrl(githubProject: GithubProject, release: Release)(implicit
           httpClient: Client[IO]): Either[CmtError, String] = {

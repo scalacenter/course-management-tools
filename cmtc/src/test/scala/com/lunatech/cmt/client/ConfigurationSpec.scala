@@ -46,7 +46,7 @@ final class ConfigurationSpec extends AnyWordSpecLike with Matchers with BeforeA
         CmtHome(configDir),
         CoursesDirectory(cacheDir / "Courses"),
         CurrentCourse(StudentifiedRepo(cacheDir / "Courses")),
-        GithubApiToken("test"))
+        GithubApiToken.fromBase64EncodedString(Configuration.DefaultGithubApiToken))
 
       val receivedConfiguration = assertRight(Configuration.load())
 

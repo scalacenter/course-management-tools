@@ -142,8 +142,7 @@ object Install:
           githubProject: GithubProject,
           tagName: String,
           configuration: Configuration)(implicit client: Client[IO]): Either[CmtError, ZipFile] = {
-        val zipFile = ZipFile(
-          file(s"${configuration.coursesDirectory.value.getAbsolutePath}/${githubProject.project}.zip"))
+        val zipFile = ZipFile(configuration.coursesDirectory.value / s"${githubProject.project}.zip")
         downloadFile(url, zipFile)
         zipFile.asRight
       }

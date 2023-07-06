@@ -17,8 +17,7 @@ import caseapp.Parser
 import com.lunatech.cmt.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
 import com.lunatech.cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
 import com.lunatech.cmt.admin.command.Linearize
-import com.lunatech.cmt.support.{CommandLineArguments, TestDirectories}
-import com.lunatech.cmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
+import com.lunatech.cmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
 import com.lunatech.cmt.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
 

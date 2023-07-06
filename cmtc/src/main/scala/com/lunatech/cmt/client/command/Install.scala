@@ -1,43 +1,28 @@
 package com.lunatech.cmt.client.command
 
 import GithubSupport.*
-import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs}
+import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import cats.syntax.either.*
-import com.lunatech.cmt.client.{Configuration, CoursesDirectory}
+import com.lunatech.cmt.client.{Configuration}
 import com.lunatech.cmt.client.Domain.{InstallationSource, StudentifiedRepo}
-import com.lunatech.cmt.{
-  CMTcConfig,
-  CmtError,
-  GenericError,
-  ProcessDSL,
-  printErrorAndExit,
-  printMessage,
-  printResult,
-  toExecuteCommandErrorMessage
-}
+import com.lunatech.cmt.{CmtError, GenericError, printMessage, printResult, toExecuteCommandErrorMessage}
 import com.lunatech.cmt.client.cli.CmtcCommand
-import com.lunatech.cmt.client.command.Executable
 import com.lunatech.cmt.core.validation.Validatable
-import com.lunatech.cmt.client.Configuration.GithubApiToken
 import com.lunatech.cmt.client.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
-import com.lunatech.cmt.client.cli.ArgParsers.{installationSourceArgParser, studentifiedRepoArgParser}
+import com.lunatech.cmt.client.cli.ArgParsers.installationSourceArgParser
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
-import com.lunatech.cmt.ProcessDSL.{ProcessCmd, runAndReadOutput, toProcessCmd}
-import com.lunatech.cmt.client.command.GithubSupport.{Asset, User}
+import com.lunatech.cmt.client.command.GithubSupport.Asset
 import org.http4s.*
 import org.http4s.circe.*
 import github4s.Github
 import github4s.domain.Release
 import io.circe.*
-import io.circe.generic.semiauto.deriveDecoder
-import java.io.{File, FileInputStream, FileOutputStream}
-import java.net.{URI, URL}
-import java.nio.file.Path
+import java.io.File
+import java.net.URL
 import java.time.ZonedDateTime
-import java.util.zip.ZipInputStream
-import sbt.io.syntax.{URL, *}
+import sbt.io.syntax.*
 import sbt.io.IO as sbtio
 import org.http4s.client.Client
 import org.http4s.client.JavaNetClientBuilder
@@ -149,7 +134,7 @@ object Install:
       }
 
       private def downloadFile(fileUri: String, destination: ZipFile)(implicit client: Client[IO]): Unit =
-        (new URL(fileUri) #> new File(destination.value.getAbsolutePath)).!!
+        val _ = (new URL(fileUri) #> new File(destination.value.getAbsolutePath)).!!
 
     end extension
   end given

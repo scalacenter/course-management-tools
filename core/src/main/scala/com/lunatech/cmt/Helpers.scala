@@ -164,7 +164,7 @@ object Helpers:
   def dumpStringToFile(string: String, file: File): Unit =
     import java.nio.charset.StandardCharsets
     import java.nio.file.Files
-    Files.write(file.toPath, string.getBytes(StandardCharsets.UTF_8))
+    val _ = Files.write(file.toPath, string.getBytes(StandardCharsets.UTF_8))
 
   def writeStudentifiedCMTConfig(configFile: File, exercises: Seq[String])(
       config: CMTaConfig,

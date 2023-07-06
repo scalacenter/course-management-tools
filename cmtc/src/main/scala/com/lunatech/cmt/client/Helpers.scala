@@ -1,7 +1,7 @@
 package com.lunatech.cmt.client
 
 import com.lunatech.cmt.client.command.{getCurrentExerciseId, starCurrentExercise}
-import com.lunatech.cmt.{CMTcConfig, CmtError, ErrorMessage, FailedToValidateArgument, OptionName, toConsoleGreen}
+import com.lunatech.cmt.{CMTcConfig, CmtError, FailedToValidateArgument, toConsoleGreen}
 import sbt.io.syntax.*
 extension (f: File)
   // Gets the parent folder of this folder but return this

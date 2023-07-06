@@ -10,7 +10,13 @@ object Build {
       Seq(
         "-source:future",
         "-deprecation",
-//        "-Wunused:locals,privates,implicits,imports",   // New linter features available as of 3.0.0
+        "-Wunused:imports",
+        "-Wunused:locals",
+        "-Wunused:privates",
+        "-Wunused:explicits",
+        "-Wunused:implicits",
+        "-Wunused:params",
+        "-Wvalue-discard",
       )
   }
 

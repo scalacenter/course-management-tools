@@ -1,6 +1,6 @@
 package com.lunatech.cmt.admin.command
 
-import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Name, Recurse, RemainingArgs, ValueDescription}
+import caseapp.{AppName, CommandName, HelpMessage, RemainingArgs}
 import com.lunatech.cmt.CmtError
 import com.lunatech.cmt.core.cli.CmtCommand
 import com.lunatech.cmt.core.execution.Executable

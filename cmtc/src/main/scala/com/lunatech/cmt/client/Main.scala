@@ -17,6 +17,7 @@ import caseapp.core.app.CommandsEntryPoint
 import com.lunatech.cmt.client.command.{
   GotoExercise,
   GotoFirstExercise,
+  Install,
   ListExercises,
   ListSavedStates,
   NextExercise,
@@ -34,6 +35,7 @@ object Main extends CommandsEntryPoint:
     Seq(
       GotoExercise.command,
       GotoFirstExercise.command,
+      Install.command,
       ListExercises.command,
       ListSavedStates.command,
       NextExercise.command,

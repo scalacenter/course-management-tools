@@ -116,8 +116,9 @@ object Install:
           _ <- setCurrentCourse(githubProject, configuration)
         } yield s"${githubProject.project} (${release.tag_name}) successfully installed to ${configuration.coursesDirectory.value}/${githubProject.project}"
 
-
-      private def setCurrentCourse(githubProject: GithubProject, configuration: Configuration): Either[CmtError, String] = {
+      private def setCurrentCourse(
+          githubProject: GithubProject,
+          configuration: Configuration): Either[CmtError, String] = {
         val courseDirectory = configuration.coursesDirectory.value / githubProject.project
         val studentifiedRepo = StudentifiedRepo(courseDirectory)
         SetCurrentCourse.Options(studentifiedRepo).execute(configuration)

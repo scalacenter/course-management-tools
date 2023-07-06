@@ -31,7 +31,6 @@ import com.lunatech.cmt.client.command.{
   SaveState
 }
 import com.lunatech.cmt.{CMTcConfig, CmtError, Helpers}
-import com.typesafe.config.ConfigResolver
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 

@@ -1,9 +1,8 @@
 package com.lunatech.cmt.client.cli
 
 import caseapp.Parser
-import caseapp.core.Error.Other
 import com.lunatech.cmt.client.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
-import com.lunatech.cmt.client.command.{GotoExercise, Install}
+import com.lunatech.cmt.client.command.Install
 import com.lunatech.cmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
 import com.lunatech.cmt.client.cli.ArgParsers.given

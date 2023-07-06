@@ -27,7 +27,7 @@ import com.lunatech.cmt.admin.Domain.{
   MainRepository,
   StudentifyBaseDirectory
 }
-import com.lunatech.cmt.support.{CommandLineArguments, TestDirectories}
+import com.lunatech.cmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
 
 final class StudentifyArgumentsSpec extends CommandLineArgumentsSpec[Studentify.Options] with TestDirectories {

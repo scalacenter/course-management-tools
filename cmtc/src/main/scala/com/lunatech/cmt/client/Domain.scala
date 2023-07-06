@@ -13,7 +13,6 @@ package com.lunatech.cmt.client
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import com.lunatech.cmt.core.validation.Validatable
 import sbt.io.syntax.{File, file}
 
 object Domain:

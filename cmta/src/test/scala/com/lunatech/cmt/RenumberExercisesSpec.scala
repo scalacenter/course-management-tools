@@ -71,7 +71,7 @@ final class RenumberExercisesSpec
     with RenumberExercisesFixture:
 
   override def afterAll(): Unit =
-    tempDirectory.delete()
+    val _ = tempDirectory.delete()
 
   "RenumberExercises" when {
     "given a renumbering" should {

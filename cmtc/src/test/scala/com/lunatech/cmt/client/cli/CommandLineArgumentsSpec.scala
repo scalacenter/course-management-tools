@@ -48,7 +48,7 @@ abstract class CommandLineArgumentsSpec[T]
   private val tempDirectory = IO.createTemporaryDirectory
 
   override def afterAll(): Unit =
-    tempDirectory.delete()
+    val _ = tempDirectory.delete()
 
   "CLI Parser" when {
 

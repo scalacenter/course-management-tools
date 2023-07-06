@@ -155,7 +155,7 @@ object Configuration:
       val currentCourse = CurrentCourse(StudentifiedRepo(cmtCoursesHome.value))
       val githubApiToken = GithubApiToken(DefaultGithubApiToken)
       val configuration = Configuration(cmtHome, CoursesDirectory(cmtCoursesHome.value), currentCourse, githubApiToken)
-      configuration.flush()
+      val _ = configuration.flush()
     }
 
   private def writeGlobalConfig(cmtGlobalConfigFile: CmtGlobalConfigFile, replaceTokens: String => String): Unit = {

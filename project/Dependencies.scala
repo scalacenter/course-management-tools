@@ -6,7 +6,7 @@ object Version {
   lazy val scalaCheck = "3.2.9.0"
   lazy val sbtio = "1.7.0"
   lazy val typesafeConfig = "1.4.2"
-  lazy val caseapp = "2.1.0-M21"
+  lazy val caseapp = "2.1.0-M24"
   lazy val cats = "2.8.0"
   lazy val devDirs = "26"
   lazy val github4s = "0.30.0"

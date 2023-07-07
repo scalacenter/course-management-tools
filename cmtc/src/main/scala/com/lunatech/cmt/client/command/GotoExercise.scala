@@ -15,10 +15,7 @@ import com.lunatech.cmt.client.Configuration
 import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise}
 import com.lunatech.cmt.core.validation.Validatable
 import sbt.io.syntax.*
-import com.lunatech.cmt.client.cli.ArgParsers.{
-  exerciseIdArgParser,
-  forceMoveToExerciseArgParser
-}
+import com.lunatech.cmt.client.cli.ArgParsers.{exerciseIdArgParser, forceMoveToExerciseArgParser}
 import com.lunatech.cmt.core.cli.ArgParsers.studentifiedRepoArgParser
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.core.cli.enforceTrailingArgumentCount

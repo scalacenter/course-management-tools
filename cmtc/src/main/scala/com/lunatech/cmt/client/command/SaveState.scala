@@ -2,7 +2,7 @@ package com.lunatech.cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import com.lunatech.cmt.Helpers.zipAndDeleteOriginal
-import com.lunatech.cmt.client.command.{getCurrentExerciseId, getCurrentExerciseStateExceptDontTouch}
+import com.lunatech.cmt.client.command.getCurrentExerciseStateExceptDontTouch
 import com.lunatech.cmt.core.validation.Validatable
 import com.lunatech.cmt.*
 import com.lunatech.cmt.client.Configuration
@@ -12,6 +12,7 @@ import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
 import com.lunatech.cmt.core.cli.ArgParsers.studentifiedRepoArgParser
+import com.lunatech.cmt.core.command.Package.getCurrentExerciseId
 
 object SaveState:
 

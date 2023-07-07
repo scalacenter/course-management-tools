@@ -5,13 +5,13 @@ import com.lunatech.cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toCo
 import com.lunatech.cmt.Helpers.{adaptToNixSeparatorChar, exerciseFileHasBeenModified, withZipFile}
 import com.lunatech.cmt.client.Configuration
 import com.lunatech.cmt.Domain.StudentifiedRepo
-import com.lunatech.cmt.client.command.getCurrentExerciseId
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
 import com.lunatech.cmt.core.cli.ArgParsers.studentifiedRepoArgParser
+import com.lunatech.cmt.core.command.Package.getCurrentExerciseId
 
 object PullSolution:
 

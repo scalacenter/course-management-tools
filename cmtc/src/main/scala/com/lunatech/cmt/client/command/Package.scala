@@ -4,7 +4,6 @@ import com.lunatech.cmt.{CMTcConfig, Helpers}
 import com.lunatech.cmt.Helpers.writeStudentifiedCMTBookmark
 import sbt.io.syntax.*
 import sbt.io.IO as sbtio
-import java.nio.charset.StandardCharsets
 
 final case class ExerciseFiles(filesAbsolute: Seq[File], filesRelative: Seq[File])
 private final case class PathARO(absolutePath: File, maybeRelativePath: Option[File])
@@ -34,9 +33,6 @@ def deleteCurrentState(studentifiedRepo: File)(config: CMTcConfig): Unit =
   val ExerciseFiles(filesToBeDeleted, _) = getCurrentExerciseStateExceptDontTouch(studentifiedRepo)(config)
   sbtio.deleteFilesEmptyDirs(filesToBeDeleted)
 
-def getCurrentExerciseId(bookmarkFile: File): String =
-  sbtio.readLines(bookmarkFile, StandardCharsets.UTF_8).head
-
 def copyTestCodeAndReadMeFiles(solution: File, prevOrNextExercise: String)(config: CMTcConfig): Unit =
 
   val (pathsToCopy, _) =
@@ -61,6 +57,3 @@ def copyTestCodeAndReadMeFiles(solution: File, prevOrNextExercise: String)(confi
   } sbtio.copyFile(solution / file, config.activeExerciseFolder / file)
 
   writeStudentifiedCMTBookmark(config.bookmarkFile, prevOrNextExercise)
-
-def starCurrentExercise(currentExercise: String, exercise: String): String =
-  if (currentExercise == exercise) " * " else "   "

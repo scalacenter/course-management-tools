@@ -6,7 +6,9 @@ lazy val `course-management-tools` =
     .settings(commonSettings: _*)
     .settings(publish / skip := true)
 
-lazy val core = project.in(file("core")).settings(commonSettings: _*)
+lazy val core = project.in(file("core"))
+  .settings(commonSettings: _*)
+  .settings(libraryDependencies ++= Dependencies.coreDependencies)
 
 lazy val cmta = project
   .in(file("cmta"))

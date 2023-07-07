@@ -11,7 +11,7 @@ import com.lunatech.cmt.client.cli.CmtcCommand
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
-import com.lunatech.cmt.client.cli.ArgParsers.studentifiedRepoArgParser
+import com.lunatech.cmt.core.cli.ArgParsers.studentifiedRepoArgParser
 
 object SaveState:
 

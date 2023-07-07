@@ -42,5 +42,6 @@ object Dependencies {
 
   lazy val coreDependencies = (http4s ++ List(sbtio, typesafeConfig, scalaTest, scalaCheck, commonsCodec, caseapp, cats, devDirs, circe, github4s)).map(_.withSources())
   lazy val cmtDependencies = List(sbtio, typesafeConfig, scalaTest, scalaCheck, commonsCodec, caseapp, cats).map(_.withSources())
-  lazy val cmtcDependencies = (http4s ++ List(devDirs, circe, github4s)).map(_.withSources())
+  lazy val cmtcDependencies = (http4s ++ List(devDirs, circe, github4s, scalaTest, scalaCheck)).map(_.withSources())
+  lazy val functionalTestDependencies = List(scalaTest, scalaCheck).map(_.withSources())
 }

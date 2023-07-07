@@ -30,8 +30,9 @@ lazy val cmtc = project
   .settings(buildInfoKeys := buildKeysWithName("Course Management Tools (Client)"))
 
 lazy val `functional-tests` = project.in(file("functional-tests"))
-  .dependsOn(cmta, cmtc)
+  .dependsOn(cmta, cmtc, core)
   .settings(commonSettings: _*)
+  .settings(libraryDependencies ++= Dependencies.functionalTestDependencies)
   .settings(publish / skip := true)
 
 lazy val docs = project

@@ -5,14 +5,14 @@ import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import cats.syntax.either.*
-import com.lunatech.cmt.client.{Configuration}
+import com.lunatech.cmt.client.Configuration
 import com.lunatech.cmt.Domain.StudentifiedRepo
-import com.lunatech.cmt.client.Domain.InstallationSource
+import com.lunatech.cmt.Domain.InstallationSource
 import com.lunatech.cmt.{CmtError, GenericError, printMessage, printResult, toExecuteCommandErrorMessage}
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.core.validation.Validatable
-import com.lunatech.cmt.client.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
-import com.lunatech.cmt.client.cli.ArgParsers.installationSourceArgParser
+import com.lunatech.cmt.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
+import com.lunatech.cmt.core.cli.ArgParsers.installationSourceArgParser
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
 import com.lunatech.cmt.client.command.GithubSupport.Asset
 import org.http4s.*

@@ -17,9 +17,10 @@ import com.lunatech.cmt.Helpers.*
 import com.lunatech.cmt.admin.Domain.MainRepository
 import com.lunatech.cmt.admin.cli.SharedOptions
 import com.lunatech.cmt.admin.command
+import com.lunatech.cmt.Domain.StudentifiedRepo
 import com.lunatech.cmt.client.{Configuration, CoursesDirectory, CurrentCourse}
 import com.lunatech.cmt.client.Configuration.{CmtHome, GithubApiToken}
-import com.lunatech.cmt.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo, TemplatePath}
+import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise, TemplatePath}
 import com.lunatech.cmt.client.command.{
   GotoExercise,
   GotoFirstExercise,

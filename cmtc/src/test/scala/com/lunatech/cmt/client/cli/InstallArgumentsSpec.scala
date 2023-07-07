@@ -5,7 +5,7 @@ import com.lunatech.cmt.Domain.InstallationSource.{GithubProject, LocalDirectory
 import com.lunatech.cmt.client.command.Install
 import com.lunatech.cmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
-import com.lunatech.cmt.client.cli.ArgParsers.given
+import com.lunatech.cmt.core.cli.ArgParsers.given
 
 final class InstallArgumentsSpec extends CommandLineArgumentsSpec[Install.Options] with TestDirectories {
 

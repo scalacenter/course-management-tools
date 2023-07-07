@@ -18,7 +18,8 @@ import com.lunatech.cmt.core.validation.Validatable
 import sbt.io.CopyOptions
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import com.lunatech.cmt.client.cli.ArgParsers.{templatePathArgParser, studentifiedRepoArgParser}
+import com.lunatech.cmt.client.cli.ArgParsers.templatePathArgParser
+import com.lunatech.cmt.core.cli.ArgParsers.studentifiedRepoArgParser
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.core.cli.enforceTrailingArgumentCount
 

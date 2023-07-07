@@ -8,7 +8,7 @@ import com.lunatech.cmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toCo
 import com.lunatech.cmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
-import com.lunatech.cmt.client.cli.ArgParsers.studentifiedRepoArgParser
+import com.lunatech.cmt.core.cli.ArgParsers.studentifiedRepoArgParser
 
 object ListSavedStates:
 

@@ -14,11 +14,13 @@ package com.lunatech.cmt.client.cli
   */
 
 import caseapp.Parser
-import com.lunatech.cmt.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
+import com.lunatech.cmt.Domain.StudentifiedRepo
+import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise}
+import com.lunatech.cmt.client.cli.ArgParsers.given
 import com.lunatech.cmt.client.command.GotoExercise
+import com.lunatech.cmt.core.cli.ArgParsers.given
 import com.lunatech.cmt.support.TestDirectories
 import sbt.io.syntax.File
-import com.lunatech.cmt.client.cli.ArgParsers.given
 
 final class GotoExerciseArgumentsSpec extends CommandLineArgumentsSpec[GotoExercise.Options] with TestDirectories {
 

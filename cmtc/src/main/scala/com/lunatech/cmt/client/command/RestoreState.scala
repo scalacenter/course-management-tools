@@ -3,7 +3,8 @@ package com.lunatech.cmt.client.command
 import com.lunatech.cmt.Domain.StudentifiedRepo
 import com.lunatech.cmt.client.Domain.ExerciseId
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import com.lunatech.cmt.client.cli.ArgParsers.{exerciseIdArgParser, studentifiedRepoArgParser}
+import com.lunatech.cmt.client.cli.ArgParsers.exerciseIdArgParser
+import com.lunatech.cmt.core.cli.ArgParsers.studentifiedRepoArgParser
 import com.lunatech.cmt.client.command.deleteCurrentState
 import com.lunatech.cmt.core.validation.Validatable
 import com.lunatech.cmt.*

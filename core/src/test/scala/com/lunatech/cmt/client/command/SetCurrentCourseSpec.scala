@@ -1,14 +1,14 @@
 package com.lunatech.cmt.client.command
 
 import com.lunatech.cmt.Domain.StudentifiedRepo
+import com.lunatech.cmt.Helpers.dumpStringToFile
 import com.lunatech.cmt.client.{Configuration, CurrentCourse}
+import com.lunatech.cmt.support.EitherSupport
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import com.lunatech.cmt.support.EitherSupport
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import com.lunatech.cmt.Helpers.dumpStringToFile
 
 import java.nio.charset.StandardCharsets
 import scala.compiletime.uninitialized

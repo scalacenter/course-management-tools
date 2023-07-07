@@ -1,32 +1,30 @@
 package com.lunatech.cmt.client.command
 
-import GithubSupport.*
-import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
+import caseapp.*
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import cats.syntax.either.*
-import com.lunatech.cmt.client.Configuration
-import com.lunatech.cmt.Domain.StudentifiedRepo
-import com.lunatech.cmt.Domain.InstallationSource
-import com.lunatech.cmt.{CmtError, GenericError, printMessage, printResult, toExecuteCommandErrorMessage}
-import com.lunatech.cmt.client.cli.CmtcCommand
-import com.lunatech.cmt.core.validation.Validatable
+import com.lunatech.cmt.*
 import com.lunatech.cmt.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
+import com.lunatech.cmt.Domain.{InstallationSource, StudentifiedRepo}
+import com.lunatech.cmt.client.Configuration
+import com.lunatech.cmt.client.cli.CmtcCommand
+import com.lunatech.cmt.client.command.GithubSupport.*
 import com.lunatech.cmt.core.cli.ArgParsers.installationSourceArgParser
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
-import com.lunatech.cmt.client.command.GithubSupport.Asset
-import org.http4s.*
-import org.http4s.circe.*
+import com.lunatech.cmt.core.validation.Validatable
 import github4s.Github
 import github4s.domain.Release
 import io.circe.*
+import org.http4s.*
+import org.http4s.circe.*
+import org.http4s.client.{Client, JavaNetClientBuilder}
+import sbt.io.IO as sbtio
+import sbt.io.syntax.*
+
 import java.io.File
 import java.net.URL
 import java.time.ZonedDateTime
-import sbt.io.syntax.*
-import sbt.io.IO as sbtio
-import org.http4s.client.Client
-import org.http4s.client.JavaNetClientBuilder
 import scala.concurrent.Await
 import scala.concurrent.duration.*
 import scala.sys.process.*

@@ -13,6 +13,7 @@ package com.lunatech.cmt.admin
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
+import com.lunatech.cmt.Domain.InstallationSource.GithubProject
 import sbt.io.syntax.File
 
 object Domain:
@@ -37,3 +38,13 @@ object Domain:
   final case class LinearizeBaseDirectory(value: File)
   final case class MainRepository(value: File)
   final case class ConfigurationFile(value: File)
+
+  final case class CourseTemplate(value: GithubProject)
+  object CourseTemplate:
+    def fromString(str: String): CourseTemplate =
+      if (str.indexOf("/") > 0) {
+        val Array(organisation, project) = str.split("/").map(_.trim)
+        CourseTemplate(GithubProject(organisation, project))
+      } else {
+        CourseTemplate(GithubProject("lunatech-labs", str))
+      }

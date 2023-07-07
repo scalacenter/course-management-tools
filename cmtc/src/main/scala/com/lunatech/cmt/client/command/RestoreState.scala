@@ -1,6 +1,7 @@
 package com.lunatech.cmt.client.command
 
-import com.lunatech.cmt.client.Domain.{ExerciseId, StudentifiedRepo}
+import com.lunatech.cmt.Domain.StudentifiedRepo
+import com.lunatech.cmt.client.Domain.ExerciseId
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import com.lunatech.cmt.client.cli.ArgParsers.{exerciseIdArgParser, studentifiedRepoArgParser}
 import com.lunatech.cmt.client.command.deleteCurrentState

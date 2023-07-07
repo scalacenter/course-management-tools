@@ -6,7 +6,7 @@ import com.lunatech.cmt.client.command.{getCurrentExerciseId, getCurrentExercise
 import com.lunatech.cmt.core.validation.Validatable
 import com.lunatech.cmt.*
 import com.lunatech.cmt.client.Configuration
-import com.lunatech.cmt.client.Domain.StudentifiedRepo
+import Domain.StudentifiedRepo
 import com.lunatech.cmt.client.cli.CmtcCommand
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*

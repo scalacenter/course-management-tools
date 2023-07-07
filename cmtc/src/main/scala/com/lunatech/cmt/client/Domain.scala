@@ -13,17 +13,14 @@ package com.lunatech.cmt.client
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import sbt.io.syntax.{File, file}
+import sbt.io.syntax.File
 
 object Domain:
   final case class ExerciseId(value: String)
   object ExerciseId:
     val default: ExerciseId = ExerciseId("")
 
-  final case class StudentifiedRepo(value: File)
   final case class ForceMoveToExercise(forceMove: Boolean)
-  object StudentifiedRepo:
-    val default: StudentifiedRepo = StudentifiedRepo(file(".").getAbsoluteFile.getParentFile)
 
   final case class TemplatePath(value: String)
   object TemplatePath:

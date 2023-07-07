@@ -1,7 +1,7 @@
 package com.lunatech.cmt.client
 
 import com.lunatech.cmt.client.Configuration.{CmtHome, GithubApiToken}
-import com.lunatech.cmt.client.Domain.StudentifiedRepo
+import com.lunatech.cmt.Domain.StudentifiedRepo
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike

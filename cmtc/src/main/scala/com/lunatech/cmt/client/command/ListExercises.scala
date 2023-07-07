@@ -2,7 +2,7 @@ package com.lunatech.cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import com.lunatech.cmt.client.{Configuration, listExercises}
-import com.lunatech.cmt.client.Domain.StudentifiedRepo
+import com.lunatech.cmt.Domain.StudentifiedRepo
 import com.lunatech.cmt.{CMTcConfig, CmtError, printResult}
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.core.validation.Validatable

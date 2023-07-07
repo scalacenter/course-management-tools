@@ -14,7 +14,7 @@ package com.lunatech.cmt.client.cli
   */
 
 import caseapp.Parser
-import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
+import com.lunatech.cmt.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
 import com.lunatech.cmt.client.command.GotoExercise
 import com.lunatech.cmt.support.TestDirectories
 import sbt.io.syntax.File

@@ -6,7 +6,8 @@ import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import cats.syntax.either.*
 import com.lunatech.cmt.client.{Configuration}
-import com.lunatech.cmt.client.Domain.{InstallationSource, StudentifiedRepo}
+import com.lunatech.cmt.Domain.StudentifiedRepo
+import com.lunatech.cmt.client.Domain.InstallationSource
 import com.lunatech.cmt.{CmtError, GenericError, printMessage, printResult, toExecuteCommandErrorMessage}
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.core.validation.Validatable

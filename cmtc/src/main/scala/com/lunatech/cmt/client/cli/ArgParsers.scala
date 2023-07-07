@@ -3,11 +3,11 @@ package com.lunatech.cmt.client.cli
 import caseapp.core.Error
 import caseapp.core.Error.Other
 import caseapp.core.argparser.{ArgParser, FlagArgParser, SimpleArgParser}
+import com.lunatech.cmt.Domain.StudentifiedRepo
 import com.lunatech.cmt.client.Domain.{
   ExerciseId,
   ForceMoveToExercise,
   InstallationSource,
-  StudentifiedRepo,
   TemplatePath
 }
 import sbt.io.syntax.{File, file}

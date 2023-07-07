@@ -3,7 +3,8 @@ package com.lunatech.cmt.client.command
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
 import com.lunatech.cmt.client.Configuration
 import com.lunatech.cmt.{CMTcConfig, CmtError, printResult}
-import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise, StudentifiedRepo}
+import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise}
+import com.lunatech.cmt.Domain.StudentifiedRepo
 import com.lunatech.cmt.core.validation.Validatable
 import com.lunatech.cmt.client.cli.ArgParsers.{forceMoveToExerciseArgParser, studentifiedRepoArgParser}
 import com.lunatech.cmt.client.cli.CmtcCommand

@@ -11,7 +11,8 @@ import com.lunatech.cmt.{
 }
 import com.lunatech.cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
 import com.lunatech.cmt.client.Configuration
-import com.lunatech.cmt.client.Domain.{ForceMoveToExercise, StudentifiedRepo}
+import com.lunatech.cmt.Domain.StudentifiedRepo
+import com.lunatech.cmt.client.Domain.ForceMoveToExercise
 import com.lunatech.cmt.client.command.getCurrentExerciseId
 import com.lunatech.cmt.core.validation.Validatable
 import sbt.io.syntax.*

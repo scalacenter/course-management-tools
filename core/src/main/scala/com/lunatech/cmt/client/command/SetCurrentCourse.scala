@@ -1,10 +1,12 @@
 package com.lunatech.cmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import com.lunatech.cmt.client.Domain.StudentifiedRepo
-import com.lunatech.cmt.client.cli.ArgParsers.studentifiedRepoArgParser
+import com.lunatech.cmt.Domain.StudentifiedRepo
+import com.lunatech.cmt.Helpers.findStudentRepoRoot
+import com.lunatech.cmt.core.cli.ArgParsers.studentifiedRepoArgParser
 import com.lunatech.cmt.client.cli.CmtcCommand
-import com.lunatech.cmt.client.{Configuration, CurrentCourse, findStudentRepoRoot, listExercises}
+import com.lunatech.cmt.client.{Configuration, CurrentCourse}
+import com.lunatech.cmt.Helpers.listExercises
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
 import com.lunatech.cmt.core.validation.Validatable
 import com.lunatech.cmt.{CMTcConfig, CmtError, printResult}

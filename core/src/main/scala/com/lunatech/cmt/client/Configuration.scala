@@ -1,28 +1,18 @@
 package com.lunatech.cmt.client
 
-import com.lunatech.cmt.client.Configuration.{
-  CmtHome,
-  CoursesDirectoryToken,
-  CurrentCourseToken,
-  DefaultGithubApiToken,
-  GithubApiToken,
-  GithubApiTokenToken,
-  globalConfigFile,
-  writeGlobalConfig
-}
+import com.lunatech.cmt.Helpers.{adaptToNixSeparatorChar, adaptToOSSeparatorChar}
+import com.lunatech.cmt.client.Configuration.*
+import com.lunatech.cmt.Domain.StudentifiedRepo
 import com.lunatech.cmt.{CmtError, FailedToWriteGlobalConfiguration, printMessage}
-import com.lunatech.cmt.client.Domain.StudentifiedRepo
 import com.typesafe.config.{Config, ConfigFactory}
+import dev.dirs.ProjectDirectories
 import sbt.io.IO.*
 import sbt.io.syntax.*
-import com.lunatech.cmt.Helpers.{adaptToNixSeparatorChar, adaptToOSSeparatorChar}
-
-import scala.jdk.CollectionConverters.*
-import scala.util.{Failure, Success, Try}
-import dev.dirs.ProjectDirectories
 
 import java.nio.charset.StandardCharsets
 import java.util.Base64
+import scala.jdk.CollectionConverters.*
+import scala.util.{Failure, Success, Try}
 
 final case class Configuration(
     homeDirectory: CmtHome,

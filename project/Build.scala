@@ -27,9 +27,7 @@ object Build {
     scalacOptions ++= CompileOptions.compileOptions,
     buildInfoPackage := "com.lunatech.cmt.version",
     Test / parallelExecution := false,
-    Test / logBuffered := false,
-    // ThisBuild / parallelExecution := false,
-    libraryDependencies ++= Dependencies.cmtDependencies)
+    Test / logBuffered := false)
 
   lazy val commonBuildInfoKeys = Seq[BuildInfoKey](version, scalaVersion, sbtVersion)
 

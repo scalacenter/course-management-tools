@@ -12,30 +12,15 @@ package com.lunatech.cmt.client
   *
   * See the License for the specific language governing permissions and limitations under the License.
   */
-
-import sbt.io.syntax.{File, file}
-
 object Domain:
   final case class ExerciseId(value: String)
   object ExerciseId:
     val default: ExerciseId = ExerciseId("")
 
-  final case class StudentifiedRepo(value: File)
   final case class ForceMoveToExercise(forceMove: Boolean)
-  object StudentifiedRepo:
-    val default: StudentifiedRepo = StudentifiedRepo(file(".").getAbsoluteFile.getParentFile)
 
   final case class TemplatePath(value: String)
   object TemplatePath:
     val default: TemplatePath = TemplatePath("")
-
-  sealed trait InstallationSource
-  object InstallationSource:
-    final case class LocalDirectory(value: File) extends InstallationSource
-    final case class ZipFile(value: File) extends InstallationSource
-    final case class GithubProject(organisation: String, project: String) extends InstallationSource {
-      val displayName = s"$organisation/$project"
-    }
-  end InstallationSource
 
 end Domain

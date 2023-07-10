@@ -1,18 +1,17 @@
 package com.lunatech.cmt.client
 
+import com.lunatech.cmt.Domain.StudentifiedRepo
 import com.lunatech.cmt.client.Configuration.{CmtHome, GithubApiToken}
-import com.lunatech.cmt.client.Domain.StudentifiedRepo
+import com.lunatech.cmt.support.EitherSupport
+import dev.dirs.ProjectDirectories
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import com.lunatech.cmt.support.EitherSupport
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
-import scala.compiletime.uninitialized
-import dev.dirs.ProjectDirectories
-
 import java.nio.charset.StandardCharsets
+import scala.compiletime.uninitialized
 
 final class ConfigurationSpec extends AnyWordSpecLike with Matchers with BeforeAndAfterEach with EitherSupport {
 

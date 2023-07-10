@@ -11,15 +11,17 @@ import com.lunatech.cmt.{
 }
 import com.lunatech.cmt.Helpers.withZipFile
 import com.lunatech.cmt.client.Configuration
-import com.lunatech.cmt.client.Domain.{StudentifiedRepo, TemplatePath}
-import com.lunatech.cmt.client.command.getCurrentExerciseId
+import com.lunatech.cmt.Domain.StudentifiedRepo
+import com.lunatech.cmt.client.Domain.TemplatePath
 import com.lunatech.cmt.core.validation.Validatable
 import sbt.io.CopyOptions
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import com.lunatech.cmt.client.cli.ArgParsers.{templatePathArgParser, studentifiedRepoArgParser}
+import com.lunatech.cmt.client.cli.ArgParsers.templatePathArgParser
+import com.lunatech.cmt.core.cli.ArgParsers.studentifiedRepoArgParser
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.core.cli.enforceTrailingArgumentCount
+import com.lunatech.cmt.core.command.Package.getCurrentExerciseId
 
 object PullTemplate:
 

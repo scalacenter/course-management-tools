@@ -10,14 +10,16 @@ import com.lunatech.cmt.{
   toExecuteCommandErrorMessage
 }
 import com.lunatech.cmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
+import com.lunatech.cmt.Domain.StudentifiedRepo
 import com.lunatech.cmt.client.Configuration
-import com.lunatech.cmt.client.Domain.{ForceMoveToExercise, StudentifiedRepo}
-import com.lunatech.cmt.client.command.getCurrentExerciseId
+import com.lunatech.cmt.client.Domain.ForceMoveToExercise
 import com.lunatech.cmt.core.validation.Validatable
 import sbt.io.syntax.*
-import com.lunatech.cmt.client.cli.ArgParsers.{forceMoveToExerciseArgParser, studentifiedRepoArgParser}
+import com.lunatech.cmt.client.cli.ArgParsers.forceMoveToExerciseArgParser
+import com.lunatech.cmt.core.cli.ArgParsers.studentifiedRepoArgParser
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
+import com.lunatech.cmt.core.command.Package.getCurrentExerciseId
 
 object NextExercise:
 
@@ -39,7 +41,6 @@ object NextExercise:
 
   extension (options: NextExercise.Options)
     def execute(configuration: Configuration): Either[CmtError, String] = {
-      import com.lunatech.cmt.client.Domain.ForceMoveToExercise
       val cMTcConfig = new CMTcConfig(options.studentifiedRepo.getOrElse(configuration.currentCourse.value).value)
 
       val currentExerciseId = getCurrentExerciseId(cMTcConfig.bookmarkFile)

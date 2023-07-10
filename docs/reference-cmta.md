@@ -14,6 +14,7 @@ The available commands and their function is as follows:
 - [`delinearize            `](#cmta-delinearize): reflect the changes made in a linearized artifact back into the corresponding main repository
 - [`renumber-exercises     `](#cmta-renumber-exercises): renumber exercises in a main repository
 - [`duplicate-insert-before`](#cmta-duplicate-insert-before): duplicate a selected exercise in a main repository and insert it before that exercise
+- [`new                    `](#cmta-new): create a new main repository from a Github template
 
 The remainder of this section describes these commands in further detail.
 
@@ -170,5 +171,30 @@ The following options are available:
 </pre>
 
 &nbsp;&nbsp;&nbsp;&nbsp;**-c**: Specify an alternative CMT configuration file.
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
+### cmta new
+
+#### Synopsys
+
+`   cmta new [-h] -t <template repository reference>`
+
+#### Description
+
+Create a main CMT repository from a given template repository on Github. The template repository can be
+any regular main CMT repository on Github.
+
+The template repository reference is composed of the name of the repository and the Github organisation.
+
+Following is an example of an invocation of the `cmta new` command that is creating a new CMT main repo
+based on the https://github.com/lunatech-labs/lunatech-scala-2-to-scala3-course Github repository:
+
+```bash
+$ cmta new -t lunatech-labs/lunatech-scala-2-to-scala3-course
+downloading studentified course from 'https://api.github.com/repos/lunatech-labs/lunatech-scala-2-to-scala3-course/zipball/3.0.0-v1' to courses directory
+lunatech-scala-2-to-scala3-course (3.0.0-v1)
+successfully installed to /Users/ericloots/Library/Caches/com.lunatech.cmt/Courses/lunatech-scala-2-to-scala3-course
+```
 
 &nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.

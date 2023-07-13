@@ -8,7 +8,7 @@ import com.lunatech.cmt.core.validation.Validatable
 import com.lunatech.cmt.admin.cli.ArgParsers.{configurationFileArgParser, courseTemplateArgParser}
 import com.lunatech.cmt.client.Configuration
 import com.lunatech.cmt.client.cli.CmtcCommand
-import com.lunatech.cmt.admin.Domain.InstallationSource.*
+import com.lunatech.cmt.Domain.InstallationSource.*
 import com.lunatech.cmt.Helpers.ignoreProcessStdOutStdErr
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
@@ -68,14 +68,16 @@ object New:
         val organisation = githubProject.organisation
         val tag = githubProject.tag
         val cloneGit = Process(Seq("git", "clone", s"git@github.com:$organisation/$project.git"), tmpDir)
-        val cloneHttp = Process(Seq("git", "clone", s"git@github.com:$organisation/$project.git"), tmpDir)
         val cloneGh = Process(Seq("gh", "repo", "clone", s"$organisation/$project"), tmpDir)
+        // TODO CHECK: I wonder if we should support cloning via HTTP...
+        val cloneHttp = Process(Seq("git", "clone", s"https://github.com/$organisation/$project"), tmpDir)
         val cloneRepoStatus =
-          Try(cloneGit.!).recoverWith(_ => Try(cloneHttp.!)).recoverWith(_ => Try(cloneGh.!)) match {
+          Try(cloneGit.!).recoverWith(_ => Try(cloneGh.!)).recoverWith(_ => Try(cloneHttp.!)) match {
             case Success(x) =>
               if x == 0 then Right(x)
               else s"Cannot install from ${githubProject.displayName}: No such repo".toExecuteCommandErrorMessage.asLeft
-            case Failure(_) => s"Cannot install from ${githubProject.displayName}: No such repo".toExecuteCommandErrorMessage.asLeft
+            case Failure(_) =>
+              s"Cannot install from ${githubProject.displayName}: No such repo".toExecuteCommandErrorMessage.asLeft
           }
         for {
           _ <- cloneRepoStatus

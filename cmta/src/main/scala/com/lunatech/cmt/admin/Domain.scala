@@ -13,8 +13,10 @@ package com.lunatech.cmt.admin
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import com.lunatech.cmt.Domain.InstallationSource.GithubProject
+import com.lunatech.cmt.CmtError
 import sbt.io.syntax.File
+import com.lunatech.cmt.*
+import cats.syntax.either.*
 
 object Domain:
 
@@ -39,12 +41,33 @@ object Domain:
   final case class MainRepository(value: File)
   final case class ConfigurationFile(value: File)
 
-  final case class CourseTemplate(value: GithubProject)
+  final case class CourseTemplate(value: Either[CmtError, InstallationSource.GithubProject])
   object CourseTemplate:
+    val GithubProjectRegex = "([A-Za-z0-9-_]*)\\/([A-Za-z0-9-_]*)".r
+    val GithubProjectWithTagRegex = "([A-Za-z0-9-_]*)\\/([A-Za-z0-9-_]*)\\/(.*)".r
     def fromString(str: String): CourseTemplate =
       if (str.indexOf("/") > 0) {
-        val Array(organisation, project) = str.split("/").map(_.trim)
-        CourseTemplate(GithubProject(organisation, project))
+        str match {
+          case GithubProjectRegex(organisation, project) =>
+            CourseTemplate(Right(InstallationSource.GithubProject(organisation, project, None)))
+          case GithubProjectWithTagRegex(organisation, project, tag) =>
+            CourseTemplate(Right(InstallationSource.GithubProject(organisation, project, Some(tag))))
+          case _ => CourseTemplate(s"Invalid template name: $str".toExecuteCommandErrorMessage.asLeft)
+        }
       } else {
-        CourseTemplate(GithubProject("lunatech-labs", str))
+        CourseTemplate(Right(InstallationSource.GithubProject("lunatech-labs", str, None)))
       }
+
+  sealed trait InstallationSource
+
+  object InstallationSource:
+    final case class LocalDirectory(value: File) extends InstallationSource
+
+    final case class ZipFile(value: File) extends InstallationSource
+
+    final case class GithubProject(organisation: String, project: String, tag: Option[String])
+      extends InstallationSource {
+      val displayName: String =
+        if tag.isEmpty then s"$organisation/$project" else s"$organisation/$project/${tag.getOrElse("")}"
+    }
+  end InstallationSource

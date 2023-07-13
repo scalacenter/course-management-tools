@@ -37,11 +37,7 @@ object Install:
     "Install a course - from either a local directory, a zip file on the local file system or a Github project")
   final case class Options(
       @ExtraName("s")
-      source: InstallationSource,
-      @ExtraName("d")
-      newName: Option[String] = None,
-      @ExtraName("a")
-      studentifiedAsset: Option[Boolean] = Some(true))
+      source: InstallationSource)
 
   given Validatable[Install.Options] with
     extension (options: Install.Options)
@@ -97,13 +93,11 @@ object Install:
           release: Release,
           configuration: Configuration)(implicit client: Client[IO]): Either[CmtError, String] =
         for {
-          assetUrl <- getAssetUrl(githubProject, release)
-          _ = printMessage(s"downloading studentified course from '$assetUrl' to courses directory")
-          downloadedZipFile <- downloadStudentAsset(assetUrl, githubProject, release.tag_name, configuration)
+          studentAssetUrl <- getStudentAssetUrl(githubProject, release)
+          _ = printMessage(s"downloading studentified course from '$studentAssetUrl' to courses directory")
+          downloadedZipFile <- downloadStudentAsset(studentAssetUrl, githubProject, release.tag_name, configuration)
           _ <- installFromZipFile(downloadedZipFile, configuration, deleteZipAfterInstall = true)
-          _ <-
-            if (cmd.studentifiedAsset.getOrElse(true)) setCurrentCourse(githubProject, configuration)
-            else "successfully created new course".toExecuteCommandErrorMessage.asRight
+          _ <- setCurrentCourse(githubProject, configuration)
         } yield s"${githubProject.project} (${release.tag_name}) successfully installed to ${configuration.coursesDirectory.value}/${githubProject.project}"
 
       private def setCurrentCourse(
@@ -114,24 +108,12 @@ object Install:
         SetCurrentCourse.Options(studentifiedRepo).execute(configuration)
       }
 
-      private def getAssetUrl(githubProject: GithubProject, release: Release)(implicit
-          httpClient: Client[IO]): Either[CmtError, String] = {
-        if (cmd.studentifiedAsset.getOrElse(true)) {
-          getStudentAssetUrl(githubProject, release)
-        } else {
-          release.zipball_url.toRight(
-            s"latest release of ${githubProject.displayName} does not have a 'main' repo zip - unable to install without one".toExecuteCommandErrorMessage)
-        }
-      }
-
       private def getStudentAssetUrl(githubProject: GithubProject, release: Release)(implicit
           httpClient: Client[IO]): Either[CmtError, String] = {
         val maybeAssetsFuture = httpClient
           .expect[List[Asset]](release.assets_url)
           .map { assets =>
-            val requiredName =
-              if (cmd.studentifiedAsset.getOrElse(true)) s"${githubProject.project}-student.zip"
-              else s"${githubProject.project}-${release.tag_name}.zip"
+            val requiredName = s"${githubProject.project}-student.zip"
             assets.find(_.name == requiredName).map(_.browserDownloadUrl)
           }
           .unsafeToFuture()

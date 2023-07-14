@@ -52,16 +52,21 @@ object New:
           // list the contents of the ~/Courses directory, if there's anything already matching the
           // name then get the count so we can append to the name and prevent conflicts
           template <- options.template.value
-          existingFilesWithSameName = sbtio.listFiles(
-            configuration.coursesDirectory.value,
-            new FileFilter {
-              override def accept(file: File): Boolean =
-                file.name.startsWith(template.project)
-            })
-          discriminator = if (existingFilesWithSameName.size > 0) s"-${existingFilesWithSameName.size}" else ""
-          targetDirectoryName = s"${template.project}$discriminator"
+          template <- options.template.value
+          targetDirectoryName = createTargetDirectoryName()
           newRepo <- newCmtRepoFromGithubProject(template, targetDirectoryName, configuration)
         } yield newRepo
+
+      private def createTargetDirectoryName(): String = {
+        val existingFilesWithSameName = sbtio.listFiles(
+          configuration.coursesDirectory.value,
+          new FileFilter {
+            override def accept(file: File): Boolean =
+              file.name.startsWith(template.project)
+          })
+        val discriminator = if (existingFilesWithSameName.size > 0) s"-${existingFilesWithSameName.size}" else ""
+        s"${template.project}$discriminator"
+      }
 
       private def cloneMainRepo(githubProject: GithubProject, tmpDir: File): Either[CmtError, TagSet] =
         val project = githubProject.project

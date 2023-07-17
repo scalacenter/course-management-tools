@@ -5,14 +5,16 @@ import cats.syntax.either.*
 import com.lunatech.cmt.*
 import com.lunatech.cmt.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
 import com.lunatech.cmt.Domain.{InstallationSource, StudentifiedRepo}
-import com.lunatech.cmt.Helpers.ignoreProcessStdOutStdErr
+import com.lunatech.cmt.Helpers.{findStudentRepoRoot, ignoreProcessStdOutStdErr}
 import com.lunatech.cmt.client.Configuration
 import com.lunatech.cmt.client.cli.CmtcCommand
 import com.lunatech.cmt.core.cli.ArgParsers.installationSourceArgParser
 import com.lunatech.cmt.core.cli.enforceNoTrailingArguments
 import com.lunatech.cmt.core.validation.Validatable
+import com.lunatech.cmt.client.Domain.ForceDeleteDestinationDirectory
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
+import com.lunatech.cmt.client.cli.ArgParsers.forceDeleteDestinationDirectoryArgParser
 
 import sys.process.*
 import scala.util.{Failure, Success, Try}
@@ -27,7 +29,12 @@ object Install:
     "Install a course - from either a local directory, a zip file on the local file system or a Github project")
   final case class Options(
       @ExtraName("s")
-      source: InstallationSource)
+      @ValueDescription("Source of the course, either a local folder or a zip file, or a Github project")
+      source: InstallationSource,
+      @ExtraName("f")
+      @ValueDescription(
+        "if set to 'true', a pre-existing installed course with the same name will be wiped before the new one is installed")
+      forceDelete: ForceDeleteDestinationDirectory = ForceDeleteDestinationDirectory(false))
 
   given Validatable[Install.Options] with
     extension (options: Install.Options)
@@ -40,14 +47,24 @@ object Install:
     extension (cmd: Install.Options)
       def execute(configuration: Configuration): Either[CmtError, String] =
         cmd.source match {
-          case localDirectory: LocalDirectory         => installFromLocalDirectory(localDirectory)
-          case zipFile: ZipFile                       => installFromZipFile(zipFile, configuration)
-          case githubProject @ GithubProject(_, _, _) => installFromGithubProject(githubProject, configuration)
+          case localDirectory: LocalDirectory =>
+            installFromLocalDirectory(localDirectory, configuration, cmd.forceDelete.value)
+          case zipFile: ZipFile => installFromZipFile(zipFile, configuration)
+          case githubProject @ GithubProject(_, _, _) =>
+            installFromGithubProject(githubProject, configuration, cmd.forceDelete.value)
         }
 
-      private def installFromLocalDirectory(localDirectory: LocalDirectory): Either[CmtError, String] =
-        GenericError(
-          s"unable to install course from local directory at '${localDirectory.value.getCanonicalPath}' - installing from a local directory is not supported... yet").asLeft
+      private def installFromLocalDirectory(
+          localDirectory: LocalDirectory,
+          configuration: Configuration,
+          forceDelete: Boolean): Either[CmtError, String] =
+        for {
+          studentRepoRoot <- findStudentRepoRoot(localDirectory.value)
+          project = studentRepoRoot.getName
+          _ <- checkPreExistingTargetFolder(project, configuration, forceDelete)
+          _ = sbtio.move(studentRepoRoot, configuration.coursesDirectory.value / studentRepoRoot.getName)
+          installCompletionMessage <- setCurrentCourse(project, configuration)
+        } yield installCompletionMessage
 
       private def installFromZipFile(
           zipFile: ZipFile,
@@ -61,43 +78,65 @@ object Install:
 
       private def extractTag(lsFilesTagLine: String): String =
         lsFilesTagLine.replaceAll(""".*refs/tags/""", "")
+
+      private def checkPreExistingTargetFolder(
+          project: String,
+          configuration: Configuration,
+          forceDelete: Boolean): Either[CmtError, Unit] =
+        val targetFolder = configuration.coursesDirectory.value / project
+        val preExistingTargetFolder = targetFolder.exists()
+        (preExistingTargetFolder, forceDelete) match {
+          case (true, false) =>
+            s"There is a pre-existing installed course for ${project}".toExecuteCommandErrorMessage.asLeft
+          case (true, true) =>
+            Right(sbtio.delete(targetFolder))
+          case (false, _) =>
+            Right(())
+        }
+
       private def installFromGithubProject(
           githubProject: GithubProject,
-          configuration: Configuration): Either[CmtError, String] = {
-        val cwd = file(".").getCanonicalFile
-        // TODO This may be brittle; if the user doesn't have its git credentials set, we
-        // may want to retry using HTTP
-        // if it fails, we may still attempt to download the artefact
-        val maybeTags = Try(
-          Process(
-            Seq(
-              "git",
-              "-c",
-              "versionsort.suffix=-",
-              "ls-remote",
-              "--tags",
-              "--refs",
-              "--sort",
-              "v:refname",
-              s"git@github.com:${githubProject.organisation}/${githubProject.project}.git"),
-            cwd).!!(ignoreProcessStdOutStdErr).split("\n").to(Seq).map(extractTag))
-        val tags: Seq[String] = maybeTags match {
-          case Success(s) => s
-          case Failure(_) => Seq.empty[String]
-        }
+          configuration: Configuration,
+          forceDelete: Boolean): Either[CmtError, String] = {
+        for {
+          _ <- checkPreExistingTargetFolder(githubProject.project, configuration, forceDelete)
+          installCompletionMessage <- {
+            val cwd = file(".").getCanonicalFile
+            val maybeTags = Try(
+              Process(
+                Seq(
+                  "git",
+                  "-c",
+                  "versionsort.suffix=-",
+                  "ls-remote",
+                  "--tags",
+                  "--refs",
+                  "--sort",
+                  "v:refname",
+                  s"git@github.com:${githubProject.organisation}/${githubProject.project}.git"),
+                cwd).!!(ignoreProcessStdOutStdErr).split("\n").to(Seq).map(extractTag))
+            val tags: Seq[String] = maybeTags match {
+              case Success(s) => s
+              case Failure(_) => Seq.empty[String]
+            }
 
-        val aTagWasPassedToInstall = githubProject.tag.isDefined
-        val aTagWasPassedToInstallWhichMatchesARelease =
-          githubProject.tag.isDefined && tags.contains(githubProject.tag.get)
+            val aTagWasPassedToInstall = githubProject.tag.isDefined
+            val aTagWasPassedToInstallWhichMatchesARelease =
+              githubProject.tag.isDefined && tags.contains(githubProject.tag.get)
+            val maybeMostRecentTag = tags.lastOption
 
-        (aTagWasPassedToInstall, aTagWasPassedToInstallWhichMatchesARelease) match {
-          case (false, _) =>
-            s"${githubProject.displayName}: Missing tag".toExecuteCommandErrorMessage.asLeft
-          case (true, false) =>
-            s"${githubProject.displayName}. ${githubProject.tag.get}: No such tag".toExecuteCommandErrorMessage.asLeft
-          case (true, true) =>
-            downloadAndInstallStudentifiedRepo(githubProject, githubProject.tag.get, configuration)
-        }
+            (aTagWasPassedToInstall, aTagWasPassedToInstallWhichMatchesARelease, maybeMostRecentTag) match {
+              case (false, _, Some(mostRecentTag)) =>
+                downloadAndInstallStudentifiedRepo(githubProject, mostRecentTag, configuration)
+              case (false, _, None) =>
+                s"${githubProject.displayName}: Missing tag".toExecuteCommandErrorMessage.asLeft
+              case (true, false, _) =>
+                s"${githubProject.displayName}. ${githubProject.tag.get}: No such tag".toExecuteCommandErrorMessage.asLeft
+              case (true, true, _) =>
+                downloadAndInstallStudentifiedRepo(githubProject, githubProject.tag.get, configuration)
+            }
+          }
+        } yield installCompletionMessage
       }
 
       private def downloadAndInstallStudentifiedRepo(
@@ -106,16 +145,15 @@ object Install:
           configuration: Configuration): Either[CmtError, String] =
         for {
           studentAssetUrl <- getStudentAssetUrl(githubProject, tag)
-          _ = printMessage(s"downloading studentified course from '$studentAssetUrl' to courses directory")
+          _ = printMessage(s"Downloading studentified course from '$studentAssetUrl' to courses directory\n")
           downloadedZipFile <- downloadStudentAsset(studentAssetUrl, githubProject, configuration)
           _ <- installFromZipFile(downloadedZipFile, configuration, deleteZipAfterInstall = true)
-          _ <- setCurrentCourse(githubProject, configuration)
-        } yield s"${githubProject.project} (${tag}) successfully installed to ${configuration.coursesDirectory.value}/${githubProject.project}"
+          _ <- setCurrentCourse(githubProject.project, configuration)
+        } yield s"""Project ${githubProject.project} (${tag}) successfully installed to:
+             |  ${configuration.coursesDirectory.value}/${githubProject.project}""".stripMargin
 
-      private def setCurrentCourse(
-          githubProject: GithubProject,
-          configuration: Configuration): Either[CmtError, String] = {
-        val courseDirectory = configuration.coursesDirectory.value / githubProject.project
+      private def setCurrentCourse(project: String, configuration: Configuration): Either[CmtError, String] = {
+        val courseDirectory = configuration.coursesDirectory.value / project
         val studentifiedRepo = StudentifiedRepo(courseDirectory)
         SetCurrentCourse.Options(studentifiedRepo).execute(configuration)
       }
@@ -123,7 +161,6 @@ object Install:
       private def getStudentAssetUrl(githubProject: GithubProject, tag: String): Either[CmtError, String] = {
         val organisation = githubProject.organisation
         val project = githubProject.project
-        val tag = githubProject.tag.get
         Right(s"https://github.com/$organisation/$project/releases/download/$tag/$project-student.zip")
       }
 
@@ -132,12 +169,16 @@ object Install:
           githubProject: GithubProject,
           configuration: Configuration): Either[CmtError, ZipFile] = {
         val zipFile = ZipFile(configuration.coursesDirectory.value / s"${githubProject.project}.zip")
-        downloadFile(url, zipFile)
-        zipFile.asRight
+        for {
+          _ <- downloadFile(url, zipFile)
+        } yield zipFile
       }
 
-      private def downloadFile(fileUri: String, destination: ZipFile): Unit =
-        val _ = (new URL(fileUri) #> new File(destination.value.getAbsolutePath)).!!
+      private def downloadFile(fileUri: String, destination: ZipFile): Either[CmtError, Unit] =
+        Try((new URL(fileUri) #> new File(destination.value.getAbsolutePath)).!) match {
+          case Success(0) => Right(())
+          case _          => s"Failed to download asset: ${fileUri}".toExecuteCommandErrorMessage.asLeft
+        }
 
     end extension
   end given

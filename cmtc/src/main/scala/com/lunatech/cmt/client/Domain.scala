@@ -17,6 +17,8 @@ object Domain:
   object ExerciseId:
     val default: ExerciseId = ExerciseId("")
 
+  final case class ForceDeleteDestinationDirectory(value: Boolean)
+
   final case class ForceMoveToExercise(forceMove: Boolean)
 
   final case class TemplatePath(value: String)

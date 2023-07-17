@@ -52,12 +52,11 @@ object New:
           // list the contents of the ~/Courses directory, if there's anything already matching the
           // name then get the count so we can append to the name and prevent conflicts
           template <- options.template.value
-          template <- options.template.value
-          targetDirectoryName = createTargetDirectoryName()
+          targetDirectoryName = createTargetDirectoryName(template, configuration)
           newRepo <- newCmtRepoFromGithubProject(template, targetDirectoryName, configuration)
         } yield newRepo
 
-      private def createTargetDirectoryName(): String = {
+      private def createTargetDirectoryName(template: GithubProject, configuration: Configuration): String = {
         val existingFilesWithSameName = sbtio.listFiles(
           configuration.coursesDirectory.value,
           new FileFilter {
@@ -74,7 +73,6 @@ object New:
         val tag = githubProject.tag
         val cloneGit = Process(Seq("git", "clone", s"git@github.com:$organisation/$project.git"), tmpDir)
         val cloneGh = Process(Seq("gh", "repo", "clone", s"$organisation/$project"), tmpDir)
-        // TODO CHECK: I wonder if we should support cloning via HTTP...
         val cloneHttp = Process(Seq("git", "clone", s"https://github.com/$organisation/$project"), tmpDir)
         val cloneRepoStatus =
           Try(cloneGit.!).recoverWith(_ => Try(cloneGh.!)).recoverWith(_ => Try(cloneHttp.!)) match {
@@ -122,12 +120,16 @@ object New:
         (githubProject.tag, tagSet.tags.isEmpty, tagSet.tags.lastOption) match {
           case (None, _, Some(lastReleaseTag)) =>
             copyRepo(githubProject, targetDirectoryName, configuration, lastReleaseTag, tmpDir)
-            Right(
-              s"${githubProject.copy(tag = Some(lastReleaseTag)).displayName} successfully installed to ${configuration.coursesDirectory.value}/${targetDirectoryName}")
+            Right(s"""Project:
+                 |   ${githubProject.copy(tag = Some(lastReleaseTag)).displayName}
+                 |successfully installed to:
+                 |   ${configuration.coursesDirectory.value}/${targetDirectoryName}""".stripMargin)
           case (Some(tag), false, _) if tagSet.tags.contains(tag) =>
             copyRepo(githubProject, targetDirectoryName, configuration, tag, tmpDir)
-            Right(
-              s"${githubProject.displayName} successfully installed to ${configuration.coursesDirectory.value}/${targetDirectoryName}")
+            Right(s"""Project:
+                 |   ${githubProject.displayName}
+                 |successfully installed to:
+                 |   ${configuration.coursesDirectory.value}/${targetDirectoryName}""".stripMargin)
           case (Some(tag), false, _) =>
             s"Cannot install from ${githubProject.displayName}. No such tag: $tag".toExecuteCommandErrorMessage.asLeft
           case (Some(_), true, _) | (None, _, None) =>

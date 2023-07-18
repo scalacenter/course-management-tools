@@ -15,11 +15,13 @@ import com.lunatech.cmt.client.Domain.ForceDeleteDestinationDirectory
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 import com.lunatech.cmt.client.cli.ArgParsers.forceDeleteDestinationDirectoryArgParser
+import com.lunatech.cmt.Releasables.{*, given}
 
 import sys.process.*
 import scala.util.{Failure, Success, Try}
 import java.io.File
 import java.net.URL
+import scala.util.Using
 
 object Install:
 
@@ -46,12 +48,13 @@ object Install:
   given Executable[Install.Options] with
     extension (cmd: Install.Options)
       def execute(configuration: Configuration): Either[CmtError, String] =
+        val forceDelete = cmd.forceDelete.value
         cmd.source match {
           case localDirectory: LocalDirectory =>
-            installFromLocalDirectory(localDirectory, configuration, cmd.forceDelete.value)
-          case zipFile: ZipFile => installFromZipFile(zipFile, configuration)
+            installFromLocalDirectory(localDirectory, configuration, forceDelete)
+          case zipFile: ZipFile => installFromZipFile(zipFile, configuration, forceDelete)
           case githubProject @ GithubProject(_, _, _) =>
-            installFromGithubProject(githubProject, configuration, cmd.forceDelete.value)
+            installFromGithubProject(githubProject, configuration, forceDelete)
         }
 
       private def installFromLocalDirectory(
@@ -69,12 +72,41 @@ object Install:
       private def installFromZipFile(
           zipFile: ZipFile,
           configuration: Configuration,
+          forceDelete: Boolean,
           deleteZipAfterInstall: Boolean = false): Either[CmtError, String] =
-        sbtio.unzip(zipFile.value, configuration.coursesDirectory.value)
-        if (deleteZipAfterInstall) {
-          sbtio.delete(zipFile.value)
+        val installResult = Using(TmpDir()) { case TmpDir(tmpDir) =>
+          sbtio
+            .unzip(zipFile.value, tmpDir)
+            .map(sbtio.relativizeFile(tmpDir, _))
+            .collect { case Some(f) => f }
+            .filterNot(_.getName.startsWith("__MACOSX"))
+          sbtio.delete(tmpDir / "__MACOSX") // Hack for MacOSX
+          val zipRootFolders = sbtio.listFiles(tmpDir).to(Vector)
+          if zipRootFolders.size == 1 then
+            val project = zipRootFolders.head.getName
+            val targetFolder = configuration.coursesDirectory.value / project
+            (targetFolder.exists, forceDelete) match {
+              case (false, _) | (true, true) =>
+                sbtio.move(tmpDir / project, targetFolder)
+                if (deleteZipAfterInstall) {
+                  sbtio.delete(zipFile.value)
+                }
+                setCurrentCourse(targetFolder.getName, configuration).map { currentCourseInfo =>
+                  s"""Project $project successfully installed to $targetFolder
+                       |
+                       |$currentCourseInfo
+                       |""".stripMargin
+                }
+              case (_, _) =>
+                s"There is a pre-existing installed course for ${zipRootFolders.head.getName}".toExecuteCommandErrorMessage.asLeft
+            }
+          else s"Invalid CMT archive: ${zipFile.value.getName}".toExecuteCommandErrorMessage.asLeft
         }
-        s"Unzipped '${zipFile.value.name}' to '${configuration.coursesDirectory.value.getAbsolutePath}'".asRight
+        installResult match {
+          case Success(Right(ok)) => ok.asRight[CmtError]
+          case Success(failure)   => failure
+          case _                  => s"Unexpected error".toExecuteCommandErrorMessage.asLeft
+        }
 
       private def extractTag(lsFilesTagLine: String): String =
         lsFilesTagLine.replaceAll(""".*refs/tags/""", "")
@@ -127,13 +159,13 @@ object Install:
 
             (aTagWasPassedToInstall, aTagWasPassedToInstallWhichMatchesARelease, maybeMostRecentTag) match {
               case (false, _, Some(mostRecentTag)) =>
-                downloadAndInstallStudentifiedRepo(githubProject, mostRecentTag, configuration)
+                downloadAndInstallStudentifiedRepo(githubProject, mostRecentTag, configuration, forceDelete)
               case (false, _, None) =>
                 s"${githubProject.displayName}: Missing tag".toExecuteCommandErrorMessage.asLeft
               case (true, false, _) =>
                 s"${githubProject.displayName}. ${githubProject.tag.get}: No such tag".toExecuteCommandErrorMessage.asLeft
               case (true, true, _) =>
-                downloadAndInstallStudentifiedRepo(githubProject, githubProject.tag.get, configuration)
+                downloadAndInstallStudentifiedRepo(githubProject, githubProject.tag.get, configuration, forceDelete)
             }
           }
         } yield installCompletionMessage
@@ -142,12 +174,13 @@ object Install:
       private def downloadAndInstallStudentifiedRepo(
           githubProject: GithubProject,
           tag: String,
-          configuration: Configuration): Either[CmtError, String] =
+          configuration: Configuration,
+          forceDelete: Boolean): Either[CmtError, String] =
         for {
           studentAssetUrl <- getStudentAssetUrl(githubProject, tag)
           _ = printMessage(s"Downloading studentified course from '$studentAssetUrl' to courses directory\n")
           downloadedZipFile <- downloadStudentAsset(studentAssetUrl, githubProject, configuration)
-          _ <- installFromZipFile(downloadedZipFile, configuration, deleteZipAfterInstall = true)
+          _ <- installFromZipFile(downloadedZipFile, configuration, forceDelete, deleteZipAfterInstall = true)
           setCurrentCourseMessage <- setCurrentCourse(githubProject.project, configuration)
         } yield s"""Project ${githubProject.project} (${tag}) successfully installed to:
              |  ${configuration.coursesDirectory.value}/${githubProject.project}

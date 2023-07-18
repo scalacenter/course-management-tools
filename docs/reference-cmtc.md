@@ -352,7 +352,17 @@ $ ls -l ~/Downloads/lunatech-scala-2-to-scala3-course-student.zip
 
 $ (cd ~/Downloads;cmtc install -s lunatech-scala-2-to-scala3-course-student.zip)
 Unzipped 'lunatech-scala-2-to-scala3-course-student.zip' to '/Users/ericloots/Library/Caches/com.lunatech.cmt/Courses'
-lunatech-scala-2-to-scala3-course successfully installed to /Users/ericloots/Library/Caches/com.lunatech.cmt/Courses/lunatech-scala-2-to-scala3-course
+Current course set to '/Users/ericloots/Library/Caches/com.lunatech.cmt/Courses/LSL-P-lightbend-scala-language-professional'
+
+Exercises in repository:
+  1.  *   exercise_000_initial_state
+  2.      exercise_001_define_a_class
+  3.      exercise_002_define_class_parameters
+  4.      exercise_003_promote_class_parameters
+  5.      exercise_004_define_a_field
+  6.      exercise_005_define_a_method
+  <elided>
+
 ```
 
 ##### Install from a folder
@@ -362,7 +372,17 @@ $ ls -ld ~/Downloads/lunatech-scala-2-to-scala3-course
 drwxr-xr-x@ 7 ericloots  staff  224 11 Mar 19:08 /Users/ericloots/Downloads/lunatech-scala-2-to-scala3-course
 
 $ (cd ~/Downloads;cmtc install -s lunatech-scala-2-to-scala3-course)
-To be implemented
+$ cmtc install -s LSL-P-lightbend-scala-language-professional
+Current course set to '/Users/ericloots/Library/Caches/com.lunatech.cmt/Courses/LSL-P-lightbend-scala-language-professional'
+
+Exercises in repository:
+  1.  *   exercise_000_initial_state
+  2.      exercise_001_define_a_class
+  3.      exercise_002_define_class_parameters
+  4.      exercise_003_promote_class_parameters
+  5.      exercise_004_define_a_field
+  6.      exercise_005_define_a_method
+  <elided>
 ```
 
 ##### Install from a published release on Github
@@ -371,6 +391,16 @@ To be implemented
 $ cmtc install -s lunatech-labs/lunatech-scala-2-to-scala3-course
 downloading studentified course from 'https://github.com/lunatech-labs/lunatech-scala-2-to-scala3-course/releases/download/3.0.0-v1/lunatech-scala-2-to-scala3-course-student.zip' to courses directory
 lunatech-scala-2-to-scala3-course (3.0.0-v1) successfully installed to /Users/ericloots/Library/Caches/com.lunatech.cmt/Courses/lunatech-scala-2-to-scala3-course
+Current course set to '/Users/ericloots/Library/Caches/com.lunatech.cmt/Courses/LSL-P-lightbend-scala-language-professional'
+
+Exercises in repository:
+  1.  *   exercise_000_initial_state
+  2.      exercise_001_define_a_class
+  3.      exercise_002_define_class_parameters
+  4.      exercise_003_promote_class_parameters
+  5.      exercise_004_define_a_field
+  6.      exercise_005_define_a_method
+  <elided>
 ```
 
 The following option is available:

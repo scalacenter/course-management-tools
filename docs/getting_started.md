@@ -6,12 +6,62 @@ sidebar_label: Introduction
 
 ## Why CMT (Course Management Tools) ?
 
-![The premise](https://i.imgur.com/52a0JhX.png)
+![The premise](https://i.imgur.com/cvwRz4G.png)
 
 The Course Management Tools (CMT) simplify the process of setting up
-and maintaining programming exercises for training courses.
+and maintaining programming exercises for training courses. At the same
+time, it allows for the creation of a student specific course-exercises
+artifact that offers a number of interesting features for that student
+when following a training course. We will refer to this course exercises
+artifact as the *studentified* repo (or course) in the remainder of the
+documentation.
 
-It starts from the premise that a complex problem can be broken down into smaller pieces that can be digested easily and learned by an individual. For a given domain, a course may build a service in small steps in a series of exercises where each exercise builds on the content of the exercise preceding it.
+A *studentified* repo can be considered to be core product of the tooling. So
+before looking at the features of the tooling from a course author's point of
+view, let's focus on the features of a *studentified* repo.
+
+### CMT from the end-user's point of view
+
+The cumulative experience gained over many years of teaching courses has
+given valuable insights in what is important to students when working on
+[programming] exercises.
+
+- It should be easy for students to install the course exercises in their
+  development environment
+- The exercises will start from a known initial state that can be studied
+  by the student before moving to the first "real" exercise
+- Students will move through the exercises, repeating the following sequence:
+  - Move from the current to the next exercise, thereby transparently "pulling"
+    in new or modified test code
+  - Read the exercise assignment, instructions and tips
+  - Solve the exercise with the objective to make the updated tests pass
+- Repeat the process until the last exercise has been solved
+
+The scenario of moving through the course exercises is an ideal one that may 
+not be attained by all students. For example, some students may not be able to
+solve an assignment within the allotted time. Therefore, a number of "safety 
+net" features have been included in the tooling that allow a student to
+save the state of an uncompleted exercise as-is. After saving the state, they
+can catch up with the rest of the class by "pulling" in the reference solution
+for the exercise. After doing so, they can resume the normal cycle of solving the exercises. At any one later point point in time, a student can "restore" a
+state that they saved earlier.
+
+Finally, the tooling allows a student, usually upon instruction of the teacher
+or as part of the exercise instructions, to selectively pull files from the solution. This can be handy when non-trivial code snippets need to be added in
+the context of a new exercise that is not strictly linked to the subject matter
+of the course.
+
+And with this, we've basically described the most important features of the
+tooling from a student's perspective.
+
+Of course, you may wonder how the _studentified_ repo is built and
+maintained... This brings us to the second perspective of the tooling, namely
+the one from a course author's point of view. Let's have a look at that in
+the next section.
+
+### CMT from an author's point of view
+
+The approach behind the CMT tooling starts from the premise that a complex problem can be broken down into smaller pieces that can be digested and learned easilyby an individual. For a given domain, a course may build a service in small steps in a series of exercises where each exercise builds on the content of the exercise preceding it.
 
 One particular challenge that one has to deal with when building and maintaining training exercises is that there are two dimensions to the problem: we've already touched on the first one, the evolution of the exercises through consecutive exercises in a training course. The second dimension comes into play when the course as a whole is versioned. Experience has shown that one needs tooling that deals with these two [orthogonal] dimensions. CMT fits the bill as will be explained in the sections that follow.
 

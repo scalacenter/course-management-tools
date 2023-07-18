@@ -244,6 +244,8 @@ object Helpers:
     d.toInt
   }
 
+  val ignoreProcessStdOutStdErr: sys.process.ProcessLogger =
+    sys.process.ProcessLogger(_ => (), _ => ())
   def copyCleanViaGit(mainRepo: File, tmpDir: File, repoName: String): Either[CmtError, Unit] =
 
     import ProcessDSL.*

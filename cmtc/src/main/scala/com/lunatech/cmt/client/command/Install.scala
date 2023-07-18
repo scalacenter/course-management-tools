@@ -148,9 +148,11 @@ object Install:
           _ = printMessage(s"Downloading studentified course from '$studentAssetUrl' to courses directory\n")
           downloadedZipFile <- downloadStudentAsset(studentAssetUrl, githubProject, configuration)
           _ <- installFromZipFile(downloadedZipFile, configuration, deleteZipAfterInstall = true)
-          _ <- setCurrentCourse(githubProject.project, configuration)
+          setCurrentCourseMessage <- setCurrentCourse(githubProject.project, configuration)
         } yield s"""Project ${githubProject.project} (${tag}) successfully installed to:
-             |  ${configuration.coursesDirectory.value}/${githubProject.project}""".stripMargin
+             |  ${configuration.coursesDirectory.value}/${githubProject.project}
+             |
+             |$setCurrentCourseMessage""".stripMargin
 
       private def setCurrentCourse(project: String, configuration: Configuration): Either[CmtError, String] = {
         val courseDirectory = configuration.coursesDirectory.value / project

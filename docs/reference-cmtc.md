@@ -28,6 +28,7 @@ The available commands and their function is as follows:
 - [`save-state`](#cmtc-save-state): save the state of th current exercise
 - [`list-saved-states`](#cmtc-list-saved-states) : list all previously saved exercise states
 - [`restore-state`](#cmtc-restore-state) : restore a previously saved state
+- [`install`](#cmtc-install) : restore a previously saved state
 
 The remainder of this section describes these commands in further detail.
 
@@ -314,6 +315,93 @@ The following option is available:
 
 Restore the state of a previously saved exercise. For more info on
 the use-case for this command, read the section of [`cmtc pull-solution`](#cmtc-pull-solution).
+
+The following option is available:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**-h**: Print command-specific help.
+
+### cmtc install
+
+#### Synopsys
+
+`cmtc install [-h] -s <studentified repo reference>`
+
+#### Description
+
+Installs a course from a studentified artifact and set it as the default course for subsequent
+`cmtc` command invocations. The studentified repo reference can one of three different forms:
+
+- A zipped version of a studentified course.
+- A folder containing the studentified course.
+- A published [studentified] release of a course.
+
+In the first two cases, the user (student) already has a local, zipped or unzipped copy of a
+studentified course.
+For the third case, the author of the course has published a release in a Github repository,
+most likely via some form of automation (eg. CI using Github Actions), and following a specific
+naming convention for the zipped studentified course artifact.
+
+Following are examples of invocations of the `cmtc install` command for each of the above
+cases:
+
+##### Install from zip archive
+
+```
+$ ls -l ~/Downloads/lunatech-scala-2-to-scala3-course-student.zip
+-rw-r--r--@ 1 ericloots  staff  696763  7 Jul 09:56 /Users/ericloots/Downloads/lunatech-scala-2-to-scala3-course-student.zip
+
+$ (cd ~/Downloads;cmtc install -s lunatech-scala-2-to-scala3-course-student.zip)
+Unzipped 'lunatech-scala-2-to-scala3-course-student.zip' to '/Users/ericloots/Library/Caches/com.lunatech.cmt/Courses'
+Current course set to '/Users/ericloots/Library/Caches/com.lunatech.cmt/Courses/LSL-P-lightbend-scala-language-professional'
+
+Exercises in repository:
+  1.  *   exercise_000_initial_state
+  2.      exercise_001_define_a_class
+  3.      exercise_002_define_class_parameters
+  4.      exercise_003_promote_class_parameters
+  5.      exercise_004_define_a_field
+  6.      exercise_005_define_a_method
+  <elided>
+
+```
+
+##### Install from a folder
+
+```
+$ ls -ld ~/Downloads/lunatech-scala-2-to-scala3-course
+drwxr-xr-x@ 7 ericloots  staff  224 11 Mar 19:08 /Users/ericloots/Downloads/lunatech-scala-2-to-scala3-course
+
+$ (cd ~/Downloads;cmtc install -s lunatech-scala-2-to-scala3-course)
+$ cmtc install -s LSL-P-lightbend-scala-language-professional
+Current course set to '/Users/ericloots/Library/Caches/com.lunatech.cmt/Courses/LSL-P-lightbend-scala-language-professional'
+
+Exercises in repository:
+  1.  *   exercise_000_initial_state
+  2.      exercise_001_define_a_class
+  3.      exercise_002_define_class_parameters
+  4.      exercise_003_promote_class_parameters
+  5.      exercise_004_define_a_field
+  6.      exercise_005_define_a_method
+  <elided>
+```
+
+##### Install from a published release on Github
+
+```bash
+$ cmtc install -s lunatech-labs/lunatech-scala-2-to-scala3-course
+downloading studentified course from 'https://github.com/lunatech-labs/lunatech-scala-2-to-scala3-course/releases/download/3.0.0-v1/lunatech-scala-2-to-scala3-course-student.zip' to courses directory
+lunatech-scala-2-to-scala3-course (3.0.0-v1) successfully installed to /Users/ericloots/Library/Caches/com.lunatech.cmt/Courses/lunatech-scala-2-to-scala3-course
+Current course set to '/Users/ericloots/Library/Caches/com.lunatech.cmt/Courses/LSL-P-lightbend-scala-language-professional'
+
+Exercises in repository:
+  1.  *   exercise_000_initial_state
+  2.      exercise_001_define_a_class
+  3.      exercise_002_define_class_parameters
+  4.      exercise_003_promote_class_parameters
+  5.      exercise_004_define_a_field
+  6.      exercise_005_define_a_method
+  <elided>
+```
 
 The following option is available:
 

@@ -27,19 +27,23 @@ object ArgParsers:
   given installationSourceArgParser: ArgParser[InstallationSource] = {
 
     val githubProjectRegex = "([A-Za-z0-9-_]*)\\/([A-Za-z0-9-_]*)".r
+    val githubProjectWithTagRegex = "([A-Za-z0-9-_]*)\\/([A-Za-z0-9-_]*)\\/(.*)".r
 
     def toString(installationSource: InstallationSource): String =
       installationSource match {
-        case LocalDirectory(value)                => value.getAbsolutePath()
-        case ZipFile(value)                       => value.getAbsolutePath()
-        case GithubProject(organisation, project) => s"$organisation/$project"
+        case LocalDirectory(value)                           => value.getAbsolutePath()
+        case ZipFile(value)                                  => value.getAbsolutePath()
+        case GithubProject(organisation, project, None)      => s"$organisation/$project"
+        case GithubProject(organisation, project, Some(tag)) => s"$organisation/$project/$tag"
       }
 
     def fromString(str: String): Either[Error, InstallationSource] = {
       val maybeFile = file(str)
       val maybeGithub = str match {
-        case githubProjectRegex(organisation, project) => Some(GithubProject(organisation, project))
-        case _                                         => None
+        case githubProjectRegex(organisation, project) => Some(GithubProject(organisation, project, None))
+        case githubProjectWithTagRegex(organisation, project, tag) =>
+          Some(GithubProject(organisation, project, Some(tag)))
+        case _ => None
       }
 
       // is it a file? does it exist?

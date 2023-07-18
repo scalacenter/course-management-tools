@@ -69,4 +69,7 @@ object ArgParsers:
   given renumberOffsetArgParser: ArgParser[RenumberOffset] =
     intGreaterThanZero.xmap[RenumberOffset](_.value, RenumberOffset(_))
 
+  given courseTemplateArgParser: ArgParser[CourseTemplate] =
+    SimpleArgParser.from[CourseTemplate]("Course Template")(str => CourseTemplate.fromString(str).asRight)
+
 end ArgParsers

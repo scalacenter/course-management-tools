@@ -1,7 +1,7 @@
 package com.lunatech.cmt.client.cli
 
 import caseapp.core.argparser.{ArgParser, FlagArgParser, SimpleArgParser}
-import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise, TemplatePath}
+import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise, TemplatePath, ForceDeleteDestinationDirectory}
 import cats.syntax.either.*
 
 object ArgParsers {
@@ -14,4 +14,7 @@ object ArgParsers {
 
   given templatePathArgParser: ArgParser[TemplatePath] =
     SimpleArgParser.from[TemplatePath]("template path")(TemplatePath(_).asRight)
+
+  given forceDeleteDestinationDirectoryArgParser: ArgParser[ForceDeleteDestinationDirectory] =
+    FlagArgParser.boolean.xmap[ForceDeleteDestinationDirectory](_.value, ForceDeleteDestinationDirectory(_))
 }

@@ -38,9 +38,9 @@ object SetCurrentCourse:
             .copy(currentCourse = CurrentCourse(StudentifiedRepo(studentRepoRoot)))
             .flush()
             .map(_ => s"""Current course set to '${studentRepoRoot.getAbsolutePath}'
-                 |
-                 |Exercises in repository:
-                 |$formattedExerciseList""".stripMargin)
+                         |
+                         |Exercises in repository:
+                         |$formattedExerciseList""".stripMargin)
         } yield currentCourse
 
   val command = new CmtcCommand[SetCurrentCourse.Options] {

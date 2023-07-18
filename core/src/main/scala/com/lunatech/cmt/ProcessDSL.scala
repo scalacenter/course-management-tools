@@ -15,6 +15,7 @@ package com.lunatech.cmt
 
 import com.lunatech.cmt.toExecuteCommandErrorMessage
 import sbt.io.syntax.*
+import com.lunatech.cmt.Helpers.ignoreProcessStdOutStdErr
 
 import scala.sys.process.Process
 import scala.util.{Failure, Success, Try}
@@ -26,7 +27,7 @@ object ProcessDSL:
   extension (cmd: ProcessCmd)
 
     def runWithStatus(msg: String): Either[CmtError, Unit] = {
-      val status = Try(Process(cmd.cmd, cmd.workingDir).!)
+      val status = Try(Process(cmd.cmd, cmd.workingDir).!(ignoreProcessStdOutStdErr))
       status match
         case Success(_)  => Right(())
         case Failure(ex) => Left(msg.toExecuteCommandErrorMessage)

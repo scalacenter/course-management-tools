@@ -13,7 +13,12 @@ package com.lunatech.cmt.admin
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
+import com.lunatech.cmt.CmtError
 import sbt.io.syntax.File
+import com.lunatech.cmt.*
+import cats.syntax.either.*
+
+import com.lunatech.cmt.Domain.InstallationSource
 
 object Domain:
 
@@ -37,3 +42,19 @@ object Domain:
   final case class LinearizeBaseDirectory(value: File)
   final case class MainRepository(value: File)
   final case class ConfigurationFile(value: File)
+
+  final case class CourseTemplate(value: Either[CmtError, InstallationSource.GithubProject])
+  object CourseTemplate:
+    val GithubTemplateRegex = "([A-Za-z0-9-_]*)".r
+    val GithubProjectRegex = "([A-Za-z0-9-_]*)\\/([A-Za-z0-9-_]*)".r
+    val GithubProjectWithTagRegex = "([A-Za-z0-9-_]*)\\/([A-Za-z0-9-_]*)\\/(.*)".r
+    def fromString(str: String): CourseTemplate =
+      str match {
+        case GithubTemplateRegex(template) =>
+          CourseTemplate(Right(InstallationSource.GithubProject("lunatech-labs", s"cmt-template-$template", None)))
+        case GithubProjectRegex(organisation, project) =>
+          CourseTemplate(Right(InstallationSource.GithubProject(organisation, project, None)))
+        case GithubProjectWithTagRegex(organisation, project, tag) =>
+          CourseTemplate(Right(InstallationSource.GithubProject(organisation, project, Some(tag))))
+        case _ => CourseTemplate(s"Invalid template name: $str".toExecuteCommandErrorMessage.asLeft)
+      }

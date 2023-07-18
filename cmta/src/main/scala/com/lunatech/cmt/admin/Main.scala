@@ -13,11 +13,12 @@ package com.lunatech.cmt.admin
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import caseapp.core.app.{CommandsEntryPoint}
+import caseapp.core.app.CommandsEntryPoint
 import com.lunatech.cmt.admin.command.{
   Delinearize,
   DuplicateInsertBefore,
   Linearize,
+  New,
   RenumberExercises,
   Studentify,
   Version
@@ -26,6 +27,7 @@ import com.lunatech.cmt.admin.command.{
 object Main extends CommandsEntryPoint:
   override def progName = "cmta"
   override def commands = Seq(
+    New.command,
     Delinearize.command,
     DuplicateInsertBefore.command,
     Linearize.command,

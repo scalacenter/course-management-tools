@@ -12,7 +12,7 @@ import com.lunatech.cmt.core.execution.Executable
 import com.lunatech.cmt.{CMTaConfig, CmtError, printResult, toConsoleGreen}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import com.lunatech.cmt.admin.*
+import com.lunatech.cmt.admin.validateTargetFolder
 import com.lunatech.cmt.admin.cli.SharedOptions
 import com.lunatech.cmt.core.validation.Validatable
 import com.lunatech.cmt.admin.cli.ArgParsers.{
@@ -22,7 +22,6 @@ import com.lunatech.cmt.admin.cli.ArgParsers.{
 }
 import com.lunatech.cmt.core.GeneratorInfo
 import com.lunatech.cmt.core.cli.CmtCommand
-import com.lunatech.cmt.toExecuteCommandErrorMessage
 
 object Studentify:
 
@@ -46,11 +45,10 @@ object Studentify:
   given Validatable[Studentify.Options] with
     extension (options: Studentify.Options)
       def validated(): Either[CmtError, Studentify.Options] =
-        if (options.studentifyBaseDirectory.value.equals(options.shared.mainRepository.value)) {
-          Left("main repository cannot be the same as the destination directory".toExecuteCommandErrorMessage)
-        } else {
-          Right(options)
-        }
+        for {
+          mainRepository <- resolveMainRepoPath(options.shared.mainRepository.value)
+          _ <- validateTargetFolder(mainRepository, options.studentifyBaseDirectory.value)
+        } yield options
       end validated
   end given
 

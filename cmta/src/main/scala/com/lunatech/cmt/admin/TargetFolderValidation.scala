@@ -4,13 +4,13 @@ import com.lunatech.cmt.CmtError
 import java.io.File
 import com.lunatech.cmt.toExecuteCommandErrorMessage
 
-def validateTargetFolder(mainRepository: File, target: File): Either[CmtError, Unit] =
-  val canonicalStudentifyBaseDirectory = target.getCanonicalPath
+def validateDestinationFolder(mainRepository: File, destination: File): Either[CmtError, Unit] =
+  val canonicalTarget = destination.getCanonicalPath
   val canonicalMainRepository = mainRepository.getCanonicalPath
-  val mainRepositoryEqualsStudentifyBaseDirectory = canonicalStudentifyBaseDirectory == canonicalMainRepository
-  val StudentifyBaseDirectoryIsSubfolderOfmainRepository =
-    canonicalStudentifyBaseDirectory.startsWith(canonicalMainRepository)
-  (mainRepositoryEqualsStudentifyBaseDirectory, StudentifyBaseDirectoryIsSubfolderOfmainRepository) match {
+  val destinationEqualsMainRepository = canonicalTarget == canonicalMainRepository
+  val destinationIsSubfolderOfmainRepository =
+    canonicalTarget.startsWith(canonicalMainRepository)
+  (destinationEqualsMainRepository, destinationIsSubfolderOfmainRepository) match {
     case (true, _) =>
       Left("destination folder cannot be the same as the main repository root folder".toExecuteCommandErrorMessage)
     case (_, true) =>

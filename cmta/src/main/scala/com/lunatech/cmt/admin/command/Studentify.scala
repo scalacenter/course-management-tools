@@ -12,7 +12,7 @@ import com.lunatech.cmt.core.execution.Executable
 import com.lunatech.cmt.{CMTaConfig, CmtError, printResult, toConsoleGreen}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import com.lunatech.cmt.admin.validateTargetFolder
+import com.lunatech.cmt.admin.validateDestinationFolder
 import com.lunatech.cmt.admin.cli.SharedOptions
 import com.lunatech.cmt.core.validation.Validatable
 import com.lunatech.cmt.admin.cli.ArgParsers.{
@@ -47,7 +47,9 @@ object Studentify:
       def validated(): Either[CmtError, Studentify.Options] =
         for {
           mainRepository <- resolveMainRepoPath(options.shared.mainRepository.value)
-          _ <- validateTargetFolder(mainRepository, options.studentifyBaseDirectory.value)
+          _ <- validateDestinationFolder(
+            mainRepository = mainRepository,
+            destination = options.studentifyBaseDirectory.value)
         } yield options
       end validated
   end given

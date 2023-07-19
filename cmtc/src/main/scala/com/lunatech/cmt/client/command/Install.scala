@@ -75,11 +75,7 @@ object Install:
           forceDelete: Boolean,
           deleteZipAfterInstall: Boolean = false): Either[CmtError, String] =
         val installResult = Using(TmpDir()) { case TmpDir(tmpDir) =>
-          sbtio
-            .unzip(zipFile.value, tmpDir)
-            .map(sbtio.relativizeFile(tmpDir, _))
-            .collect { case Some(f) => f }
-            .filterNot(_.getName.startsWith("__MACOSX"))
+          sbtio.unzip(zipFile.value, tmpDir)
           sbtio.delete(tmpDir / "__MACOSX") // Hack for MacOSX
           val zipRootFolders = sbtio.listFiles(tmpDir).to(Vector)
           if zipRootFolders.size == 1 then
@@ -105,7 +101,9 @@ object Install:
         installResult match {
           case Success(Right(ok)) => ok.asRight[CmtError]
           case Success(failure)   => failure
-          case _                  => s"Unexpected error".toExecuteCommandErrorMessage.asLeft
+          case Failure(e) =>
+            s"""Unexpected error(${e.getMessage})
+               |  ${zipFile.value} may be corrupt""".toExecuteCommandErrorMessage.asLeft
         }
 
       private def extractTag(lsFilesTagLine: String): String =

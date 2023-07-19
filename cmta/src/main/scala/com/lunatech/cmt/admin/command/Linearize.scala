@@ -6,6 +6,7 @@ import com.lunatech.cmt.{CMTaConfig, CmtError, printResult, toConsoleGreen}
 import com.lunatech.cmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
 import com.lunatech.cmt.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
 import com.lunatech.cmt.admin.cli.SharedOptions
+import com.lunatech.cmt.admin.validateDestinationFolder
 import com.lunatech.cmt.core.cli.CmtCommand
 import com.lunatech.cmt.core.execution.Executable
 import com.lunatech.cmt.core.validation.Validatable
@@ -30,7 +31,12 @@ object Linearize:
   given Validatable[Linearize.Options] with
     extension (options: Linearize.Options)
       def validated(): Either[CmtError, Linearize.Options] =
-        Right(options)
+        for {
+          mainRepository <- resolveMainRepoPath(options.shared.mainRepository.value)
+          _ <- validateDestinationFolder(
+            mainRepository = mainRepository,
+            destination = options.linearizeBaseDirectory.value)
+        } yield options
   end given
 
   given Executable[Linearize.Options] with

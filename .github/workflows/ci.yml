@@ -26,30 +26,13 @@ jobs:
         with:
           java-version: 11
           distribution: adopt-hotspot
+          cache: 'sbt'
 
       - name: Setup Coursier
         run: |
           curl -fLo coursier https://git.io/coursier-cli &&
           chmod +x coursier &&
           ./coursier
-
-      - name: Cache Ivy
-        uses: actions/cache@v3
-        with:
-          path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy--${{ hashFiles('**/build.sbt') }}
-          restore-keys: |
-            ${{ runner.os }}-ivy-
-            ${{ runner.os }}-
-
-      - name: Cache SBT
-        uses: actions/cache@v3
-        with:
-          path: ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ hashFiles('project/**') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-
-            ${{ runner.os }}-
 
       - name: Check code formatting
         run: |
@@ -77,24 +60,7 @@ jobs:
         with:
           java-version: 11
           distribution: adopt-hotspot
-
-      - name: Cache Ivy
-        uses: actions/cache@v3
-        with:
-          path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy--${{ hashFiles('**/build.sbt') }}
-          restore-keys: |
-            ${{ runner.os }}-ivy-
-            ${{ runner.os }}-
-
-      - name: Cache SBT
-        uses: actions/cache@v3
-        with:
-          path: ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ hashFiles('project/**') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-
-            ${{ runner.os }}-
+          cache: 'sbt'
 
       - name: Run tests
         shell: bash
@@ -120,30 +86,13 @@ jobs:
         with:
           java-version: 11
           distribution: adopt-hotspot
+          cache: 'sbt'
 
       - name: Setup Coursier
         run: |
           curl -fLo coursier https://git.io/coursier-cli &&
           chmod +x coursier &&
           ./coursier
-
-      - name: Cache Ivy
-        uses: actions/cache@v3
-        with:
-          path: ~/.ivy2/cache
-          key: ${{ runner.os }}-ivy--${{ hashFiles('**/build.sbt') }}
-          restore-keys: |
-            ${{ runner.os }}-ivy-
-            ${{ runner.os }}-
-
-      - name: Cache SBT
-        uses: actions/cache@v3
-        with:
-          path: ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ hashFiles('project/**') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-
-            ${{ runner.os }}-
 
       - name: Publish Local
         run: (cd CMT && exec sbt publishLocal)

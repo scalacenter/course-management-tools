@@ -167,6 +167,14 @@ object Helpers:
     import java.nio.file.Files
     val _ = Files.write(file.toPath, string.getBytes(StandardCharsets.UTF_8))
 
+  private def dontTouchExtraFiles(config: CMTaConfig): List[String] =
+    if config.studentifiedRepoActiveExerciseFolder == "." then List(".cmt", ".git", ".gitignore")
+    else List.empty[String]
+
+  private def dontTouchFilesAdjust(config: CMTaConfig, path: String): String =
+    if config.studentifiedRepoActiveExerciseFolder == "." then path
+    else s"${config.studentifiedRepoActiveExerciseFolder}/${path}"
+
   def writeStudentifiedCMTConfig(configFile: File, exercises: Seq[String])(
       config: CMTaConfig,
       generatorInfo: GeneratorInfo): Unit =
@@ -183,9 +191,8 @@ object Helpers:
       "test-code-folders" -> config.testCodeFolders.asJava,
       "read-me-files" -> config.readMeFiles.asJava,
       "exercises" -> exercises.asJava,
-      "cmt-studentified-dont-touch" -> config.cmtStudentifiedDontTouch
-        .map(path => s"${config.studentifiedRepoActiveExerciseFolder}/${path}")
-        .asJava)
+      "cmt-studentified-dont-touch" -> (config.cmtStudentifiedDontTouch.map(path =>
+        dontTouchFilesAdjust(config, path)) ++ dontTouchExtraFiles(config)).asJava)
     val cmtConfig =
       ConfigFactory.parseMap(configMap.asJava).root().render(ConfigRenderOptions.concise().setFormatted(true))
     dumpStringToFile(cmtConfig, configFile)

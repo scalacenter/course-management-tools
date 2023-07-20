@@ -16,8 +16,7 @@ object Build {
         "-Wunused:explicits",
         "-Wunused:implicits",
         "-Wunused:params",
-        "-Wvalue-discard",
-      )
+        "-Wvalue-discard")
   }
 
   lazy val commonSettings = Seq(

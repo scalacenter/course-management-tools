@@ -37,7 +37,7 @@ jobs:
       - name: Check code formatting
         run: |
           cd CMT &&
-          sbt scalafmtCheckAll
+          sbt "scalafmtCheckAll ; scalafmtSbtCheck"
 
       - name: Run tests
         run: |

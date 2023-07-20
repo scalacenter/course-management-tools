@@ -6,9 +6,8 @@ lazy val `course-management-tools` =
     .settings(commonSettings: _*)
     .settings(publish / skip := true)
 
-lazy val core = project.in(file("core"))
-  .settings(commonSettings: _*)
-  .settings(libraryDependencies ++= Dependencies.coreDependencies)
+lazy val core =
+  project.in(file("core")).settings(commonSettings: _*).settings(libraryDependencies ++= Dependencies.coreDependencies)
 
 lazy val cmta = project
   .in(file("cmta"))
@@ -29,7 +28,8 @@ lazy val cmtc = project
   .settings(Compile / mainClass := Some("com.lunatech.cmt.client.Main"))
   .settings(buildInfoKeys := buildKeysWithName("Course Management Tools (Client)"))
 
-lazy val `functional-tests` = project.in(file("functional-tests"))
+lazy val `functional-tests` = project
+  .in(file("functional-tests"))
   .dependsOn(cmta, cmtc, core)
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++= Dependencies.functionalTestDependencies)
@@ -37,8 +37,5 @@ lazy val `functional-tests` = project.in(file("functional-tests"))
 
 lazy val docs = project
   .in(file("course-management-tools-docs"))
-  .settings(
-    moduleName := "course-management-tools-docs",
-    publish / skip := true
-  )
+  .settings(moduleName := "course-management-tools-docs", publish / skip := true)
   .enablePlugins(MdocPlugin, DocusaurusPlugin)

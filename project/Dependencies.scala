@@ -29,8 +29,7 @@ object Library {
     "org.http4s" %% "http4s-dsl",
     "org.http4s" %% "http4s-blaze-server",
     "org.http4s" %% "http4s-blaze-client",
-    "org.http4s" %% "http4s-circe"
-  ).map(_ % Version.http4s)
+    "org.http4s" %% "http4s-circe").map(_ % Version.http4s)
 
   lazy val circe = "io.circe" %% "circe-generic" % Version.circe
   lazy val github4s = "com.47deg" %% "github4s" % Version.github4s
@@ -40,8 +39,19 @@ object Dependencies {
 
   import Library._
 
-  lazy val coreDependencies = (http4s ++ List(sbtio, typesafeConfig, scalaTest, scalaCheck, commonsCodec, caseapp, cats, devDirs, circe, github4s)).map(_.withSources())
-  lazy val cmtDependencies = List(sbtio, typesafeConfig, scalaTest, scalaCheck, commonsCodec, caseapp, cats).map(_.withSources())
+  lazy val coreDependencies = (http4s ++ List(
+    sbtio,
+    typesafeConfig,
+    scalaTest,
+    scalaCheck,
+    commonsCodec,
+    caseapp,
+    cats,
+    devDirs,
+    circe,
+    github4s)).map(_.withSources())
+  lazy val cmtDependencies =
+    List(sbtio, typesafeConfig, scalaTest, scalaCheck, commonsCodec, caseapp, cats).map(_.withSources())
   lazy val cmtcDependencies = (http4s ++ List(devDirs, circe, github4s, scalaTest, scalaCheck)).map(_.withSources())
   lazy val functionalTestDependencies = List(scalaTest, scalaCheck).map(_.withSources())
 }

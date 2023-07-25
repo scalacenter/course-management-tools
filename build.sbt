@@ -1,4 +1,6 @@
-import Build._
+import Build.*
+
+import scala.collection.Seq
 
 ThisBuild / dynverVTagPrefix := false
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
@@ -9,6 +11,12 @@ lazy val `course-management-tools` =
     .aggregate(cmta, cmtc, core, `functional-tests`, docs)
     .settings(commonSettings: _*)
     .settings(publish / skip := true)
+    .settings(inThisBuild(List(
+      organization := "com.lunatech",
+      homepage := Some(url("https://cmt.lunatech.com/")),
+      developers := List(
+        Developer("eloots", "Eric Loots", "eric.loots@lunatech.com", url("https://github.com/eloots"))),
+      licenses := Seq("Apache-2.0" -> url("http://www.apache.org/license/LICENSE-2.0")))))
 
 lazy val core =
   project.in(file("core")).settings(commonSettings: _*).settings(libraryDependencies ++= Dependencies.coreDependencies)

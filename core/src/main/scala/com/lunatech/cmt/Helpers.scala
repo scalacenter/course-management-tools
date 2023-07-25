@@ -28,7 +28,7 @@ object Helpers:
   def fileList(base: File): Vector[File] =
     @scala.annotation.tailrec
     def fileList(filesSoFar: Vector[File], folders: Vector[File]): Vector[File] =
-      val subs = (folders.foldLeft(Vector.empty[File])) { case (tally, folder) =>
+      val subs = folders.foldLeft(Vector.empty[File]) { case (tally, folder) =>
         tally ++ sbtio.listFiles(folder)
       }
       subs.partition(_.isDirectory) match

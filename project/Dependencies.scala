@@ -9,7 +9,7 @@ object Version {
   lazy val caseapp = "2.1.0-M24"
   lazy val cats = "2.8.0"
   lazy val devDirs = "26"
-  lazy val github4s = "0.30.0"
+  lazy val github4s = "0.32.0"
   lazy val http4s = "0.23.6"
   lazy val circe = "0.14.1"
   lazy val circeConfig = "0.8.0"

@@ -1,5 +1,9 @@
 import Build._
 
+ThisBuild / dynverVTagPrefix := false
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
+
 lazy val `course-management-tools` =
   (project in file("."))
     .aggregate(cmta, cmtc, core, `functional-tests`, docs)

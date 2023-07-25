@@ -104,6 +104,13 @@ jobs:
           ./coursier bootstrap com.github.lunatech-labs:cmtc_3:2.0.0-SNAPSHOT -o course-management-tools/bin/cmtc --standalone --bat
           zip -r course-management-tools.zip course-management-tools
 
+      - run: sbt ci-release
+        env:
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+
       - name: Create Github Release
         id: create_release
         uses: actions/create-release@v1

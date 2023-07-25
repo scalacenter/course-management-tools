@@ -20,7 +20,7 @@ object Library {
   lazy val scalaCheck = "org.scalatestplus" %% "scalacheck-1-15" % Version.scalaCheck % Test
   lazy val sbtio = "org.scala-sbt" %% "io" % Version.sbtio
   lazy val typesafeConfig = "com.typesafe" % "config" % Version.typesafeConfig
-  lazy val commonsCodec = "commons-codec" % "commons-codec" % "1.15"
+  lazy val commonsCodec = "commons-codec" % "commons-codec" % "1.16.0"
   lazy val caseapp = "com.github.alexarchambault" %% "case-app" % Version.caseapp
   lazy val cats = "org.typelevel" %% "cats-core" % Version.cats
   lazy val devDirs = ("dev.dirs" % "directories" % Version.devDirs).withJavadoc()

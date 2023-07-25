@@ -4,7 +4,7 @@ object Version {
   lazy val scalaVersion = "3.3.0"
   lazy val scalaTest = "3.2.14"
   lazy val scalaCheck = "3.2.9.0"
-  lazy val sbtio = "1.7.0"
+  lazy val sbtio = "1.9.1"
   lazy val typesafeConfig = "1.4.2"
   lazy val caseapp = "2.1.0-M25"
   lazy val cats = "2.8.0"

@@ -27,12 +27,6 @@ jobs:
           distribution: adopt-hotspot
           cache: 'sbt'
 
-      - name: Setup Coursier
-        run: |
-          curl -fLo coursier https://git.io/coursier-cli &&
-          chmod +x coursier &&
-          ./coursier
-
       - name: Check code formatting
         run: sbt "scalafmtCheckAll ; scalafmtSbtCheck"
 

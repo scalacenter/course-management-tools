@@ -10,7 +10,7 @@ object Version {
   lazy val cats = "2.9.0"
   lazy val devDirs = "26"
   lazy val github4s = "0.32.0"
-  lazy val http4s = "0.23.15"
+  lazy val http4s = "0.23.23"
   lazy val circe = "0.14.5"
   lazy val circeConfig = "0.8.0"
 }

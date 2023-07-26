@@ -44,7 +44,7 @@ object ArgParsers:
   given configurationFileArgParser: ArgParser[ConfigurationFile] =
     fileArgParser.xmapError[ConfigurationFile](
       _.value,
-      file => (file.validateExists).map(_ => ConfigurationFile(file)).leftMap(_.flatten).toEither)
+      file => file.validateExists.map(_ => ConfigurationFile(file)).leftMap(_.flatten).toEither)
 
   given forceDeleteDestinationDirectoryArgParser: ArgParser[ForceDeleteDestinationDirectory] =
     FlagArgParser.boolean.xmap[ForceDeleteDestinationDirectory](_.value, ForceDeleteDestinationDirectory(_))

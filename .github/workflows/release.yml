@@ -43,8 +43,8 @@ jobs:
       - name: Package Binaries
         run: |
           mkdir -p course-management-tools/bin
-          ./coursier bootstrap com.github.lunatech-labs:cmta_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmta --standalone --bat
-          ./coursier bootstrap com.github.lunatech-labs:cmtc_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmtc --standalone --bat
+          ./coursier bootstrap com.lunatech:cmta_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmta --standalone --bat
+          ./coursier bootstrap com.lunatech:cmtc_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmtc --standalone --bat
           zip -r course-management-tools.zip course-management-tools
 
       - run: sbt ci-release

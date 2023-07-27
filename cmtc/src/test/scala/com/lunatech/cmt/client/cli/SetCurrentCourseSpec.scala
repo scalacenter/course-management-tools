@@ -113,6 +113,7 @@ final class SetCurrentCourseSpec
         expectedDirectory.mkdir()
         val cmtConfigFolder = expectedDirectory / ".cmt"
         cmtConfigFolder.mkdir()
+
         dumpStringToFile(`cmt-config`, cmtConfigFolder / ".cmt-config")
         dumpStringToFile(`cmt-code-size-checksums`, cmtConfigFolder / ".cmt-code-size-checksums")
         dumpStringToFile(`cmt-test-size-checksums`, cmtConfigFolder / ".cmt-test-size-checksums")

@@ -109,8 +109,7 @@ final class SetCurrentCourseSpec
       "write the global configuration with the updated `current-course` value" in {
         println(s"""~~> tempDirectory = $tempDirectory""")
         val configuration = Configuration.load()
-        println(
-          s"""~~> Configuration =
+        println(s"""~~> Configuration =
              |$configuration""".stripMargin)
         val receivedConfiguration = assertRight(Configuration.load())
 

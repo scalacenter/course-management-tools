@@ -16,6 +16,9 @@ jobs:
 
     steps:
 
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
       - name: Checkout Course Management Tools Repo
         uses: actions/checkout@v3
         with:
@@ -40,8 +43,8 @@ jobs:
       - name: Package Binaries
         run: |
           mkdir -p course-management-tools/bin
-          ./coursier bootstrap com.github.lunatech-labs:cmta_3:2.0.0-SNAPSHOT -o course-management-tools/bin/cmta --standalone --bat
-          ./coursier bootstrap com.github.lunatech-labs:cmtc_3:2.0.0-SNAPSHOT -o course-management-tools/bin/cmtc --standalone --bat
+          ./coursier bootstrap com.github.lunatech-labs:cmta_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmta --standalone --bat
+          ./coursier bootstrap com.github.lunatech-labs:cmtc_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmtc --standalone --bat
           zip -r course-management-tools.zip course-management-tools
 
       - run: sbt ci-release

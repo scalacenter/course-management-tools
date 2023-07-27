@@ -107,6 +107,11 @@ final class SetCurrentCourseSpec
     "given a studentified directory" should {
 
       "write the global configuration with the updated `current-course` value" in {
+        println(s"""~~> tempDirectory = $tempDirectory""")
+        val configuration = Configuration.load()
+        println(
+          s"""~~> Configuration =
+             |$configuration""".stripMargin)
         val receivedConfiguration = assertRight(Configuration.load())
 
         val expectedDirectory = tempDirectory / "i-am-the-current-course-directory"

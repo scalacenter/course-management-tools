@@ -90,9 +90,6 @@ object Configuration:
 
   private def readFromConfigFile(cmtHome: CmtHome): Configuration = {
     val configFile = globalConfigFile(cmtHome)
-    println(s"""~~> CmtHome = $CmtHome
-         |~~> configFile = ${configFile.value}""".stripMargin)
-    println(s"""~~> config = ${scala.io.Source.fromFile(configFile.value).getLines().mkString("\n")}""")
     val config = configFile.config()
     val coursesDirectory = CoursesDirectory(file(adaptToOSSeparatorChar(config.getString("cmtc.courses-directory"))))
     val currentCourse = CurrentCourse(

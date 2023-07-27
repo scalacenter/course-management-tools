@@ -19,7 +19,7 @@ import com.lunatech.cmt.admin.cli.SharedOptions
 import com.lunatech.cmt.admin.command
 import com.lunatech.cmt.Domain.StudentifiedRepo
 import com.lunatech.cmt.client.{Configuration, CoursesDirectory, CurrentCourse}
-import com.lunatech.cmt.client.Configuration.{CmtHome, GithubApiToken}
+import com.lunatech.cmt.client.Configuration.CmtHome
 import com.lunatech.cmt.client.Domain.{ExerciseId, ForceMoveToExercise, TemplatePath}
 import com.lunatech.cmt.client.command.{
   GotoExercise,
@@ -219,5 +219,4 @@ private def createConfiguration(studentifiedRepoDirectory: File): Configuration 
   Configuration(
     CmtHome(file(".")),
     CoursesDirectory(file(".")),
-    CurrentCourse(StudentifiedRepo(studentifiedRepoDirectory)),
-    GithubApiToken(Configuration.DefaultGithubApiToken))
+    CurrentCourse(StudentifiedRepo(studentifiedRepoDirectory)))

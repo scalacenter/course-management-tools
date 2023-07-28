@@ -147,7 +147,7 @@ studentify.studentified-project-name = "base"
 This settings is used to add per-exercise specific sbt build code and
 is useful for example to enable sbt plugins and/or sbt plugin settings
 for every exercise. You can see an example of this in the [Play CMT main
-template repo](https://github.com/eloots/course-management-tools/blob/3a8ca61fff34fe5f1a7daed81f96c9b95c167f0c/course-templates/play-cmt-template-no-common/course-management.conf#L19).
+template repo](https://github.com/lunatech-labs/course-management-tools/blob/3a8ca61fff34fe5f1a7daed81f96c9b95c167f0c/course-templates/play-cmt-template-no-common/course-management.conf#L19).
 
 Applies to `cmt-mainadm`, `cmt-studentify`, `cmt-linearize`
 
@@ -234,4 +234,4 @@ apply the settings defined in `CommonSettings.configure`.
 
 ## Reference configuration
 
-The complete reference configuration can be found [here](https://github.com/eloots/course-management-tools/blob/main/core/src/main/resources/reference.conf).
+The complete reference configuration can be found [here](https://github.com/lunatech-labs/course-management-tools/blob/main/core/src/main/resources/reference.conf).

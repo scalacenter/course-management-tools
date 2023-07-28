@@ -41,7 +41,7 @@ const siteConfig = {
   // Algolia DocSearch
   algolia: {
     apiKey: 'ad215f5ba694d2e808dde2e2c3c465f4',
-    indexName: 'eloots_course-management-tools',
+    indexName: 'lunatech-labs_course-management-tools',
     //appId: 'app-id', // Optional, if you run the DocSearch crawler on your own
     // algoliaOptions: {} // Optional, if provided by Algolia
   },

@@ -23,11 +23,11 @@ Make sure to have a [recent version of **_git_**](https://git-scm.com/downloads)
 ## Installation
 
 The preferred way to install the Course Management Tools is to download
-the binaries from [the latest (version 1) release](https://github.com/eloots/course-management-tools/releases/tag/1.0.3).
+the binaries from [the latest (version 1) release](https://github.com/lunatech-labs/course-management-tools/releases/tag/1.0.3).
 
 The installation procedure is rather straightforward:
 
-- download the `course-management-tools.zip` file from the [release page](https://github.com/eloots/course-management-tools/releases)
+- download the `course-management-tools.zip` file from the [release page](https://github.com/lunatech-labs/course-management-tools/releases)
 - unzip the content in a folder
 - update your PATH to include the `course-management-tools/bin` folder in
   the folder in which you unzipped the downloaded zip file

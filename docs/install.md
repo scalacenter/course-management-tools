@@ -23,11 +23,11 @@ Make sure to have a [recent version of **_git_**](https://git-scm.com/downloads)
 ## Installation
 
 The preferred way to install the Course Management Tools is to download
-the binaries from [the latest release](https://github.com/eloots/course-management-tools/releases).
+the binaries from [the latest release](https://github.com/lunatech-labs/course-management-tools/releases).
 
 The installation procedure is rather straightforward:
 
-- download the `course-management-tools.zip` file from the [release page](https://github.com/eloots/course-management-tools/releases)
+- download the `course-management-tools.zip` file from the [release page](https://github.com/lunatech-labs/course-management-tools/releases)
 - unzip the content in a folder
 - update your PATH to include the `course-management-tools/bin` folder in
   the folder in which you unzipped the downloaded zip file
@@ -36,4 +36,3 @@ The installation procedure is rather straightforward:
   - `cmtc` client command to manipulate studentified artifacts
 
 > Note: the plan is to publish native binaries of `cmta` and `cmtc` for MacOS, *nix, and Windows. Also, the goal is to publish CMT binary artifacts on Maven Central which should enable installation of the CMT binaries using [Coursier](https://github.com/coursier/coursier).
-

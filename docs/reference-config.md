@@ -10,7 +10,7 @@ The behaviour of the `cmta` command can be changed via configuration.
 
 If a file named `course-management.conf`  is present in the root folder of
 the CMT main repository, CMT settings in that file will override the default
-value from the [reference configuration](https://github.com/eloots/course-management-tools/blob/main/core/src/main/resources/reference.conf).
+value from the [reference configuration](https://github.com/lunatech-labs/course-management-tools/blob/main/core/src/main/resources/reference.conf).
 
 
 `cmta` takes the `-cfg <cfg file>` option which can be used
@@ -82,4 +82,4 @@ or deletes such folders while performing its tasks.
 
 ## Reference configuration
 
-The complete reference configuration can be found [here](https://github.com/eloots/course-management-tools/blob/main/core/src/main/resources/reference.conf).
+The complete reference configuration can be found [here](https://github.com/lunatech-labs/course-management-tools/blob/main/core/src/main/resources/reference.conf).

@@ -26,7 +26,8 @@ import com.lunatech.cmt.client.command.{
   PullTemplate,
   RestoreState,
   SaveState,
-  SetCurrentCourse
+  SetCurrentCourse,
+  Version
 }
 
 object Main extends CommandsEntryPoint:
@@ -44,4 +45,5 @@ object Main extends CommandsEntryPoint:
       PullTemplate.command,
       RestoreState.command,
       SaveState.command,
-      SetCurrentCourse.command)
+      SetCurrentCourse.command,
+      Version.command)

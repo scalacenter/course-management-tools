@@ -13,18 +13,21 @@ sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
 
 lazy val `course-management-tools` =
   (project in file("."))
-    .aggregate(cmta, cmtc, core, `functional-tests`, docs)
+    .aggregate(cmta, cmtc, `cmt-core`, `functional-tests`, docs)
     .settings(commonSettings: _*)
     .settings(publish / skip := true)
 
-lazy val core =
-  project.in(file("core")).settings(commonSettings: _*).settings(libraryDependencies ++= Dependencies.coreDependencies)
+lazy val `cmt-core` =
+  project
+    .in(file("cmt-core"))
+    .settings(commonSettings: _*)
+    .settings(libraryDependencies ++= Dependencies.coreDependencies)
 
 lazy val cmta = project
   .in(file("cmta"))
   .enablePlugins(BuildInfoPlugin)
   .enablePlugins(NativeImagePlugin)
-  .dependsOn(core, core % "test->test")
+  .dependsOn(`cmt-core`, `cmt-core` % "test->test")
   .settings(commonSettings: _*)
   .settings(Compile / mainClass := Some("com.lunatech.cmt.admin.Main"))
   .settings(buildInfoKeys := buildKeysWithName("cmta:Course Management Tools (Admin)"))
@@ -33,7 +36,7 @@ lazy val cmtc = project
   .in(file("cmtc"))
   .enablePlugins(BuildInfoPlugin)
   .enablePlugins(NativeImagePlugin)
-  .dependsOn(core, core % "test->test")
+  .dependsOn(`cmt-core`, `cmt-core` % "test->test")
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++= Dependencies.cmtcDependencies)
   .settings(Compile / mainClass := Some("com.lunatech.cmt.client.Main"))
@@ -41,7 +44,7 @@ lazy val cmtc = project
 
 lazy val `functional-tests` = project
   .in(file("functional-tests"))
-  .dependsOn(cmta, cmtc, core)
+  .dependsOn(cmta, cmtc, `cmt-core`)
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++= Dependencies.functionalTestDependencies)
   .settings(publish / skip := true)

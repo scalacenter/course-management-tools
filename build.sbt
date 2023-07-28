@@ -31,6 +31,7 @@ lazy val cmta = project
   .enablePlugins(NativeImagePlugin)
   .dependsOn(`cmt-core`, `cmt-core` % "test->test")
   .settings(commonSettings: _*)
+  .settings(nativeImageSettings: _*)
   .settings(Compile / mainClass := Some("com.lunatech.cmt.admin.Main"))
   .settings(buildInfoKeys := buildKeysWithName("cmta:Course Management Tools (Admin)"))
 
@@ -40,6 +41,7 @@ lazy val cmtc = project
   .enablePlugins(NativeImagePlugin)
   .dependsOn(`cmt-core`, `cmt-core` % "test->test")
   .settings(commonSettings: _*)
+  .settings(nativeImageSettings: _*)
   .settings(libraryDependencies ++= Dependencies.cmtcDependencies)
   .settings(Compile / mainClass := Some("com.lunatech.cmt.client.Main"))
   .settings(buildInfoKeys := buildKeysWithName("Course Management Tools (Client)"))

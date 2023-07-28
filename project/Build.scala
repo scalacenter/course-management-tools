@@ -30,11 +30,7 @@ object Build {
     Test / logBuffered := false)
 
   lazy val nativeImageSettings =
-    Seq(
-      nativeImageJvm := "graalvm-java17",
-      nativeImageVersion := "22.3.1",
-      nativeImageOptions := Seq("--no-fallback")
-    )
+    Seq(nativeImageJvm := "graalvm-java17", nativeImageVersion := "22.3.1", nativeImageOptions := Seq("--no-fallback"))
 
   lazy val commonBuildInfoKeys = Seq[BuildInfoKey](version, scalaVersion, sbtVersion)
 

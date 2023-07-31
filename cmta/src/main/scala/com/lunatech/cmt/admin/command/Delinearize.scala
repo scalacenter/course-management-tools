@@ -42,14 +42,14 @@ object Delinearize:
 
         for {
           _ <- Right(()).withLeft[CmtError]
-          _ = println(s"De-linearizing ${toConsoleGreen(mainRepository.value.getPath)} to ${toConsoleGreen(
-              options.linearizeBaseDirectory.value.getPath)}")
 
           mainRepoName = mainRepository.value.getName
+          linearizedRootFolder = options.linearizeBaseDirectory.value / mainRepoName
+
+          _ = println(
+            s"De-linearizing ${toConsoleGreen(linearizedRootFolder.getPath)} to ${toConsoleGreen(mainRepository.value.getCanonicalPath)}")
 
           ExercisesMetadata(_, exercisesInMain, _) <- getExerciseMetadata(mainRepository.value)(config)
-
-          linearizedRootFolder = options.linearizeBaseDirectory.value / mainRepoName
 
           exercisesAndSHAsInLinearized <- getExercisesAndSHAs(linearizedRootFolder)
 

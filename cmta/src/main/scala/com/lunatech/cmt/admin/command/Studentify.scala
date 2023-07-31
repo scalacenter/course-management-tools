@@ -83,8 +83,10 @@ object Studentify:
             studentifiedRootFolder = options.studentifyBaseDirectory.value / mainRepoName
             solutionsFolder = studentifiedRootFolder / config.studentifiedRepoSolutionsFolder
 
-            _ = println(
-              s"Studentifying ${toConsoleGreen(mainRepoName)} to ${toConsoleGreen(options.studentifyBaseDirectory.value.getPath)}")
+            _ = {
+              val destinationPath = (options.studentifyBaseDirectory.value / mainRepoName).getPath
+              println(s"Studentifying ${toConsoleGreen(mainRepoName)} to ${toConsoleGreen(destinationPath)}")
+            }
 
             _ <- checkpreExistingAndCreateArtifactRepo(
               options.studentifyBaseDirectory.value,

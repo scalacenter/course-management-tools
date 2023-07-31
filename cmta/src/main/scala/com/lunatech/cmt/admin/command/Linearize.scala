@@ -54,12 +54,12 @@ object Linearize:
             mainRepoName = mainRepository.value.getName
             tmpFolder = sbtio.createTemporaryDirectory
             cleanedMainRepo = tmpFolder / mainRepository.value.getName
-            ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(config)
+            ExercisesMetadata(_, exercises, _) <- getExerciseMetadata(mainRepository.value)(config)
             linearizedRootFolder = options.linearizeBaseDirectory.value / mainRepoName
 
-            _ = println(
-              s"Linearizing ${toConsoleGreen(mainRepoName)} to ${toConsoleGreen(options.linearizeBaseDirectory.value.getPath)}")
-
+            _ = {
+              println(s"Linearizing ${toConsoleGreen(mainRepoName)} to ${toConsoleGreen(linearizedRootFolder.getPath)}")
+            }
             _ <- checkpreExistingAndCreateArtifactRepo(
               options.linearizeBaseDirectory.value,
               linearizedRootFolder,

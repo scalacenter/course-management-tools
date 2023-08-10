@@ -31,17 +31,18 @@ jobs:
       - name: Set up caching
         uses: coursier/cache-action@v6
 
-      - name: Windows dev environment
-        uses: microsoft/setup-msbuild@v1.1
-        if: runner.os == 'Windows'
-
       #- name: Run tests
       #  shell: bash
       #  run: sbt test
 
+      - uses: actions/checkout@v3
+      - uses: ilammy/msvc-dev-cmd@v1
       - name: Native image generation
         shell: bash
-        run: sbt nativeImage
+        run: |
+          cmake -G "NMake Makefiles" .
+          nmake
+          sbt nativeImage
 
   formatting:
     runs-on: 'ubuntu-latest'

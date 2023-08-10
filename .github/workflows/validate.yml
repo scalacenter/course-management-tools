@@ -37,8 +37,8 @@ jobs:
       - name: cmta check native image generation
         shell: bash
         run: sbt cmta/nativeImage
-        env:
-          NATIVE_IMAGE_INSTALLED: true
+        #env:
+        #  NATIVE_IMAGE_INSTALLED: true
 
   formatting:
     runs-on: 'ubuntu-latest'

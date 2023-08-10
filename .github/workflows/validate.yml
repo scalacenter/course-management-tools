@@ -34,9 +34,9 @@ jobs:
         shell: bash
         run: sbt test
 
-      - name: Check native image generation
+      - name: cmta check native image generation
         shell: bash
-        run: sbt nativeImage
+        run: sbt cmta/nativeImage
         env:
           NATIVE_IMAGE_INSTALLED: true
 

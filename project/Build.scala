@@ -5,6 +5,7 @@ import sbtbuildinfo.BuildInfoKeys._
 import sbtnativeimage.NativeImagePlugin.autoImport.nativeImageJvm
 import sbtnativeimage.NativeImagePlugin.autoImport.nativeImageOptions
 import sbtnativeimage.NativeImagePlugin.autoImport.nativeImageVersion
+import sbtnativeimage.NativeImagePlugin.autoImport.nativeImageAgentMerge
 
 object Build {
 
@@ -30,8 +31,17 @@ object Build {
     Test / logBuffered := false)
 
   lazy val nativeImageSettings =
-    Seq(nativeImageJvm := "graalvm-java17", nativeImageVersion := "22.3.1", nativeImageOptions := Seq("--no-fallback"))
-
+    Seq(
+      nativeImageAgentMerge := true,
+      nativeImageJvm := "graalvm-java17",
+      nativeImageVersion := "22.3.1",
+      nativeImageOptions :=
+        Seq(
+          "--no-fallback",
+          "--enable-url-protocols=https",
+          "-H:+ReportExceptionStackTraces",
+          s"-H:ReflectionConfigurationFiles=${(Compile / resourceDirectory).value / "reflect-config.json"}",
+          s"-H:ConfigurationFileDirectories=${(Compile / resourceDirectory).value}"))
   lazy val commonBuildInfoKeys = Seq[BuildInfoKey](version, scalaVersion, sbtVersion)
 
   def buildKeysWithName(projectName: String): Seq[BuildInfoKey] =

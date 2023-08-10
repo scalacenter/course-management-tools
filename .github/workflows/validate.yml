@@ -9,13 +9,29 @@ permissions:
   contents: write
 
 jobs:
-  test:
+  native-image:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         #os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
         os: [ 'ubuntu-latest', 'windows-latest' ]
+        include:
+          # Replace "example" with the name your binary
+          # - os: macOS-latest
+          #   uploaded_filename: cmta-x86_64-apple-darwin
+          #   local_path: cmta/target/native-image/cmta
+          - os: ubuntu-latest
+            uploaded_filename: cmta-x86_64-pc-linux
+            local_path: cmta/target/native-image/cmta
+          - os: windows-latest
+            uploaded_filename: cmta-x86_64-pc-win32.exe
+            local_path: cmta\target\native-image\cmta.exe
+
+    env:
+      # define Java options for both official sbt and sbt-extras
+      JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      JVM_OPTS:  -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
 
     steps:
       - name: Checkout Course Management Tools Repo
@@ -35,13 +51,14 @@ jobs:
       #  shell: bash
       #  run: sbt test
 
-      - uses: actions/checkout@v3
-      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Setup Windows C++ toolchain
+        uses: ilammy/msvc-dev-cmd@v1
+        if: ${{ matrix.os == 'windows-latest' }}
+
       - name: Native image generation
         shell: bash
         run: |
-          cmake -G "NMake Makefiles" .
-          nmake
+          echo $(pwd)
           sbt nativeImage
 
   formatting:

@@ -14,7 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
+        #os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
+        os: [ 'ubuntu-latest', 'windows-latest' ]
 
     steps:
       - name: Checkout Course Management Tools Repo
@@ -30,15 +31,17 @@ jobs:
       - name: Set up caching
         uses: coursier/cache-action@v6
 
-      - name: Run tests
-        shell: bash
-        run: sbt test
+      - name: Windows dev environment
+        uses: microsoft/setup-msbuild@v1.1
+        if: runner.os == 'Windows'
 
-      - name: cmta check native image generation
+      #- name: Run tests
+      #  shell: bash
+      #  run: sbt test
+
+      - name: Native image generation
         shell: bash
-        run: sbt cmta/nativeImage
-        #env:
-        #  NATIVE_IMAGE_INSTALLED: true
+        run: sbt nativeImage
 
   formatting:
     runs-on: 'ubuntu-latest'

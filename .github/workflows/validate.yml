@@ -14,19 +14,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #os: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
         os: [ 'ubuntu-latest', 'macos-latest' ]
         include:
-          # Replace "example" with the name your binary
-          # - os: macOS-latest
-          #   uploaded_filename: cmta-x86_64-apple-darwin
-          #   local_path: cmta/target/native-image/cmta
+          - os: macOS-latest
+            uploaded_filename_cmta: cmta-x86_64-apple-darwin
+            local_path_cmta: cmta/target/native-image/cmta
+            uploaded_filename_cmtc: cmtc-x86_64-apple-darwin
+            local_path_cmtc: cmtc/target/native-image/cmtc
           - os: ubuntu-latest
-            uploaded_filename: cmta-x86_64-pc-linux
-            local_path: cmta/target/native-image/cmta
-          - os: windows-latest
-            uploaded_filename: cmta-x86_64-pc-win32.exe
-            local_path: cmta\target\native-image\cmta.exe
+            uploaded_filename_cmta: cmta-x86_64-pc-linux
+            local_path_cmta: cmta/target/native-image/cmta
+            uploaded_filename_cmtc: cmtc-x86_64-pc-linux
+            local_path_cmtc: cmtc/target/native-image/cmtc
+          # - os: windows-latest
+          #   uploaded_filename_cmta: cmta-x86_64-pc-win32.exe
+          #   local_path_cmta: cmta\target\native-image\cmta
+          #   uploaded_filename_cmtc: cmtc-x86_64-pc-win32.exe
+          #   local_path_cmtc: cmtc\target\native-image\cmtc
 
     env:
       # define Java options for both official sbt and sbt-extras
@@ -46,6 +50,8 @@ jobs:
           java-version: 11
           cache: sbt
 
+      - run: git fetch --tags || true
+
       - name: Set up caching
         uses: coursier/cache-action@v6
 
@@ -61,7 +67,16 @@ jobs:
         shell: bash
         run: |
           echo $(pwd)
-          sbt nativeImage
+          sbt clean nativeImage
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ${{ matrix.local_path_cmta }}
+          name: ${{ matrix.uploaded_filename_cmta }}
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ${{ matrix.local_path_cmtc }}
+          name: ${{ matrix.uploaded_filename_cmtc }}
 
   formatting:
     runs-on: 'ubuntu-latest'

@@ -1,0 +1,93 @@
+[
+{
+  "name":"[Lcaseapp.core.util.fansi.Attr;"
+},
+{
+  "name":"[Lcaseapp.core.util.fansi.Category;"
+},
+{
+  "name":"[Ljava.lang.String;"
+},
+{
+  "name":"[[Ljava.lang.Object;"
+},
+{
+  "name":"caseapp.core.app.CaseApp",
+  "fields":[{"name":"0bitmap$1"}]
+},
+{
+  "name":"caseapp.core.parser.ParserCompanion",
+  "fields":[{"name":"0bitmap$1"}]
+},
+{
+  "name":"caseapp.core.util.fansi.Category",
+  "fields":[{"name":"0bitmap$2"}]
+},
+{
+  "name":"caseapp.core.util.fansi.Str",
+  "fields":[{"name":"0bitmap$1"}]
+},
+{
+  "name":"com.lunatech.cmt.admin.cli.ArgParsers$",
+  "fields":[
+    {"name":"configurationFileArgParser$lzy1"}, 
+    {"name":"courseTemplateArgParser$lzy1"}, 
+    {"name":"exerciseNumberArgParser$lzy1"}, 
+    {"name":"forceDeleteDestinationDirectoryArgParser$lzy1"}, 
+    {"name":"initializeGitRepoArgParser$lzy1"}, 
+    {"name":"linearizeBaseDirectoryArgParser$lzy1"}, 
+    {"name":"mainRepositoryArgParser$lzy1"}, 
+    {"name":"renumberOffsetArgParser$lzy1"}, 
+    {"name":"renumberStartArgParser$lzy1"}, 
+    {"name":"renumberStepArgParser$lzy1"}, 
+    {"name":"studentifyBaseDirectoryArgParser$lzy1"}
+  ]
+},
+{
+  "name":"com.lunatech.cmt.admin.cli.SharedOptions$",
+  "fields":[
+    {"name":"help$lzy1"}, 
+    {"name":"parser$lzy1"}
+  ]
+},
+{
+  "name":"java.lang.ClassValue"
+},
+{
+  "name":"java.lang.invoke.VarHandle",
+  "methods":[{"name":"releaseFence","parameterTypes":[] }]
+},
+{
+  "name":"java.security.SecureRandomParameters"
+},
+{
+  "name":"sbt.internal.io.Retry$",
+  "fields":[{"name":"limit$lzy1"}]
+},
+{
+  "name":"sbt.io.IO$",
+  "fields":[
+    {"name":"hasAclFileAttributeView$lzy1"}, 
+    {"name":"hasBasicFileAttributeView$lzy1"}, 
+    {"name":"hasDosFileAttributeView$lzy1"}, 
+    {"name":"hasFileOwnerAttributeView$lzy1"}, 
+    {"name":"hasPosixFileAttributeView$lzy1"}, 
+    {"name":"hasUserDefinedFileAttributeView$lzy1"}, 
+    {"name":"jrtFs$lzy1"}, 
+    {"name":"random$lzy1"}, 
+    {"name":"supportedFileAttributeViews$lzy1"}
+  ]
+},
+{
+  "name":"sun.misc.Unsafe",
+  "fields":[{"name":"theUnsafe"}]
+},
+{
+  "name":"sun.security.provider.NativePRNG",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+}
+]

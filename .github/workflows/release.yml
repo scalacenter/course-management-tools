@@ -11,8 +11,33 @@ permissions:
 
 jobs:
   create-release:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'ubuntu-latest', 'macos-latest' ]
+        include:
+          - os: macOS-latest
+            uploaded_filename_cmta: cmta-x86_64-apple-darwin
+            local_path_cmta: cmta/target/native-image/cmta
+            uploaded_filename_cmtc: cmtc-x86_64-apple-darwin
+            local_path_cmtc: cmtc/target/native-image/cmtc
+          - os: ubuntu-latest
+            uploaded_filename_cmta: cmta-x86_64-pc-linux
+            local_path_cmta: cmta/target/native-image/cmta
+            uploaded_filename_cmtc: cmtc-x86_64-pc-linux
+            local_path_cmtc: cmtc/target/native-image/cmtc
+          # - os: windows-latest
+          #   uploaded_filename_cmta: cmta-x86_64-pc-win32.exe
+          #   local_path_cmta: cmta\target\native-image\cmta
+          #   uploaded_filename_cmtc: cmtc-x86_64-pc-win32.exe
+          #   local_path_cmtc: cmtc\target\native-image\cmtc
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
+
+    env:
+      # define Java options for both official sbt and sbt-extras
+      JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      JVM_OPTS:  -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
 
     steps:
 
@@ -39,6 +64,7 @@ jobs:
 
       - name: Publish Local
         run: sbt publishLocal
+        if: ${{ matrix.os == 'ubuntu-latest' }}
           
       - name: Package Binaries
         run: |
@@ -46,6 +72,7 @@ jobs:
           ./coursier bootstrap com.lunatech:cmta_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmta --standalone --bat
           ./coursier bootstrap com.lunatech:cmtc_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmtc --standalone --bat
           zip -r course-management-tools.zip course-management-tools
+        if: ${{ matrix.os == 'ubuntu-latest' }}
 
       - run: sbt ci-release
         env:
@@ -53,6 +80,7 @@ jobs:
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
 
       - name: Create Github Release
         id: create_release
@@ -64,6 +92,7 @@ jobs:
           release_name: ${{ github.ref }}
           draft: false
           prerelease: false
+        if: ${{ matrix.os == 'ubuntu-latest' }}
 
       - name: Upload assets to Github release
         uses: actions/upload-release-asset@v1
@@ -73,4 +102,44 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./course-management-tools.zip
           asset_name: course-management-tools.zip
+          asset_content_type: application/zip
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+
+      - name: Setup Windows C++ toolchain
+        uses: ilammy/msvc-dev-cmd@v1
+        if: ${{ matrix.os == 'windows-latest' }}
+
+      - name: Native image generation
+        shell: bash
+        run: |
+          echo $(pwd)
+          sbt clean nativeImage
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ${{ matrix.local_path_cmta }}
+          name: ${{ matrix.uploaded_filename_cmta }}
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ${{ matrix.local_path_cmtc }}
+          name: ${{ matrix.uploaded_filename_cmtc }}
+
+      - name: Upload release cmta native
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ matrix.local_path_cmta }}
+          asset_name: ${{ matrix.uploaded_filename_cmta }}
+          asset_content_type: application/zip
+
+      - name: Upload release cmtc native
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ matrix.local_path_cmtc }}
+          asset_name: ${{ matrix.uploaded_filename_cmtc }}
           asset_content_type: application/zip

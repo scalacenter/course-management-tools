@@ -210,7 +210,16 @@ object Install:
       private def downloadFile(fileUri: String, destination: ZipFile): Either[CmtError, Unit] =
         Try((new URL(fileUri) #> new File(destination.value.getAbsolutePath)).!) match {
           case Success(0) => Right(())
-          case _          => s"Failed to download asset: ${fileUri}".toExecuteCommandErrorMessage.asLeft
+          case Success(exitCode) =>
+            s"""Failed to download asset: ${fileUri}
+               |
+               |Command exit code = $exitCode
+               |""".stripMargin.toExecuteCommandErrorMessage.asLeft
+          case Failure(e) =>
+            s"""Failed to download asset: ${fileUri}
+               |
+               |${e.getStackTrace().mkString("\n")}
+               |""".stripMargin.toExecuteCommandErrorMessage.asLeft
         }
 
     end extension

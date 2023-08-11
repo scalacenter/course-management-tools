@@ -38,6 +38,8 @@ jobs:
       # define Java options for both official sbt and sbt-extras
       JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
       JVM_OPTS:  -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      # disable automatic installation of native image
+      NATIVE_IMAGE_INSTALLED: true
 
     steps:
 
@@ -53,7 +55,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 11
-          distribution: adopt-hotspot
+          distribution: temurin
           cache: 'sbt'
 
       - name: Setup Coursier

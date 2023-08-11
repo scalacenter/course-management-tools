@@ -113,7 +113,7 @@ jobs:
         shell: bash
         run: |
           echo $(pwd)
-          sbt nativeImage
+          (export NATIVE_IMAGE_INSTALLED=true; sbt nativeImage)
 
       - uses: actions/upload-artifact@v2
         with:

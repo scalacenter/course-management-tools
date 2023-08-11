@@ -9,33 +9,12 @@ permissions:
   contents: write
 
 jobs:
-  native-image:
+  test:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ 'ubuntu-latest', 'macos-latest' ]
-        include:
-          - os: macOS-latest
-            uploaded_filename_cmta: cmta-x86_64-apple-darwin
-            local_path_cmta: cmta/target/native-image/cmta
-            uploaded_filename_cmtc: cmtc-x86_64-apple-darwin
-            local_path_cmtc: cmtc/target/native-image/cmtc
-          - os: ubuntu-latest
-            uploaded_filename_cmta: cmta-x86_64-pc-linux
-            local_path_cmta: cmta/target/native-image/cmta
-            uploaded_filename_cmtc: cmtc-x86_64-pc-linux
-            local_path_cmtc: cmtc/target/native-image/cmtc
-          # - os: windows-latest
-          #   uploaded_filename_cmta: cmta-x86_64-pc-win32.exe
-          #   local_path_cmta: cmta\target\native-image\cmta
-          #   uploaded_filename_cmtc: cmtc-x86_64-pc-win32.exe
-          #   local_path_cmtc: cmtc\target\native-image\cmtc
-
-    env:
-      # define Java options for both official sbt and sbt-extras
-      JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
-      JVM_OPTS:  -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
 
     steps:
       - name: Checkout Course Management Tools Repo
@@ -50,33 +29,9 @@ jobs:
           java-version: 11
           cache: sbt
 
-      - run: git fetch --tags || true
-
-      - name: Set up caching
-        uses: coursier/cache-action@v6
-
-      #- name: Run tests
-      #  shell: bash
-      #  run: sbt test
-
-      - name: Setup Windows C++ toolchain
-        uses: ilammy/msvc-dev-cmd@v1
-        if: ${{ matrix.os == 'windows-latest' }}
-
-      - name: Native image generation
+      - name: Run tests
         shell: bash
-        run: |
-          echo $(pwd)
-          sbt clean nativeImage
-
-      - uses: actions/upload-artifact@v2
-        with:
-          path: ${{ matrix.local_path_cmta }}
-          name: ${{ matrix.uploaded_filename_cmta }}
-      - uses: actions/upload-artifact@v2
-        with:
-          path: ${{ matrix.local_path_cmtc }}
-          name: ${{ matrix.uploaded_filename_cmtc }}
+        run: sbt test
 
   formatting:
     runs-on: 'ubuntu-latest'

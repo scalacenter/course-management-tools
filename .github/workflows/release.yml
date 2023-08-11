@@ -74,13 +74,13 @@ jobs:
           zip -r course-management-tools.zip course-management-tools
         if: ${{ matrix.os == 'ubuntu-latest' }}
 
-      - run: sbt ci-release
-        env:
-          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-          PGP_SECRET: ${{ secrets.PGP_SECRET }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+      # - run: sbt ci-release
+      #   env:
+      #     PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+      #     PGP_SECRET: ${{ secrets.PGP_SECRET }}
+      #     SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+      #     SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+      #   if: ${{ matrix.os == 'ubuntu-latest' }}
 
       - name: Create Github Release
         id: create_release

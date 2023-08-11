@@ -109,11 +109,17 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         if: ${{ matrix.os == 'windows-latest' }}
 
-      - name: Native image generation
+      - name: cmta native image generation
         shell: bash
         run: |
           echo $(pwd)
-          (export NATIVE_IMAGE_INSTALLED=true; sbt nativeImage)
+          sbt cmta/nativeImage
+
+      - name: cmtc native image generation
+        shell: bash
+        run: |
+          echo $(pwd)
+          sbt cmtc/nativeImage
 
       - uses: actions/upload-artifact@v2
         with:

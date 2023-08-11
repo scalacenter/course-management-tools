@@ -6,6 +6,7 @@ import sbtnativeimage.NativeImagePlugin.autoImport.nativeImageJvm
 import sbtnativeimage.NativeImagePlugin.autoImport.nativeImageOptions
 import sbtnativeimage.NativeImagePlugin.autoImport.nativeImageVersion
 import sbtnativeimage.NativeImagePlugin.autoImport.nativeImageAgentMerge
+import sbtnativeimage.NativeImagePlugin.autoImport.nativeImageInstalled
 
 object Build {
 
@@ -33,6 +34,7 @@ object Build {
   lazy val nativeImageSettings =
     Seq(
       nativeImageAgentMerge := true,
+      nativeImageInstalled := false,
       nativeImageJvm := "graalvm-java17",
       nativeImageVersion := "22.3.1",
       nativeImageOptions :=

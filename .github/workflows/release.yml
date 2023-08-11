@@ -38,9 +38,7 @@ jobs:
       # define Java options for both official sbt and sbt-extras
       JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
       JVM_OPTS:  -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
-      # disable automatic installation of native image
-      NATIVE_IMAGE_INSTALLED: true
-      GRAALVM_INSTALLED: false
+
     steps:
 
       - name: Set env
@@ -64,26 +62,6 @@ jobs:
           chmod +x coursier &&
           ./coursier
 
-      - name: Publish Local
-        run: sbt publishLocal
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-          
-      - name: Package Binaries
-        run: |
-          mkdir -p course-management-tools/bin
-          ./coursier bootstrap com.lunatech:cmta_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmta --standalone --bat
-          ./coursier bootstrap com.lunatech:cmtc_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmtc --standalone --bat
-          zip -r course-management-tools.zip course-management-tools
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-
-      # - run: sbt ci-release
-      #   env:
-      #     PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-      #     PGP_SECRET: ${{ secrets.PGP_SECRET }}
-      #     SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-      #     SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-      #   if: ${{ matrix.os == 'ubuntu-latest' }}
-
       - name: Create Github Release
         id: create_release
         uses: actions/create-release@v1
@@ -96,16 +74,36 @@ jobs:
           prerelease: false
         if: ${{ matrix.os == 'ubuntu-latest' }}
 
-      - name: Upload assets to Github release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./course-management-tools.zip
-          asset_name: course-management-tools.zip
-          asset_content_type: application/zip
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+      # - name: Publish Local
+      #   run: sbt publishLocal
+      #   if: ${{ matrix.os == 'ubuntu-latest' }}
+
+      # - name: Package Binaries
+      #   run: |
+      #     mkdir -p course-management-tools/bin
+      #     ./coursier bootstrap com.lunatech:cmta_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmta --standalone --bat
+      #     ./coursier bootstrap com.lunatech:cmtc_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmtc --standalone --bat
+      #     zip -r course-management-tools.zip course-management-tools
+      #   if: ${{ matrix.os == 'ubuntu-latest' }}
+
+      # - run: sbt ci-release
+      #   env:
+      #     PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+      #     PGP_SECRET: ${{ secrets.PGP_SECRET }}
+      #     SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+      #     SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+      #   if: ${{ matrix.os == 'ubuntu-latest' }}
+
+      # - name: Upload assets to Github release
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./course-management-tools.zip
+      #     asset_name: course-management-tools.zip
+      #     asset_content_type: application/zip
+      #   if: ${{ matrix.os == 'ubuntu-latest' }}
 
       - name: Setup Windows C++ toolchain
         uses: ilammy/msvc-dev-cmd@v1

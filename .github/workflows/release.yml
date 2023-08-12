@@ -11,7 +11,25 @@ permissions:
 
 jobs:
   create-release:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Github Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+
+
+  release:
+    needs: create-release
+    runs-on: [ "${{ matrix.os }}", "${{ needs.create-release.outputs.upload_url }}" ]
     strategy:
       fail-fast: false
       matrix:
@@ -62,18 +80,6 @@ jobs:
           chmod +x coursier &&
           ./coursier
 
-      - name: Create Github Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: false
-          prerelease: false
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-
       # - name: Publish Local
       #   run: sbt publishLocal
       #   if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -114,12 +120,14 @@ jobs:
         run: |
           echo $(pwd)
           sbt cmta/nativeImage
+          (cd cmta/target/native-image ; zip -r cmta.zip cmta)
 
       - name: cmtc native image generation
         shell: bash
         run: |
           echo $(pwd)
           sbt cmtc/nativeImage
+          (cd cmtc/target/native-image ; zip -r cmtc.zip cmtc)
 
       - uses: actions/upload-artifact@v2
         with:
@@ -135,7 +143,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ${{ matrix.local_path_cmta }}
           asset_name: ${{ matrix.uploaded_filename_cmta }}
           asset_content_type: application/zip
@@ -145,7 +153,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ${{ matrix.local_path_cmtc }}
           asset_name: ${{ matrix.uploaded_filename_cmtc }}
           asset_content_type: application/zip

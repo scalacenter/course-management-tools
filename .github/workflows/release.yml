@@ -22,6 +22,37 @@ jobs:
           release_name: ${{ github.ref }}
           draft: false
           prerelease: false
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Publish Local
+        run: sbt publishLocal
+
+      - name: Package Binaries
+        run: |
+          mkdir -p course-management-tools/bin
+          ./coursier bootstrap com.lunatech:cmta_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmta --standalone --bat
+          ./coursier bootstrap com.lunatech:cmtc_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmtc --standalone --bat
+          zip -r course-management-tools.zip course-management-tools
+
+      # - run: sbt ci-release
+      #   env:
+      #     PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+      #     PGP_SECRET: ${{ secrets.PGP_SECRET }}
+      #     SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+      #     SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+
+      - name: Upload assets to Github release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./course-management-tools.zip
+          asset_name: course-management-tools.zip
+          asset_content_type: application/zip
+
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
 
@@ -58,9 +89,6 @@ jobs:
 
     steps:
 
-      - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
       - name: Checkout Course Management Tools Repo
         uses: actions/checkout@v3
         with:
@@ -78,37 +106,6 @@ jobs:
           curl -fLo coursier https://git.io/coursier-cli &&
           chmod +x coursier &&
           ./coursier
-
-      # - name: Publish Local
-      #   run: sbt publishLocal
-      #   if: ${{ matrix.os == 'ubuntu-latest' }}
-
-      # - name: Package Binaries
-      #   run: |
-      #     mkdir -p course-management-tools/bin
-      #     ./coursier bootstrap com.lunatech:cmta_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmta --standalone --bat
-      #     ./coursier bootstrap com.lunatech:cmtc_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmtc --standalone --bat
-      #     zip -r course-management-tools.zip course-management-tools
-      #   if: ${{ matrix.os == 'ubuntu-latest' }}
-
-      # - run: sbt ci-release
-      #   env:
-      #     PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-      #     PGP_SECRET: ${{ secrets.PGP_SECRET }}
-      #     SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-      #     SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-      #   if: ${{ matrix.os == 'ubuntu-latest' }}
-
-      # - name: Upload assets to Github release
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./course-management-tools.zip
-      #     asset_name: course-management-tools.zip
-      #     asset_content_type: application/zip
-      #   if: ${{ matrix.os == 'ubuntu-latest' }}
 
       - name: Setup Windows C++ toolchain
         uses: ilammy/msvc-dev-cmd@v1

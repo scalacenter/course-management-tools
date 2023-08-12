@@ -142,7 +142,7 @@ jobs:
         run: |
           echo $(pwd)
           sbt cmtc/nativeImage
-          (cd cmtc/target/native-image ; zip -r cmtc.zip cmtc)
+          (cd cmtc/target/native-image ; zip -r cmtc.zip cmtc)    
 
       - uses: actions/upload-artifact@v2
         with:
@@ -158,7 +158,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: $UPLOAD_URL
+          upload_url: ${{ env.UPLOAD_URL }}
           asset_path: ${{ matrix.local_path_cmta }}
           asset_name: ${{ matrix.uploaded_filename_cmta }}
           asset_content_type: application/zip
@@ -168,7 +168,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: $UPLOAD_URL
+          upload_url: ${{ env.UPLOAD_URL }}
           asset_path: ${{ matrix.local_path_cmtc }}
           asset_name: ${{ matrix.uploaded_filename_cmtc }}
           asset_content_type: application/zip

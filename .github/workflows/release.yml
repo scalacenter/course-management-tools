@@ -77,7 +77,7 @@ jobs:
 
   release:
     needs: create-release
-    runs-on: [ "${{ matrix.os }}", "${{ needs.create-release.outputs.upload_url }}" ]
+    runs-on: [ "${{ matrix.os }}" ]
     strategy:
       fail-fast: false
       matrix:
@@ -104,9 +104,9 @@ jobs:
       # define Java options for both official sbt and sbt-extras
       JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
       JVM_OPTS:  -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
 
     steps:
-
       - name: Setup Windows C++ toolchain
         uses: ilammy/msvc-dev-cmd@v1
         if: ${{ matrix.os == 'windows-latest' }}
@@ -115,6 +115,7 @@ jobs:
         shell: bash
         run: |
           echo $(pwd)
+          echo "UPLOAD_URL = $UPLOAD_URL"
           sbt cmta/nativeImage
           (cd cmta/target/native-image ; zip -r cmta.zip cmta)
 
@@ -139,7 +140,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          upload_url: $UPLOAD_URL
           asset_path: ${{ matrix.local_path_cmta }}
           asset_name: ${{ matrix.uploaded_filename_cmta }}
           asset_content_type: application/zip
@@ -149,7 +150,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          upload_url: $UPLOAD_URL
           asset_path: ${{ matrix.local_path_cmtc }}
           asset_name: ${{ matrix.uploaded_filename_cmtc }}
           asset_content_type: application/zip

@@ -85,14 +85,14 @@ jobs:
         include:
           - os: macOS-latest
             uploaded_filename_cmta: cmta-x86_64-apple-darwin
-            local_path_cmta: cmta/target/native-image/cmta
+            local_path_cmta: ${{ github.event.repository.name }}/cmta/target/native-image/cmta
             uploaded_filename_cmtc: cmtc-x86_64-apple-darwin
-            local_path_cmtc: cmtc/target/native-image/cmtc
+            local_path_cmtc: ${{ github.event.repository.name }}/cmtc/target/native-image/cmtc
           - os: ubuntu-latest
             uploaded_filename_cmta: cmta-x86_64-pc-linux
-            local_path_cmta: cmta/target/native-image/cmta
+            local_path_cmta: ${{ github.event.repository.name }}/cmta/target/native-image/cmta
             uploaded_filename_cmtc: cmtc-x86_64-pc-linux
-            local_path_cmtc: cmtc/target/native-image/cmtc
+            local_path_cmtc: ${{ github.event.repository.name }}/cmtc/target/native-image/cmtc
           # - os: windows-latest
           #   uploaded_filename_cmta: cmta-x86_64-pc-win32.exe
           #   local_path_cmta: cmta\target\native-image\cmta
@@ -124,7 +124,7 @@ jobs:
           curl -fLo coursier https://git.io/coursier-cli &&
           chmod +x coursier &&
           ./coursier
-
+          
       - name: Setup Windows C++ toolchain
         uses: ilammy/msvc-dev-cmd@v1
         if: ${{ matrix.os == 'windows-latest' }}

@@ -99,7 +99,7 @@ object Studentify:
 
             ExercisesMetadata(prefix, exercises, exerciseNumbers) <- getExerciseMetadata(mainRepository.value)(config)
 
-            _ = buildStudentifiedRepository(
+            buildResult = buildStudentifiedRepository(
               cleanedMainRepo,
               exercises,
               studentifiedRootFolder,
@@ -108,7 +108,7 @@ object Studentify:
               options.initGit,
               tmpFolder)
 
-            successMessage <- Right(exercises.mkString("Processed exercises:\n  ", "\n  ", "\n"))
+            successMessage <- buildResult
 
           } yield successMessage
         }
@@ -139,7 +139,7 @@ object Studentify:
         generatorInfo)
       writeStudentifiedCMTBookmark(studentifiedRootFolder / config.studentifiedRepoBookmarkFile, exercises.head)
 
-      val successMessage = exercises.mkString("Processed exercises:\n  ", "\n  ", "\n")
+      val successMessage = exercises.mkString("\nProcessed exercises:\n  ", "\n  ", "\n")
       if initializeAsGitRepo.value then
         val dotIgnoreFile = cleanedMainRepo / ".gitignore"
         if dotIgnoreFile.exists then sbtio.copyFile(dotIgnoreFile, studentifiedRootFolder / ".gitignore")

@@ -159,6 +159,7 @@ object Helpers:
   def hideExercises(cleanedMainRepo: File, solutionsFolder: File, exercises: Vector[String])(config: CMTaConfig): Unit =
     val now: Option[Long] = Some(java.time.Instant.now().toEpochMilli())
     for (exercise <- exercises)
+      print(s".")
       zipAndDeleteOriginal(cleanedMainRepo / config.mainRepoExerciseFolder, solutionsFolder, exercise, now)
   end hideExercises
 

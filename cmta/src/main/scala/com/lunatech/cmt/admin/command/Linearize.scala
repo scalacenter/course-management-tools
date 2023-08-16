@@ -72,7 +72,7 @@ object Linearize:
             _ <- commitExercises(cleanedMainRepo, exercises, linearizedRootFolder, config)
 
             _ = sbtio.delete(tmpFolder)
-            successMessage <- Right(s"Successfully linearized ${mainRepository.value.getPath}")
+            successMessage <- Right(s"\nSuccessfully linearized ${mainRepository.value.getPath}")
 
           } yield successMessage
         }
@@ -91,6 +91,7 @@ object Linearize:
 
       exercises match
         case exercise +: remainingExercises =>
+          print(".")
           val from = cleanedMainRepo / config.mainRepoExerciseFolder / exercise
           val linearizedCodeFolder = linearizedRootFolder / config.linearizedRepoActiveExerciseFolder
           sbtio.delete(linearizedCodeFolder)

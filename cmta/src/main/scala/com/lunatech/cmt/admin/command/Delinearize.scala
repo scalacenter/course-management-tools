@@ -57,7 +57,7 @@ object Delinearize:
 
           _ <- putBackToMain(mainRepository.value, linearizedRootFolder, exercisesAndSHAsInLinearized)(config)
 
-          successMessage <- Right(s"Successfully delinearised ${options.linearizeBaseDirectory.value.getPath}")
+          successMessage <- Right(s"\nSuccessfully delinearised ${options.linearizeBaseDirectory.value.getPath}")
         } yield successMessage
       }
 
@@ -114,6 +114,7 @@ object Delinearize:
         exercisesAndSHAs: Seq[ExerciseNameAndSHA]): Either[CmtError, Unit] =
       exercisesAndSHAs match
         case ExerciseNameAndSHA(exercise, sha) +: remaining =>
+          print(".")
           s"git checkout $sha"
             .toProcessCmd(linearizedRepo)
             .runWithStatus(toConsoleRed(s"Unable to checkout commit($sha) corresponding to exercise: $exercise")) match

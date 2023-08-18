@@ -51,31 +51,28 @@ jobs:
 
       - name: Package Binaries
         run: |
-          mkdir -p course-management-tools/bin
-          ./coursier bootstrap com.lunatech:cmta_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmta --standalone --bat
-          ./coursier bootstrap com.lunatech:cmtc_3:${{ env.RELEASE_VERSION }} -o course-management-tools/bin/cmtc --standalone --bat
-          zip -r course-management-tools.zip course-management-tools
+          mkdir -p course-management-tools-bin/bin
+          ./coursier bootstrap com.lunatech:cmta_3:${{ env.RELEASE_VERSION }} -o course-management-tools-bin/bin/cmta --standalone --bat
+          ./coursier bootstrap com.lunatech:cmtc_3:${{ env.RELEASE_VERSION }} -o course-management-tools-bin/bin/cmtc --standalone --bat
+          zip -r course-management-tools.zip course-management-tools-bin
 
-      - run: sbt ci-release
-        env:
-          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-          PGP_SECRET: ${{ secrets.PGP_SECRET }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-
-      - name: Upload assets to Github release
+      - name: Upload artefacts
+        # id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./course-management-tools.zip
+          asset_path: course-management-tools.zip
           asset_name: course-management-tools.zip
           asset_content_type: application/zip
 
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-
+      # - run: sbt ci-release
+      #   env:
+      #     PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+      #     PGP_SECRET: ${{ secrets.PGP_SECRET }}
+      #     SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+      #     SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
 
   release:
     needs: create-release
@@ -83,9 +80,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'ubuntu-latest', 'macos-latest' ]
+        os: [ 'macos-latest', 'ubuntu-latest', 'windows-latest' ]
         include:
-          - os: macOS-latest
+          - os: macos-latest
             uploaded_filename_cmta: cmta-x86_64-apple-darwin
             local_path_cmta: cmta/target/native-image/cmta
             uploaded_filename_cmtc: cmtc-x86_64-apple-darwin
@@ -95,18 +92,17 @@ jobs:
             local_path_cmta: cmta/target/native-image/cmta
             uploaded_filename_cmtc: cmtc-x86_64-pc-linux
             local_path_cmtc: cmtc/target/native-image/cmtc
-          # - os: windows-latest
-          #   uploaded_filename_cmta: cmta-x86_64-pc-win32.exe
-          #   local_path_cmta: cmta\target\native-image\cmta
-          #   uploaded_filename_cmtc: cmtc-x86_64-pc-win32.exe
-          #   local_path_cmtc: cmtc\target\native-image\cmtc
+          - os: windows-latest
+            uploaded_filename_cmta: cmta-x86_64-pc-win32.exe
+            local_path_cmta: cmta\target\native-image\cmta.exe
+            uploaded_filename_cmtc: cmtc-x86_64-pc-win32.exe
+            local_path_cmtc: cmtc\target\native-image\cmtc.exe
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
 
     env:
       # define Java options for both official sbt and sbt-extras
       JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
       JVM_OPTS:  -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
-      UPLOAD_URL: ${{ needs.create-release.outputs.upload_url }}
 
     steps:
       - name: Checkout Course Management Tools Repo
@@ -131,46 +127,75 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         if: ${{ matrix.os == 'windows-latest' }}
 
-      - name: cmta native image generation
+      - name: cmt native image generation
         shell: bash
         run: |
+          echo "------------------------------------------------------------"
           echo $(pwd)
-          echo "UPLOAD_URL = $UPLOAD_URL"
+          echo "------------------------------------------------------------"
           sbt cmta/nativeImage
-          (cd cmta/target/native-image ; zip -r cmta.zip cmta)
+          sbt cmtc/nativeImage
 
-      - name: cmtc native image generation
+      - name: Upload cmta artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.uploaded_filename_cmta }}
+          path: ${{ matrix.local_path_cmta }}
+          if-no-files-found: warn
+          retention-days: 1
+
+      - name: Upload cmtc artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.uploaded_filename_cmtc }}
+          path: ${{ matrix.local_path_cmtc }}
+          if-no-files-found: warn
+          retention-days: 1
+
+  release_bits:
+    needs: release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Move and rename artifacts
         shell: bash
         run: |
-          echo $(pwd)
-          sbt cmtc/nativeImage
-          (cd cmtc/target/native-image ; zip -r cmtc.zip cmtc)    
+          # The following is repetitive and should be scripted
+          mv cmta-x86_64-pc-linux cmta-x86_64-pc-linux-tmp
+          mv cmta-x86_64-pc-linux-tmp/cmta cmta-x86_64-pc-linux
 
-      - uses: actions/upload-artifact@v2
-        with:
-          path: ${{ matrix.local_path_cmta }}
-          name: ${{ matrix.uploaded_filename_cmta }}
-      - uses: actions/upload-artifact@v2
-        with:
-          path: ${{ matrix.local_path_cmtc }}
-          name: ${{ matrix.uploaded_filename_cmtc }}
+          mv cmta-x86_64-apple-darwin cmta-x86_64-apple-darwin-tmp
+          mv cmta-x86_64-apple-darwin-tmp/cmta cmta-x86_64-apple-darwin
 
-      - name: Upload release cmta native
-        uses: actions/upload-release-asset@v1.0.2
+          mv cmta-x86_64-pc-win32.exe cmta-x86_64-pc-win32-tmp.exe
+          mv cmta-x86_64-pc-win32-tmp.exe/cmta.exe cmta-x86_64-pc-win32.exe
+
+          mv cmtc-x86_64-pc-linux cmtc-x86_64-pc-linux-tmp
+          mv cmtc-x86_64-pc-linux-tmp/cmtc cmtc-x86_64-pc-linux
+
+          mv cmtc-x86_64-apple-darwin cmtc-x86_64-apple-darwin-tmp
+          mv cmtc-x86_64-apple-darwin-tmp/cmtc cmtc-x86_64-apple-darwin
+
+          mv cmtc-x86_64-pc-win32.exe cmtc-x86_64-pc-win32-tmp.exe
+          mv cmtc-x86_64-pc-win32-tmp.exe/cmtc.exe cmtc-x86_64-pc-win32.exe
+
+      - name: Upload-to-release
+        uses: softprops/action-gh-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
-          upload_url: ${{ env.UPLOAD_URL }}
-          asset_path: ${{ matrix.local_path_cmta }}
-          asset_name: ${{ matrix.uploaded_filename_cmta }}
-          asset_content_type: application/zip
-
-      - name: Upload release cmtc native
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ env.UPLOAD_URL }}
-          asset_path: ${{ matrix.local_path_cmtc }}
-          asset_name: ${{ matrix.uploaded_filename_cmtc }}
-          asset_content_type: application/zip
+          generate_release_notes: false
+          fail_on_unmatched_files: false
+          files: |
+            cmta-x86_64-pc-linux
+            cmta-x86_64-apple-darwin
+            cmta-x86_64-pc-win32.exe
+            cmtc-x86_64-pc-linux
+            cmtc-x86_64-apple-darwin
+            cmtc-x86_64-pc-win32.exe

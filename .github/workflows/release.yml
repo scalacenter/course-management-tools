@@ -67,12 +67,12 @@ jobs:
           asset_name: course-management-tools.zip
           asset_content_type: application/zip
 
-      # - run: sbt ci-release
-      #   env:
-      #     PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-      #     PGP_SECRET: ${{ secrets.PGP_SECRET }}
-      #     SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-      #     SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+      - run: sbt ci-release
+        env:
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
 
   release:
     needs: create-release
@@ -190,7 +190,7 @@ jobs:
         env:
           RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
-          generate_release_notes: false
+          generate_release_notes: true
           fail_on_unmatched_files: false
           files: |
             cmta-x86_64-pc-linux

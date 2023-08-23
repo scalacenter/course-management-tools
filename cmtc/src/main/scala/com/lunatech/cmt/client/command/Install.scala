@@ -19,8 +19,6 @@ import com.lunatech.cmt.Releasables.{*, given}
 
 import sys.process.*
 import scala.util.{Failure, Success, Try}
-import java.io.File
-import java.net.URL
 import scala.util.Using
 
 object Install:
@@ -124,6 +122,12 @@ object Install:
             Right(())
         }
 
+      private def getProjectTags(gitPrefix: String, githubProject: GithubProject): Try[Seq[String]] =
+        val cwd = file(".").getCanonicalFile
+        val uri = s"${gitPrefix}${githubProject.organisation}/${githubProject.project}.git"
+        val cmd = Seq("git", "-c", "versionsort.suffix=-", "ls-remote", "--tags", "--refs", "--sort", "v:refname", uri)
+        Try(Process(cmd, cwd).!!(ignoreProcessStdOutStdErr).split("\n").to(Seq).map(extractTag))
+
       private def installFromGithubProject(
           githubProject: GithubProject,
           configuration: Configuration,
@@ -131,20 +135,12 @@ object Install:
         for {
           _ <- checkPreExistingTargetFolder(githubProject.project, configuration, forceDelete)
           installCompletionMessage <- {
-            val cwd = file(".").getCanonicalFile
-            val maybeTags = Try(
-              Process(
-                Seq(
-                  "git",
-                  "-c",
-                  "versionsort.suffix=-",
-                  "ls-remote",
-                  "--tags",
-                  "--refs",
-                  "--sort",
-                  "v:refname",
-                  s"git@github.com:${githubProject.organisation}/${githubProject.project}.git"),
-                cwd).!!(ignoreProcessStdOutStdErr).split("\n").to(Seq).map(extractTag))
+            val maybeTags =
+              for {
+                tags <- getProjectTags("git@github.com:", githubProject).recoverWith(g_ =>
+                  getProjectTags("https://github.com/", githubProject))
+                trimmedTags = tags.map(_.trim())
+              } yield trimmedTags
             val tags: Seq[String] = maybeTags match {
               case Success(s) => s
               case Failure(_) => Seq.empty[String]
@@ -194,7 +190,8 @@ object Install:
       private def getStudentAssetUrl(githubProject: GithubProject, tag: String): Either[CmtError, String] = {
         val organisation = githubProject.organisation
         val project = githubProject.project
-        Right(s"https://github.com/$organisation/$project/releases/download/$tag/$project-student.zip")
+        val url = s"https://github.com/${organisation}/${project}/releases/download/${tag}/${project}-student.zip"
+        Right(url)
       }
 
       private def downloadStudentAsset(
@@ -208,13 +205,9 @@ object Install:
       }
 
       private def downloadFile(fileUri: String, destination: ZipFile): Either[CmtError, Unit] =
-        Try((new URL(fileUri) #> new File(destination.value.getAbsolutePath)).!) match {
-          case Success(0) => Right(())
-          case Success(exitCode) =>
-            s"""Failed to download asset: ${fileUri}
-               |
-               |Command exit code = $exitCode
-               |""".stripMargin.toExecuteCommandErrorMessage.asLeft
+        val destinationPath = os.Path(Helpers.adaptToOSSeparatorChar(destination.value.getCanonicalPath()))
+        Try(os.write.over(destinationPath, requests.get.stream(fileUri), createFolders = true)) match {
+          case Success(()) => Right(())
           case Failure(e) =>
             s"""Failed to download asset: ${fileUri}
                |

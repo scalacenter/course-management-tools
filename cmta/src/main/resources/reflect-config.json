@@ -6,6 +6,9 @@
   "name":"[Lcaseapp.core.util.fansi.Category;"
 },
 {
+  "name":"[Ljava.io.File;"
+},
+{
   "name":"[Ljava.lang.String;"
 },
 {
@@ -88,6 +91,10 @@
 },
 {
   "name":"sun.security.provider.SHA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA2$SHA256",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 }
 ]

@@ -6,6 +6,9 @@
   "name":"[Ljava.lang.String;"
 },
 {
+  "name":"[Ljava.nio.file.attribute.FileAttribute;"
+},
+{
   "name":"[Lsun.security.pkcs.SignerInfo;"
 },
 {
@@ -116,6 +119,18 @@
   "methods":[{"name":"<init>","parameterTypes":["sun.security.x509.X500Name"] }]
 },
 {
+  "name":"requests.Requester$",
+  "fields":[{"name":"0bitmap$1"}]
+},
+{
+  "name":"requests.Util$",
+  "fields":[{"name":"0bitmap$1"}]
+},
+{
+  "name":"requests.package$",
+  "fields":[{"name":"0bitmap$1"}]
+},
+{
   "name":"sbt.internal.io.Retry$",
   "fields":[{"name":"limit$lzy1"}]
 },
@@ -223,6 +238,10 @@
 },
 {
   "name":"sun.security.ssl.SSLContextImpl$DefaultSSLContext",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.ssl.SSLContextImpl$TLSContext",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {

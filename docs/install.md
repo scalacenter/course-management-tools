@@ -11,7 +11,7 @@ sidebar_label: Installation
 The Course Management Tools have been tested on the following Operating Systems:
 
 - MacOS 10.14 or higher
-- Ubuntu 18.04.4 LTS (tested via CI/CD)
+- Ubuntu 20.04 LTS or higher (tested via CI/CD)
 - Windows 10 & 11
 
 ### Prerequisites

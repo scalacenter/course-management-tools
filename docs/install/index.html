@@ -60,29 +60,62 @@
 <ul>
 <li>MacOS 10.14 or higher</li>
 <li>Ubuntu 18.04.4 LTS (tested via CI/CD)</li>
-<li>Windows 10</li>
+<li>Windows 10 &amp; 11</li>
 </ul>
 <h3><a class="anchor" aria-hidden="true" id="prerequisites"></a><a href="#prerequisites" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Prerequisites</h3>
-<p>Make sure to have a <a href="https://git-scm.com/downloads">recent version of <strong><em>git</em></strong></a> installed on your system.</p>
+<p>Course creators/maintainers should have a
+<a href="https://git-scm.com/downloads">recent version of <strong><em>git</em></strong></a> installed on
+their system.</p>
+<p>Course users may need to have <strong><em>git</em></strong> installed under certain conditions
+(for example, when the studentified artefact was initialised as a <strong><em>git</em></strong>
+repository.</p>
 <h2><a class="anchor" aria-hidden="true" id="installation"></a><a href="#installation" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Installation</h2>
-<p>The preferred way to install the Course Management Tools is to download
-the binaries from <a href="https://github.com/lunatech-labs/course-management-tools/releases">the latest release</a>.</p>
-<p>The installation procedure is rather straightforward:</p>
-<ul>
-<li>download the <code>course-management-tools.zip</code> file from the <a href="https://github.com/lunatech-labs/course-management-tools/releases">release page</a></li>
-<li>unzip the content in a folder</li>
-<li>update your PATH to include the <code>course-management-tools/bin</code> folder in
-the folder in which you unzipped the downloaded zip file</li>
-<li>You now have access to the two CMT commands:
-<ul>
-<li><code>cmta</code> admin command (studentify, linearize, delinearize, ...) to manipulate CMT main repositories</li>
-<li><code>cmtc</code> client command to manipulate studentified artifacts</li>
-</ul></li>
-</ul>
-<blockquote>
-<p>Note: the plan is to publish native binaries of <code>cmta</code> and <code>cmtc</code> for MacOS, *nix, and Windows. Also, the goal is to publish CMT binary artifacts on Maven Central which should enable installation of the CMT binaries using <a href="https://github.com/coursier/coursier">Coursier</a>.</p>
-</blockquote>
-</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/workflows"><span class="arrow-prev">← </span><span>Workflows</span></a><a class="docs-next button" href="/docs/FAQ"><span>CMT FAQs</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#supported-operating-systems-and-prerequisites">Supported Operating Systems and Prerequisites</a><ul class="toc-headings"><li><a href="#supported-os">Supported OS</a></li><li><a href="#prerequisites">Prerequisites</a></li></ul></li><li><a href="#installation">Installation</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/favicon.ico" alt="Course Management Tools" width="66" height="58"/></a><div><h5>Docs</h5><a href="/docs/install">Getting Started</a><a href="/docs/reference-intro">Reference</a></div><div><h5>Community</h5><a href="https://github.com/lunatech-labs/course-management-tools/issues" target="_blank">Open an issue or ask questions</a></div><div><h5>More</h5><a href="/blog">Blog</a><a href="https://github.com/lunatech-labs/course-management-tools" target="_blank">GitHub</a><a class="github-button" href="https://github.com/lunatech-labs/course-management-tools" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div><div><img style="float:left;margin:5px" src="/img/jetbrains.svg" alt="Course Management Tools" width="66" height="58"/><div><a href="https://www.jetbrains.com/?from=course-management-tools" target="_blank">JetBrains supports this project by providing core project contributors with a set of best-in-class developer tools free of charge.</a></div></div></section><section class="copyright">Copyright © 2023 Course Management Tools</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+<p>The preferred way to install the Course Management Tools to use
+<a href="https://github.com/coursier/coursier/">Coursier</a>.</p>
+<p><strong>If you haven't installed Coursier, install it first by following the instructions here: <a href="https://docs.scala-lang.org/getting-started/index.html#install-scala-on-your-computer">Install Scala on your computer</a>.</strong></p>
+<p>With Coursier, the installation procedure is rather straightforward as shown in the
+following sections.</p>
+<h3><a class="anchor" aria-hidden="true" id="install-cmtc---the-cmt-client-cli"></a><a href="#install-cmtc---the-cmt-client-cli" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Install <code>cmtc</code> - the CMT Client CLI</h3>
+<pre><code class="hljs css language-bash">$ cs install --contrib cmtc
+Wrote cmtc
+</code></pre>
+<p>And verify it's working properly:</p>
+<pre><code class="hljs css language-bash">$ cmtc
+Usage: cmtc &lt;COMMAND&gt;
+
+Commands:
+  goto-exercise        Move to a given exercise. Pull <span class="hljs-keyword">in</span> tests and readme files <span class="hljs-keyword">for</span> that exercise
+  goto-first-exercise  Move to the first exercise. Pull <span class="hljs-keyword">in</span> tests and readme files <span class="hljs-keyword">for</span> that exercise
+  install              Install a course - from either a <span class="hljs-built_in">local</span> directory, a zip file on the <span class="hljs-built_in">local</span> file system or a Github project
+  list-exercises       List all exercises and their IDs <span class="hljs-keyword">in</span> the repo. Mark the active exercise with a star
+  list-saved-states    List all saved exercise states, <span class="hljs-keyword">if</span> any.
+  next-exercise        Move to the next exercise. Pull <span class="hljs-keyword">in</span> tests and readme files <span class="hljs-keyword">for</span> that exercise
+  previous-exercise    Move to the previous exercise. Pull <span class="hljs-keyword">in</span> tests and readme files <span class="hljs-keyword">for</span> that exercise
+  pull-solution        Pull <span class="hljs-keyword">in</span> all code <span class="hljs-keyword">for</span> the active exercise. All <span class="hljs-built_in">local</span> changes are discarded
+  pull-template        Selectively pull <span class="hljs-keyword">in</span> a given file or folder <span class="hljs-keyword">for</span> the active exercise
+  restore-state        Restore a previously saved exercise state
+  save-state           Save the state of the active exercise
+  <span class="hljs-built_in">set</span>-current-course   Sets the current course to point to a directory
+  version              Print version info
+</code></pre>
+<h3><a class="anchor" aria-hidden="true" id="install-cmta---the-cmt-administrator-cli"></a><a href="#install-cmta---the-cmt-administrator-cli" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Install <code>cmta</code> - the CMT Administrator CLI</h3>
+<pre><code class="hljs css language-bash">$ cs install --contrib cmta
+Wrote cmta
+</code></pre>
+<p>And verify it's working properly:</p>
+<pre><code class="hljs css language-bash">$ cmta
+Usage: cmta &lt;COMMAND&gt;
+
+Commands:
+  new                      Create a new course from an existing course template <span class="hljs-keyword">in</span> a Github repository - by default the `lunatech-labs` organisation is used.
+  delinearize              <span class="hljs-string">'Delinearizes'</span> an existing master repository
+  duplicate-insert-before  Duplicates a given exercise <span class="hljs-keyword">in</span> a <span class="hljs-string">'main'</span> repository shifting subsequent exercises <span class="hljs-keyword">if</span> needed
+  linearize                <span class="hljs-string">'Linearizes'</span> a <span class="hljs-string">'main'</span> repository <span class="hljs-keyword">in</span> the target directory <span class="hljs-built_in">where</span> the linearized repo has one commit per exercise
+  renumber-exercises       Renumbers the exercises <span class="hljs-keyword">in</span> the main repository
+  studentify               <span class="hljs-string">'Studentifies'</span> an existing repository - taking the <span class="hljs-string">'main'</span> repository and creating a CMT project <span class="hljs-keyword">in</span> the target directory
+  version                  Print version info
+</code></pre>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/workflows"><span class="arrow-prev">← </span><span>Workflows</span></a><a class="docs-next button" href="/docs/FAQ"><span>CMT FAQs</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#supported-operating-systems-and-prerequisites">Supported Operating Systems and Prerequisites</a><ul class="toc-headings"><li><a href="#supported-os">Supported OS</a></li><li><a href="#prerequisites">Prerequisites</a></li></ul></li><li><a href="#installation">Installation</a><ul class="toc-headings"><li><a href="#install-cmtc---the-cmt-client-cli">Install <code>cmtc</code> - the CMT Client CLI</a></li><li><a href="#install-cmta---the-cmt-administrator-cli">Install <code>cmta</code> - the CMT Administrator CLI</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/" class="nav-home"><img src="/img/favicon.ico" alt="Course Management Tools" width="66" height="58"/></a><div><h5>Docs</h5><a href="/docs/install">Getting Started</a><a href="/docs/reference-intro">Reference</a></div><div><h5>Community</h5><a href="https://github.com/lunatech-labs/course-management-tools/issues" target="_blank">Open an issue or ask questions</a></div><div><h5>More</h5><a href="/blog">Blog</a><a href="https://github.com/lunatech-labs/course-management-tools" target="_blank">GitHub</a><a class="github-button" href="https://github.com/lunatech-labs/course-management-tools" data-icon="octicon-star" data-count-href="/facebook/docusaurus/stargazers" data-show-count="true" data-count-aria-label="# stargazers on GitHub" aria-label="Star this project on GitHub">Star</a></div><div><img style="float:left;margin:5px" src="/img/jetbrains.svg" alt="Course Management Tools" width="66" height="58"/><div><a href="https://www.jetbrains.com/?from=course-management-tools" target="_blank">JetBrains supports this project by providing core project contributors with a set of best-in-class developer tools free of charge.</a></div></div></section><section class="copyright">Copyright © 2023 Course Management Tools</section></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;

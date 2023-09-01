@@ -11,7 +11,7 @@ object Version {
   lazy val devDirsVersion = "26"
   lazy val github4sVersion = "0.32.0"
   lazy val http4sVersion = "0.23.15"
-  lazy val circeVersion = "0.14.5"
+  lazy val circeVersion = "0.14.6"
   // lazy val circeConfig = "0.8.0"
   lazy val LiHaoyiOsLibVersion = "0.9.1"
   lazy val LiHaoyiRequestLibVersion = "0.8.0"

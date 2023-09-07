@@ -2,7 +2,7 @@ import sbt._
 
 object Version {
   lazy val scalaVersion = "3.3.0"
-  lazy val scalaTestVersion = "3.2.16"
+  lazy val scalaTestVersion = "3.2.17"
   lazy val scalaCheckVersion = "3.2.14.0"
   lazy val sbtioVersion = "1.9.1"
   lazy val typesafeConfigVersion = "1.4.2"

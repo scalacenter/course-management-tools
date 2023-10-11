@@ -81,7 +81,7 @@ object Install:
             val targetFolder = configuration.coursesDirectory.value / project
             (targetFolder.exists, forceDelete) match {
               case (false, _) | (true, true) =>
-                sbtio.move(tmpDir / project, targetFolder)
+                sbtio.copyDirectory(tmpDir / project, targetFolder)
                 if (deleteZipAfterInstall) {
                   sbtio.delete(zipFile.value)
                 }

@@ -27,7 +27,7 @@ object Build {
   lazy val commonSettings = Seq(
     scalaVersion := Version.scalaVersion,
     scalacOptions ++= CompileOptions.compileOptions,
-    buildInfoPackage := "com.lunatech.cmt.version",
+    buildInfoPackage := "coursemgmttools.version",
     Test / parallelExecution := false,
     Test / logBuffered := false)
 

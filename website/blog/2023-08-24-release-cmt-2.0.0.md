@@ -24,8 +24,7 @@ build tool(s) used in a course.
 
 ### How To Install
 
-Installation is a breeze using Coursier: you can find the instructions [here](https://cmt.lunatech.com/docs/install)
-
+Installation is a breeze using Coursier: you can find the instructions [here](https://scalacenter.github.io/course-management-tools/docs/install)
 
 ### Contributors
 

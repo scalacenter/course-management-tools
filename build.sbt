@@ -6,7 +6,7 @@ inThisBuild(
     organizationName := "Scala Center",
     organizationHomepage := Some(url("https://scala.epfl.ch")),
     homepage := Some(url("https://scala.epfl.ch")),
-    developers := List(Developer("eloots", "Eric Loots", "eric.loots@lunatech.com", url("https://github.com/eloots"))),
+    developers := List(Developer("eloots", "Eric Loots", "eric.loots@gmail.com", url("https://github.com/eloots"))),
     licenses := Seq("Apache-2.0" -> url("http://www.apache.org/license/LICENSE-2.0"))))
 
 ThisBuild / dynverVTagPrefix := false

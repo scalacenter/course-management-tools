@@ -1,4 +1,4 @@
-package coursemgmttools.admin.cli
+package coursemgmt.admin.cli
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -14,12 +14,12 @@ package coursemgmttools.admin.cli
   */
 
 import caseapp.Parser
-import coursemgmttools.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
-import coursemgmttools.admin.Domain.{ExerciseNumber, MainRepository}
-import coursemgmttools.admin.command.DuplicateInsertBefore
-import coursemgmttools.support.TestDirectories
+import coursemgmt.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
+import coursemgmt.admin.Domain.{ExerciseNumber, MainRepository}
+import coursemgmt.admin.command.DuplicateInsertBefore
+import coursemgmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
-import coursemgmttools.admin.cli.ArgParsers.exerciseNumberArgParser
+import coursemgmt.admin.cli.ArgParsers.exerciseNumberArgParser
 
 final class DuplicateInsertBeforeArgumentsSpec
     extends CommandLineArgumentsSpec[DuplicateInsertBefore.Options]

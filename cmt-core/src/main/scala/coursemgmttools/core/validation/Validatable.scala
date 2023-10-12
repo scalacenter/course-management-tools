@@ -1,6 +1,6 @@
-package coursemgmttools.core.validation
+package coursemgmt.core.validation
 
-import coursemgmttools.CmtError
+import coursemgmt.CmtError
 
 trait Validatable[T]:
   extension (t: T) def validated(): Either[CmtError, T]

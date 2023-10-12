@@ -1,8 +1,8 @@
-package coursemgmttools.admin
+package coursemgmt.admin
 
-import coursemgmttools.CmtError
+import coursemgmt.CmtError
 import java.io.File
-import coursemgmttools.toExecuteCommandErrorMessage
+import coursemgmt.toExecuteCommandErrorMessage
 
 def validateDestinationFolder(mainRepository: File, destination: File): Either[CmtError, Unit] =
   val canonicalTarget = destination.getCanonicalPath

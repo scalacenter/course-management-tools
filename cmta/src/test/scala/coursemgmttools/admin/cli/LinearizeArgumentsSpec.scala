@@ -1,4 +1,4 @@
-package coursemgmttools.admin.cli
+package coursemgmt.admin.cli
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -14,12 +14,12 @@ package coursemgmttools.admin.cli
   */
 
 import caseapp.Parser
-import coursemgmttools.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
-import coursemgmttools.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
-import coursemgmttools.admin.command.Linearize
-import coursemgmttools.support.TestDirectories
+import coursemgmt.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
+import coursemgmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
+import coursemgmt.admin.command.Linearize
+import coursemgmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
-import coursemgmttools.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
+import coursemgmt.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
 
 final class LinearizeArgumentsSpec extends CommandLineArgumentsSpec[Linearize.Options] with TestDirectories {
 

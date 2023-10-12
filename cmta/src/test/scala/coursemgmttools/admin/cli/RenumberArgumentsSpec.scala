@@ -1,4 +1,4 @@
-package coursemgmttools.admin.cli
+package coursemgmt.admin.cli
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -14,12 +14,12 @@ package coursemgmttools.admin.cli
   */
 
 import caseapp.Parser
-import coursemgmttools.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
-import coursemgmttools.admin.Domain.{MainRepository, RenumberOffset, RenumberStart, RenumberStep}
-import coursemgmttools.admin.command.RenumberExercises
-import coursemgmttools.support.TestDirectories
+import coursemgmt.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
+import coursemgmt.admin.Domain.{MainRepository, RenumberOffset, RenumberStart, RenumberStep}
+import coursemgmt.admin.command.RenumberExercises
+import coursemgmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
-import coursemgmttools.admin.cli.ArgParsers.{renumberStepArgParser, renumberOffsetArgParser, renumberStartArgParser}
+import coursemgmt.admin.cli.ArgParsers.{renumberStepArgParser, renumberOffsetArgParser, renumberStartArgParser}
 
 final class RenumberArgumentsSpec extends CommandLineArgumentsSpec[RenumberExercises.Options] with TestDirectories {
 

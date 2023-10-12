@@ -1,7 +1,7 @@
-package coursemgmttools.client.cli
+package coursemgmt.client.cli
 
 import caseapp.core.argparser.{ArgParser, FlagArgParser, SimpleArgParser}
-import coursemgmttools.client.Domain.{ExerciseId, ForceMoveToExercise, TemplatePath, ForceDeleteDestinationDirectory}
+import coursemgmt.client.Domain.{ExerciseId, ForceMoveToExercise, TemplatePath, ForceDeleteDestinationDirectory}
 import cats.syntax.either.*
 
 object ArgParsers {

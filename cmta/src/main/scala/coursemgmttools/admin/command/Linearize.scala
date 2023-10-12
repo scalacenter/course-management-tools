@@ -1,15 +1,15 @@
-package coursemgmttools.admin.command
+package coursemgmt.admin.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
-import coursemgmttools.Helpers.*
-import coursemgmttools.{CMTaConfig, CmtError, printResult, toConsoleGreen}
-import coursemgmttools.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
-import coursemgmttools.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
-import coursemgmttools.admin.cli.SharedOptions
-import coursemgmttools.admin.validateDestinationFolder
-import coursemgmttools.core.cli.CmtCommand
-import coursemgmttools.core.execution.Executable
-import coursemgmttools.core.validation.Validatable
+import coursemgmt.Helpers.*
+import coursemgmt.{CMTaConfig, CmtError, printResult, toConsoleGreen}
+import coursemgmt.admin.Domain.{ForceDeleteDestinationDirectory, LinearizeBaseDirectory, MainRepository}
+import coursemgmt.admin.cli.ArgParsers.{forceDeleteDestinationDirectoryArgParser, linearizeBaseDirectoryArgParser}
+import coursemgmt.admin.cli.SharedOptions
+import coursemgmt.admin.validateDestinationFolder
+import coursemgmt.core.cli.CmtCommand
+import coursemgmt.core.execution.Executable
+import coursemgmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 

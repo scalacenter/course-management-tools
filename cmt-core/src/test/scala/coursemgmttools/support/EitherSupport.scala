@@ -1,4 +1,4 @@
-package coursemgmttools.support
+package coursemgmt.support
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *

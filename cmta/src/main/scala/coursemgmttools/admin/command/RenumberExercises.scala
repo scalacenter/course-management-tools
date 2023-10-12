@@ -1,17 +1,17 @@
-package coursemgmttools.admin.command
+package coursemgmt.admin.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
-import coursemgmttools.{CMTaConfig, CmtError, printResult}
-import coursemgmttools.Helpers.{ExercisesMetadata, getExerciseMetadata, commitToGit, exitIfGitIndexOrWorkspaceIsntClean}
-import coursemgmttools.admin.Domain.{RenumberOffset, RenumberStart, RenumberStep}
-import coursemgmttools.admin.cli.SharedOptions
-import coursemgmttools.core.execution.Executable
-import coursemgmttools.admin.cli.ArgParsers.{renumberOffsetArgParser, renumberStartArgParser, renumberStepArgParser}
-import coursemgmttools.core.cli.CmtCommand
-import coursemgmttools.core.validation.Validatable
+import coursemgmt.{CMTaConfig, CmtError, printResult}
+import coursemgmt.Helpers.{ExercisesMetadata, getExerciseMetadata, commitToGit, exitIfGitIndexOrWorkspaceIsntClean}
+import coursemgmt.admin.Domain.{RenumberOffset, RenumberStart, RenumberStep}
+import coursemgmt.admin.cli.SharedOptions
+import coursemgmt.core.execution.Executable
+import coursemgmt.admin.cli.ArgParsers.{renumberOffsetArgParser, renumberStartArgParser, renumberStepArgParser}
+import coursemgmt.core.cli.CmtCommand
+import coursemgmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import coursemgmttools.toExecuteCommandErrorMessage
+import coursemgmt.toExecuteCommandErrorMessage
 
 object RenumberExercises:
 

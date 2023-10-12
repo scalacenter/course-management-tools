@@ -1,9 +1,9 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.Helpers.dumpStringToFile
-import coursemgmttools.client.{Configuration, CurrentCourse}
-import coursemgmttools.support.EitherSupport
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.Helpers.dumpStringToFile
+import coursemgmt.client.{Configuration, CurrentCourse}
+import coursemgmt.support.EitherSupport
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -96,7 +96,7 @@ final class SetCurrentCourseSpec
 
   override def afterEach(): Unit = {
     savedCmtConfig.foreach { config =>
-      coursemgmttools.Helpers.dumpStringToFile(config, configFile)
+      coursemgmt.Helpers.dumpStringToFile(config, configFile)
     }
     sbtio.delete(tempDirectory)
     super.afterEach()

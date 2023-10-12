@@ -1,4 +1,4 @@
-package coursemgmttools
+package coursemgmt
 
 import sbt.io.syntax.{File, file}
 

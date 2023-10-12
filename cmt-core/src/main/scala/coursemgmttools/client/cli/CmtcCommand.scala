@@ -1,11 +1,11 @@
-package coursemgmttools.client.cli
+package coursemgmt.client.cli
 
 import caseapp.core.help.Help
 import caseapp.core.parser.Parser
 import cats.syntax.either.*
-import coursemgmttools.client.Configuration
-import coursemgmttools.core.cli.CmtCommand
-import coursemgmttools.printErrorAndExit
+import coursemgmt.client.Configuration
+import coursemgmt.core.cli.CmtCommand
+import coursemgmt.printErrorAndExit
 
 abstract class CmtcCommand[T](using parser: Parser[T], help: Help[T]) extends CmtCommand[T] {
 

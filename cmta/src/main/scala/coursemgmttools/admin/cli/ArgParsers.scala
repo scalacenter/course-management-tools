@@ -1,9 +1,9 @@
-package coursemgmttools.admin.cli
+package coursemgmt.admin.cli
 
 import caseapp.core.argparser.{ArgParser, FlagArgParser, SimpleArgParser}
 import cats.syntax.apply.*
-import coursemgmttools.admin.Domain.*
-import coursemgmttools.core.validation.FileValidations.*
+import coursemgmt.admin.Domain.*
+import coursemgmt.core.validation.FileValidations.*
 import sbt.io.syntax.file
 import caseapp.core.Error
 import cats.syntax.either.*

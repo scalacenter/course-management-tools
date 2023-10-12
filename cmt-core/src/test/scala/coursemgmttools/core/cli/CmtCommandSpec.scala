@@ -1,4 +1,4 @@
-package coursemgmttools.core.cli
+package coursemgmt.core.cli
 
 //import caseapp.core.{Indexed, RemainingArgs}
 import org.scalatest.wordspec.AnyWordSpecLike

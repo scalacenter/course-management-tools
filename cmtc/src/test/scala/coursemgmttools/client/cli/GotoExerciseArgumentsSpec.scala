@@ -1,4 +1,4 @@
-package coursemgmttools.client.cli
+package coursemgmt.client.cli
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -14,12 +14,12 @@ package coursemgmttools.client.cli
   */
 
 import caseapp.Parser
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.client.Domain.{ExerciseId, ForceMoveToExercise}
-import coursemgmttools.client.cli.ArgParsers.given
-import coursemgmttools.client.command.GotoExercise
-import coursemgmttools.core.cli.ArgParsers.given
-import coursemgmttools.support.TestDirectories
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.client.Domain.{ExerciseId, ForceMoveToExercise}
+import coursemgmt.client.cli.ArgParsers.given
+import coursemgmt.client.command.GotoExercise
+import coursemgmt.core.cli.ArgParsers.given
+import coursemgmt.support.TestDirectories
 import sbt.io.syntax.File
 
 final class GotoExerciseArgumentsSpec extends CommandLineArgumentsSpec[GotoExercise.Options] with TestDirectories {

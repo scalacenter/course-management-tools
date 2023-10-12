@@ -1,4 +1,4 @@
-package coursemgmttools.admin
+package coursemgmt.admin
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -13,12 +13,12 @@ package coursemgmttools.admin
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import coursemgmttools.CmtError
+import coursemgmt.CmtError
 import sbt.io.syntax.File
-import coursemgmttools.*
+import coursemgmt.*
 import cats.syntax.either.*
 
-import coursemgmttools.Domain.InstallationSource
+import coursemgmt.Domain.InstallationSource
 
 object Domain:
 

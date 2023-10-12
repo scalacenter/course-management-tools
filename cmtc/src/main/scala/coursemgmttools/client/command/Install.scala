@@ -1,21 +1,21 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
 import caseapp.*
 import cats.syntax.either.*
-import coursemgmttools.*
-import coursemgmttools.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
-import coursemgmttools.Domain.{InstallationSource, StudentifiedRepo}
-import coursemgmttools.Helpers.{findStudentRepoRoot, ignoreProcessStdOutStdErr}
-import coursemgmttools.client.Configuration
-import coursemgmttools.client.cli.CmtcCommand
-import coursemgmttools.core.cli.ArgParsers.installationSourceArgParser
-import coursemgmttools.core.cli.enforceNoTrailingArguments
-import coursemgmttools.core.validation.Validatable
-import coursemgmttools.client.Domain.ForceDeleteDestinationDirectory
+import coursemgmt.*
+import coursemgmt.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
+import coursemgmt.Domain.{InstallationSource, StudentifiedRepo}
+import coursemgmt.Helpers.{findStudentRepoRoot, ignoreProcessStdOutStdErr}
+import coursemgmt.client.Configuration
+import coursemgmt.client.cli.CmtcCommand
+import coursemgmt.core.cli.ArgParsers.installationSourceArgParser
+import coursemgmt.core.cli.enforceNoTrailingArguments
+import coursemgmt.core.validation.Validatable
+import coursemgmt.client.Domain.ForceDeleteDestinationDirectory
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import coursemgmttools.client.cli.ArgParsers.forceDeleteDestinationDirectoryArgParser
-import coursemgmttools.Releasables.{*, given}
+import coursemgmt.client.cli.ArgParsers.forceDeleteDestinationDirectoryArgParser
+import coursemgmt.Releasables.{*, given}
 
 import sys.process.*
 import scala.util.{Failure, Success, Try}

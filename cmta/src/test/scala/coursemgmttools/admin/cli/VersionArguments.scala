@@ -1,4 +1,4 @@
-package coursemgmttools.admin.cli
+package coursemgmt.admin.cli
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -13,8 +13,8 @@ package coursemgmttools.admin.cli
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-//import coursemgmttools.support.{CommandLineArguments, TestDirectories}
-//import coursemgmttools.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
+//import coursemgmt.support.{CommandLineArguments, TestDirectories}
+//import coursemgmt.support.CommandLineArguments.{invalidArgumentsTable, validArgumentsTable}
 //import org.scalatest.prop.Tables
 //import sbt.io.syntax.File
 

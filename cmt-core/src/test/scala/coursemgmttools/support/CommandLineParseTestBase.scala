@@ -1,4 +1,4 @@
-package coursemgmttools.support
+package coursemgmt.support
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -24,7 +24,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import sbt.io.IO
 import sbt.io.syntax.*
-import coursemgmttools.{CmtError, toCmtError}
+import coursemgmt.{CmtError, toCmtError}
 
 import scala.language.postfixOps
 

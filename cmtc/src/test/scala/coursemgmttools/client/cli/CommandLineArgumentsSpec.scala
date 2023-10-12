@@ -1,4 +1,4 @@
-package coursemgmttools.client.cli
+package coursemgmt.client.cli
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -15,8 +15,8 @@ package coursemgmttools.client.cli
 
 import caseapp.Parser
 import caseapp.core.Error.{RequiredOptionNotSpecified, SeveralErrors}
-import coursemgmttools.CmtError
-import coursemgmttools.support.EitherSupport
+import coursemgmt.CmtError
+import coursemgmt.support.EitherSupport
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableFor2
@@ -25,7 +25,7 @@ import org.scalatest.prop.Tables.Table
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import sbt.io.IO
 import sbt.io.syntax.File
-import coursemgmttools.toCmtError
+import coursemgmt.toCmtError
 
 abstract class CommandLineArgumentsSpec[T]
     extends AnyWordSpecLike

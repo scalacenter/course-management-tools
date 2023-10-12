@@ -1,4 +1,4 @@
-package coursemgmttools.admin
+package coursemgmt.admin
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -14,7 +14,7 @@ package coursemgmttools.admin
   */
 
 import caseapp.core.app.CommandsEntryPoint
-import coursemgmttools.admin.command.{
+import coursemgmt.admin.command.{
   Delinearize,
   DuplicateInsertBefore,
   Linearize,

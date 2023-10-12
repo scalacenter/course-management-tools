@@ -1,14 +1,14 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import coursemgmttools.client.Configuration
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.{CMTcConfig, CmtError, printResult}
-import coursemgmttools.client.cli.CmtcCommand
-import coursemgmttools.core.validation.Validatable
-import coursemgmttools.core.cli.enforceNoTrailingArguments
-import coursemgmttools.core.cli.ArgParsers.studentifiedRepoArgParser
-import coursemgmttools.Helpers.listExercises
+import coursemgmt.client.Configuration
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.{CMTcConfig, CmtError, printResult}
+import coursemgmt.client.cli.CmtcCommand
+import coursemgmt.core.validation.Validatable
+import coursemgmt.core.cli.enforceNoTrailingArguments
+import coursemgmt.core.cli.ArgParsers.studentifiedRepoArgParser
+import coursemgmt.Helpers.listExercises
 
 object ListExercises:
 

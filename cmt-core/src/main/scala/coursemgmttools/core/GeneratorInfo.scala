@@ -1,3 +1,3 @@
-package coursemgmttools.core
+package coursemgmt.core
 
 final case class GeneratorInfo(generatorName: String, generatorVersion: String)

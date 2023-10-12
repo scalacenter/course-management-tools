@@ -1,4 +1,4 @@
-package coursemgmttools
+package coursemgmt
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -13,10 +13,10 @@ package coursemgmttools
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import coursemgmttools.TestHelpers.getExercisePrefixAndExercises
-import coursemgmttools.admin.Domain.{MainRepository, RenumberOffset, RenumberStart, RenumberStep}
-import coursemgmttools.admin.cli.SharedOptions
-import coursemgmttools.admin.command.RenumberExercises
+import coursemgmt.TestHelpers.getExercisePrefixAndExercises
+import coursemgmt.admin.Domain.{MainRepository, RenumberOffset, RenumberStart, RenumberStep}
+import coursemgmt.admin.cli.SharedOptions
+import coursemgmt.admin.command.RenumberExercises
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

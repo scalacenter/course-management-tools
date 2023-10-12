@@ -1,8 +1,8 @@
-package coursemgmttools.admin.cli
+package coursemgmt.admin.cli
 
 import caseapp.{ExtraName, Help, HelpMessage, Parser, ValueDescription}
-import coursemgmttools.admin.Domain.{ConfigurationFile, MainRepository}
-import coursemgmttools.admin.cli.ArgParsers.{configurationFileArgParser, mainRepositoryArgParser}
+import coursemgmt.admin.Domain.{ConfigurationFile, MainRepository}
+import coursemgmt.admin.cli.ArgParsers.{configurationFileArgParser, mainRepositoryArgParser}
 
 final case class SharedOptions(
     @ExtraName("m")

@@ -1,4 +1,4 @@
-package coursemgmttools
+package coursemgmt
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -13,9 +13,9 @@ package coursemgmttools
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import coursemgmttools.toExecuteCommandErrorMessage
+import coursemgmt.toExecuteCommandErrorMessage
 import sbt.io.syntax.*
-import coursemgmttools.Helpers.ignoreProcessStdOutStdErr
+import coursemgmt.Helpers.ignoreProcessStdOutStdErr
 
 import scala.sys.process.Process
 import scala.util.{Failure, Success, Try}

@@ -1,9 +1,9 @@
-package coursemgmttools.client
+package coursemgmt.client
 
-import coursemgmttools.Helpers.{adaptToNixSeparatorChar, adaptToOSSeparatorChar}
-import coursemgmttools.client.Configuration.*
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.{CmtError, FailedToWriteGlobalConfiguration, printMessage}
+import coursemgmt.Helpers.{adaptToNixSeparatorChar, adaptToOSSeparatorChar}
+import coursemgmt.client.Configuration.*
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.{CmtError, FailedToWriteGlobalConfiguration, printMessage}
 import com.typesafe.config.{Config, ConfigFactory}
 import dev.dirs.ProjectDirectories
 import sbt.io.IO.*
@@ -46,7 +46,7 @@ object Configuration:
 
   private val projectDirectories = ProjectDirectories.from("com", "lunatech", "cmt")
   val UserConfigDir = projectDirectories.configDir
-  val CmtGlobalConfigName = "coursemgmttools.conf"
+  val CmtGlobalConfigName = "coursemgmt.conf"
   val CoursesDirectoryToken = "COURSES_DIRECTORY"
   val CurrentCourseToken = "CURRENT_COURSE"
   val CmtHomeEnvKey = "CMT_HOME"

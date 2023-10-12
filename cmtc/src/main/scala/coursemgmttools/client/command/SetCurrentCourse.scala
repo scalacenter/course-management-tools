@@ -1,15 +1,15 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.Helpers.findStudentRepoRoot
-import coursemgmttools.core.cli.ArgParsers.studentifiedRepoArgParser
-import coursemgmttools.client.cli.CmtcCommand
-import coursemgmttools.client.{Configuration, CurrentCourse}
-import coursemgmttools.Helpers.listExercises
-import coursemgmttools.core.cli.enforceNoTrailingArguments
-import coursemgmttools.core.validation.Validatable
-import coursemgmttools.{CMTcConfig, CmtError, printResult}
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.Helpers.findStudentRepoRoot
+import coursemgmt.core.cli.ArgParsers.studentifiedRepoArgParser
+import coursemgmt.client.cli.CmtcCommand
+import coursemgmt.client.{Configuration, CurrentCourse}
+import coursemgmt.Helpers.listExercises
+import coursemgmt.core.cli.enforceNoTrailingArguments
+import coursemgmt.core.validation.Validatable
+import coursemgmt.{CMTcConfig, CmtError, printResult}
 import sbt.io.syntax.*
 
 object SetCurrentCourse:

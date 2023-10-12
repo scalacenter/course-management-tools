@@ -1,4 +1,4 @@
-package coursemgmttools.support
+package coursemgmt.support
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
@@ -14,7 +14,7 @@ trait ExtractUniquePathsFixture {
 
 final class ExtractUniquePathsSpec extends AnyWordSpec with Matchers with ExtractUniquePathsFixture {
 
-  import coursemgmttools.Helpers.extractUniquePaths
+  import coursemgmt.Helpers.extractUniquePaths
 
   "extractUniquePaths" when {
     "given a series of paths that don't share any common prefix" should {

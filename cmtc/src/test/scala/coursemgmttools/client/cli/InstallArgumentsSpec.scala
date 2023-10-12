@@ -1,12 +1,12 @@
-package coursemgmttools.client.cli
+package coursemgmt.client.cli
 
 import caseapp.Parser
-import coursemgmttools.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
-import coursemgmttools.client.command.Install
-import coursemgmttools.support.TestDirectories
+import coursemgmt.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
+import coursemgmt.client.command.Install
+import coursemgmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
-import coursemgmttools.core.cli.ArgParsers.given
-import coursemgmttools.client.cli.ArgParsers.forceDeleteDestinationDirectoryArgParser
+import coursemgmt.core.cli.ArgParsers.given
+import coursemgmt.client.cli.ArgParsers.forceDeleteDestinationDirectoryArgParser
 
 final class InstallArgumentsSpec extends CommandLineArgumentsSpec[Install.Options] with TestDirectories {
 

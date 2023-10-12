@@ -1,27 +1,27 @@
-package coursemgmttools.admin.command
+package coursemgmt.admin.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Name, Recurse, RemainingArgs, ValueDescription}
-import coursemgmttools.Helpers.*
-import coursemgmttools.admin.Domain.{
+import coursemgmt.Helpers.*
+import coursemgmt.admin.Domain.{
   ForceDeleteDestinationDirectory,
   InitializeGitRepo,
   MainRepository,
   StudentifyBaseDirectory
 }
-import coursemgmttools.core.execution.Executable
-import coursemgmttools.{CMTaConfig, CmtError, printResult, toConsoleGreen}
+import coursemgmt.core.execution.Executable
+import coursemgmt.{CMTaConfig, CmtError, printResult, toConsoleGreen}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import coursemgmttools.admin.validateDestinationFolder
-import coursemgmttools.admin.cli.SharedOptions
-import coursemgmttools.core.validation.Validatable
-import coursemgmttools.admin.cli.ArgParsers.{
+import coursemgmt.admin.validateDestinationFolder
+import coursemgmt.admin.cli.SharedOptions
+import coursemgmt.core.validation.Validatable
+import coursemgmt.admin.cli.ArgParsers.{
   forceDeleteDestinationDirectoryArgParser,
   initializeGitRepoArgParser,
   studentifyBaseDirectoryArgParser
 }
-import coursemgmttools.core.GeneratorInfo
-import coursemgmttools.core.cli.CmtCommand
+import coursemgmt.core.GeneratorInfo
+import coursemgmt.core.cli.CmtCommand
 
 object Studentify:
 
@@ -69,8 +69,7 @@ object Studentify:
             if (redundantPaths.nonEmpty)
               for (redundantPath <- redundantPaths)
                 println(
-                  coursemgmttools.toConsoleYellow(
-                    s"WARNING: Redundant path detected in CMT configuration: $redundantPath"))
+                  coursemgmt.toConsoleYellow(s"WARNING: Redundant path detected in CMT configuration: $redundantPath"))
 
           checkForOverlappingPathsInConfig()
 
@@ -132,7 +131,7 @@ object Studentify:
 
       hideExercises(cleanedMainRepo, solutionsFolder, exercises)(config)
 
-      import coursemgmttools.version.BuildInfo
+      import coursemgmt.version.BuildInfo
       val generatorInfo = GeneratorInfo(BuildInfo.name, BuildInfo.version)
       writeStudentifiedCMTConfig(studentifiedRootFolder / config.cmtStudentifiedConfigFile, exercises)(
         config,

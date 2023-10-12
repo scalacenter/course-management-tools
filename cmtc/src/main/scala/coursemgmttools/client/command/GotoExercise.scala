@@ -1,25 +1,18 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import coursemgmttools.{
-  CMTcConfig,
-  CmtError,
-  printResult,
-  toConsoleGreen,
-  toConsoleYellow,
-  toExecuteCommandErrorMessage
-}
-import coursemgmttools.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.client.Configuration
-import coursemgmttools.client.Domain.{ExerciseId, ForceMoveToExercise}
-import coursemgmttools.core.validation.Validatable
+import coursemgmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
+import coursemgmt.Helpers.{exerciseFileHasBeenModified, getFilesToCopyAndDelete, pullTestCode}
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.client.Configuration
+import coursemgmt.client.Domain.{ExerciseId, ForceMoveToExercise}
+import coursemgmt.core.validation.Validatable
 import sbt.io.syntax.*
-import coursemgmttools.client.cli.ArgParsers.{exerciseIdArgParser, forceMoveToExerciseArgParser}
-import coursemgmttools.core.cli.ArgParsers.studentifiedRepoArgParser
-import coursemgmttools.client.cli.CmtcCommand
-import coursemgmttools.core.cli.enforceTrailingArgumentCount
-import coursemgmttools.core.command.Package.getCurrentExerciseId
+import coursemgmt.client.cli.ArgParsers.{exerciseIdArgParser, forceMoveToExerciseArgParser}
+import coursemgmt.core.cli.ArgParsers.studentifiedRepoArgParser
+import coursemgmt.client.cli.CmtcCommand
+import coursemgmt.core.cli.enforceTrailingArgumentCount
+import coursemgmt.core.command.Package.getCurrentExerciseId
 
 object GotoExercise:
 

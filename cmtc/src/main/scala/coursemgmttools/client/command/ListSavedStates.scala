@@ -1,14 +1,14 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import coursemgmttools.client.Configuration
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.client.cli.CmtcCommand
-import coursemgmttools.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
-import coursemgmttools.core.validation.Validatable
+import coursemgmt.client.Configuration
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.client.cli.CmtcCommand
+import coursemgmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
+import coursemgmt.core.validation.Validatable
 import sbt.io.IO as sbtio
-import coursemgmttools.core.cli.enforceNoTrailingArguments
-import coursemgmttools.core.cli.ArgParsers.studentifiedRepoArgParser
+import coursemgmt.core.cli.enforceNoTrailingArguments
+import coursemgmt.core.cli.ArgParsers.studentifiedRepoArgParser
 
 object ListSavedStates:
 

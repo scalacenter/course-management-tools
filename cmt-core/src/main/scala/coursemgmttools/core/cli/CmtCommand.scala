@@ -1,10 +1,10 @@
-package coursemgmttools.core.cli
+package coursemgmt.core.cli
 
 import caseapp.{Command, RemainingArgs}
 import caseapp.core.Error
 import caseapp.core.help.Help
 import caseapp.core.parser.Parser
-import coursemgmttools.{
+import coursemgmt.{
   CmtError,
   MissingTrailingArguments,
   NoTrailingArguments,

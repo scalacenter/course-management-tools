@@ -1,9 +1,9 @@
-package coursemgmttools.core.validation
+package coursemgmt.core.validation
 
 import caseapp.core.Error
 import cats.data.{NonEmptyList, ValidatedNel}
 import cats.syntax.either.*
-import coursemgmttools.Helpers
+import coursemgmt.Helpers
 import sbt.io.syntax.File
 
 object FileValidations:

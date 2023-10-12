@@ -1,7 +1,7 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
-import coursemgmttools.{CMTcConfig, Helpers}
-import coursemgmttools.Helpers.writeStudentifiedCMTBookmark
+import coursemgmt.{CMTcConfig, Helpers}
+import coursemgmt.Helpers.writeStudentifiedCMTBookmark
 import sbt.io.syntax.*
 import sbt.io.IO as sbtio
 

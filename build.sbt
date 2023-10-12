@@ -32,7 +32,7 @@ lazy val cmta = project
   .dependsOn(`cmt-core`, `cmt-core` % "test->test")
   .settings(commonSettings: _*)
   .settings(nativeImageSettings: _*)
-  .settings(Compile / mainClass := Some("coursemgmttools.admin.Main"))
+  .settings(Compile / mainClass := Some("coursemgmt.admin.Main"))
   .settings(buildInfoKeys := buildKeysWithName("cmta:Course Management Tools (Admin)"))
 
 lazy val cmtc = project
@@ -43,7 +43,7 @@ lazy val cmtc = project
   .settings(commonSettings: _*)
   .settings(nativeImageSettings: _*)
   .settings(libraryDependencies ++= Dependencies.cmtcDependencies)
-  .settings(Compile / mainClass := Some("coursemgmttools.client.Main"))
+  .settings(Compile / mainClass := Some("coursemgmt.client.Main"))
   .settings(buildInfoKeys := buildKeysWithName("Course Management Tools (Client)"))
 
 lazy val `functional-tests` = project

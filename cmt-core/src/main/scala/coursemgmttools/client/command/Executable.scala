@@ -1,7 +1,7 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
-import coursemgmttools.CmtError
-import coursemgmttools.client.Configuration
+import coursemgmt.CmtError
+import coursemgmt.client.Configuration
 
 trait Executable[T]:
   extension (t: T) def execute(configuration: Configuration): Either[CmtError, String]

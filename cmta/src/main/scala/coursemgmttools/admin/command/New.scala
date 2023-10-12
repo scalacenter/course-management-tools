@@ -1,18 +1,18 @@
-package coursemgmttools.admin.command
+package coursemgmt.admin.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs, ValueDescription}
-import coursemgmttools.{CmtError, printResult}
-import coursemgmttools.admin.Domain.{ConfigurationFile, CourseTemplate}
-import coursemgmttools.client.command.Executable
-import coursemgmttools.core.validation.Validatable
-import coursemgmttools.admin.cli.ArgParsers.{configurationFileArgParser, courseTemplateArgParser}
-import coursemgmttools.client.Configuration
-import coursemgmttools.client.cli.CmtcCommand
-import coursemgmttools.Domain.InstallationSource.*
-import coursemgmttools.Helpers.ignoreProcessStdOutStdErr
+import coursemgmt.{CmtError, printResult}
+import coursemgmt.admin.Domain.{ConfigurationFile, CourseTemplate}
+import coursemgmt.client.command.Executable
+import coursemgmt.core.validation.Validatable
+import coursemgmt.admin.cli.ArgParsers.{configurationFileArgParser, courseTemplateArgParser}
+import coursemgmt.client.Configuration
+import coursemgmt.client.cli.CmtcCommand
+import coursemgmt.Domain.InstallationSource.*
+import coursemgmt.Helpers.ignoreProcessStdOutStdErr
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import coursemgmttools.*
+import coursemgmt.*
 
 import cats.syntax.either.*
 

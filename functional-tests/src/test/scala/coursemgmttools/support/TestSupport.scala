@@ -1,4 +1,4 @@
-package coursemgmttools.support
+package coursemgmt.support
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -13,15 +13,15 @@ package coursemgmttools.support
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import coursemgmttools.Helpers.*
-import coursemgmttools.admin.Domain.MainRepository
-import coursemgmttools.admin.cli.SharedOptions
-import coursemgmttools.admin.command
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.client.{Configuration, CoursesDirectory, CurrentCourse}
-import coursemgmttools.client.Configuration.CmtHome
-import coursemgmttools.client.Domain.{ExerciseId, ForceMoveToExercise, TemplatePath}
-import coursemgmttools.client.command.{
+import coursemgmt.Helpers.*
+import coursemgmt.admin.Domain.MainRepository
+import coursemgmt.admin.cli.SharedOptions
+import coursemgmt.admin.command
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.client.{Configuration, CoursesDirectory, CurrentCourse}
+import coursemgmt.client.Configuration.CmtHome
+import coursemgmt.client.Domain.{ExerciseId, ForceMoveToExercise, TemplatePath}
+import coursemgmt.client.command.{
   GotoExercise,
   GotoFirstExercise,
   NextExercise,
@@ -31,7 +31,7 @@ import coursemgmttools.client.command.{
   RestoreState,
   SaveState
 }
-import coursemgmttools.{CMTcConfig, CmtError, Helpers}
+import coursemgmt.{CMTcConfig, CmtError, Helpers}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
 
@@ -153,8 +153,8 @@ def createMainRepo(tmpDir: File, repoName: String, exercises: Exercises, testCon
   mainRepo
 
 def studentifyMainRepo(tmpDir: File, repoName: String, mainRepo: File): File =
-  import coursemgmttools.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, StudentifyBaseDirectory}
-  import coursemgmttools.admin.command.Studentify
+  import coursemgmt.admin.Domain.{ForceDeleteDestinationDirectory, InitializeGitRepo, StudentifyBaseDirectory}
+  import coursemgmt.admin.command.Studentify
 
   val studentifyBase = tmpDir / "stu"
   sbtio.createDirectory(studentifyBase)

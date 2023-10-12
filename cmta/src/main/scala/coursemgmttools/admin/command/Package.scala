@@ -1,6 +1,6 @@
-package coursemgmttools.admin.command
+package coursemgmt.admin.command
 
-import coursemgmttools.Helpers.extractExerciseNr
+import coursemgmt.Helpers.extractExerciseNr
 def renumberExercise(exercise: String, exercisePrefix: String, newNumber: Int): String =
   val newNumberPrefix = f"${exercisePrefix}_$newNumber%03d_"
   val oldNumberPrefix =

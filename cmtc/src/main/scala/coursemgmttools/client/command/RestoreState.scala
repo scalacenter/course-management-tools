@@ -1,18 +1,18 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.client.Domain.ExerciseId
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.client.Domain.ExerciseId
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import coursemgmttools.client.cli.ArgParsers.exerciseIdArgParser
-import coursemgmttools.core.cli.ArgParsers.studentifiedRepoArgParser
-import coursemgmttools.client.command.deleteCurrentState
-import coursemgmttools.core.validation.Validatable
-import coursemgmttools.*
-import coursemgmttools.client.Configuration
-import coursemgmttools.client.cli.CmtcCommand
+import coursemgmt.client.cli.ArgParsers.exerciseIdArgParser
+import coursemgmt.core.cli.ArgParsers.studentifiedRepoArgParser
+import coursemgmt.client.command.deleteCurrentState
+import coursemgmt.core.validation.Validatable
+import coursemgmt.*
+import coursemgmt.client.Configuration
+import coursemgmt.client.cli.CmtcCommand
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import coursemgmttools.core.cli.enforceTrailingArgumentCount
+import coursemgmt.core.cli.enforceTrailingArgumentCount
 
 object RestoreState:
 

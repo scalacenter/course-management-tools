@@ -1,17 +1,17 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import coursemgmttools.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
-import coursemgmttools.Helpers.{adaptToNixSeparatorChar, exerciseFileHasBeenModified, withZipFile}
-import coursemgmttools.client.Configuration
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.client.cli.CmtcCommand
-import coursemgmttools.core.validation.Validatable
+import coursemgmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow}
+import coursemgmt.Helpers.{adaptToNixSeparatorChar, exerciseFileHasBeenModified, withZipFile}
+import coursemgmt.client.Configuration
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.client.cli.CmtcCommand
+import coursemgmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import coursemgmttools.core.cli.enforceNoTrailingArguments
-import coursemgmttools.core.cli.ArgParsers.studentifiedRepoArgParser
-import coursemgmttools.core.command.Package.getCurrentExerciseId
+import coursemgmt.core.cli.enforceNoTrailingArguments
+import coursemgmt.core.cli.ArgParsers.studentifiedRepoArgParser
+import coursemgmt.core.command.Package.getCurrentExerciseId
 
 object PullSolution:
 

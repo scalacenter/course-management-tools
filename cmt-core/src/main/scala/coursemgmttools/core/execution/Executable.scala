@@ -1,4 +1,4 @@
-package coursemgmttools.core.execution
+package coursemgmt.core.execution
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -13,7 +13,7 @@ package coursemgmttools.core.execution
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import coursemgmttools.CmtError
+import coursemgmt.CmtError
 
 trait Executable[T]:
   extension (t: T) def execute(): Either[CmtError, String]

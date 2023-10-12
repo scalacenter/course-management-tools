@@ -1,4 +1,4 @@
-package coursemgmttools
+package coursemgmt
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -13,9 +13,9 @@ package coursemgmttools
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import coursemgmttools.ProcessDSL.ProcessCmd
-import coursemgmttools.core.GeneratorInfo
-import coursemgmttools.core.command.Package.*
+import coursemgmt.ProcessDSL.ProcessCmd
+import coursemgmt.core.GeneratorInfo
+import coursemgmt.core.command.Package.*
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*

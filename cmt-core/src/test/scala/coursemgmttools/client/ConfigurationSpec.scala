@@ -1,8 +1,8 @@
-package coursemgmttools.client
+package coursemgmt.client
 
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.client.Configuration.CmtHome
-import coursemgmttools.support.EitherSupport
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.client.Configuration.CmtHome
+import coursemgmt.support.EitherSupport
 import dev.dirs.ProjectDirectories
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
@@ -27,7 +27,7 @@ final class ConfigurationSpec extends AnyWordSpecLike with Matchers with BeforeA
       // other specs _may_ have run before this one and already created the config file
       // so that's why we ensure that the cmt config file is removed before we execute
       // otherwise, if the file exists, it will likely not contain default values and the assertion below will fail
-      sbtio.delete(configDir / "coursemgmttools.conf")
+      sbtio.delete(configDir / "coursemgmt.conf")
 
       val receivedConfiguration = assertRight(Configuration.load())
 

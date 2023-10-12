@@ -1,16 +1,16 @@
-package coursemgmttools.admin.command
+package coursemgmt.admin.command
 
-import coursemgmttools.*
+import coursemgmt.*
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
-import coursemgmttools.Helpers.{ExercisesMetadata, getExerciseMetadata, commitToGit, exitIfGitIndexOrWorkspaceIsntClean}
-import coursemgmttools.admin.Domain.{ExerciseNumber, RenumberOffset, RenumberStart, RenumberStep}
-import coursemgmttools.admin.cli.SharedOptions
-import coursemgmttools.core.execution.Executable
-import coursemgmttools.core.validation.Validatable
+import coursemgmt.Helpers.{ExercisesMetadata, getExerciseMetadata, commitToGit, exitIfGitIndexOrWorkspaceIsntClean}
+import coursemgmt.admin.Domain.{ExerciseNumber, RenumberOffset, RenumberStart, RenumberStep}
+import coursemgmt.admin.cli.SharedOptions
+import coursemgmt.core.execution.Executable
+import coursemgmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import coursemgmttools.admin.cli.ArgParsers.exerciseNumberArgParser
-import coursemgmttools.core.cli.CmtCommand
+import coursemgmt.admin.cli.ArgParsers.exerciseNumberArgParser
+import coursemgmt.core.cli.CmtCommand
 
 object DuplicateInsertBefore:
 

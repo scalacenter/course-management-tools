@@ -1,4 +1,4 @@
-package coursemgmttools.admin.cli
+package coursemgmt.admin.cli
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -14,20 +14,20 @@ package coursemgmttools.admin.cli
   */
 
 import caseapp.Parser
-import coursemgmttools.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
-import coursemgmttools.admin.command.Studentify
-import coursemgmttools.admin.cli.ArgParsers.{
+import coursemgmt.{ErrorMessage, FailedToValidateArgument, OptionName, RequiredOptionIsMissing}
+import coursemgmt.admin.command.Studentify
+import coursemgmt.admin.cli.ArgParsers.{
   initializeGitRepoArgParser,
   forceDeleteDestinationDirectoryArgParser,
   studentifyBaseDirectoryArgParser
 }
-import coursemgmttools.admin.Domain.{
+import coursemgmt.admin.Domain.{
   ForceDeleteDestinationDirectory,
   InitializeGitRepo,
   MainRepository,
   StudentifyBaseDirectory
 }
-import coursemgmttools.support.TestDirectories
+import coursemgmt.support.TestDirectories
 import sbt.io.syntax.{File, file}
 
 final class StudentifyArgumentsSpec extends CommandLineArgumentsSpec[Studentify.Options] with TestDirectories {

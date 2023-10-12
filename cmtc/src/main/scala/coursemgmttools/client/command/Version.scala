@@ -1,12 +1,12 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
 import caseapp.{AppName, CommandName, HelpMessage, RemainingArgs}
-import coursemgmttools.CmtError
-import coursemgmttools.core.cli.CmtCommand
-import coursemgmttools.core.execution.Executable
-import coursemgmttools.core.validation.Validatable
-import coursemgmttools.printResult
-import coursemgmttools.version.BuildInfo
+import coursemgmt.CmtError
+import coursemgmt.core.cli.CmtCommand
+import coursemgmt.core.execution.Executable
+import coursemgmt.core.validation.Validatable
+import coursemgmt.printResult
+import coursemgmt.version.BuildInfo
 object Version:
   @AppName("version")
   @CommandName("version")

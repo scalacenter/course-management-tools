@@ -1,4 +1,4 @@
-package coursemgmttools.support
+package coursemgmt.support
 
 /** Copyright 2022 - Eric Loots - eric.loots@gmail.com / Trevor Burton-McCreadie - trevor@thinkmorestupidless.com
   *
@@ -13,9 +13,9 @@ package coursemgmttools.support
   * See the License for the specific language governing permissions and limitations under the License.
   */
 
-import coursemgmttools.Helpers
+import coursemgmt.Helpers
 import sbt.io.syntax.{File, file}
-import coursemgmttools.Helpers.adaptToOSSeparatorChar
+import coursemgmt.Helpers.adaptToOSSeparatorChar
 
 trait TestDirectories {
 

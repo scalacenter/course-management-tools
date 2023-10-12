@@ -1,4 +1,4 @@
-package coursemgmttools.core.command
+package coursemgmt.core.command
 
 import sbt.io.syntax.File
 import sbt.io.IO as sbtio

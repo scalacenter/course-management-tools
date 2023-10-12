@@ -1,4 +1,4 @@
-package coursemgmttools
+package coursemgmt
 
 sealed trait CmtError {
   def prettyPrint: String

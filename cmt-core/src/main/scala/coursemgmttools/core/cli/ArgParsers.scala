@@ -1,13 +1,13 @@
-package coursemgmttools.core.cli
+package coursemgmt.core.cli
 
 import caseapp.core.Error
 import caseapp.core.Error.Other
 import caseapp.core.argparser.{ArgParser, SimpleArgParser}
 import cats.syntax.apply.*
 import cats.syntax.either.*
-import coursemgmttools.Domain.{InstallationSource, StudentifiedRepo}
-import coursemgmttools.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
-import coursemgmttools.core.validation.FileValidations.*
+import coursemgmt.Domain.{InstallationSource, StudentifiedRepo}
+import coursemgmt.Domain.InstallationSource.{GithubProject, LocalDirectory, ZipFile}
+import coursemgmt.core.validation.FileValidations.*
 import sbt.io.syntax.{File, file}
 
 object ArgParsers:

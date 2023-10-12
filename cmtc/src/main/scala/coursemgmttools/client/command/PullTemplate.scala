@@ -1,27 +1,20 @@
-package coursemgmttools.client.command
+package coursemgmt.client.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, RemainingArgs}
-import coursemgmttools.{
-  CMTcConfig,
-  CmtError,
-  printResult,
-  toConsoleGreen,
-  toConsoleYellow,
-  toExecuteCommandErrorMessage
-}
-import coursemgmttools.Helpers.withZipFile
-import coursemgmttools.client.Configuration
-import coursemgmttools.Domain.StudentifiedRepo
-import coursemgmttools.client.Domain.TemplatePath
-import coursemgmttools.core.validation.Validatable
+import coursemgmt.{CMTcConfig, CmtError, printResult, toConsoleGreen, toConsoleYellow, toExecuteCommandErrorMessage}
+import coursemgmt.Helpers.withZipFile
+import coursemgmt.client.Configuration
+import coursemgmt.Domain.StudentifiedRepo
+import coursemgmt.client.Domain.TemplatePath
+import coursemgmt.core.validation.Validatable
 import sbt.io.CopyOptions
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import coursemgmttools.client.cli.ArgParsers.templatePathArgParser
-import coursemgmttools.core.cli.ArgParsers.studentifiedRepoArgParser
-import coursemgmttools.client.cli.CmtcCommand
-import coursemgmttools.core.cli.enforceTrailingArgumentCount
-import coursemgmttools.core.command.Package.getCurrentExerciseId
+import coursemgmt.client.cli.ArgParsers.templatePathArgParser
+import coursemgmt.core.cli.ArgParsers.studentifiedRepoArgParser
+import coursemgmt.client.cli.CmtcCommand
+import coursemgmt.core.cli.enforceTrailingArgumentCount
+import coursemgmt.core.command.Package.getCurrentExerciseId
 
 object PullTemplate:
 

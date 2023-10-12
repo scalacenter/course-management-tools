@@ -1,4 +1,4 @@
-package coursemgmttools
+package coursemgmt
 
 import java.util.Map.Entry
 import scala.jdk.CollectionConverters.*

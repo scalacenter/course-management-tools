@@ -1,17 +1,17 @@
-package coursemgmttools.admin.command
+package coursemgmt.admin.command
 
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
-import coursemgmttools.*
-import coursemgmttools.Helpers.*
-import coursemgmttools.ProcessDSL.toProcessCmd
-import coursemgmttools.admin.Domain.LinearizeBaseDirectory
-import coursemgmttools.admin.cli.SharedOptions
-import coursemgmttools.core.execution.Executable
-import coursemgmttools.core.validation.Validatable
+import coursemgmt.*
+import coursemgmt.Helpers.*
+import coursemgmt.ProcessDSL.toProcessCmd
+import coursemgmt.admin.Domain.LinearizeBaseDirectory
+import coursemgmt.admin.cli.SharedOptions
+import coursemgmt.core.execution.Executable
+import coursemgmt.core.validation.Validatable
 import sbt.io.IO as sbtio
 import sbt.io.syntax.*
-import coursemgmttools.admin.cli.ArgParsers.linearizeBaseDirectoryArgParser
-import coursemgmttools.core.cli.CmtCommand
+import coursemgmt.admin.cli.ArgParsers.linearizeBaseDirectoryArgParser
+import coursemgmt.core.cli.CmtCommand
 
 object Delinearize:
 

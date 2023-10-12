@@ -66,14 +66,14 @@ $ cmt-mainadm init
  Checkout template into /var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_78941d08
  Initialized empty Git repository in /private/var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_78941d08/.git/
  Updating origin
- From https://github.com/lunatech-labs/course-management-tools
+ From https://github.com/scalacenter/course-management-tools
   * [new branch]      add-documentation      -> origin/add-documentation
   * [new branch]      add-social-media-preview-image-and-fix-footer-links -> origin/add-social-media-preview-image-and-fix-footer-links
   * [new branch]      gh-pages               -> origin/gh-pages
   * [new branch]      main                   -> origin/main
   * [new branch]      mainadm-validation-fix -> origin/mainadm-validation-fix
   * [new tag]         1.0.0                  -> 1.0.0
- From https://github.com/lunatech-labs/course-management-tools
+ From https://github.com/scalacenter/course-management-tools
   * branch            main       -> FETCH_HEAD
  Template created in /var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_78941d08/course-templates/scala-cmt-template-no-common/
  Copying template to /Users/ericloots/tmp/starting-with-scala
@@ -243,7 +243,7 @@ man [e] > Starting with Scala > initial state > man
 ## Description
 
 This project can be used as a template for a master
-project managed by the [Course Management Tools](https://github.com/lunatech-labs/course-management-tools)
+project managed by the [Course Management Tools](https://github.com/scalacenter/course-management-tools)
 
 It contains 2 simple steps (or exercises)
 
@@ -414,14 +414,14 @@ mainadm init --template scala-cmt-template-no-common --name "Starting with Scala
  Checkout template into /var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_78941d08
  Initialized empty Git repository in /private/var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_78941d08/.git/
  Updating origin
- From https://github.com/lunatech-labs/course-management-tools
+ From https://github.com/scalacenter/course-management-tools
   * [new branch]      add-documentation      -> origin/add-documentation
   * [new branch]      add-social-media-preview-image-and-fix-footer-links -> origin/add-social-media-preview-image-and-fix-footer-links
   * [new branch]      gh-pages               -> origin/gh-pages
   * [new branch]      main                   -> origin/main
   * [new branch]      mainadm-validation-fix -> origin/mainadm-validation-fix
   * [new tag]         1.0.0                  -> 1.0.0
- From https://github.com/lunatech-labs/course-management-tools
+ From https://github.com/scalacenter/course-management-tools
   * branch            main       -> FETCH_HEAD
  Template created in /var/folders/rq/vhwkgm9x2rs33jl4t2x6t6jr0000gn/T/sbt_78941d08/course-templates/scala-cmt-template-no-common/
  Copying template to /Users/ericloots/tmp/starting-with-scala

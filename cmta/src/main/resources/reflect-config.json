@@ -31,7 +31,7 @@
   "fields":[{"name":"0bitmap$1"}]
 },
 {
-  "name":"com.lunatech.cmt.admin.cli.ArgParsers$",
+  "name":"coursemgmt.admin.cli.ArgParsers$",
   "fields":[
     {"name":"configurationFileArgParser$lzy1"}, 
     {"name":"courseTemplateArgParser$lzy1"}, 
@@ -47,7 +47,7 @@
   ]
 },
 {
-  "name":"com.lunatech.cmt.admin.cli.SharedOptions$",
+  "name":"coursemgmt.admin.cli.SharedOptions$",
   "fields":[
     {"name":"help$lzy1"}, 
     {"name":"parser$lzy1"}

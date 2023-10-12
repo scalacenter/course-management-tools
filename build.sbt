@@ -10,8 +10,6 @@ inThisBuild(
     licenses := Seq("Apache-2.0" -> url("http://www.apache.org/license/LICENSE-2.0"))))
 
 ThisBuild / dynverVTagPrefix := false
-ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
-sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
 
 lazy val `course-management-tools` =
   (project in file("."))

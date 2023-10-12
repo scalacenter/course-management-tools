@@ -2,10 +2,10 @@ import Build.*
 
 inThisBuild(
   List(
-    organization := "com.lunatech",
-    organizationName := "Lunatech",
-    organizationHomepage := Some(url("https://lunatech.com")),
-    homepage := Some(url("https://cmt.lunatech.com")),
+    organization := "ch.epfl.scala",
+    organizationName := "Scala Center",
+    organizationHomepage := Some(url("https://scala.epfl.ch")),
+    homepage := Some(url("https://scala.epfl.ch")),
     developers := List(Developer("eloots", "Eric Loots", "eric.loots@lunatech.com", url("https://github.com/eloots"))),
     licenses := Seq("Apache-2.0" -> url("http://www.apache.org/license/LICENSE-2.0"))))
 
@@ -32,7 +32,7 @@ lazy val cmta = project
   .dependsOn(`cmt-core`, `cmt-core` % "test->test")
   .settings(commonSettings: _*)
   .settings(nativeImageSettings: _*)
-  .settings(Compile / mainClass := Some("com.lunatech.cmt.admin.Main"))
+  .settings(Compile / mainClass := Some("coursemgmt.admin.Main"))
   .settings(buildInfoKeys := buildKeysWithName("cmta:Course Management Tools (Admin)"))
 
 lazy val cmtc = project
@@ -43,7 +43,7 @@ lazy val cmtc = project
   .settings(commonSettings: _*)
   .settings(nativeImageSettings: _*)
   .settings(libraryDependencies ++= Dependencies.cmtcDependencies)
-  .settings(Compile / mainClass := Some("com.lunatech.cmt.client.Main"))
+  .settings(Compile / mainClass := Some("coursemgmt.client.Main"))
   .settings(buildInfoKeys := buildKeysWithName("Course Management Tools (Client)"))
 
 lazy val `functional-tests` = project

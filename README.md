@@ -7,4 +7,5 @@
 
 ## Documentation
 
-See the website: http://cmt.lunatech.com
+See the website: https://scalacenter.github.io/course-management-tools/
+

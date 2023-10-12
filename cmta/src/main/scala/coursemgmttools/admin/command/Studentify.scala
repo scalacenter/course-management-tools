@@ -69,8 +69,8 @@ object Studentify:
             if (redundantPaths.nonEmpty)
               for (redundantPath <- redundantPaths)
                 println(
-                  coursemgmttools
-                    .toConsoleYellow(s"WARNING: Redundant path detected in CMT configuration: $redundantPath"))
+                  coursemgmttools.toConsoleYellow(
+                    s"WARNING: Redundant path detected in CMT configuration: $redundantPath"))
 
           checkForOverlappingPathsInConfig()
 

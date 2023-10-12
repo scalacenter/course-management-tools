@@ -2,12 +2,7 @@ package coursemgmttools.admin.command
 
 import coursemgmttools.*
 import caseapp.{AppName, CommandName, ExtraName, HelpMessage, Recurse, RemainingArgs, ValueDescription}
-import coursemgmttools.Helpers.{
-  ExercisesMetadata,
-  getExerciseMetadata,
-  commitToGit,
-  exitIfGitIndexOrWorkspaceIsntClean
-}
+import coursemgmttools.Helpers.{ExercisesMetadata, getExerciseMetadata, commitToGit, exitIfGitIndexOrWorkspaceIsntClean}
 import coursemgmttools.admin.Domain.{ExerciseNumber, RenumberOffset, RenumberStart, RenumberStep}
 import coursemgmttools.admin.cli.SharedOptions
 import coursemgmttools.core.execution.Executable

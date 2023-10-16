@@ -82,6 +82,7 @@ object Install:
             (targetFolder.exists, forceDelete) match {
               case (false, _) | (true, true) =>
                 sbtio.copyDirectory(tmpDir / project, targetFolder)
+                sbtio.delete(tmpDir / project)
                 if (deleteZipAfterInstall) {
                   sbtio.delete(zipFile.value)
                 }
